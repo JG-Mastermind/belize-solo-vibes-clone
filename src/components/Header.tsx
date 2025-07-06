@@ -23,6 +23,7 @@ const Header = () => {
           <nav className="hidden md:flex items-center space-x-8">
             <Link to="/#adventures" className="text-belize-neutral-800 hover:text-belize-green-600 transition-colors">Adventures</Link>
             <Link to="/#about" className="text-belize-neutral-800 hover:text-belize-green-600 transition-colors">About</Link>
+            <Link to="/blog" className="text-belize-neutral-800 hover:text-belize-green-600 transition-colors">Blog</Link>
             <Link to="/#testimonials" className="text-belize-neutral-800 hover:text-belize-green-600 transition-colors">Reviews</Link>
             <Link to="/contact" className="text-belize-neutral-800 hover:text-belize-green-600 transition-colors">Contact</Link>
           </nav>
@@ -53,6 +54,7 @@ const Header = () => {
             <nav className="flex flex-col space-y-3">
               <Link to="/#adventures" className="text-belize-neutral-800 hover:text-belize-green-600 transition-colors py-2">Adventures</Link>
               <Link to="/#about" className="text-belize-neutral-800 hover:text-belize-green-600 transition-colors py-2">About</Link>
+              <Link to="/blog" className="text-belize-neutral-800 hover:text-belize-green-600 transition-colors py-2">Blog</Link>
               <Link to="/#testimonials" className="text-belize-neutral-800 hover:text-belize-green-600 transition-colors py-2">Reviews</Link>
               <Link to="/contact" className="text-belize-neutral-800 hover:text-belize-green-600 transition-colors py-2">Contact</Link>
               <div className="pt-4 border-t border-belize-green-100">

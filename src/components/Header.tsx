@@ -2,6 +2,7 @@
 import { Button } from "@/components/ui/button";
 import { Menu, Phone, Mail } from "lucide-react";
 import { useState } from "react";
+import { Link } from "react-router-dom";
 
 const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -11,19 +12,19 @@ const Header = () => {
       <div className="container mx-auto px-4">
         <div className="flex items-center justify-between h-16">
           {/* Logo */}
-          <div className="flex items-center space-x-2">
+          <Link to="/" className="flex items-center space-x-2">
             <div className="w-10 h-10 bg-gradient-to-br from-belize-green-500 to-belize-blue-500 rounded-full flex items-center justify-center">
               <span className="text-white font-bold text-lg">BV</span>
             </div>
             <span className="font-playfair font-bold text-xl text-belize-neutral-900">BelizeVibes</span>
-          </div>
+          </Link>
 
           {/* Desktop Navigation */}
           <nav className="hidden md:flex items-center space-x-8">
-            <a href="#adventures" className="text-belize-neutral-800 hover:text-belize-green-600 transition-colors">Adventures</a>
-            <a href="#about" className="text-belize-neutral-800 hover:text-belize-green-600 transition-colors">About</a>
-            <a href="#testimonials" className="text-belize-neutral-800 hover:text-belize-green-600 transition-colors">Reviews</a>
-            <a href="#contact" className="text-belize-neutral-800 hover:text-belize-green-600 transition-colors">Contact</a>
+            <Link to="/#adventures" className="text-belize-neutral-800 hover:text-belize-green-600 transition-colors">Adventures</Link>
+            <Link to="/#about" className="text-belize-neutral-800 hover:text-belize-green-600 transition-colors">About</Link>
+            <Link to="/#testimonials" className="text-belize-neutral-800 hover:text-belize-green-600 transition-colors">Reviews</Link>
+            <Link to="/contact" className="text-belize-neutral-800 hover:text-belize-green-600 transition-colors">Contact</Link>
           </nav>
 
           {/* Contact Info & CTA */}
@@ -50,10 +51,10 @@ const Header = () => {
         {isMenuOpen && (
           <div className="md:hidden border-t border-belize-green-100 py-4">
             <nav className="flex flex-col space-y-3">
-              <a href="#adventures" className="text-belize-neutral-800 hover:text-belize-green-600 transition-colors py-2">Adventures</a>
-              <a href="#about" className="text-belize-neutral-800 hover:text-belize-green-600 transition-colors py-2">About</a>
-              <a href="#testimonials" className="text-belize-neutral-800 hover:text-belize-green-600 transition-colors py-2">Reviews</a>
-              <a href="#contact" className="text-belize-neutral-800 hover:text-belize-green-600 transition-colors py-2">Contact</a>
+              <Link to="/#adventures" className="text-belize-neutral-800 hover:text-belize-green-600 transition-colors py-2">Adventures</Link>
+              <Link to="/#about" className="text-belize-neutral-800 hover:text-belize-green-600 transition-colors py-2">About</Link>
+              <Link to="/#testimonials" className="text-belize-neutral-800 hover:text-belize-green-600 transition-colors py-2">Reviews</Link>
+              <Link to="/contact" className="text-belize-neutral-800 hover:text-belize-green-600 transition-colors py-2">Contact</Link>
               <div className="pt-4 border-t border-belize-green-100">
                 <div className="flex items-center space-x-2 text-sm text-belize-neutral-600 mb-3">
                   <Phone className="h-4 w-4" />

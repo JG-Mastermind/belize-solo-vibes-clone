@@ -1,9 +1,16 @@
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Star, Clock, Users, MapPin } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 import { adventures } from "@/data/adventures";
 
 const AdventureCards = () => {
+  const navigate = useNavigate();
+
+  const handleBookNow = (id: number) => {
+    navigate(`/booking/${id}`);
+  };
+
   return (
     <section id="adventures" className="py-16 bg-belize-neutral-50">
       <div className="container mx-auto px-4">
@@ -73,7 +80,10 @@ const AdventureCards = () => {
                 </div>
 
                 <div className="flex space-x-2">
-                  <Button className="flex-1 bg-belize-green-500 hover:bg-belize-green-600 text-white">
+                  <Button 
+                    onClick={() => handleBookNow(adventure.id)} 
+                    className="flex-1 bg-belize-green-500 hover:bg-belize-green-600 text-white"
+                  >
                     Book Now
                   </Button>
                   <Button variant="outline" className="flex-1 border-belize-green-500 text-belize-green-600 hover:bg-belize-green-50">

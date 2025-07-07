@@ -1,3 +1,4 @@
+// src/App.tsx
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -12,19 +13,18 @@ import Booking from "./pages/Booking";
 import NotFound from "./pages/NotFound";
 import Header from "./components/Header";
 import Footer from "./components/Footer";
-import { ScrollToTopButton } from "./components/ScrollToTopButton"; // <-- IMPORT THE NEW BUTTON
+import ScrollToTop from "./components/ScrollToTop";
 
 const queryClient = new QueryClient();
 
 const AppLayout = () => (
-  <>
+  <div className="flex flex-col min-h-screen">
     <Header />
-    <main>
+    <main className="flex-grow pt-16">
       <Outlet />
     </main>
     <Footer />
-    <ScrollToTopButton /> {/* <-- ADD THE BUTTON HERE */}
-  </>
+  </div>
 );
 
 const App = () => (
@@ -33,7 +33,7 @@ const App = () => (
       <Toaster />
       <Sonner />
       <BrowserRouter>
-        {/* The old ScrollToTop component is no longer needed here */}
+        <ScrollToTop />
         <Routes>
           <Route path="/" element={<AppLayout />}>
             <Route index element={<Index />} />

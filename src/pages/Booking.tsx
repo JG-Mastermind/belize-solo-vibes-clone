@@ -1,14 +1,53 @@
 
 import { useState } from "react";
 import { useParams } from "react-router-dom";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { z } from "zod";
 import { adventures } from "@/data/adventures";
 import { Progress } from "@/components/ui/progress";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Button } from "@/components/ui/button";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
+
+const bookingFormSchema = z.object({
+  fullName: z.string().min(2, "Full name must be at least 2 characters"),
+  email: z.string().email("Please enter a valid email address"),
+  phone: z.string().min(10, "Phone number must be at least 10 digits"),
+  numberOfTravelers: z.number().min(1, "Must have at least 1 traveler").max(20, "Maximum 20 travelers"),
+});
+
+type BookingFormData = z.infer<typeof bookingFormSchema>;
 
 const Booking = () => {
   const { id } = useParams<{ id: string }>();
   const [currentStep, setCurrentStep] = useState(0);
   
   const adventure = adventures.find(adv => adv.id === Number(id));
+  
+  const form = useForm<BookingFormData>({
+    resolver: zodResolver(bookingFormSchema),
+    defaultValues: {
+      fullName: "",
+      email: "",
+      phone: "",
+      numberOfTravelers: 1,
+    },
+  });
+
+  const onSubmit = (data: BookingFormData) => {
+    console.log("Booking form submitted:", data);
+    // Move to next step after form submission
+    setCurrentStep(Math.min(adventure!.steps.length - 1, currentStep + 1));
+  };
   
   if (!adventure) {
     return (
@@ -22,6 +61,7 @@ const Booking = () => {
   }
 
   const progressPercentage = ((currentStep + 1) / adventure.steps.length) * 100;
+  const currentStepName = adventure.steps[currentStep];
 
   return (
     <div className="container mx-auto px-4 py-8">
@@ -54,23 +94,108 @@ const Booking = () => {
           </div>
         </div>
 
+        <div className="mb-8">
+          <h3 className="text-xl font-semibold mb-4">Current Step: {currentStepName}</h3>
+          
+          {currentStepName === "Your Info" && (
+            <Form {...form}>
+              <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+                <FormField
+                  control={form.control}
+                  name="fullName"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Full Name</FormLabel>
+                      <FormControl>
+                        <Input placeholder="Enter your full name" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                
+                <FormField
+                  control={form.control}
+                  name="email"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Email Address</FormLabel>
+                      <FormControl>
+                        <Input type="email" placeholder="Enter your email" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                
+                <FormField
+                  control={form.control}
+                  name="phone"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Phone Number</FormLabel>
+                      <FormControl>
+                        <Input type="tel" placeholder="Enter your phone number" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                
+                <FormField
+                  control={form.control}
+                  name="numberOfTravelers"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Number of Travelers</FormLabel>
+                      <FormControl>
+                        <Input 
+                          type="number" 
+                          min="1" 
+                          max="20" 
+                          placeholder="1" 
+                          {...field}
+                          onChange={(e) => field.onChange(Number(e.target.value))}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                
+                <Button type="submit" className="w-full">
+                  Continue to Next Step
+                </Button>
+              </form>
+            </Form>
+          )}
+          
+          {currentStepName !== "Your Info" && (
+            <div className="text-center py-8">
+              <p className="text-muted-foreground">
+                {currentStepName === "Select Date" && "Please select your preferred date for this adventure."}
+                {currentStepName === "Payment" && "Complete your payment to confirm the booking."}
+                {currentStepName === "Confirmation" && "Your booking has been confirmed! You will receive a confirmation email shortly."}
+              </p>
+            </div>
+          )}
+        </div>
+
         <div className="text-center">
-          <p className="text-lg mb-4">Current Step: {adventure.steps[currentStep]}</p>
           <div className="space-x-4">
-            <button
+            <Button
+              variant="outline"
               onClick={() => setCurrentStep(Math.max(0, currentStep - 1))}
               disabled={currentStep === 0}
-              className="px-4 py-2 bg-secondary text-secondary-foreground rounded hover:bg-secondary/80 disabled:opacity-50 disabled:cursor-not-allowed"
             >
               Previous
-            </button>
-            <button
+            </Button>
+            <Button
               onClick={() => setCurrentStep(Math.min(adventure.steps.length - 1, currentStep + 1))}
-              disabled={currentStep === adventure.steps.length - 1}
-              className="px-4 py-2 bg-primary text-primary-foreground rounded hover:bg-primary/90 disabled:opacity-50 disabled:cursor-not-allowed"
+              disabled={currentStep === adventure.steps.length - 1 || (currentStepName === "Your Info" && !form.formState.isValid)}
             >
               Next
-            </button>
+            </Button>
           </div>
         </div>
       </div>

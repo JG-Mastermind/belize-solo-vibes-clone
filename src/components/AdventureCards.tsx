@@ -1,13 +1,13 @@
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Star, Clock, Users, MapPin } from "lucide-react";
-import { useNavigate } from "react-router-dom"; // <-- The hook for navigation
+import { useNavigate } from "react-router-dom";
 import { adventures } from "@/data/adventures";
 
 const AdventureCards = () => {
-  const navigate = useNavigate(); // <-- Initialize the navigate function
+  const navigate = useNavigate();
 
-  // This function tells the browser where to go
+  // The 'id' from your data is a number, so we use number here.
   const handleBookNow = (id: number) => {
     navigate(`/booking/${id}`);
   };
@@ -81,7 +81,6 @@ const AdventureCards = () => {
                 </div>
 
                 <div className="flex space-x-2">
-                  {/* THIS onClick IS THE FIX */}
                   <Button 
                     onClick={() => handleBookNow(adventure.id)} 
                     className="flex-1 bg-belize-green-500 hover:bg-belize-green-600 text-white"

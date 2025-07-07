@@ -1,8 +1,6 @@
-
+import React from "react";
 import { Shield, Phone, Heart, Droplets, Cloud, Users, AlertTriangle, MapPin } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import Header from "@/components/Header";
-import Footer from "@/components/Footer";
 
 const Safety = () => {
   const safetyTopics = [
@@ -48,11 +46,9 @@ const Safety = () => {
   ];
 
   return (
-    <div className="min-h-screen bg-white">
-      <Header />
-      
+    <React.Fragment>
       {/* Hero Section */}
-      <section className="relative min-h-[60vh] flex items-center justify-center overflow-hidden mt-16">
+      <section className="relative min-h-[60vh] flex items-center justify-center overflow-hidden">
         <div 
           className="absolute inset-0 bg-cover bg-center bg-no-repeat"
           style={{
@@ -173,9 +169,7 @@ const Safety = () => {
           </Button>
         </div>
       </section>
-
-      <Footer />
-    </div>
+    </React.Fragment>
   );
 };
 

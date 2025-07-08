@@ -22,3 +22,7 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+# Environment variables
+# This line is critical and prevents your secret keys from being uploaded.
+.env

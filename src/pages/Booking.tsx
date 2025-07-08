@@ -1,6 +1,5 @@
-
 import { useState } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
@@ -33,6 +32,7 @@ type BookingFormData = z.infer<typeof bookingFormSchema>;
 
 const Booking = () => {
   const { id } = useParams<{ id: string }>();
+  const navigate = useNavigate();
   const [currentStep, setCurrentStep] = useState(0);
   
   const adventure = adventures.find(adv => adv.id === Number(id));
@@ -52,6 +52,10 @@ const Booking = () => {
     console.log("Booking form submitted:", data);
     // Move to next step after form submission
     setCurrentStep(Math.min(adventure!.steps.length - 1, currentStep + 1));
+  };
+
+  const handleExploreMore = () => {
+    navigate("/");
   };
   
   if (!adventure) {
@@ -196,12 +200,57 @@ const Booking = () => {
               </form>
             )}
             
-            {currentStepName !== "Your Info" && currentStep !== 0 && (
+            {currentStepName === "Payment" && (
               <div className="text-center py-8">
                 <p className="text-muted-foreground">
-                  {currentStepName === "Payment" && "Complete your payment to confirm the booking."}
-                  {currentStepName === "Confirmation" && "Your booking has been confirmed! You will receive a confirmation email shortly."}
+                  Complete your payment to confirm the booking.
                 </p>
+              </div>
+            )}
+
+            {currentStepName === "Confirmation" && (
+              <div className="bg-green-50 border border-green-200 rounded-lg p-6">
+                <div className="text-center mb-6">
+                  <h2 className="text-2xl font-bold text-green-800 mb-2">Booking Confirmed!</h2>
+                  <p className="text-green-700">Thank you for your booking. A confirmation email is on its way to your inbox.</p>
+                </div>
+                
+                <div className="space-y-4 mb-6">
+                  <h3 className="text-lg font-semibold text-green-800 border-b border-green-200 pb-2">Booking Summary</h3>
+                  
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                      <p className="text-sm font-medium text-green-700">Adventure</p>
+                      <p className="text-green-900">{adventure.title}</p>
+                    </div>
+                    
+                    <div>
+                      <p className="text-sm font-medium text-green-700">Selected Date</p>
+                      <p className="text-green-900">
+                        {form.getValues("bookingDate")?.toLocaleDateString() || "Not selected"}
+                      </p>
+                    </div>
+                    
+                    <div>
+                      <p className="text-sm font-medium text-green-700">Full Name</p>
+                      <p className="text-green-900">{form.getValues("fullName") || "Not provided"}</p>
+                    </div>
+                    
+                    <div>
+                      <p className="text-sm font-medium text-green-700">Number of Travelers</p>
+                      <p className="text-green-900">{form.getValues("numberOfTravelers") || 1}</p>
+                    </div>
+                  </div>
+                </div>
+                
+                <div className="text-center">
+                  <Button 
+                    onClick={handleExploreMore}
+                    className="bg-green-600 hover:bg-green-700 text-white px-6 py-2"
+                  >
+                    Explore More Adventures
+                  </Button>
+                </div>
               </div>
             )}
           </div>

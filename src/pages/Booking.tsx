@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { useParams } from "react-router-dom";
 import { useForm } from "react-hook-form";
@@ -98,33 +99,33 @@ const Booking = () => {
           </div>
         </div>
 
-        <div className="mb-8">
-          <h3 className="text-xl font-semibold mb-4">Current Step: {currentStepName}</h3>
-          
-          {currentStep === 0 && (
-            <FormField
-              control={form.control}
-              name="bookingDate"
-              render={({ field }) => (
-                <FormItem className="flex flex-col items-center">
-                  <FormLabel className="text-lg font-semibold mb-4">Select Your Adventure Date</FormLabel>
-                  <FormControl>
-                    <Calendar
-                      mode="single"
-                      selected={field.value}
-                      onSelect={field.onChange}
-                      disabled={(date) => date < new Date(new Date().setHours(0, 0, 0, 0))}
-                      className="rounded-md border"
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-          )}
-          
-          {currentStepName === "Your Info" && (
-            <Form {...form}>
+        <Form {...form}>
+          <div className="mb-8">
+            <h3 className="text-xl font-semibold mb-4">Current Step: {currentStepName}</h3>
+            
+            {currentStep === 0 && (
+              <FormField
+                control={form.control}
+                name="bookingDate"
+                render={({ field }) => (
+                  <FormItem className="flex flex-col items-center">
+                    <FormLabel className="text-lg font-semibold mb-4">Select Your Adventure Date</FormLabel>
+                    <FormControl>
+                      <Calendar
+                        mode="single"
+                        selected={field.value}
+                        onSelect={field.onChange}
+                        disabled={(date) => date < new Date(new Date().setHours(0, 0, 0, 0))}
+                        className="rounded-md border"
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            )}
+            
+            {currentStepName === "Your Info" && (
               <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
                 <FormField
                   control={form.control}
@@ -193,18 +194,18 @@ const Booking = () => {
                   Continue to Next Step
                 </Button>
               </form>
-            </Form>
-          )}
-          
-          {currentStepName !== "Your Info" && currentStep !== 0 && (
-            <div className="text-center py-8">
-              <p className="text-muted-foreground">
-                {currentStepName === "Payment" && "Complete your payment to confirm the booking."}
-                {currentStepName === "Confirmation" && "Your booking has been confirmed! You will receive a confirmation email shortly."}
-              </p>
-            </div>
-          )}
-        </div>
+            )}
+            
+            {currentStepName !== "Your Info" && currentStep !== 0 && (
+              <div className="text-center py-8">
+                <p className="text-muted-foreground">
+                  {currentStepName === "Payment" && "Complete your payment to confirm the booking."}
+                  {currentStepName === "Confirmation" && "Your booking has been confirmed! You will receive a confirmation email shortly."}
+                </p>
+              </div>
+            )}
+          </div>
+        </Form>
 
         <div className="text-center">
           <div className="space-x-4">

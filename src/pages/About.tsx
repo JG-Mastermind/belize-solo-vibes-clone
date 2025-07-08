@@ -1,8 +1,6 @@
-
-import { Users, Shield, Leaf, MapPin, Phone, Mail } from "lucide-react";
+import React from "react";
+import { Users, Shield, Leaf, MapPin, Mail } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import Header from "@/components/Header";
-import Footer from "@/components/Footer";
 
 const About = () => {
   const valuePillars = [
@@ -30,7 +28,8 @@ const About = () => {
 
   const teamMembers = [
     { name: "Dimitre Sleeuw", role: "Founder & Lead Guide", photo: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=300&h=300&fit=crop&crop=face" },
-    { name: "Maria Castillo", role: "Operations Manager", photo: "https://images.unsplash.com/photo-1494790108755-2616b612b786?w=300&h=300&fit=crop&crop=face" },
+    // --- FINAL FIX: This now uses the correct, direct Unsplash image link ---
+    { name: "Amber Villafranco", role: "Operations Manager", photo: "https://images.unsplash.com/photo-1611432579699-484f7990b127?w=300&h=300&fit=crop&crop=face" },
     { name: "Carlos Mendez", role: "Cave Tubing Specialist", photo: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=300&h=300&fit=crop&crop=face" },
     { name: "Ana Rodriguez", role: "Wildlife Expert", photo: "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=300&h=300&fit=crop&crop=face" },
     { name: "Diego Santos", role: "Diving Instructor", photo: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=300&h=300&fit=crop&crop=face" },
@@ -40,11 +39,9 @@ const About = () => {
   ];
 
   return (
-    <div className="min-h-screen bg-white">
-      <Header />
-      
+    <React.Fragment>
       {/* Hero Section */}
-      <section className="relative min-h-[60vh] flex items-center justify-center overflow-hidden mt-16">
+      <section className="relative min-h-[60vh] flex items-center justify-center overflow-hidden">
         <div 
           className="absolute inset-0 bg-cover bg-center bg-no-repeat"
           style={{
@@ -64,10 +61,10 @@ const About = () => {
       </section>
 
       {/* Story Section */}
-      <section className="py-16 bg-white">
+      <section className="py-16 bg-white" aria-labelledby="story-heading">
         <div className="container mx-auto px-4">
           <div className="max-w-4xl mx-auto text-center">
-            <h2 className="text-3xl md:text-4xl font-playfair font-bold text-belize-neutral-900 mb-8">
+            <h2 id="story-heading" className="text-3xl md:text-4xl font-playfair font-bold text-belize-neutral-900 mb-8">
               Locally Owned. Globally Inspired.
             </h2>
             <p className="text-lg text-belize-neutral-700 leading-relaxed">
@@ -82,7 +79,7 @@ const About = () => {
         <div className="container mx-auto px-4">
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
             {valuePillars.map((pillar, index) => (
-              <div key={index} className="text-center p-6 bg-white rounded-xl shadow-lg hover:shadow-xl transition-shadow duration-300">
+              <div key={index} className="text-center p-6 bg-white rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 ease-in-out hover:scale-105">
                 <div className="flex justify-center mb-4">
                   {pillar.icon}
                 </div>
@@ -99,10 +96,10 @@ const About = () => {
       </section>
 
       {/* Team Section */}
-      <section className="py-16 bg-white">
+      <section className="py-16 bg-white" aria-labelledby="team-heading">
         <div className="container mx-auto px-4">
           <div className="text-center mb-12">
-            <h2 className="text-3xl md:text-4xl font-playfair font-bold text-belize-neutral-900 mb-4">
+            <h2 id="team-heading" className="text-3xl md:text-4xl font-playfair font-bold text-belize-neutral-900 mb-4">
               Meet Our Team
             </h2>
             <p className="text-lg text-belize-neutral-600">
@@ -112,11 +109,11 @@ const About = () => {
           
           <div className="grid grid-cols-2 md:grid-cols-4 gap-6 md:gap-8">
             {teamMembers.map((member, index) => (
-              <div key={index} className="text-center group">
-                <div className="relative mb-4 overflow-hidden rounded-xl">
+              <div key={index} className="flex flex-col items-center text-center group">
+                <div className="relative mb-4 w-full overflow-hidden rounded-xl bg-gray-100">
                   <img 
                     src={member.photo} 
-                    alt={member.name}
+                    alt={`Photo of ${member.name}`}
                     className="w-full aspect-square object-cover transition-transform duration-300 group-hover:scale-105"
                   />
                 </div>
@@ -133,23 +130,23 @@ const About = () => {
       </section>
 
       {/* CTA Section */}
-      <section className="py-16 bg-belize-green-50">
+      <section className="py-16 bg-belize-green-50" aria-labelledby="cta-heading">
         <div className="container mx-auto px-4 text-center">
-          <h2 className="text-3xl font-playfair font-bold text-belize-neutral-900 mb-4">
+          <h2 id="cta-heading" className="text-3xl font-playfair font-bold text-belize-neutral-900 mb-4">
             Want to Join Us?
           </h2>
           <p className="text-lg text-belize-neutral-700 mb-8 max-w-2xl mx-auto">
             We're always looking for passionate, certified guides who share our vision of sustainable, authentic travel experiences.
           </p>
-          <Button className="bg-belize-green-500 hover:bg-belize-green-600 text-white px-8 py-3 text-lg">
-            <Mail className="h-5 w-5 mr-2" />
-            careers@belizevibes.com
-          </Button>
+          <a href="mailto:careers@belizevibes.com">
+            <Button className="bg-belize-green-500 hover:bg-belize-green-600 text-white px-8 py-3 text-lg">
+              <Mail className="h-5 w-5 mr-2" />
+              careers@belizevibes.com
+            </Button>
+          </a>
         </div>
       </section>
-
-      <Footer />
-    </div>
+    </React.Fragment>
   );
 };
 

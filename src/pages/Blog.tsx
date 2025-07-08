@@ -1,22 +1,81 @@
-import Header from "@/components/Header";
-import Footer from "@/components/Footer";
+import React from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Calendar, User, Facebook, Instagram, Mail } from "lucide-react";
-import { blogPosts } from "@/data/blogPosts";
-
-const popularTopics = [
-  "Wildlife", "Safety", "Budget Travel", "Group Tours", "Jungle Adventures", 
-  "Beach Activities", "Cultural Experiences", "Solo Tips", "Photography"
-];
 
 const Blog = () => {
+  const blogPosts = [
+    {
+      id: 1,
+      title: "10 Solo Adventures to Take in Belize",
+      excerpt: "From cave tubing to jungle zip-lining, discover the best solo-friendly adventures that Belize has to offer.",
+      imgUrl: "https://images.unsplash.com/photo-1482938289607-e9573fc25ebb?w=800&h=400&fit=crop&crop=center",
+      author: "Maya Rodriguez",
+      date: "December 15, 2024",
+      slug: "10-solo-adventures-belize"
+    },
+    {
+      id: 2,
+      title: "How to Stay Safe While Traveling Alone",
+      excerpt: "Essential safety tips and precautions for solo travelers exploring Belize's beautiful landscapes.",
+      imgUrl: "https://images.unsplash.com/photo-1472396961693-142e6e269027?w=800&h=400&fit=crop&crop=center",
+      author: "Carlos Mendez",
+      date: "December 10, 2024",
+      slug: "solo-travel-safety-belize"
+    },
+    {
+      id: 3,
+      title: "A Week in San Ignacio: Budget & Luxury Picks",
+      excerpt: "Whether you're backpacking or splurging, here's how to make the most of San Ignacio's adventure scene.",
+      imgUrl: "https://images.unsplash.com/photo-1433086966358-54859d0ed716?w=800&h=400&fit=crop&crop=center",
+      author: "Sarah Thompson",
+      date: "December 5, 2024",
+      slug: "san-ignacio-week-guide"
+    },
+    {
+      id: 4,
+      title: "Wildlife Watching: A Solo Traveler's Guide",
+      excerpt: "Spot jaguars, howler monkeys, and exotic birds on your own terms with these wildlife watching tips.",
+      imgUrl: "https://images.unsplash.com/photo-1509316975850-ff9c5deb0cd9?w=800&h=400&fit=crop&crop=center",
+      author: "Elena Castro",
+      date: "November 28, 2024",
+      slug: "wildlife-watching-solo"
+    },
+    {
+      id: 5,
+      title: "Budget-Friendly Belize: Solo Travel on $50/Day",
+      excerpt: "Discover how to experience Belize's wonders without breaking the bank, from hostels to street food.",
+      imgUrl: "https://images.unsplash.com/photo-1513836279014-a89f7a76ae86?w=800&h=400&fit=crop&crop=center",
+      author: "Mike Johnson",
+      date: "November 20, 2024",
+      slug: "budget-belize-solo-travel"
+    },
+    {
+      id: 6,
+      title: "The Best Time to Visit Belize for Solo Travelers",
+      excerpt: "Weather, crowds, and costs - everything you need to know about timing your solo Belize adventure.",
+      imgUrl: "https://images.unsplash.com/photo-1518495973542-4543c06a5843?w=800&h=400&fit=crop&crop=center",
+      author: "Ana Gutierrez",
+      date: "November 15, 2024",
+      slug: "best-time-visit-belize"
+    }
+  ];
+
+  const popularTopics = [
+    "Wildlife", "Safety", "Budget Travel", "Group Tours", "Jungle Adventures", 
+    "Beach Activities", "Cultural Experiences", "Solo Tips", "Photography"
+  ];
+
+  const handleNewsletterSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    // Future implementation: handle form submission
+    console.log('Newsletter form submitted');
+  };
+
   return (
-    <div className="min-h-screen bg-white">
-      <Header />
-      
+    <React.Fragment>
       {/* Hero Section */}
-      <section className="relative pt-16 min-h-[60vh] flex items-center justify-center overflow-hidden">
+      <section className="relative min-h-[60vh] flex items-center justify-center overflow-hidden">
         <div 
           className="absolute inset-0 bg-cover bg-center bg-no-repeat"
           style={{
@@ -49,8 +108,8 @@ const Blog = () => {
         <div className="lg:grid lg:grid-cols-4 lg:gap-12">
           
           {/* Blog Posts Grid */}
-          <div className="lg:col-span-3" id="blog-posts">
-            <h2 className="text-3xl font-playfair font-bold text-belize-neutral-900 mb-8 text-center lg:text-left">
+          <main className="lg:col-span-3" id="blog-posts" aria-labelledby="latest-stories-heading">
+            <h2 id="latest-stories-heading" className="text-3xl font-playfair font-bold text-belize-neutral-900 mb-8 text-center lg:text-left">
               Latest Stories
             </h2>
             
@@ -90,7 +149,7 @@ const Blog = () => {
                     <Button 
                       variant="outline" 
                       className="w-full border-belize-green-500 text-belize-green-600 hover:bg-belize-green-500 hover:text-white transition-all duration-300"
-                      onClick={() => console.log(`Navigate to: /blog/${post.slug}`)}
+                      onClick={() => console.log(`Maps to: /blog/${post.slug}`)}
                     >
                       Read More
                     </Button>
@@ -98,14 +157,13 @@ const Blog = () => {
                 </Card>
               ))}
             </div>
-          </div>
+          </main>
 
-          {/* Sidebar - Desktop Only */}
-          <div className="hidden lg:block lg:col-span-1 space-y-8">
+          {/* Sidebar */}
+          <aside className="hidden lg:block lg:col-span-1 space-y-8 mt-16 lg:mt-0">
             
-            {/* Popular Topics */}
-            <Card className="p-6">
-              <h3 className="text-xl font-playfair font-semibold text-belize-neutral-900 mb-4">
+            <Card className="p-6" aria-labelledby="popular-topics-heading">
+              <h3 id="popular-topics-heading" className="text-xl font-playfair font-semibold text-belize-neutral-900 mb-4">
                 Popular Topics
               </h3>
               <div className="flex flex-wrap gap-2">
@@ -121,20 +179,21 @@ const Blog = () => {
               </div>
             </Card>
 
-            {/* Social Links */}
-            <Card className="p-6">
-              <h3 className="text-xl font-playfair font-semibold text-belize-neutral-900 mb-4">
+            <Card className="p-6" aria-labelledby="follow-us-heading">
+              <h3 id="follow-us-heading" className="text-xl font-playfair font-semibold text-belize-neutral-900 mb-4">
                 Follow Us
               </h3>
               <div className="flex space-x-4">
                 <a 
                   href="#" 
+                  aria-label="Follow us on Facebook"
                   className="w-10 h-10 bg-belize-green-500 rounded-full flex items-center justify-center hover:bg-belize-green-600 transition-colors text-white"
                 >
                   <Facebook className="h-5 w-5" />
                 </a>
                 <a 
                   href="#" 
+                  aria-label="Follow us on Instagram"
                   className="w-10 h-10 bg-belize-green-500 rounded-full flex items-center justify-center hover:bg-belize-green-600 transition-colors text-white"
                 >
                   <Instagram className="h-5 w-5" />
@@ -142,35 +201,35 @@ const Blog = () => {
               </div>
             </Card>
 
-            {/* Newsletter Signup */}
-            <Card className="p-6">
-              <h3 className="text-xl font-playfair font-semibold text-belize-neutral-900 mb-4">
+            <Card className="p-6" aria-labelledby="newsletter-heading">
+              <h3 id="newsletter-heading" className="text-xl font-playfair font-semibold text-belize-neutral-900 mb-4">
                 Stay Updated
               </h3>
               <p className="text-sm text-belize-neutral-600 mb-4">
                 Get the latest travel tips and adventure stories delivered to your inbox.
               </p>
-              <div className="space-y-3">
+              <form onSubmit={handleNewsletterSubmit} className="space-y-3">
+                <label htmlFor="newsletter-email" className="sr-only">Email address</label>
                 <input
+                  id="newsletter-email"
                   type="email"
                   placeholder="Enter your email"
+                  required
                   className="w-full px-3 py-2 border border-belize-neutral-200 rounded-lg focus:ring-2 focus:ring-belize-green-500 focus:border-transparent outline-none transition-all duration-300"
                 />
                 <Button 
+                  type="submit"
                   className="w-full bg-belize-orange-500 hover:bg-belize-orange-600 text-white"
-                  onClick={() => console.log('Newsletter signup - future implementation')}
                 >
                   <Mail className="h-4 w-4 mr-2" />
                   Subscribe
                 </Button>
-              </div>
+              </form>
             </Card>
-          </div>
+          </aside>
         </div>
       </div>
-
-      <Footer />
-    </div>
+    </React.Fragment>
   );
 };
 

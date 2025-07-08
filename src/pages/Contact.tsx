@@ -1,13 +1,10 @@
-
-import Header from "@/components/Header";
-import Footer from "@/components/Footer";
+import React, { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent } from "@/components/ui/card";
 import { MapPin, Phone, Mail, Clock } from "lucide-react";
-import { useState } from "react";
 
 const Contact = () => {
   const [formData, setFormData] = useState({
@@ -31,7 +28,7 @@ const Contact = () => {
     e.preventDefault();
     setIsSubmitting(true);
     
-    // Mock form submission - replace with actual API call later
+    // Mock form submission
     console.log('Form submitted:', formData);
     
     // Simulate API delay
@@ -50,11 +47,9 @@ const Contact = () => {
   };
 
   return (
-    <div className="min-h-screen">
-      <Header />
-      
+    <>
       {/* Hero Section */}
-      <section className="relative min-h-[60vh] flex items-center justify-center overflow-hidden mt-16">
+      <section className="relative min-h-[60vh] flex items-center justify-center overflow-hidden">
         <div 
           className="absolute inset-0 bg-cover bg-center bg-no-repeat"
           style={{
@@ -85,13 +80,13 @@ const Contact = () => {
       </section>
 
       {/* Contact Information Section */}
-      <section className="py-16 bg-belize-neutral-50">
+      <section className="py-16 bg-belize-neutral-50" aria-labelledby="reach-us-heading">
         <div className="container mx-auto px-4">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
             {/* Contact Details */}
             <div className="space-y-8">
               <div>
-                <h2 className="text-3xl font-playfair font-bold text-belize-neutral-900 mb-6">
+                <h2 id="reach-us-heading" className="text-3xl font-playfair font-bold text-belize-neutral-900 mb-6">
                   How to Reach Us
                 </h2>
                 <p className="text-belize-neutral-600 mb-8">
@@ -101,7 +96,6 @@ const Contact = () => {
               </div>
 
               <div className="space-y-6">
-                {/* Office Address */}
                 <Card className="p-6 hover:shadow-lg transition-shadow">
                   <CardContent className="p-0">
                     <div className="flex items-start space-x-4">
@@ -119,7 +113,6 @@ const Contact = () => {
                   </CardContent>
                 </Card>
 
-                {/* Phone Numbers */}
                 <Card className="p-6 hover:shadow-lg transition-shadow">
                   <CardContent className="p-0">
                     <div className="flex items-start space-x-4">
@@ -137,7 +130,6 @@ const Contact = () => {
                   </CardContent>
                 </Card>
 
-                {/* Email */}
                 <Card className="p-6 hover:shadow-lg transition-shadow">
                   <CardContent className="p-0">
                     <div className="flex items-start space-x-4">
@@ -155,7 +147,6 @@ const Contact = () => {
                   </CardContent>
                 </Card>
 
-                {/* Office Hours */}
                 <Card className="p-6 hover:shadow-lg transition-shadow">
                   <CardContent className="p-0">
                     <div className="flex items-start space-x-4">
@@ -191,11 +182,11 @@ const Contact = () => {
       </section>
 
       {/* Contact Form Section */}
-      <section id="contact-form" className="py-16 bg-white">
+      <section id="contact-form" className="py-16 bg-white" aria-labelledby="form-heading">
         <div className="container mx-auto px-4">
           <div className="max-w-2xl mx-auto">
             <div className="text-center mb-12">
-              <h2 className="text-3xl font-playfair font-bold text-belize-neutral-900 mb-4">
+              <h2 id="form-heading" className="text-3xl font-playfair font-bold text-belize-neutral-900 mb-4">
                 Send Us a Message
               </h2>
               <p className="text-belize-neutral-600">
@@ -203,9 +194,8 @@ const Contact = () => {
               </p>
             </div>
 
-            {/* Success Message */}
             {showSuccess && (
-              <div className="mb-8 p-4 bg-belize-green-100 border border-belize-green-300 rounded-lg animate-fade-in">
+              <div role="alert" className="mb-8 p-4 bg-belize-green-100 border border-belize-green-300 rounded-lg animate-fade-in">
                 <div className="flex items-center">
                   <div className="w-6 h-6 bg-belize-green-500 rounded-full flex items-center justify-center mr-3">
                     <span className="text-white text-sm">✓</span>
@@ -219,7 +209,6 @@ const Contact = () => {
 
             <Card className="p-8 shadow-lg">
               <form onSubmit={handleSubmit} className="space-y-6">
-                {/* Full Name */}
                 <div className="space-y-2">
                   <Label htmlFor="fullName" className="text-belize-neutral-800 font-semibold">
                     Full Name *
@@ -235,7 +224,6 @@ const Contact = () => {
                   />
                 </div>
 
-                {/* Email */}
                 <div className="space-y-2">
                   <Label htmlFor="email" className="text-belize-neutral-800 font-semibold">
                     Email Address *
@@ -252,7 +240,6 @@ const Contact = () => {
                   />
                 </div>
 
-                {/* Subject */}
                 <div className="space-y-2">
                   <Label htmlFor="subject" className="text-belize-neutral-800 font-semibold">
                     Subject
@@ -271,7 +258,6 @@ const Contact = () => {
                   </select>
                 </div>
 
-                {/* Message */}
                 <div className="space-y-2">
                   <Label htmlFor="message" className="text-belize-neutral-800 font-semibold">
                     Message *
@@ -288,7 +274,6 @@ const Contact = () => {
                   />
                 </div>
 
-                {/* Submit Button */}
                 <Button
                   type="submit"
                   disabled={isSubmitting}
@@ -301,9 +286,7 @@ const Contact = () => {
           </div>
         </div>
       </section>
-
-      <Footer />
-    </div>
+    </>
   );
 };
 

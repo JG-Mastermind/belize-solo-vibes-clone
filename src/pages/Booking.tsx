@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { useParams } from "react-router-dom";
 import { useForm } from "react-hook-form";
@@ -9,6 +8,7 @@ import { Progress } from "@/components/ui/progress";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
+import { Calendar } from "@/components/ui/calendar";
 import {
   Form,
   FormControl,
@@ -19,10 +19,13 @@ import {
 } from "@/components/ui/form";
 
 const bookingFormSchema = z.object({
+  bookingDate: z.date({
+    required_error: "A booking date is required.",
+  }),
   fullName: z.string().min(2, "Full name must be at least 2 characters"),
   email: z.string().email("Please enter a valid email address"),
   phone: z.string().min(10, "Phone number must be at least 10 digits"),
-  numberOfTravelers: z.number().min(1, "Must have at least 1 traveler").max(20, "Maximum 20 travelers"),
+  numberOfTravelers: z.coerce.number().min(1, "Must have at least 1 traveler").max(20, "Maximum 20 travelers"),
 });
 
 type BookingFormData = z.infer<typeof bookingFormSchema>;
@@ -36,6 +39,7 @@ const Booking = () => {
   const form = useForm<BookingFormData>({
     resolver: zodResolver(bookingFormSchema),
     defaultValues: {
+      bookingDate: undefined,
       fullName: "",
       email: "",
       phone: "",
@@ -96,6 +100,28 @@ const Booking = () => {
 
         <div className="mb-8">
           <h3 className="text-xl font-semibold mb-4">Current Step: {currentStepName}</h3>
+          
+          {currentStep === 0 && (
+            <FormField
+              control={form.control}
+              name="bookingDate"
+              render={({ field }) => (
+                <FormItem className="flex flex-col items-center">
+                  <FormLabel className="text-lg font-semibold mb-4">Select Your Adventure Date</FormLabel>
+                  <FormControl>
+                    <Calendar
+                      mode="single"
+                      selected={field.value}
+                      onSelect={field.onChange}
+                      disabled={(date) => date < new Date(new Date().setHours(0, 0, 0, 0))}
+                      className="rounded-md border"
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+          )}
           
           {currentStepName === "Your Info" && (
             <Form {...form}>
@@ -170,10 +196,9 @@ const Booking = () => {
             </Form>
           )}
           
-          {currentStepName !== "Your Info" && (
+          {currentStepName !== "Your Info" && currentStep !== 0 && (
             <div className="text-center py-8">
               <p className="text-muted-foreground">
-                {currentStepName === "Select Date" && "Please select your preferred date for this adventure."}
                 {currentStepName === "Payment" && "Complete your payment to confirm the booking."}
                 {currentStepName === "Confirmation" && "Your booking has been confirmed! You will receive a confirmation email shortly."}
               </p>
@@ -192,7 +217,9 @@ const Booking = () => {
             </Button>
             <Button
               onClick={() => setCurrentStep(Math.min(adventure.steps.length - 1, currentStep + 1))}
-              disabled={currentStep === adventure.steps.length - 1 || (currentStepName === "Your Info" && !form.formState.isValid)}
+              disabled={currentStep === adventure.steps.length - 1 || 
+                (currentStep === 0 && !form.getValues("bookingDate")) ||
+                (currentStepName === "Your Info" && !form.formState.isValid)}
             >
               Next
             </Button>

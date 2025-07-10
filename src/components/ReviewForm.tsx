@@ -1,26 +1,25 @@
 
 import { useState } from "react";
+import { useAuth } from "@/components/auth/AuthProvider";
+import { supabase } from "@/integrations/supabase/client";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Input } from "@/components/ui/input";
 import { Star, Send } from "lucide-react";
+import { toast } from "sonner";
 
 interface ReviewFormProps {
-  adventureId?: number;
-  onSubmit: (review: {
-    name: string;
-    location: string;
-    rating: number;
-    text: string;
-    trip: string;
-  }) => void;
+  adventureId?: string;
+  bookingId?: string;
+  onSubmit?: (review: any) => void;
 }
 
-const ReviewForm = ({ adventureId, onSubmit }: ReviewFormProps) => {
+const ReviewForm = ({ adventureId, bookingId, onSubmit }: ReviewFormProps) => {
+  const { user } = useAuth();
   const [rating, setRating] = useState(0);
   const [hoverRating, setHoverRating] = useState(0);
-  const [name, setName] = useState("");
+  const [name, setName] = useState(user?.user_metadata?.first_name + " " + user?.user_metadata?.last_name || "");
   const [location, setLocation] = useState("");
   const [reviewText, setReviewText] = useState("");
   const [trip, setTrip] = useState("");
@@ -28,27 +27,61 @@ const ReviewForm = ({ adventureId, onSubmit }: ReviewFormProps) => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (rating === 0 || !name || !reviewText) return;
+    if (rating === 0 || !reviewText) {
+      toast.error("Please provide a rating and review text");
+      return;
+    }
+
+    if (!user) {
+      toast.error("Please sign in to submit a review");
+      return;
+    }
 
     setIsSubmitting(true);
     
-    const newReview = {
-      name,
-      location,
-      rating,
-      text: reviewText,
-      trip
-    };
+    try {
+      const reviewData = {
+        reviewer_id: user.id,
+        adventure_id: adventureId,
+        booking_id: bookingId,
+        rating,
+        comment: reviewText,
+        submitted_at: new Date().toISOString()
+      };
 
-    onSubmit(newReview);
-    
-    // Reset form
-    setRating(0);
-    setName("");
-    setLocation("");
-    setReviewText("");
-    setTrip("");
-    setIsSubmitting(false);
+      const { data, error } = await supabase
+        .from('reviews')
+        .insert(reviewData)
+        .select()
+        .single();
+
+      if (error) throw error;
+
+      toast.success("Review submitted successfully!");
+      
+      // Call the optional onSubmit callback
+      if (onSubmit) {
+        onSubmit({
+          name,
+          location,
+          rating,
+          text: reviewText,
+          trip
+        });
+      }
+      
+      // Reset form
+      setRating(0);
+      setReviewText("");
+      setTrip("");
+      setLocation("");
+      
+    } catch (error) {
+      console.error('Error submitting review:', error);
+      toast.error("Failed to submit review");
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -136,11 +169,13 @@ const ReviewForm = ({ adventureId, onSubmit }: ReviewFormProps) => {
 
           <Button
             type="submit"
-            disabled={rating === 0 || !name || !reviewText || isSubmitting}
+            disabled={rating === 0 || !reviewText || isSubmitting || !user}
             className="w-full bg-belize-green-600 hover:bg-belize-green-700"
           >
             {isSubmitting ? (
               "Submitting..."
+            ) : !user ? (
+              "Sign in to submit review"
             ) : (
               <>
                 <Send className="h-4 w-4 mr-2" />

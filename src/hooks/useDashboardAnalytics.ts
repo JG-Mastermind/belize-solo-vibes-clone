@@ -46,7 +46,15 @@ export const useDashboardAnalytics = () => {
         console.error('Error fetching booking analytics:', error);
         throw error;
       }
-      return data || [];
+      
+      // Transform the data to match our interface
+      return (data || []).map((item: any) => ({
+        month: item.month,
+        total_bookings: Number(item.total_bookings) || 0,
+        total_revenue: Number(item.total_revenue) || 0,
+        avg_participants: Number(item.avg_participants) || 0,
+        status: item.status || 'unknown'
+      }));
     }
   });
 
@@ -60,7 +68,14 @@ export const useDashboardAnalytics = () => {
         console.error('Error fetching review analytics:', error);
         throw error;
       }
-      return data || [];
+      
+      // Transform the data to match our interface
+      return (data || []).map((item: any) => ({
+        month: item.month,
+        total_reviews: Number(item.total_reviews) || 0,
+        avg_rating: Number(item.avg_rating) || 0,
+        adventure_id: item.adventure_id || ''
+      }));
     }
   });
 

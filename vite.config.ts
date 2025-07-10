@@ -12,8 +12,8 @@ export default defineConfig(async ({ mode }) => {
       // Dynamic import to avoid ESM issues
       const { componentTagger } = await import('lovable-tagger');
       plugins.push(componentTagger());
-    } catch (error) {
-      console.warn('lovable-tagger not available:', error.message);
+    } catch (error: unknown) {
+      console.warn('lovable-tagger not available:', (error as Error).message);
     }
   }
   

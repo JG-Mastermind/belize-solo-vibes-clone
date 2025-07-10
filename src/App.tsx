@@ -16,6 +16,10 @@ import NotFound from "./pages/NotFound";
 import Header from "./components/Header";
 import Footer from "./components/Footer";
 import ScrollToTop from "./components/ScrollToTop";
+import { DashboardLayout } from "./components/dashboard/DashboardLayout";
+import AdminDashboard from "./pages/dashboard/AdminDashboard";
+import GuideDashboard from "./pages/dashboard/GuideDashboard";
+import TravelerDashboard from "./pages/dashboard/TravelerDashboard";
 
 const queryClient = new QueryClient();
 
@@ -45,8 +49,16 @@ const App = () => (
               <Route path="about" element={<About />} />
               <Route path="safety" element={<Safety />} />
               <Route path="booking/:id" element={<Booking />} />
-              <Route path="*" element={<NotFound />} />
             </Route>
+            
+            <Route path="/dashboard" element={<DashboardLayout />}>
+              <Route index element={<AdminDashboard />} />
+              <Route path="admin" element={<AdminDashboard />} />
+              <Route path="guide" element={<GuideDashboard />} />
+              <Route path="traveler" element={<TravelerDashboard />} />
+            </Route>
+            
+            <Route path="*" element={<NotFound />} />
           </Routes>
         </BrowserRouter>
       </AuthProvider>

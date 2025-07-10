@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { useForm } from "react-hook-form";
@@ -14,6 +13,7 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Calendar } from "@/components/ui/calendar";
 import { SignInModal } from "@/components/auth/SignInModal";
+import { adventures } from "@/data/adventures";
 import {
   Form,
   FormControl,
@@ -47,11 +47,18 @@ const Booking = () => {
   const [showSignIn, setShowSignIn] = useState(false);
   const [createdBooking, setCreatedBooking] = useState<any>(null);
 
-  // Fetch adventure data from Supabase
-  const { data: adventure, isLoading: isLoadingAdventure } = useQuery({
+  // First try to get adventure from local data (fallback for numeric IDs)
+  const localAdventure = adventures.find(adv => adv.id.toString() === id);
+
+  // Fetch adventure data from Supabase (for UUID adventures)
+  const { data: dbAdventure, isLoading: isLoadingAdventure } = useQuery({
     queryKey: ['adventure', id],
     queryFn: async () => {
       if (!id) throw new Error('No adventure ID provided');
+      
+      // Only query database if it looks like a UUID
+      const isUUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(id);
+      if (!isUUID) return null;
       
       const { data, error } = await supabase
         .from('adventures')
@@ -64,6 +71,12 @@ const Booking = () => {
     },
     enabled: !!id
   });
+
+  // Use either database adventure or local adventure
+  const adventure = dbAdventure || (localAdventure ? {
+    ...localAdventure,
+    price_per_person: parseFloat(localAdventure.price.replace('$', ''))
+  } : null);
   
   const form = useForm<BookingFormData>({
     resolver: zodResolver(bookingFormSchema),
@@ -82,14 +95,16 @@ const Booking = () => {
       return;
     }
 
-    // Ensure all required data is present
-    if (!data.bookingDate) {
-      console.error('Booking date is required');
+    if (!adventure) {
+      console.error('No adventure found');
       return;
     }
 
+    // For local adventures, we need to create a UUID or use a default one
+    const adventureId = adventure.id || 'default-adventure-id';
+
     const booking = await createBooking({
-      adventureId: id!,
+      adventureId: adventureId.toString(),
       bookingDate: data.bookingDate,
       fullName: data.fullName,
       email: data.email,
@@ -272,7 +287,7 @@ const Booking = () => {
                 <Button 
                   type="submit" 
                   className="w-full"
-                  disabled={isCreatingBooking}
+                  disabled={isCreatingBooking || !isAuthenticated}
                 >
                   {isCreatingBooking ? "Creating Booking..." : "Continue to Payment"}
                 </Button>

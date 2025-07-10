@@ -1,4 +1,5 @@
 
+-- Create the RPC functions for analytics
 CREATE OR REPLACE FUNCTION get_booking_analytics()
 RETURNS TABLE (
   month TIMESTAMPTZ,

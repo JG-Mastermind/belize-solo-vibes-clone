@@ -3,6 +3,7 @@ import { useState } from 'react';
 import { useAuth } from '@/components/auth/AuthProvider';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
+import { adventures } from '@/data/adventures';
 
 export interface BookingData {
   adventureId: string;
@@ -25,17 +26,27 @@ export const useBookingFlow = () => {
 
     setIsLoading(true);
     try {
-      const { data: adventure } = await supabase
+      // Check if the adventure exists in the database first
+      let adventurePrice = null;
+      const { data: dbAdventure } = await supabase
         .from('adventures')
         .select('price_per_person')
         .eq('id', bookingData.adventureId)
         .single();
 
-      if (!adventure) {
-        throw new Error('Adventure not found');
+      if (dbAdventure) {
+        adventurePrice = dbAdventure.price_per_person;
+      } else {
+        // Fallback to local adventure data
+        const localAdventure = adventures.find(adv => adv.id.toString() === bookingData.adventureId);
+        if (localAdventure) {
+          adventurePrice = parseFloat(localAdventure.price.replace('$', ''));
+        } else {
+          throw new Error('Adventure not found');
+        }
       }
 
-      const totalAmount = adventure.price_per_person * bookingData.numberOfTravelers;
+      const totalAmount = adventurePrice * bookingData.numberOfTravelers;
 
       const { data, error } = await supabase
         .from('bookings')

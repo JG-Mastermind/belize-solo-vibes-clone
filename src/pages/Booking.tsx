@@ -72,7 +72,7 @@ const Booking = () => {
     enabled: !!id
   });
 
-  // Use either database adventure or local adventure
+  // Use either database adventure or local adventure with proper fallback
   const adventure = dbAdventure || (localAdventure ? {
     ...localAdventure,
     price_per_person: parseFloat(localAdventure.price.replace('$', ''))
@@ -97,14 +97,18 @@ const Booking = () => {
 
     if (!adventure) {
       console.error('No adventure found');
+      toast.error('Adventure not found');
       return;
     }
 
-    // For local adventures, we need to create a UUID or use a default one
-    const adventureId = adventure.id || 'default-adventure-id';
+    // Use the proper adventure ID (either UUID from DB or local ID for fallback)
+    const adventureId = dbAdventure?.id || (localAdventure ? 
+      `550e8400-e29b-41d4-a716-44665544000${localAdventure.id}` : // Convert numeric to UUID format
+      '550e8400-e29b-41d4-a716-446655440001' // Default fallback
+    );
 
     const booking = await createBooking({
-      adventureId: adventureId.toString(),
+      adventureId: adventureId,
       bookingDate: data.bookingDate,
       fullName: data.fullName,
       email: data.email,
@@ -152,7 +156,7 @@ const Booking = () => {
   return (
     <div className="container mx-auto px-4 py-8">
       <div className="max-w-2xl mx-auto">
-        <h1 className="text-3xl font-bold mb-8">{adventure.title}</h1>
+        <h1 className="text-3xl font-bold mb-8">{adventure?.title || 'Adventure Booking'}</h1>
         
         <div className="mb-8">
           <div className="flex justify-between items-center mb-4">

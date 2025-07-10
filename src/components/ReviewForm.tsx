@@ -40,9 +40,12 @@ const ReviewForm = ({ adventureId, bookingId, onSubmit }: ReviewFormProps) => {
     setIsSubmitting(true);
     
     try {
+      // Ensure we have a valid adventure_id for the review
+      const finalAdventureId = adventureId || bookingId; // Use adventureId if provided, otherwise bookingId as fallback
+      
       const reviewData = {
         reviewer_id: user.id,
-        adventure_id: adventureId,
+        adventure_id: finalAdventureId,
         booking_id: bookingId,
         rating,
         comment: reviewText,
@@ -59,7 +62,7 @@ const ReviewForm = ({ adventureId, bookingId, onSubmit }: ReviewFormProps) => {
 
       toast.success("Review submitted successfully!");
       
-      // Call the optional onSubmit callback
+      // Call the optional onSubmit callback with review data
       if (onSubmit) {
         onSubmit({
           name,

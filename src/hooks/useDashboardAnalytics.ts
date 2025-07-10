@@ -7,7 +7,7 @@ export const useDashboardAnalytics = () => {
     queryKey: ['booking-analytics'],
     queryFn: async () => {
       const { data, error } = await supabase
-        .rpc('get_booking_analytics' as any);
+        .rpc('get_booking_analytics');
       
       if (error) {
         console.error('Error fetching booking analytics:', error);
@@ -21,7 +21,7 @@ export const useDashboardAnalytics = () => {
     queryKey: ['review-analytics'],
     queryFn: async () => {
       const { data, error } = await supabase
-        .rpc('get_review_analytics' as any);
+        .rpc('get_review_analytics');
       
       if (error) {
         console.error('Error fetching review analytics:', error);

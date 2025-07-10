@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { useForm } from "react-hook-form";
@@ -24,9 +23,7 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-import { StripeProvider } from "@/components/StripeProvider";
-import { StripePaymentForm } from "@/components/StripePaymentForm";
-import { useCreatePaymentIntent } from "@/hooks/useCreatePaymentIntent";
+import { SimplePaymentForm } from "@/components/SimplePaymentForm";
 
 const bookingFormSchema = z.object({
   bookingDate: z.date({
@@ -51,7 +48,6 @@ const Booking = () => {
   const [currentStep, setCurrentStep] = useState(0);
   const [showSignIn, setShowSignIn] = useState(false);
   const [createdBooking, setCreatedBooking] = useState<any>(null);
-  const { createPaymentIntent, clientSecret, isLoading: isCreatingPaymentIntent } = useCreatePaymentIntent();
   const [paymentIntentCreated, setPaymentIntentCreated] = useState(false);
 
   // First try to get adventure from local data (fallback for numeric IDs)
@@ -125,19 +121,7 @@ const Booking = () => {
 
     if (booking) {
       setCreatedBooking(booking);
-      // Automatically initialize payment intent when booking is created
-      try {
-        await createPaymentIntent({
-          adventureTitle: adventure.title,
-          totalAmount: booking.total_amount,
-          userEmail: data.email,
-          bookingId: booking.id
-        });
-        setPaymentIntentCreated(true);
-        setCurrentStep(2); // Move to payment step
-      } catch (error) {
-        toast.error('Failed to initialize payment');
-      }
+      setCurrentStep(2); // Move to payment step
     }
   };
 
@@ -318,34 +302,18 @@ const Booking = () => {
             
             {currentStep === 2 && createdBooking && (
               <div className="space-y-6">
-                {!paymentIntentCreated || isCreatingPaymentIntent ? (
-                  <div className="text-center py-8">
-                    <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto mb-4"></div>
-                    <p className="text-muted-foreground">Initializing secure payment...</p>
-                  </div>
-                ) : clientSecret ? (
-                  <StripeProvider clientSecret={clientSecret}>
-                    <StripePaymentForm
-                      bookingData={{
-                        adventureTitle: adventure?.title || 'Adventure',
-                        bookingDate: form.getValues("bookingDate")?.toLocaleDateString() || '',
-                        participants: createdBooking.participants,
-                        totalAmount: createdBooking.total_amount,
-                        fullName: form.getValues("fullName"),
-                        email: form.getValues("email")
-                      }}
-                      onPaymentSuccess={handlePaymentSuccess}
-                      isLoading={isCreatingPayment}
-                    />
-                  </StripeProvider>
-                ) : (
-                  <div className="text-center py-8">
-                    <p className="text-destructive mb-4">Failed to initialize payment</p>
-                    <Button onClick={() => window.location.reload()} variant="outline">
-                      Try Again
-                    </Button>
-                  </div>
-                )}
+                <SimplePaymentForm
+                  bookingData={{
+                    adventureTitle: adventure?.title || 'Adventure',
+                    bookingDate: form.getValues("bookingDate")?.toLocaleDateString() || '',
+                    participants: createdBooking.participants,
+                    totalAmount: createdBooking.total_amount,
+                    fullName: form.getValues("fullName"),
+                    email: form.getValues("email")
+                  }}
+                  onPaymentSuccess={handlePaymentSuccess}
+                  isLoading={isCreatingPayment}
+                />
               </div>
             )}
 
@@ -403,7 +371,7 @@ const Booking = () => {
             <Button
               variant="outline"
               onClick={() => setCurrentStep(Math.max(0, currentStep - 1))}
-              disabled={currentStep === 0 || (currentStep === 2 && (isCreatingPaymentIntent || !paymentIntentCreated))}
+              disabled={currentStep === 0 || (currentStep === 2 && (false))}
             >
               Previous
             </Button>

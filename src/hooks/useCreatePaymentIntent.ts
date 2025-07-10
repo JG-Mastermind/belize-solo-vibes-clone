@@ -1,5 +1,6 @@
 
 import { useState } from 'react';
+import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 
 interface PaymentIntentData {
@@ -16,28 +17,33 @@ export const useCreatePaymentIntent = () => {
   const createPaymentIntent = async (data: PaymentIntentData) => {
     setIsLoading(true);
     try {
-      // For now, we'll create a mock client secret for testing
-      // In production, this would call your backend to create a real payment intent
+      console.log('Creating payment intent for:', data);
       
-      // Simulate API call delay
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      
-      // Mock client secret (in production, this comes from Stripe)
-      const mockClientSecret = `pi_test_${Date.now()}_secret_${Math.random().toString(36).substr(2, 9)}`;
-      
-      setClientSecret(mockClientSecret);
-      
-      console.log('Mock Payment Intent created:', {
-        clientSecret: mockClientSecret,
-        amount: data.totalAmount * 100, // Stripe uses cents
-        adventure: data.adventureTitle,
-        email: data.userEmail
+      const { data: result, error } = await supabase.functions.invoke('create-payment-intent', {
+        body: {
+          bookingId: data.bookingId,
+          amount: data.totalAmount,
+          currency: 'usd'
+        }
       });
+
+      if (error) {
+        console.error('Supabase function error:', error);
+        throw new Error(error.message || 'Failed to create payment intent');
+      }
+
+      if (!result?.clientSecret) {
+        throw new Error('No client secret returned from payment service');
+      }
       
-      return { clientSecret: mockClientSecret };
+      setClientSecret(result.clientSecret);
+      
+      console.log('Payment Intent created successfully');
+      
+      return { clientSecret: result.clientSecret };
     } catch (error) {
       console.error('Error creating payment intent:', error);
-      toast.error('Failed to initialize payment');
+      toast.error('Failed to initialize payment: ' + (error as Error).message);
       throw error;
     } finally {
       setIsLoading(false);

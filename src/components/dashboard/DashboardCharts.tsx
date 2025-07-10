@@ -12,27 +12,32 @@ import {
   BarChart,
   Bar,
 } from 'recharts';
-
-const revenueData = [
-  { name: 'Jan', value: 2400 },
-  { name: 'Feb', value: 1398 },
-  { name: 'Mar', value: 9800 },
-  { name: 'Apr', value: 3908 },
-  { name: 'May', value: 4800 },
-  { name: 'Jun', value: 3800 },
-];
-
-const bookingsData = [
-  { name: 'Mon', bookings: 24 },
-  { name: 'Tue', bookings: 13 },
-  { name: 'Wed', bookings: 98 },
-  { name: 'Thu', bookings: 39 },
-  { name: 'Fri', bookings: 48 },
-  { name: 'Sat', bookings: 38 },
-  { name: 'Sun', bookings: 43 },
-];
+import { useDashboardAnalytics } from '@/hooks/useDashboardAnalytics';
 
 export const RevenueChart = () => {
+  const { bookingAnalytics } = useDashboardAnalytics();
+  
+  // Transform booking analytics data for the chart
+  const revenueData = bookingAnalytics.data?.map(item => ({
+    name: new Date(item.month).toLocaleDateString('en-US', { month: 'short' }),
+    value: Number(item.total_revenue) || 0
+  })) || [];
+
+  if (bookingAnalytics.isLoading) {
+    return (
+      <Card className="dashboard-card">
+        <CardHeader>
+          <CardTitle>Revenue Overview</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="h-[300px] flex items-center justify-center">
+            <p>Loading revenue data...</p>
+          </div>
+        </CardContent>
+      </Card>
+    );
+  }
+
   return (
     <Card className="dashboard-card">
       <CardHeader>
@@ -59,10 +64,33 @@ export const RevenueChart = () => {
 };
 
 export const BookingsChart = () => {
+  const { bookingAnalytics } = useDashboardAnalytics();
+  
+  // Transform booking analytics data for the chart
+  const bookingsData = bookingAnalytics.data?.map(item => ({
+    name: new Date(item.month).toLocaleDateString('en-US', { month: 'short' }),
+    bookings: Number(item.total_bookings) || 0
+  })) || [];
+
+  if (bookingAnalytics.isLoading) {
+    return (
+      <Card className="dashboard-card">
+        <CardHeader>
+          <CardTitle>Monthly Bookings</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="h-[300px] flex items-center justify-center">
+            <p>Loading booking data...</p>
+          </div>
+        </CardContent>
+      </Card>
+    );
+  }
+
   return (
     <Card className="dashboard-card">
       <CardHeader>
-        <CardTitle>Weekly Bookings</CardTitle>
+        <CardTitle>Monthly Bookings</CardTitle>
       </CardHeader>
       <CardContent>
         <ResponsiveContainer width="100%" height={300}>

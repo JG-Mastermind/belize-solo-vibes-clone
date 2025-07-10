@@ -14,6 +14,7 @@ import { Button } from "@/components/ui/button";
 import { Calendar } from "@/components/ui/calendar";
 import { SignInModal } from "@/components/auth/SignInModal";
 import { adventures } from "@/data/adventures";
+import { toast } from "sonner";
 import {
   Form,
   FormControl,

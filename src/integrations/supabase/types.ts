@@ -433,7 +433,24 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      get_booking_analytics: {
+        Args: Record<PropertyKey, never>
+        Returns: {
+          month: string
+          total_bookings: number
+          total_revenue: number
+          avg_participants: number
+        }[]
+      }
+      get_review_analytics: {
+        Args: Record<PropertyKey, never>
+        Returns: {
+          month: string
+          total_reviews: number
+          avg_rating: number
+          adventure_title: string
+        }[]
+      }
     }
     Enums: {
       user_type_enum: "traveler" | "guide" | "host" | "admin"

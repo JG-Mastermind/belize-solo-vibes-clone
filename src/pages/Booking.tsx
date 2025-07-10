@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { useForm } from "react-hook-form";
@@ -124,20 +125,16 @@ const Booking = () => {
 
     if (booking) {
       setCreatedBooking(booking);
-      setCurrentStep(2); // Move to payment step
-    }
-  };
-
-  const handlePayment = async () => {
-    if (createdBooking && adventure) {
+      // Automatically initialize payment intent when booking is created
       try {
         await createPaymentIntent({
           adventureTitle: adventure.title,
-          totalAmount: createdBooking.total_amount,
-          userEmail: form.getValues("email"),
-          bookingId: createdBooking.id
+          totalAmount: booking.total_amount,
+          userEmail: data.email,
+          bookingId: booking.id
         });
         setPaymentIntentCreated(true);
+        setCurrentStep(2); // Move to payment step
       } catch (error) {
         toast.error('Failed to initialize payment');
       }
@@ -231,7 +228,7 @@ const Booking = () => {
               />
             )}
             
-            {currentStepName === "Your Info" && (
+            {currentStep === 1 && (
               <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
                 {!isAuthenticated && (
                   <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4 mb-6">
@@ -319,7 +316,7 @@ const Booking = () => {
               </form>
             )}
             
-            {currentStepName === "Payment" && createdBooking && (
+            {currentStep === 2 && createdBooking && (
               <div className="space-y-6">
                 {!paymentIntentCreated || isCreatingPaymentIntent ? (
                   <div className="text-center py-8">
@@ -344,7 +341,7 @@ const Booking = () => {
                 ) : (
                   <div className="text-center py-8">
                     <p className="text-destructive mb-4">Failed to initialize payment</p>
-                    <Button onClick={handlePayment} variant="outline">
+                    <Button onClick={() => window.location.reload()} variant="outline">
                       Try Again
                     </Button>
                   </div>
@@ -352,7 +349,7 @@ const Booking = () => {
               </div>
             )}
 
-            {currentStepName === "Confirmation" && (
+            {currentStep === 3 && (
               <div className="bg-green-50 border border-green-200 rounded-lg p-6">
                 <div className="text-center mb-6">
                   <h2 className="text-2xl font-bold text-green-800 mb-2">Booking Confirmed!</h2>
@@ -400,7 +397,7 @@ const Booking = () => {
           </div>
         </Form>
 
-        {/* Update navigation buttons to handle payment step */}
+        {/* Navigation buttons */}
         <div className="text-center">
           <div className="space-x-4">
             <Button
@@ -415,7 +412,7 @@ const Booking = () => {
                 onClick={() => setCurrentStep(Math.min(steps.length - 1, currentStep + 1))}
                 disabled={currentStep === steps.length - 1 || 
                   (currentStep === 0 && !form.getValues("bookingDate")) ||
-                  (currentStepName === "Your Info" && !form.formState.isValid)}
+                  (currentStep === 1 && !form.formState.isValid)}
               >
                 Next
               </Button>

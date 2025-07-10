@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { useForm } from "react-hook-form";
@@ -50,6 +51,8 @@ const Booking = () => {
   const { data: adventure, isLoading: isLoadingAdventure } = useQuery({
     queryKey: ['adventure', id],
     queryFn: async () => {
+      if (!id) throw new Error('No adventure ID provided');
+      
       const { data, error } = await supabase
         .from('adventures')
         .select('*')
@@ -79,9 +82,19 @@ const Booking = () => {
       return;
     }
 
+    // Ensure all required data is present
+    if (!data.bookingDate) {
+      console.error('Booking date is required');
+      return;
+    }
+
     const booking = await createBooking({
       adventureId: id!,
-      ...data
+      bookingDate: data.bookingDate,
+      fullName: data.fullName,
+      email: data.email,
+      phone: data.phone,
+      numberOfTravelers: data.numberOfTravelers
     });
 
     if (booking) {
@@ -110,6 +123,9 @@ const Booking = () => {
         <div className="text-center">
           <h1 className="text-2xl font-bold text-destructive">Adventure not found</h1>
           <p className="mt-4 text-muted-foreground">The adventure you're looking for doesn't exist.</p>
+          <Button onClick={() => navigate("/")} className="mt-4">
+            Back to Adventures
+          </Button>
         </div>
       </div>
     );

@@ -12,6 +12,7 @@ import Blog from "./pages/Blog";
 import About from "./pages/About";
 import Safety from "./pages/Safety";
 import Booking from "./pages/Booking";
+import SuccessPage from "./pages/booking/success";
 import NotFound from "./pages/NotFound";
 import Header from "./components/Header";
 import Footer from "./components/Footer";
@@ -49,6 +50,7 @@ const App = () => (
               <Route path="about" element={<About />} />
               <Route path="safety" element={<Safety />} />
               <Route path="booking/:id" element={<Booking />} />
+              <Route path="booking/success" element={<SuccessPage />} />
             </Route>
             
             <Route path="/dashboard" element={<DashboardLayout />}>

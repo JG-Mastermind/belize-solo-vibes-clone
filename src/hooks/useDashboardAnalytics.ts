@@ -7,13 +7,13 @@ export const useDashboardAnalytics = () => {
     queryKey: ['booking-analytics'],
     queryFn: async () => {
       const { data, error } = await supabase
-        .from('booking_analytics')
-        .select('*')
-        .order('month', { ascending: false })
-        .limit(12);
+        .rpc('get_booking_analytics');
       
-      if (error) throw error;
-      return data;
+      if (error) {
+        console.error('Error fetching booking analytics:', error);
+        throw error;
+      }
+      return data || [];
     }
   });
 
@@ -21,13 +21,13 @@ export const useDashboardAnalytics = () => {
     queryKey: ['review-analytics'],
     queryFn: async () => {
       const { data, error } = await supabase
-        .from('review_analytics')
-        .select('*')
-        .order('month', { ascending: false })
-        .limit(12);
+        .rpc('get_review_analytics');
       
-      if (error) throw error;
-      return data;
+      if (error) {
+        console.error('Error fetching review analytics:', error);
+        throw error;
+      }
+      return data || [];
     }
   });
 

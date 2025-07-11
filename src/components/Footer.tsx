@@ -2,24 +2,6 @@
 import { MapPin, Phone, Mail, Facebook, Instagram, Twitter } from "lucide-react";
 
 const Footer = () => {
-  const scrollToAdventures = () => {
-    const adventuresSection = document.getElementById('adventures');
-    if (adventuresSection) {
-      adventuresSection.scrollIntoView({ behavior: 'smooth' });
-    }
-  };
-
-  const scrollToTestimonials = () => {
-    const testimonialsSection = document.querySelector('[data-testimonials]');
-    if (testimonialsSection) {
-      testimonialsSection.scrollIntoView({ behavior: 'smooth' });
-    }
-  };
-
-  const scrollToTop = () => {
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-  };
-
   return (
     <footer className="bg-belize-neutral-900 text-white">
       <div className="container mx-auto px-4 py-12">
@@ -52,12 +34,12 @@ const Footer = () => {
           <div className="space-y-4">
             <h3 className="font-playfair font-semibold text-lg">Quick Links</h3>
             <ul className="space-y-2 text-sm">
-              <li><button onClick={scrollToAdventures} className="text-belize-neutral-300 hover:text-belize-green-400 transition-colors">Adventures</button></li>
-              <li><a href="/about" className="text-belize-neutral-300 hover:text-belize-green-400 transition-colors">About Us</a></li>
-              <li><button onClick={scrollToTestimonials} className="text-belize-neutral-300 hover:text-belize-green-400 transition-colors">Reviews</button></li>
-              <li><a href="/blog" className="text-belize-neutral-300 hover:text-belize-green-400 transition-colors">Solo Travel Guide</a></li>
-              <li><a href="/safety" className="text-belize-neutral-300 hover:text-belize-green-400 transition-colors">Safety Information</a></li>
-              <li><a href="/contact" className="text-belize-neutral-300 hover:text-belize-green-400 transition-colors">FAQ</a></li>
+              <li><a href="#adventures" className="text-belize-neutral-300 hover:text-belize-green-400 transition-colors">Adventures</a></li>
+              <li><a href="#about" className="text-belize-neutral-300 hover:text-belize-green-400 transition-colors">About Us</a></li>
+              <li><a href="#testimonials" className="text-belize-neutral-300 hover:text-belize-green-400 transition-colors">Reviews</a></li>
+              <li><a href="#" className="text-belize-neutral-300 hover:text-belize-green-400 transition-colors">Solo Travel Guide</a></li>
+              <li><a href="#" className="text-belize-neutral-300 hover:text-belize-green-400 transition-colors">Safety Information</a></li>
+              <li><a href="#" className="text-belize-neutral-300 hover:text-belize-green-400 transition-colors">FAQ</a></li>
             </ul>
           </div>
 
@@ -65,12 +47,12 @@ const Footer = () => {
           <div className="space-y-4">
             <h3 className="font-playfair font-semibold text-lg">Popular Adventures</h3>
             <ul className="space-y-2 text-sm">
-              <li><button onClick={scrollToAdventures} className="text-belize-neutral-300 hover:text-belize-green-400 transition-colors">Cave Tubing</button></li>
-              <li><button onClick={scrollToAdventures} className="text-belize-neutral-300 hover:text-belize-green-400 transition-colors">Blue Hole Diving</button></li>
-              <li><button onClick={scrollToAdventures} className="text-belize-neutral-300 hover:text-belize-green-400 transition-colors">Maya Ruins Tours</button></li>
-              <li><button onClick={scrollToAdventures} className="text-belize-neutral-300 hover:text-belize-green-400 transition-colors">Snorkeling Tours</button></li>
-              <li><button onClick={scrollToAdventures} className="text-belize-neutral-300 hover:text-belize-green-400 transition-colors">Jungle Zip-lining</button></li>
-              <li><button onClick={scrollToAdventures} className="text-belize-neutral-300 hover:text-belize-green-400 transition-colors">Wildlife Watching</button></li>
+              <li><a href="#" className="text-belize-neutral-300 hover:text-belize-green-400 transition-colors">Cave Tubing</a></li>
+              <li><a href="#" className="text-belize-neutral-300 hover:text-belize-green-400 transition-colors">Blue Hole Diving</a></li>
+              <li><a href="#" className="text-belize-neutral-300 hover:text-belize-green-400 transition-colors">Maya Ruins Tours</a></li>
+              <li><a href="#" className="text-belize-neutral-300 hover:text-belize-green-400 transition-colors">Snorkeling Tours</a></li>
+              <li><a href="#" className="text-belize-neutral-300 hover:text-belize-green-400 transition-colors">Jungle Zip-lining</a></li>
+              <li><a href="#" className="text-belize-neutral-300 hover:text-belize-green-400 transition-colors">Wildlife Watching</a></li>
             </ul>
           </div>
 
@@ -119,9 +101,9 @@ const Footer = () => {
             © 2024 BelizeVibes. All rights reserved.
           </div>
           <div className="flex space-x-6 text-sm">
-            <button onClick={scrollToTop} className="text-belize-neutral-400 hover:text-belize-green-400 transition-colors">Privacy Policy</button>
-            <button onClick={scrollToTop} className="text-belize-neutral-400 hover:text-belize-green-400 transition-colors">Terms of Service</button>
-            <button onClick={scrollToTop} className="text-belize-neutral-400 hover:text-belize-green-400 transition-colors">Cookie Policy</button>
+            <a href="#" className="text-belize-neutral-400 hover:text-belize-green-400 transition-colors">Privacy Policy</a>
+            <a href="#" className="text-belize-neutral-400 hover:text-belize-green-400 transition-colors">Terms of Service</a>
+            <a href="#" className="text-belize-neutral-400 hover:text-belize-green-400 transition-colors">Cookie Policy</a>
           </div>
         </div>
       </div>

@@ -10,7 +10,7 @@ import { SignUpModal } from './auth/SignUpModal';
 import { toast } from 'sonner';
 
 export const UserProfile: React.FC = () => {
-  const { user, signOut, loading } = useAuth();
+  const { user, signOut, loading, getUserRole } = useAuth();
   const [showSignIn, setShowSignIn] = useState(false);
   const [showSignUp, setShowSignUp] = useState(false);
 
@@ -62,6 +62,20 @@ export const UserProfile: React.FC = () => {
   const userEmail = user.email || '';
   const firstName = userMetadata.first_name || '';
   const lastName = userMetadata.last_name || '';
+  const userRole = getUserRole() || 'traveler';
+  
+  const getRoleBadgeColor = (role: string) => {
+    switch (role) {
+      case 'guide': return 'bg-green-100 text-green-800';
+      case 'host': return 'bg-purple-100 text-purple-800';
+      case 'admin': return 'bg-red-100 text-red-800';
+      default: return 'bg-blue-100 text-blue-800';
+    }
+  };
+  
+  const capitalizeRole = (role: string) => {
+    return role.charAt(0).toUpperCase() + role.slice(1);
+  };
 
   return (
     <div className="flex items-center gap-4">
@@ -84,7 +98,9 @@ export const UserProfile: React.FC = () => {
         </CardHeader>
         <CardContent className="pt-0">
           <div className="flex items-center justify-between">
-            <Badge variant="secondary">Traveler</Badge>
+            <Badge className={getRoleBadgeColor(userRole)}>
+              {capitalizeRole(userRole)}
+            </Badge>
             <Button variant="outline" size="sm" onClick={handleSignOut}>
               Sign Out
             </Button>

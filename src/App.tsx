@@ -12,7 +12,10 @@ import Blog from "./pages/Blog";
 import About from "./pages/About";
 import Safety from "./pages/Safety";
 import Booking from "./pages/Booking";
+import BookingCheckout from "./pages/BookingCheckout";
+import AdventureDetail from "./pages/AdventureDetail";
 import NotFound from "./pages/NotFound";
+import AuthCallback from "./pages/auth/callback";
 import Header from "./components/Header";
 import Footer from "./components/Footer";
 import ScrollToTop from "./components/ScrollToTop";
@@ -44,7 +47,9 @@ const App = () => (
               <Route path="blog" element={<Blog />} />
               <Route path="about" element={<About />} />
               <Route path="safety" element={<Safety />} />
-              <Route path="booking/:id" element={<Booking />} />
+              <Route path="adventure/:id" element={<AdventureDetail />} />
+              <Route path="booking/:id" element={<BookingCheckout />} />
+              <Route path="auth/callback" element={<AuthCallback />} />
               <Route path="*" element={<NotFound />} />
             </Route>
           </Routes>

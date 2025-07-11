@@ -12,6 +12,10 @@ const AdventureCards = () => {
     navigate(`/booking/${id}`);
   };
 
+  const handleLearnMore = (id: number) => {
+    navigate(`/adventure/${id}`);
+  };
+
   return (
     <section id="adventures" className="py-16 bg-belize-neutral-50">
       <div className="container mx-auto px-4">
@@ -87,7 +91,11 @@ const AdventureCards = () => {
                   >
                     Book Now
                   </Button>
-                  <Button variant="outline" className="flex-1 border-belize-green-500 text-belize-green-600 hover:bg-belize-green-50">
+                  <Button 
+                    variant="outline" 
+                    className="flex-1 border-belize-green-500 text-belize-green-600 hover:bg-belize-green-50"
+                    onClick={() => handleLearnMore(adventure.id)}
+                  >
                     Learn More
                   </Button>
                 </div>

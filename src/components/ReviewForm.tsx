@@ -40,16 +40,11 @@ const ReviewForm = ({ adventureId, bookingId, onSubmit }: ReviewFormProps) => {
     setIsSubmitting(true);
     
     try {
-      // Ensure we have a valid adventure_id for the review
-      const finalAdventureId = adventureId || bookingId; // Use adventureId if provided, otherwise bookingId as fallback
-      
       const reviewData = {
         reviewer_id: user.id,
-        adventure_id: finalAdventureId,
-        booking_id: bookingId,
+        booking_id: bookingId || null,
         rating,
         comment: reviewText,
-        submitted_at: new Date().toISOString()
       };
 
       const { data, error } = await supabase

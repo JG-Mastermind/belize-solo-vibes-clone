@@ -1,235 +1,116 @@
 
+import { Star, Quote } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
-import { Star, Quote, Plus } from "lucide-react";
-import { useState, useEffect } from "react";
-import { Button } from "@/components/ui/button";
-import ReviewForm from "./ReviewForm";
 
-const initialTestimonials = [
+const testimonials = [
   {
     id: 1,
     name: "Sarah Johnson",
     location: "Toronto, Canada",
-    image: "https://images.unsplash.com/photo-1494790108755-2616b612b630?w=100&h=100&fit=crop&crop=face",
     rating: 5,
-    text: "My solo trip to Belize with BelizeVibes was absolutely incredible! The cave tubing experience was magical, and I felt completely safe traveling alone. The guides were knowledgeable and made sure everyone in our small group had an amazing time.",
-    trip: "Cave Tubing & Jungle Trek"
+    text: "BelizeVibes made my solo trip to Belize absolutely incredible! The Blue Hole dive was a dream come true, and the guides were so knowledgeable and friendly. Perfect for solo travelers who want adventure without the hassle of planning.",
+    adventure: "Blue Hole Diving Experience",
+    image: "https://images.unsplash.com/photo-1494790108755-2616b612b786?w=150&h=150&fit=crop&crop=face"
   },
   {
     id: 2,
-    name: "Michael Chen",
+    name: "Marcus Chen",
     location: "San Francisco, USA",
-    image: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&h=100&fit=crop&crop=face",
     rating: 5,
-    text: "The Blue Hole diving experience exceeded all expectations! As a solo traveler, I was worried about fitting in, but the group was welcoming and the dive masters were professional. Definitely a once-in-a-lifetime experience.",
-    trip: "Blue Hole Diving Experience"
+    text: "The Caracol Maya ruins tour was mind-blowing! Our guide shared so many fascinating stories about Maya civilization. As a solo traveler, I felt completely safe and welcomed. The small group size made it feel like a private tour.",
+    adventure: "Caracol Maya Ruins Explorer",
+    image: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150&h=150&fit=crop&crop=face"
   },
   {
     id: 3,
-    name: "Emma Thompson",
-    location: "London, UK",
-    image: "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=100&h=100&fit=crop&crop=face",
-    rating: 5,
-    text: "I was nervous about traveling solo, but BelizeVibes made everything seamless. The Caracol Maya ruins tour was fascinating, and I learned so much about Mayan history. The small group size made it feel personal and intimate.",
-    trip: "Caracol Maya Ruins Adventure"
-  },
-  {
-    id: 4,
-    name: "James Rodriguez",
+    name: "Emma Rodriguez",
     location: "Madrid, Spain",
-    image: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=100&h=100&fit=crop&crop=face",
     rating: 5,
-    text: "The snorkeling at Hol Chan was breathtaking! Swimming with nurse sharks and stingrays was surreal. The guides were excellent and made sure everyone felt comfortable in the water. Highly recommend for solo travelers!",
-    trip: "Snorkeling at Hol Chan"
-  },
-  {
-    id: 5,
-    name: "Lisa Park",
-    location: "Seoul, South Korea",
-    image: "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=100&h=100&fit=crop&crop=face",
-    rating: 5,
-    text: "The zip-lining through the jungle canopy was exhilarating! I traveled alone but never felt lonely thanks to the friendly group and amazing guides. The waterfall swim afterwards was the perfect way to cool down.",
-    trip: "Jungle Zip-lining & Waterfall"
+    text: "Snorkeling at Hol Chan was like swimming in an aquarium! The marine life was spectacular, and I loved how eco-conscious the tour was. BelizeVibes really cares about sustainable tourism. Highly recommend for nature lovers!",
+    adventure: "Hol Chan Marine Reserve",
+    image: "https://images.unsplash.com/photo-1488426862026-3ee34a7d66df?w=150&h=150&fit=crop&crop=face"
   }
 ];
 
 const Testimonials = () => {
-  const [testimonials, setTestimonials] = useState(initialTestimonials);
-  const [currentIndex, setCurrentIndex] = useState(0);
-  const [showReviewForm, setShowReviewForm] = useState(false);
-
-  useEffect(() => {
-    const timer = setInterval(() => {
-      setCurrentIndex((prevIndex) => (prevIndex + 1) % testimonials.length);
-    }, 5000);
-
-    return () => clearInterval(timer);
-  }, [testimonials.length]);
-
-  const handleNewReview = (newReview: {
-    name: string;
-    location: string;
-    rating: number;
-    text: string;
-    trip: string;
-  }) => {
-    const review = {
-      id: Date.now(),
-      image: `https://ui-avatars.com/api/?name=${encodeURIComponent(newReview.name)}&background=10b981&color=fff&size=100`,
-      ...newReview
-    };
-
-    setTestimonials(prev => [review, ...prev]);
-    setCurrentIndex(0);
-    setShowReviewForm(false);
-  };
-
-  const renderStars = (rating: number) => {
-    return Array.from({ length: 5 }, (_, i) => (
-      <Star
-        key={i}
-        className={`h-4 w-4 ${i < rating ? 'text-yellow-400 fill-current' : 'text-gray-300'}`}
-      />
-    ));
-  };
-
   return (
-    <section id="testimonials" className="py-16 bg-white">
+    <section data-testimonials className="py-16 bg-white">
       <div className="container mx-auto px-4">
         <div className="text-center mb-12">
           <h2 className="text-3xl md:text-4xl font-playfair font-bold text-belize-neutral-900 mb-4">
-            What Solo Travelers Say
+            What Our Travelers Say
           </h2>
-          <p className="text-lg text-belize-neutral-600 max-w-2xl mx-auto mb-6">
-            Don't just take our word for it. Here's what our adventurous solo travelers have to say about their BelizeVibes experiences.
+          <p className="text-lg text-belize-neutral-600 max-w-2xl mx-auto">
+            Real experiences from solo travelers who discovered the magic of Belize with us.
           </p>
-          
-          <Button
-            onClick={() => setShowReviewForm(!showReviewForm)}
-            className="bg-belize-green-600 hover:bg-belize-green-700 text-white"
-          >
-            <Plus className="h-4 w-4 mr-2" />
-            {showReviewForm ? "Hide Review Form" : "Add Your Review"}
-          </Button>
         </div>
 
-        {/* Review Form */}
-        {showReviewForm && (
-          <div className="max-w-2xl mx-auto mb-12">
-            <ReviewForm onSubmit={handleNewReview} />
-          </div>
-        )}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+          {testimonials.map((testimonial, index) => (
+            <Card 
+              key={testimonial.id} 
+              className="testimonial-card animate-fade-in hover:shadow-lg transition-shadow duration-300"
+              style={{ animationDelay: `${index * 0.2}s` }}
+            >
+              <CardContent className="p-6">
+                {/* Quote Icon */}
+                <Quote className="h-8 w-8 text-belize-orange-500 mb-4 opacity-50" />
+                
+                {/* Rating */}
+                <div className="flex items-center mb-4">
+                  {[...Array(testimonial.rating)].map((_, i) => (
+                    <Star key={i} className="h-5 w-5 text-yellow-400 fill-current" />
+                  ))}
+                </div>
 
-        {/* Main Testimonial Card */}
-        {testimonials.length > 0 && (
-          <div className="max-w-4xl mx-auto mb-8">
-            <Card className="bg-gradient-to-br from-belize-green-50 to-belize-blue-50 border-belize-green-200">
-              <CardContent className="p-8 md:p-12">
-                <div className="flex flex-col md:flex-row items-center md:items-start space-y-6 md:space-y-0 md:space-x-8">
-                  <div className="flex-shrink-0">
-                    <img
-                      src={testimonials[currentIndex].image}
-                      alt={testimonials[currentIndex].name}
-                      className="w-20 h-20 rounded-full object-cover border-4 border-white shadow-lg"
-                    />
-                  </div>
-                  
-                  <div className="flex-1 text-center md:text-left">
-                    <Quote className="h-8 w-8 text-belize-green-400 mb-4 mx-auto md:mx-0" />
-                    
-                    <p className="text-lg md:text-xl text-belize-neutral-700 mb-6 italic leading-relaxed">
-                      "{testimonials[currentIndex].text}"
-                    </p>
-                    
-                    <div className="space-y-2">
-                      <div className="flex items-center justify-center md:justify-start space-x-1 mb-2">
-                        {renderStars(testimonials[currentIndex].rating)}
-                      </div>
-                      
-                      <h4 className="font-semibold text-belize-neutral-900 text-lg">
-                        {testimonials[currentIndex].name}
-                      </h4>
-                      
-                      {testimonials[currentIndex].location && (
-                        <p className="text-belize-neutral-600">
-                          {testimonials[currentIndex].location}
-                        </p>
-                      )}
-                      
-                      {testimonials[currentIndex].trip && (
-                        <p className="text-sm text-belize-green-600 font-medium">
-                          {testimonials[currentIndex].trip}
-                        </p>
-                      )}
+                {/* Testimonial Text */}
+                <p className="text-belize-neutral-700 mb-4 leading-relaxed">
+                  "{testimonial.text}"
+                </p>
+
+                {/* Adventure */}
+                <div className="text-sm text-belize-green-600 font-semibold mb-4">
+                  {testimonial.adventure}
+                </div>
+
+                {/* User Info */}
+                <div className="flex items-center">
+                  <img 
+                    src={testimonial.image} 
+                    alt={testimonial.name}
+                    className="w-12 h-12 rounded-full object-cover mr-4"
+                  />
+                  <div>
+                    <div className="font-semibold text-belize-neutral-900">
+                      {testimonial.name}
+                    </div>
+                    <div className="text-sm text-belize-neutral-600">
+                      {testimonial.location}
                     </div>
                   </div>
                 </div>
               </CardContent>
             </Card>
-          </div>
-        )}
+          ))}
+        </div>
 
-        {/* Testimonial Navigation Dots */}
-        {testimonials.length > 1 && (
-          <div className="flex justify-center space-x-2 mb-8">
-            {testimonials.map((_, index) => (
-              <button
-                key={index}
-                onClick={() => setCurrentIndex(index)}
-                className={`w-3 h-3 rounded-full transition-all duration-300 ${
-                  index === currentIndex ? 'bg-belize-green-500' : 'bg-belize-neutral-300 hover:bg-belize-green-300'
-                }`}
-              />
-            ))}
-          </div>
-        )}
-
-        {/* Thumbnail Grid */}
-        {testimonials.length > 1 && (
-          <div className="grid grid-cols-2 md:grid-cols-5 gap-4 max-w-2xl mx-auto">
-            {testimonials.slice(0, 5).map((testimonial, index) => (
-              <button
-                key={testimonial.id}
-                onClick={() => setCurrentIndex(index)}
-                className={`p-3 rounded-lg transition-all duration-300 ${
-                  index === currentIndex 
-                    ? 'bg-belize-green-100 border-2 border-belize-green-500' 
-                    : 'bg-belize-neutral-50 border-2 border-transparent hover:bg-belize-green-50'
-                }`}
-              >
-                <img
-                  src={testimonial.image}
-                  alt={testimonial.name}
-                  className="w-12 h-12 rounded-full object-cover mx-auto mb-2"
-                />
-                <p className="text-xs font-medium text-belize-neutral-700 truncate">
-                  {testimonial.name}
-                </p>
-              </button>
-            ))}
-          </div>
-        )}
-
-        {/* Trust Statistics */}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-6 mt-16 max-w-3xl mx-auto">
-          <div className="text-center">
-            <div className="text-3xl font-bold text-belize-green-600 mb-2">
-              {(testimonials.reduce((acc, t) => acc + t.rating, 0) / testimonials.length).toFixed(1)}/5
-            </div>
-            <div className="text-sm text-belize-neutral-600">Average Rating</div>
-          </div>
-          <div className="text-center">
-            <div className="text-3xl font-bold text-belize-green-600 mb-2">{testimonials.length}</div>
-            <div className="text-sm text-belize-neutral-600">Total Reviews</div>
-          </div>
-          <div className="text-center">
-            <div className="text-3xl font-bold text-belize-green-600 mb-2">95%</div>
-            <div className="text-sm text-belize-neutral-600">Solo Travelers</div>
-          </div>
-          <div className="text-center">
-            <div className="text-3xl font-bold text-belize-green-600 mb-2">100%</div>
-            <div className="text-sm text-belize-neutral-600">Satisfaction</div>
-          </div>
+        {/* Call to Action */}
+        <div className="text-center mt-12">
+          <p className="text-lg text-belize-neutral-600 mb-4">
+            Ready to create your own adventure story?
+          </p>
+          <button 
+            onClick={() => {
+              const adventuresSection = document.getElementById('adventures');
+              if (adventuresSection) {
+                adventuresSection.scrollIntoView({ behavior: 'smooth' });
+              }
+            }}
+            className="bg-belize-orange-500 hover:bg-belize-orange-600 text-white px-8 py-3 rounded-lg font-semibold transition-all duration-300 hover:scale-105"
+            aria-label="Start booking your adventure"
+          >
+            Start Your Adventure
+          </button>
         </div>
       </div>
     </section>

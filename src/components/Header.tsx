@@ -15,40 +15,6 @@ const Header = () => {
             BelizeVibes
           </Link>
           
-          {/* Desktop Navigation - Hidden on mobile */}
-          <nav className="hidden md:flex items-center space-x-6">
-            <Link 
-              to="/" 
-              className="text-sm font-medium hover:text-primary transition-colors text-muted-foreground"
-            >
-              Home
-            </Link>
-            <Link 
-              to="/about" 
-              className="text-sm font-medium hover:text-primary transition-colors text-muted-foreground"
-            >
-              About
-            </Link>
-            <Link 
-              to="/blog" 
-              className="text-sm font-medium hover:text-primary transition-colors text-muted-foreground"
-            >
-              Blog
-            </Link>
-            <Link 
-              to="/safety" 
-              className="text-sm font-medium hover:text-primary transition-colors text-muted-foreground"
-            >
-              Safety
-            </Link>
-            <Link 
-              to="/contact" 
-              className="text-sm font-medium hover:text-primary transition-colors text-muted-foreground"
-            >
-              Contact
-            </Link>
-          </nav>
-
           {/* Right side controls */}
           <div className="flex items-center space-x-3">
             {/* User Profile - Hidden on small screens */}
@@ -59,7 +25,7 @@ const Header = () => {
             {/* Mode Toggle */}
             <ModeToggle />
             
-            {/* Mobile Menu - Only visible on mobile */}
+            {/* Mobile Menu - Now used for all screen sizes */}
             <MobileMenu />
           </div>
         </div>

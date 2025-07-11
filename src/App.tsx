@@ -11,6 +11,7 @@ import Contact from "./pages/Contact";
 import Blog from "./pages/Blog";
 import About from "./pages/About";
 import Safety from "./pages/Safety";
+import Adventures from "./pages/Adventures";
 import Booking from "./pages/Booking";
 import BookingCheckout from "./pages/BookingCheckout";
 import AdventureDetail from "./pages/AdventureDetail";
@@ -52,6 +53,7 @@ const App = () => (
               <Route path="blog" element={<Blog />} />
               <Route path="about" element={<About />} />
               <Route path="safety" element={<Safety />} />
+              <Route path="adventures" element={<Adventures />} />
               <Route path="adventure/:id" element={<AdventureDetail />} />
               <Route path="booking/:id" element={<BookingCheckout />} />
               <Route path="booking/success" element={<SuccessPage />} />

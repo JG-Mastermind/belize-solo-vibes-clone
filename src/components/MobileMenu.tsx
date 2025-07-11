@@ -12,11 +12,26 @@ import {
 import { Menu, Instagram, Youtube, Twitter, Facebook } from 'lucide-react';
 
 const MobileMenu = () => {
+  const scrollToAdventures = () => {
+    const adventuresSection = document.getElementById('adventures');
+    if (adventuresSection) {
+      adventuresSection.scrollIntoView({ behavior: 'smooth' });
+    }
+  };
+
+  const scrollToTestimonials = () => {
+    const testimonialsSection = document.querySelector('[data-testimonials]');
+    if (testimonialsSection) {
+      testimonialsSection.scrollIntoView({ behavior: 'smooth' });
+    }
+  };
+
   const navigationLinks = [
-    { name: 'Home', path: '/' },
+    { name: 'Adventures', action: scrollToAdventures },
     { name: 'About', path: '/about' },
     { name: 'Blog', path: '/blog' },
     { name: 'Safety', path: '/safety' },
+    { name: 'Reviews', action: scrollToTestimonials },
     { name: 'Contact', path: '/contact' },
   ];
 
@@ -30,7 +45,7 @@ const MobileMenu = () => {
   return (
     <Sheet>
       <SheetTrigger asChild>
-        <Button variant="ghost" size="icon" className="md:hidden">
+        <Button variant="ghost" size="icon" aria-label="Open navigation menu">
           <Menu className="h-6 w-6" />
           <span className="sr-only">Open menu</span>
         </Button>
@@ -46,19 +61,35 @@ const MobileMenu = () => {
           {/* Navigation Links */}
           <nav className="space-y-6">
             {navigationLinks.map((link) => (
-              <Link
-                key={link.path}
-                to={link.path}
-                className="block text-2xl font-medium text-foreground hover:text-primary transition-colors"
-              >
-                {link.name}
-              </Link>
+              <div key={link.name}>
+                {link.path ? (
+                  <Link
+                    to={link.path}
+                    className="block text-2xl font-medium text-foreground hover:text-primary transition-colors"
+                  >
+                    {link.name}
+                  </Link>
+                ) : (
+                  <button
+                    onClick={link.action}
+                    className="block text-2xl font-medium text-foreground hover:text-primary transition-colors text-left"
+                    aria-label={`Navigate to ${link.name} section`}
+                  >
+                    {link.name}
+                  </button>
+                )}
+              </div>
             ))}
           </nav>
 
           {/* Book Next CTA */}
           <div className="my-8">
-            <Button size="lg" className="w-full text-lg py-6 rounded-xl">
+            <Button 
+              size="lg" 
+              className="w-full text-lg py-6 rounded-xl"
+              onClick={scrollToAdventures}
+              aria-label="Book your next adventure"
+            >
               Book Your Next Adventure
             </Button>
           </div>
@@ -76,6 +107,7 @@ const MobileMenu = () => {
                   className={`flex flex-col items-center space-y-2 ${social.color} hover:opacity-80 transition-opacity`}
                   target="_blank"
                   rel="noopener noreferrer"
+                  aria-label={`Follow us on ${social.name}`}
                 >
                   <social.icon className="h-8 w-8" />
                   <span className="text-sm">{social.name}</span>

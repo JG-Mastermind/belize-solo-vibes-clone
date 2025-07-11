@@ -3,12 +3,18 @@ import { useParams, useNavigate } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-import { adventures } from "@/data/adventures";
+import { useQuery } from "@tanstack/react-query";
+import { supabase } from "@/integrations/supabase/client";
+import { useAuth } from "@/components/auth/AuthProvider";
+import { useBookingFlow } from "@/hooks/useBookingFlow";
+import { useStripePayment } from "@/hooks/useStripePayment";
 import { Progress } from "@/components/ui/progress";
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { Calendar } from "@/components/ui/calendar";
+import { SignInModal } from "@/components/auth/SignInModal";
+import { adventures } from "@/data/adventures";
+import { toast } from "sonner";
 import {
   Form,
   FormControl,
@@ -17,6 +23,7 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
+import { SimplePaymentForm } from "@/components/SimplePaymentForm";
 
 const bookingFormSchema = z.object({
   bookingDate: z.date({
@@ -30,33 +37,106 @@ const bookingFormSchema = z.object({
 
 type BookingFormData = z.infer<typeof bookingFormSchema>;
 
+const steps = ["Select Date", "Your Info", "Payment", "Confirmation"];
+
 const Booking = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
+  const { user } = useAuth();
+  const { createBooking, isLoading: isCreatingBooking, isAuthenticated } = useBookingFlow();
+  const { createPaymentSession, isLoading: isCreatingPayment } = useStripePayment();
   const [currentStep, setCurrentStep] = useState(0);
-  
-  const adventure = adventures.find(adv => adv.id === Number(id));
+  const [showSignIn, setShowSignIn] = useState(false);
+  const [createdBooking, setCreatedBooking] = useState<any>(null);
+  const [paymentIntentCreated, setPaymentIntentCreated] = useState(false);
+
+  // First try to get adventure from local data (fallback for numeric IDs)
+  const localAdventure = adventures.find(adv => adv.id.toString() === id);
+
+  // Fetch adventure data from Supabase (for UUID adventures)
+  const { data: dbAdventure, isLoading: isLoadingAdventure } = useQuery({
+    queryKey: ['adventure', id],
+    queryFn: async () => {
+      if (!id) throw new Error('No adventure ID provided');
+      
+      // Only query database if it looks like a UUID
+      const isUUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(id);
+      if (!isUUID) return null;
+      
+      const { data, error } = await supabase
+        .from('adventures')
+        .select('*')
+        .eq('id', id)
+        .single();
+      
+      if (error) throw error;
+      return data;
+    },
+    enabled: !!id
+  });
+
+  // Use either database adventure or local adventure with proper fallback
+  const adventure = dbAdventure || (localAdventure ? {
+    ...localAdventure,
+    price_per_person: parseFloat(localAdventure.price.replace('$', ''))
+  } : null);
   
   const form = useForm<BookingFormData>({
     resolver: zodResolver(bookingFormSchema),
     defaultValues: {
       bookingDate: undefined,
-      fullName: "",
-      email: "",
+      fullName: user?.user_metadata?.first_name + " " + user?.user_metadata?.last_name || "",
+      email: user?.email || "",
       phone: "",
       numberOfTravelers: 1,
     },
   });
 
-  const onSubmit = (data: BookingFormData) => {
-    console.log("Booking form submitted:", data);
-    // Move to next step after form submission
-    setCurrentStep(Math.min(adventure!.steps.length - 1, currentStep + 1));
+  const onSubmit = async (data: BookingFormData) => {
+    if (!isAuthenticated) {
+      setShowSignIn(true);
+      return;
+    }
+
+    if (!adventure) {
+      console.error('No adventure found');
+      toast.error('Adventure not found');
+      return;
+    }
+
+    // Use the proper adventure ID (either UUID from DB or local ID for fallback)
+    const adventureId = dbAdventure?.id || (localAdventure ? 
+      `550e8400-e29b-41d4-a716-44665544000${localAdventure.id}` : // Convert numeric to UUID format
+      '550e8400-e29b-41d4-a716-446655440001' // Default fallback
+    );
+
+    const booking = await createBooking({
+      adventureId: adventureId,
+      bookingDate: data.bookingDate,
+      fullName: data.fullName,
+      email: data.email,
+      phone: data.phone,
+      numberOfTravelers: data.numberOfTravelers
+    });
+
+    if (booking) {
+      setCreatedBooking(booking);
+      setCurrentStep(2); // Move to payment step
+    }
   };
 
-  const handleExploreMore = () => {
-    navigate("/");
+  const handlePaymentSuccess = () => {
+    setCurrentStep(3); // Move to confirmation step
+    toast.success('Booking confirmed! Check your email for details.');
   };
+
+  if (isLoadingAdventure) {
+    return (
+      <div className="container mx-auto px-4 py-8">
+        <div className="text-center">Loading adventure details...</div>
+      </div>
+    );
+  }
   
   if (!adventure) {
     return (
@@ -64,31 +144,34 @@ const Booking = () => {
         <div className="text-center">
           <h1 className="text-2xl font-bold text-destructive">Adventure not found</h1>
           <p className="mt-4 text-muted-foreground">The adventure you're looking for doesn't exist.</p>
+          <Button onClick={() => navigate("/")} className="mt-4">
+            Back to Adventures
+          </Button>
         </div>
       </div>
     );
   }
 
-  const progressPercentage = ((currentStep + 1) / adventure.steps.length) * 100;
-  const currentStepName = adventure.steps[currentStep];
+  const progressPercentage = ((currentStep + 1) / steps.length) * 100;
+  const currentStepName = steps[currentStep];
 
   return (
     <div className="container mx-auto px-4 py-8">
       <div className="max-w-2xl mx-auto">
-        <h1 className="text-3xl font-bold mb-8">{adventure.title}</h1>
+        <h1 className="text-3xl font-bold mb-8">{adventure?.title || 'Adventure Booking'}</h1>
         
         <div className="mb-8">
           <div className="flex justify-between items-center mb-4">
             <h2 className="text-lg font-semibold">Booking Progress</h2>
             <span className="text-sm text-muted-foreground">
-              Step {currentStep + 1} of {adventure.steps.length}
+              Step {currentStep + 1} of {steps.length}
             </span>
           </div>
           
           <Progress value={progressPercentage} className="mb-4" />
           
           <div className="flex justify-between">
-            {adventure.steps.map((step, index) => (
+            {steps.map((step, index) => (
               <div
                 key={index}
                 className={`text-xs px-2 py-1 rounded ${
@@ -129,8 +212,21 @@ const Booking = () => {
               />
             )}
             
-            {currentStepName === "Your Info" && (
+            {currentStep === 1 && (
               <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+                {!isAuthenticated && (
+                  <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4 mb-6">
+                    <p className="text-yellow-800">Please sign in to continue with your booking.</p>
+                    <Button 
+                      type="button" 
+                      onClick={() => setShowSignIn(true)}
+                      className="mt-2"
+                    >
+                      Sign In
+                    </Button>
+                  </div>
+                )}
+                
                 <FormField
                   control={form.control}
                   name="fullName"
@@ -194,21 +290,34 @@ const Booking = () => {
                   )}
                 />
                 
-                <Button type="submit" className="w-full">
-                  Continue to Next Step
+                <Button 
+                  type="submit" 
+                  className="w-full"
+                  disabled={isCreatingBooking || !isAuthenticated}
+                >
+                  {isCreatingBooking ? "Creating Booking..." : "Continue to Payment"}
                 </Button>
               </form>
             )}
             
-            {currentStepName === "Payment" && (
-              <div className="text-center py-8">
-                <p className="text-muted-foreground">
-                  Complete your payment to confirm the booking.
-                </p>
+            {currentStep === 2 && createdBooking && (
+              <div className="space-y-6">
+                <SimplePaymentForm
+                  bookingData={{
+                    adventureTitle: adventure?.title || 'Adventure',
+                    bookingDate: form.getValues("bookingDate")?.toLocaleDateString() || '',
+                    participants: createdBooking.participants,
+                    totalAmount: createdBooking.total_amount,
+                    fullName: form.getValues("fullName"),
+                    email: form.getValues("email")
+                  }}
+                  onPaymentSuccess={handlePaymentSuccess}
+                  isLoading={isCreatingPayment}
+                />
               </div>
             )}
 
-            {currentStepName === "Confirmation" && (
+            {currentStep === 3 && (
               <div className="bg-green-50 border border-green-200 rounded-lg p-6">
                 <div className="text-center mb-6">
                   <h2 className="text-2xl font-bold text-green-800 mb-2">Booking Confirmed!</h2>
@@ -245,7 +354,7 @@ const Booking = () => {
                 
                 <div className="text-center">
                   <Button 
-                    onClick={handleExploreMore}
+                    onClick={() => navigate("/")}
                     className="bg-green-600 hover:bg-green-700 text-white px-6 py-2"
                   >
                     Explore More Adventures
@@ -256,25 +365,34 @@ const Booking = () => {
           </div>
         </Form>
 
+        {/* Navigation buttons */}
         <div className="text-center">
           <div className="space-x-4">
             <Button
               variant="outline"
               onClick={() => setCurrentStep(Math.max(0, currentStep - 1))}
-              disabled={currentStep === 0}
+              disabled={currentStep === 0 || (currentStep === 2 && (false))}
             >
               Previous
             </Button>
-            <Button
-              onClick={() => setCurrentStep(Math.min(adventure.steps.length - 1, currentStep + 1))}
-              disabled={currentStep === adventure.steps.length - 1 || 
-                (currentStep === 0 && !form.getValues("bookingDate")) ||
-                (currentStepName === "Your Info" && !form.formState.isValid)}
-            >
-              Next
-            </Button>
+            {currentStep < 2 && (
+              <Button
+                onClick={() => setCurrentStep(Math.min(steps.length - 1, currentStep + 1))}
+                disabled={currentStep === steps.length - 1 || 
+                  (currentStep === 0 && !form.getValues("bookingDate")) ||
+                  (currentStep === 1 && !form.formState.isValid)}
+              >
+                Next
+              </Button>
+            )}
           </div>
         </div>
+
+        <SignInModal
+          isOpen={showSignIn}
+          onClose={() => setShowSignIn(false)}
+          onSwitchToSignUp={() => {}}
+        />
       </div>
     </div>
   );

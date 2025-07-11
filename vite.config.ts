@@ -3,34 +3,29 @@ import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react-swc";
 import path from "path";
 
-// https://vitejs.dev/config/
-export default defineConfig(async ({ mode }) => {
-  const plugins = [react()];
-  
-  if (mode === 'development') {
-    try {
-      // Dynamic import to avoid ESM issues
-      const { componentTagger } = await import('lovable-tagger');
-      plugins.push(componentTagger());
-    } catch (error) {
-      console.warn('lovable-tagger not available:', error.message);
-    }
-  }
-  
-  return {
-    server: {
-      host: "::",
-      port: 8080,
+export default defineConfig(({ mode }) => ({
+  server: {
+    host: "::",
+    port: 8080,
+  },
+  plugins: [
+    react(),
+    // Conditionally load componentTagger only in development
+    ...(mode === 'development' ? [
+      (async () => {
+        try {
+          const { componentTagger } = await import("lovable-tagger");
+          return componentTagger();
+        } catch (error) {
+          console.warn('Failed to load lovable-tagger:', error);
+          return null;
+        }
+      })()
+    ] : [])
+  ].filter(Boolean),
+  resolve: {
+    alias: {
+      "@": path.resolve(__dirname, "./src"),
     },
-    preview: {
-      port: 8080,
-      host: true
-    },
-    plugins,
-    resolve: {
-      alias: {
-        "@": path.resolve(__dirname, "./src"),
-      },
-    },
-  };
-});
+  },
+}));

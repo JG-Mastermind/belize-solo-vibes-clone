@@ -14,11 +14,16 @@ import Safety from "./pages/Safety";
 import Booking from "./pages/Booking";
 import BookingCheckout from "./pages/BookingCheckout";
 import AdventureDetail from "./pages/AdventureDetail";
+import SuccessPage from "./pages/booking/success";
 import NotFound from "./pages/NotFound";
 import AuthCallback from "./pages/auth/callback";
 import Header from "./components/Header";
 import Footer from "./components/Footer";
 import ScrollToTop from "./components/ScrollToTop";
+import { DashboardLayout } from "./components/dashboard/DashboardLayout";
+import AdminDashboard from "./pages/dashboard/AdminDashboard";
+import GuideDashboard from "./pages/dashboard/GuideDashboard";
+import TravelerDashboard from "./pages/dashboard/TravelerDashboard";
 
 const queryClient = new QueryClient();
 
@@ -49,9 +54,19 @@ const App = () => (
               <Route path="safety" element={<Safety />} />
               <Route path="adventure/:id" element={<AdventureDetail />} />
               <Route path="booking/:id" element={<BookingCheckout />} />
+              <Route path="booking/success" element={<SuccessPage />} />
               <Route path="auth/callback" element={<AuthCallback />} />
               <Route path="*" element={<NotFound />} />
             </Route>
+            
+            <Route path="/dashboard" element={<DashboardLayout />}>
+              <Route index element={<AdminDashboard />} />
+              <Route path="admin" element={<AdminDashboard />} />
+              <Route path="guide" element={<GuideDashboard />} />
+              <Route path="traveler" element={<TravelerDashboard />} />
+            </Route>
+            
+            <Route path="*" element={<NotFound />} />
           </Routes>
         </BrowserRouter>
       </AuthProvider>

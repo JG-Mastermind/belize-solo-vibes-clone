@@ -5,7 +5,7 @@ export const adventures: Adventure[] = [
   {
     id: 1,
     title: "Cave Tubing & Jungle Trek",
-    image: "https://images.unsplash.com/photo-1472396961693-142e6e269027?w=600&h=400&fit=crop",
+    image: "https://images.unsplash.com/photo-1544551763-46a013bb70d5?w=600&h=400&fit=crop",
     price: "$149",
     duration: "Full Day",
     groupSize: "4-8 people",
@@ -19,7 +19,7 @@ export const adventures: Adventure[] = [
   {
     id: 2,
     title: "Snorkeling at Hol Chan",
-    image: "https://images.unsplash.com/photo-1500375592092-40eb2168fd21?w=600&h=400&fit=crop",
+    image: "https://images.unsplash.com/photo-1583212292454-1fe6229603b7?w=600&h=400&fit=crop",
     price: "$89",
     duration: "Half Day",
     groupSize: "6-12 people",
@@ -33,7 +33,7 @@ export const adventures: Adventure[] = [
   {
     id: 3,
     title: "Caracol Maya Ruins Adventure",
-    image: "https://images.unsplash.com/photo-1469041797191-50ace28483c3?w=600&h=400&fit=crop",
+    image: "https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=600&h=400&fit=crop",
     price: "$199",
     duration: "Full Day",
     groupSize: "4-10 people",
@@ -47,7 +47,7 @@ export const adventures: Adventure[] = [
   {
     id: 4,
     title: "Blue Hole Diving Experience",
-    image: "https://images.unsplash.com/photo-1482938289607-e9573fc25ebb?w=600&h=400&fit=crop",
+    image: "https://images.unsplash.com/photo-1559827260-dc66d52bef19?w=600&h=400&fit=crop",
     price: "$299",
     duration: "Full Day",
     groupSize: "4-8 people",
@@ -61,7 +61,7 @@ export const adventures: Adventure[] = [
   {
     id: 5,
     title: "Jungle Zip-lining & Waterfall",
-    image: "https://images.unsplash.com/photo-1472396961693-142e6e269027?w=600&h=400&fit=crop",
+    image: "https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=600&h=400&fit=crop",
     price: "$119",
     duration: "Half Day",
     groupSize: "6-12 people",
@@ -75,7 +75,7 @@ export const adventures: Adventure[] = [
   {
     id: 6,
     title: "Manatee Watching & Beach Day",
-    image: "https://images.unsplash.com/photo-1500375592092-40eb2168fd21?w=600&h=400&fit=crop",
+    image: "https://images.unsplash.com/photo-1559827260-dc66d52bef19?w=600&h=400&fit=crop",
     price: "$129",
     duration: "Full Day",
     groupSize: "4-10 people",

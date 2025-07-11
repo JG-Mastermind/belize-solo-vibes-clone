@@ -1,9 +1,11 @@
 
 import { Card, CardContent } from "@/components/ui/card";
-import { Star, Quote } from "lucide-react";
+import { Star, Quote, Plus } from "lucide-react";
 import { useState, useEffect } from "react";
+import { Button } from "@/components/ui/button";
+import ReviewForm from "./ReviewForm";
 
-const testimonials = [
+const initialTestimonials = [
   {
     id: 1,
     name: "Sarah Johnson",
@@ -52,7 +54,9 @@ const testimonials = [
 ];
 
 const Testimonials = () => {
+  const [testimonials, setTestimonials] = useState(initialTestimonials);
   const [currentIndex, setCurrentIndex] = useState(0);
+  const [showReviewForm, setShowReviewForm] = useState(false);
 
   useEffect(() => {
     const timer = setInterval(() => {
@@ -60,7 +64,25 @@ const Testimonials = () => {
     }, 5000);
 
     return () => clearInterval(timer);
-  }, []);
+  }, [testimonials.length]);
+
+  const handleNewReview = (newReview: {
+    name: string;
+    location: string;
+    rating: number;
+    text: string;
+    trip: string;
+  }) => {
+    const review = {
+      id: Date.now(),
+      image: `https://ui-avatars.com/api/?name=${encodeURIComponent(newReview.name)}&background=10b981&color=fff&size=100`,
+      ...newReview
+    };
+
+    setTestimonials(prev => [review, ...prev]);
+    setCurrentIndex(0);
+    setShowReviewForm(false);
+  };
 
   const renderStars = (rating: number) => {
     return Array.from({ length: 5 }, (_, i) => (
@@ -78,100 +100,127 @@ const Testimonials = () => {
           <h2 className="text-3xl md:text-4xl font-playfair font-bold text-belize-neutral-900 mb-4">
             What Solo Travelers Say
           </h2>
-          <p className="text-lg text-belize-neutral-600 max-w-2xl mx-auto">
+          <p className="text-lg text-belize-neutral-600 max-w-2xl mx-auto mb-6">
             Don't just take our word for it. Here's what our adventurous solo travelers have to say about their BelizeVibes experiences.
           </p>
+          
+          <Button
+            onClick={() => setShowReviewForm(!showReviewForm)}
+            className="bg-belize-green-600 hover:bg-belize-green-700 text-white"
+          >
+            <Plus className="h-4 w-4 mr-2" />
+            {showReviewForm ? "Hide Review Form" : "Add Your Review"}
+          </Button>
         </div>
+
+        {/* Review Form */}
+        {showReviewForm && (
+          <div className="max-w-2xl mx-auto mb-12">
+            <ReviewForm onSubmit={handleNewReview} />
+          </div>
+        )}
 
         {/* Main Testimonial Card */}
-        <div className="max-w-4xl mx-auto mb-8">
-          <Card className="bg-gradient-to-br from-belize-green-50 to-belize-blue-50 border-belize-green-200">
-            <CardContent className="p-8 md:p-12">
-              <div className="flex flex-col md:flex-row items-center md:items-start space-y-6 md:space-y-0 md:space-x-8">
-                <div className="flex-shrink-0">
-                  <img
-                    src={testimonials[currentIndex].image}
-                    alt={testimonials[currentIndex].name}
-                    className="w-20 h-20 rounded-full object-cover border-4 border-white shadow-lg"
-                  />
-                </div>
-                
-                <div className="flex-1 text-center md:text-left">
-                  <Quote className="h-8 w-8 text-belize-green-400 mb-4 mx-auto md:mx-0" />
+        {testimonials.length > 0 && (
+          <div className="max-w-4xl mx-auto mb-8">
+            <Card className="bg-gradient-to-br from-belize-green-50 to-belize-blue-50 border-belize-green-200">
+              <CardContent className="p-8 md:p-12">
+                <div className="flex flex-col md:flex-row items-center md:items-start space-y-6 md:space-y-0 md:space-x-8">
+                  <div className="flex-shrink-0">
+                    <img
+                      src={testimonials[currentIndex].image}
+                      alt={testimonials[currentIndex].name}
+                      className="w-20 h-20 rounded-full object-cover border-4 border-white shadow-lg"
+                    />
+                  </div>
                   
-                  <p className="text-lg md:text-xl text-belize-neutral-700 mb-6 italic leading-relaxed">
-                    "{testimonials[currentIndex].text}"
-                  </p>
-                  
-                  <div className="space-y-2">
-                    <div className="flex items-center justify-center md:justify-start space-x-1 mb-2">
-                      {renderStars(testimonials[currentIndex].rating)}
+                  <div className="flex-1 text-center md:text-left">
+                    <Quote className="h-8 w-8 text-belize-green-400 mb-4 mx-auto md:mx-0" />
+                    
+                    <p className="text-lg md:text-xl text-belize-neutral-700 mb-6 italic leading-relaxed">
+                      "{testimonials[currentIndex].text}"
+                    </p>
+                    
+                    <div className="space-y-2">
+                      <div className="flex items-center justify-center md:justify-start space-x-1 mb-2">
+                        {renderStars(testimonials[currentIndex].rating)}
+                      </div>
+                      
+                      <h4 className="font-semibold text-belize-neutral-900 text-lg">
+                        {testimonials[currentIndex].name}
+                      </h4>
+                      
+                      {testimonials[currentIndex].location && (
+                        <p className="text-belize-neutral-600">
+                          {testimonials[currentIndex].location}
+                        </p>
+                      )}
+                      
+                      {testimonials[currentIndex].trip && (
+                        <p className="text-sm text-belize-green-600 font-medium">
+                          {testimonials[currentIndex].trip}
+                        </p>
+                      )}
                     </div>
-                    
-                    <h4 className="font-semibold text-belize-neutral-900 text-lg">
-                      {testimonials[currentIndex].name}
-                    </h4>
-                    
-                    <p className="text-belize-neutral-600">
-                      {testimonials[currentIndex].location}
-                    </p>
-                    
-                    <p className="text-sm text-belize-green-600 font-medium">
-                      {testimonials[currentIndex].trip}
-                    </p>
                   </div>
                 </div>
-              </div>
-            </CardContent>
-          </Card>
-        </div>
+              </CardContent>
+            </Card>
+          </div>
+        )}
 
         {/* Testimonial Navigation Dots */}
-        <div className="flex justify-center space-x-2 mb-8">
-          {testimonials.map((_, index) => (
-            <button
-              key={index}
-              onClick={() => setCurrentIndex(index)}
-              className={`w-3 h-3 rounded-full transition-all duration-300 ${
-                index === currentIndex ? 'bg-belize-green-500' : 'bg-belize-neutral-300 hover:bg-belize-green-300'
-              }`}
-            />
-          ))}
-        </div>
+        {testimonials.length > 1 && (
+          <div className="flex justify-center space-x-2 mb-8">
+            {testimonials.map((_, index) => (
+              <button
+                key={index}
+                onClick={() => setCurrentIndex(index)}
+                className={`w-3 h-3 rounded-full transition-all duration-300 ${
+                  index === currentIndex ? 'bg-belize-green-500' : 'bg-belize-neutral-300 hover:bg-belize-green-300'
+                }`}
+              />
+            ))}
+          </div>
+        )}
 
         {/* Thumbnail Grid */}
-        <div className="grid grid-cols-2 md:grid-cols-5 gap-4 max-w-2xl mx-auto">
-          {testimonials.map((testimonial, index) => (
-            <button
-              key={testimonial.id}
-              onClick={() => setCurrentIndex(index)}
-              className={`p-3 rounded-lg transition-all duration-300 ${
-                index === currentIndex 
-                  ? 'bg-belize-green-100 border-2 border-belize-green-500' 
-                  : 'bg-belize-neutral-50 border-2 border-transparent hover:bg-belize-green-50'
-              }`}
-            >
-              <img
-                src={testimonial.image}
-                alt={testimonial.name}
-                className="w-12 h-12 rounded-full object-cover mx-auto mb-2"
-              />
-              <p className="text-xs font-medium text-belize-neutral-700 truncate">
-                {testimonial.name}
-              </p>
-            </button>
-          ))}
-        </div>
+        {testimonials.length > 1 && (
+          <div className="grid grid-cols-2 md:grid-cols-5 gap-4 max-w-2xl mx-auto">
+            {testimonials.slice(0, 5).map((testimonial, index) => (
+              <button
+                key={testimonial.id}
+                onClick={() => setCurrentIndex(index)}
+                className={`p-3 rounded-lg transition-all duration-300 ${
+                  index === currentIndex 
+                    ? 'bg-belize-green-100 border-2 border-belize-green-500' 
+                    : 'bg-belize-neutral-50 border-2 border-transparent hover:bg-belize-green-50'
+                }`}
+              >
+                <img
+                  src={testimonial.image}
+                  alt={testimonial.name}
+                  className="w-12 h-12 rounded-full object-cover mx-auto mb-2"
+                />
+                <p className="text-xs font-medium text-belize-neutral-700 truncate">
+                  {testimonial.name}
+                </p>
+              </button>
+            ))}
+          </div>
+        )}
 
         {/* Trust Statistics */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-6 mt-16 max-w-3xl mx-auto">
           <div className="text-center">
-            <div className="text-3xl font-bold text-belize-green-600 mb-2">4.9/5</div>
+            <div className="text-3xl font-bold text-belize-green-600 mb-2">
+              {(testimonials.reduce((acc, t) => acc + t.rating, 0) / testimonials.length).toFixed(1)}/5
+            </div>
             <div className="text-sm text-belize-neutral-600">Average Rating</div>
           </div>
           <div className="text-center">
-            <div className="text-3xl font-bold text-belize-green-600 mb-2">500+</div>
-            <div className="text-sm text-belize-neutral-600">Happy Travelers</div>
+            <div className="text-3xl font-bold text-belize-green-600 mb-2">{testimonials.length}</div>
+            <div className="text-sm text-belize-neutral-600">Total Reviews</div>
           </div>
           <div className="text-center">
             <div className="text-3xl font-bold text-belize-green-600 mb-2">95%</div>

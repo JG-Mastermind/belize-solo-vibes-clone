@@ -9,24 +9,119 @@ import {
   Promotion,
   Review
 } from '@/types/booking';
+import { adventures } from '@/data/adventures';
 import { addDays, format, isAfter, isBefore, parseISO } from 'date-fns';
 
 export class BookingService {
   // Adventure Methods
   static async getAdventure(id: string): Promise<Adventure | null> {
-    const { data, error } = await supabase
-      .from('adventures')
-      .select('*')
-      .eq('id', id)
-      .eq('is_active', true)
-      .single();
-    
-    if (error) {
+    try {
+      // First try to fetch from Supabase adventures table
+      const { data: adventureData, error: adventureError } = await supabase
+        .from('adventures')
+        .select('*')
+        .eq('id', id)
+        .eq('is_active', true)
+        .single();
+      
+      if (!adventureError && adventureData) {
+        // Transform adventures table data to Adventure format for booking types
+        return {
+          id: adventureData.id,
+          guide_id: adventureData.guide_id || '',
+          title: adventureData.title,
+          description: adventureData.description || '',
+          location: adventureData.location || '',
+          duration_hours: adventureData.duration_hours || 8,
+          difficulty_level: (adventureData.difficulty_level as any) || 'moderate',
+          max_participants: adventureData.max_participants || 12,
+          base_price: adventureData.price_per_person || 0,
+          group_discount_percentage: 0,
+          early_bird_discount_percentage: 0,
+          early_bird_days: 7,
+          min_advance_booking_hours: 24,
+          max_advance_booking_days: 365,
+          cancellation_policy: 'moderate' as any,
+          meeting_point: '',
+          what_to_bring: [],
+          not_suitable_for: [],
+          includes: adventureData.includes || [],
+          requirements: adventureData.requirements || [],
+          featured_image_url: adventureData.image_urls?.[0] || '',
+          image_urls: adventureData.image_urls || [],
+          gallery_images: adventureData.image_urls || [],
+          video_url: '',
+          highlights: [],
+          itinerary: {},
+          add_ons: {},
+          faqs: {},
+          available_days: [1,2,3,4,5,6,7],
+          daily_capacity: adventureData.max_participants || 8,
+          seasonal_pricing: {},
+          booking_count: 0,
+          average_rating: 0,
+          total_reviews: 0,
+          last_booked_at: '',
+          is_active: adventureData.is_active !== false,
+          created_at: adventureData.created_at || new Date().toISOString(),
+          updated_at: adventureData.updated_at || new Date().toISOString()
+        };
+      }
+      
+      // Fallback to local adventures data for numeric IDs
+      const numericId = parseInt(id);
+      if (!isNaN(numericId)) {
+        const localAdventure = adventures.find(adv => adv.id === numericId);
+        if (localAdventure) {
+          return {
+            id: `local-${localAdventure.id}`,
+            guide_id: '',
+            title: localAdventure.title,
+            description: localAdventure.description,
+            location: localAdventure.location,
+            duration_hours: localAdventure.duration === 'Full Day' ? 8 : 4,
+            difficulty_level: 'moderate',
+            max_participants: parseInt(localAdventure.groupSize.split('-')[1]) || 12,
+            base_price: parseFloat(localAdventure.price.replace('$', '')),
+            group_discount_percentage: 0,
+            early_bird_discount_percentage: 0,
+            early_bird_days: 7,
+            min_advance_booking_hours: 24,
+            max_advance_booking_days: 365,
+            cancellation_policy: 'moderate',
+            meeting_point: '',
+            what_to_bring: [],
+            not_suitable_for: [],
+            includes: localAdventure.highlights || [],
+            requirements: [],
+            featured_image_url: localAdventure.image,
+            image_urls: [localAdventure.image],
+            gallery_images: [localAdventure.image],
+            video_url: '',
+            highlights: localAdventure.highlights || [],
+            itinerary: {},
+            add_ons: {},
+            faqs: {},
+            available_days: [1,2,3,4,5,6,7],
+            daily_capacity: parseInt(localAdventure.groupSize.split('-')[1]) || 8,
+            seasonal_pricing: {},
+            booking_count: 0,
+            average_rating: localAdventure.rating || 0,
+            total_reviews: localAdventure.reviews || 0,
+            last_booked_at: '',
+            is_active: true,
+            created_at: new Date().toISOString(),
+            updated_at: new Date().toISOString()
+          };
+        }
+      }
+      
+      console.error('Adventure not found in any data source:', id);
+      return null;
+    } catch (error) {
       console.error('Error fetching adventure:', error);
       return null;
     }
-    
-    return data;
   }
 
   static async getAdventureAvailability(

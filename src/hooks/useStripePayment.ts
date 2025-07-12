@@ -26,8 +26,35 @@ export const useStripePayment = () => {
     }
   };
 
+  const createPaymentIntent = async (bookingId: string, amount: number) => {
+    setIsLoading(true);
+    try {
+      const { data, error } = await supabase.functions.invoke('create-payment-intent', {
+        body: { 
+          bookingId,
+          amount,
+          currency: 'usd'
+        }
+      });
+
+      if (error) throw error;
+
+      return {
+        clientSecret: data?.clientSecret,
+        paymentIntentId: data?.clientSecret?.split('_secret_')[0]
+      };
+    } catch (error) {
+      console.error('Error creating payment intent:', error);
+      toast.error('Failed to create payment intent');
+      return { clientSecret: null, paymentIntentId: null };
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   return {
     createPaymentSession,
+    createPaymentIntent,
     isLoading
   };
 };

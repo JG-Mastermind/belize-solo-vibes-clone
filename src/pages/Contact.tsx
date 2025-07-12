@@ -71,7 +71,7 @@ const Contact = () => {
             <Button 
               onClick={scrollToForm}
               size="lg" 
-              className="bg-belize-orange-500 hover:bg-belize-orange-600 text-white px-8 py-3 text-lg font-semibold transition-all duration-300 hover:scale-105"
+              className="bg-orange-500 hover:bg-orange-600 text-white px-8 py-3 text-lg font-semibold transition-all duration-300 hover:scale-105"
             >
               Get In Touch
             </Button>
@@ -80,31 +80,31 @@ const Contact = () => {
       </section>
 
       {/* Contact Information Section */}
-      <section className="py-16 bg-belize-neutral-50" aria-labelledby="reach-us-heading">
+      <section className="py-16 bg-muted/20" aria-labelledby="reach-us-heading">
         <div className="container mx-auto px-4">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
             {/* Contact Details */}
             <div className="space-y-8">
               <div>
-                <h2 id="reach-us-heading" className="text-3xl font-playfair font-bold text-belize-neutral-900 mb-6">
+                <h2 id="reach-us-heading" className="text-3xl font-playfair font-bold text-foreground mb-6">
                   How to Reach Us
                 </h2>
-                <p className="text-belize-neutral-600 mb-8">
+                <p className="text-muted-foreground mb-8">
                   We're based in beautiful Belize and ready to help plan your perfect adventure. 
                   Our local expertise ensures you get the most authentic experience possible.
                 </p>
               </div>
 
               <div className="space-y-6">
-                <Card className="p-6 hover:shadow-lg transition-shadow">
+                <Card className="p-6 hover:shadow-lg transition-shadow bg-card">
                   <CardContent className="p-0">
                     <div className="flex items-start space-x-4">
-                      <div className="w-12 h-12 bg-belize-green-100 rounded-full flex items-center justify-center flex-shrink-0">
-                        <MapPin className="h-6 w-6 text-belize-green-600" />
+                      <div className="w-12 h-12 bg-green-100 dark:bg-green-900/30 rounded-full flex items-center justify-center flex-shrink-0">
+                        <MapPin className="h-6 w-6 text-green-600" />
                       </div>
                       <div>
-                        <h3 className="font-semibold text-belize-neutral-900 mb-1">Belize Office</h3>
-                        <p className="text-belize-neutral-600">
+                        <h3 className="font-semibold text-foreground mb-1">Belize Office</h3>
+                        <p className="text-muted-foreground">
                           San Pedro, Ambergris Caye<br />
                           Belize, Central America
                         </p>
@@ -113,15 +113,15 @@ const Contact = () => {
                   </CardContent>
                 </Card>
 
-                <Card className="p-6 hover:shadow-lg transition-shadow">
+                <Card className="p-6 hover:shadow-lg transition-shadow bg-card">
                   <CardContent className="p-0">
                     <div className="flex items-start space-x-4">
-                      <div className="w-12 h-12 bg-belize-blue-100 rounded-full flex items-center justify-center flex-shrink-0">
-                        <Phone className="h-6 w-6 text-belize-blue-600" />
+                      <div className="w-12 h-12 bg-blue-100 dark:bg-blue-900/30 rounded-full flex items-center justify-center flex-shrink-0">
+                        <Phone className="h-6 w-6 text-blue-600" />
                       </div>
                       <div>
-                        <h3 className="font-semibold text-belize-neutral-900 mb-1">Phone</h3>
-                        <p className="text-belize-neutral-600">
+                        <h3 className="font-semibold text-foreground mb-1">Phone</h3>
+                        <p className="text-muted-foreground">
                           Toll-Free: +1-800-XXX-XXXX<br />
                           Belize Local: +501-XXX-XXXX
                         </p>
@@ -130,15 +130,15 @@ const Contact = () => {
                   </CardContent>
                 </Card>
 
-                <Card className="p-6 hover:shadow-lg transition-shadow">
+                <Card className="p-6 hover:shadow-lg transition-shadow bg-card">
                   <CardContent className="p-0">
                     <div className="flex items-start space-x-4">
-                      <div className="w-12 h-12 bg-belize-orange-100 rounded-full flex items-center justify-center flex-shrink-0">
-                        <Mail className="h-6 w-6 text-belize-orange-600" />
+                      <div className="w-12 h-12 bg-orange-100 dark:bg-orange-900/30 rounded-full flex items-center justify-center flex-shrink-0">
+                        <Mail className="h-6 w-6 text-orange-600" />
                       </div>
                       <div>
-                        <h3 className="font-semibold text-belize-neutral-900 mb-1">Email</h3>
-                        <p className="text-belize-neutral-600">
+                        <h3 className="font-semibold text-foreground mb-1">Email</h3>
+                        <p className="text-muted-foreground">
                           hello@belizevibes.com<br />
                           booking@belizevibes.com
                         </p>
@@ -147,15 +147,15 @@ const Contact = () => {
                   </CardContent>
                 </Card>
 
-                <Card className="p-6 hover:shadow-lg transition-shadow">
+                <Card className="p-6 hover:shadow-lg transition-shadow bg-card">
                   <CardContent className="p-0">
                     <div className="flex items-start space-x-4">
-                      <div className="w-12 h-12 bg-belize-green-100 rounded-full flex items-center justify-center flex-shrink-0">
-                        <Clock className="h-6 w-6 text-belize-green-600" />
+                      <div className="w-12 h-12 bg-green-100 dark:bg-green-900/30 rounded-full flex items-center justify-center flex-shrink-0">
+                        <Clock className="h-6 w-6 text-green-600" />
                       </div>
                       <div>
-                        <h3 className="font-semibold text-belize-neutral-900 mb-1">Office Hours</h3>
-                        <p className="text-belize-neutral-600">
+                        <h3 className="font-semibold text-foreground mb-1">Office Hours</h3>
+                        <p className="text-muted-foreground">
                           Monday - Friday: 8:00 AM - 6:00 PM (Belize Time)<br />
                           Saturday: 9:00 AM - 4:00 PM<br />
                           Sunday: Closed
@@ -169,9 +169,9 @@ const Contact = () => {
 
             {/* Map Placeholder */}
             <div className="lg:order-last">
-              <div className="bg-belize-neutral-200 rounded-lg h-96 lg:h-full min-h-[400px] flex items-center justify-center">
-                <div className="text-center text-belize-neutral-600">
-                  <MapPin className="h-12 w-12 mx-auto mb-4 text-belize-green-500" />
+              <div className="bg-muted rounded-lg h-96 lg:h-full min-h-[400px] flex items-center justify-center">
+                <div className="text-center text-muted-foreground">
+                  <MapPin className="h-12 w-12 mx-auto mb-4 text-primary" />
                   <p className="text-lg font-semibold mb-2">Interactive Map</p>
                   <p className="text-sm">Google Maps integration coming soon</p>
                 </div>
@@ -182,35 +182,35 @@ const Contact = () => {
       </section>
 
       {/* Contact Form Section */}
-      <section id="contact-form" className="py-16 bg-white" aria-labelledby="form-heading">
+      <section id="contact-form" className="py-16 bg-background" aria-labelledby="form-heading">
         <div className="container mx-auto px-4">
           <div className="max-w-2xl mx-auto">
             <div className="text-center mb-12">
-              <h2 id="form-heading" className="text-3xl font-playfair font-bold text-belize-neutral-900 mb-4">
+              <h2 id="form-heading" className="text-3xl font-playfair font-bold text-foreground mb-4">
                 Send Us a Message
               </h2>
-              <p className="text-belize-neutral-600">
+              <p className="text-muted-foreground">
                 Whether you're planning your first Belize adventure or have specific questions about safety and solo travel, we're here to help.
               </p>
             </div>
 
             {showSuccess && (
-              <div role="alert" className="mb-8 p-4 bg-belize-green-100 border border-belize-green-300 rounded-lg animate-fade-in">
+              <div role="alert" className="mb-8 p-4 bg-green-100 dark:bg-green-900/30 border border-green-300 dark:border-green-700 rounded-lg animate-fade-in">
                 <div className="flex items-center">
-                  <div className="w-6 h-6 bg-belize-green-500 rounded-full flex items-center justify-center mr-3">
+                  <div className="w-6 h-6 bg-green-500 rounded-full flex items-center justify-center mr-3">
                     <span className="text-white text-sm">✓</span>
                   </div>
-                  <p className="text-belize-green-800 font-semibold">
+                  <p className="text-green-800 dark:text-green-200 font-semibold">
                     Thank you! Your message has been sent successfully. We'll get back to you within 24 hours.
                   </p>
                 </div>
               </div>
             )}
 
-            <Card className="p-8 shadow-lg">
+            <Card className="p-8 shadow-lg bg-card">
               <form onSubmit={handleSubmit} className="space-y-6">
                 <div className="space-y-2">
-                  <Label htmlFor="fullName" className="text-belize-neutral-800 font-semibold">
+                  <Label htmlFor="fullName" className="text-foreground font-semibold">
                     Full Name *
                   </Label>
                   <Input
@@ -219,13 +219,13 @@ const Contact = () => {
                     value={formData.fullName}
                     onChange={handleInputChange}
                     required
-                    className="w-full p-3 rounded-lg border border-belize-neutral-300 focus:ring-2 focus:ring-belize-green-500 focus:border-transparent"
+                    className="w-full p-3 rounded-lg border border-border focus:ring-2 focus:ring-primary focus:border-transparent"
                     placeholder="Enter your full name"
                   />
                 </div>
 
                 <div className="space-y-2">
-                  <Label htmlFor="email" className="text-belize-neutral-800 font-semibold">
+                  <Label htmlFor="email" className="text-foreground font-semibold">
                     Email Address *
                   </Label>
                   <Input
@@ -235,13 +235,13 @@ const Contact = () => {
                     value={formData.email}
                     onChange={handleInputChange}
                     required
-                    className="w-full p-3 rounded-lg border border-belize-neutral-300 focus:ring-2 focus:ring-belize-green-500 focus:border-transparent"
+                    className="w-full p-3 rounded-lg border border-border focus:ring-2 focus:ring-primary focus:border-transparent"
                     placeholder="your.email@example.com"
                   />
                 </div>
 
                 <div className="space-y-2">
-                  <Label htmlFor="subject" className="text-belize-neutral-800 font-semibold">
+                  <Label htmlFor="subject" className="text-foreground font-semibold">
                     Subject
                   </Label>
                   <select
@@ -249,7 +249,7 @@ const Contact = () => {
                     name="subject"
                     value={formData.subject}
                     onChange={handleInputChange}
-                    className="w-full p-3 rounded-lg border border-belize-neutral-300 focus:ring-2 focus:ring-belize-green-500 focus:border-transparent bg-white"
+                    className="w-full p-3 rounded-lg border border-border focus:ring-2 focus:ring-primary focus:border-transparent bg-background"
                   >
                     <option value="General">General Inquiry</option>
                     <option value="Booking">Booking Question</option>
@@ -259,7 +259,7 @@ const Contact = () => {
                 </div>
 
                 <div className="space-y-2">
-                  <Label htmlFor="message" className="text-belize-neutral-800 font-semibold">
+                  <Label htmlFor="message" className="text-foreground font-semibold">
                     Message *
                   </Label>
                   <Textarea
@@ -269,7 +269,7 @@ const Contact = () => {
                     onChange={handleInputChange}
                     required
                     rows={6}
-                    className="w-full p-3 rounded-lg border border-belize-neutral-300 focus:ring-2 focus:ring-belize-green-500 focus:border-transparent resize-vertical"
+                    className="w-full p-3 rounded-lg border border-border focus:ring-2 focus:ring-primary focus:border-transparent resize-vertical"
                     placeholder="Tell us about your Belize adventure plans, any questions you have, or how we can help..."
                   />
                 </div>
@@ -277,7 +277,7 @@ const Contact = () => {
                 <Button
                   type="submit"
                   disabled={isSubmitting}
-                  className="w-full bg-belize-orange-500 hover:bg-belize-orange-600 text-white font-semibold py-3 px-6 rounded-lg transition-all duration-300 hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100"
+                  className="w-full bg-orange-500 hover:bg-orange-600 text-white font-semibold py-3 px-6 rounded-lg transition-all duration-300 hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100"
                 >
                   {isSubmitting ? 'Sending Message...' : 'Send Message'}
                 </Button>

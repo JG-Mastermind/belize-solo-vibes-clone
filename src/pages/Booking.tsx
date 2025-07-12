@@ -33,9 +33,12 @@ const bookingFormSchema = z.object({
   email: z.string().email("Please enter a valid email address"),
   phone: z.string().min(10, "Phone number must be at least 10 digits"),
   numberOfTravelers: z.coerce.number().min(1, "Must have at least 1 traveler").max(20, "Maximum 20 travelers"),
+  specialRequests: z.string().optional(),
 });
 
-type BookingFormData = z.infer<typeof bookingFormSchema>;
+type BookingFormData = z.infer<typeof bookingFormSchema> & {
+  specialRequests?: string;
+};
 
 const steps = ["Select Date", "Your Info", "Payment", "Confirmation"];
 
@@ -67,10 +70,26 @@ const Booking = () => {
         .from('adventures')
         .select('*')
         .eq('id', id)
+        .eq('is_active', true)
         .single();
       
-      if (error) throw error;
-      return data;
+      if (error) {
+        console.warn('Adventure not found in database:', id);
+        return null;
+      }
+      
+      // Transform to expected format
+      return {
+        id: data.id,
+        title: data.title,
+        description: data.description,
+        price_per_person: data.price_per_person || 0,
+        location: data.location,
+        duration: data.duration_hours ? `${data.duration_hours} hours` : 'Full Day',
+        image: data.image_urls?.[0] || '',
+        created_at: data.created_at,
+        updated_at: data.updated_at
+      };
     },
     enabled: !!id
   });
@@ -89,6 +108,7 @@ const Booking = () => {
       email: user?.email || "",
       phone: "",
       numberOfTravelers: 1,
+      specialRequests: "",
     },
   });
 
@@ -104,30 +124,90 @@ const Booking = () => {
       return;
     }
 
-    // Use the proper adventure ID (either UUID from DB or local ID for fallback)
-    const adventureId = dbAdventure?.id || (localAdventure ? 
-      `550e8400-e29b-41d4-a716-44665544000${localAdventure.id}` : // Convert numeric to UUID format
-      '550e8400-e29b-41d4-a716-446655440001' // Default fallback
-    );
+    if (!user) {
+      toast.error('Please sign in to continue');
+      return;
+    }
 
-    const booking = await createBooking({
-      adventureId: adventureId,
-      bookingDate: data.bookingDate,
-      fullName: data.fullName,
-      email: data.email,
-      phone: data.phone,
-      numberOfTravelers: data.numberOfTravelers
-    });
+    try {
+      // Use the proper adventure ID (either UUID from DB or local ID for fallback)
+      const adventureId = dbAdventure?.id || (localAdventure ? 
+        `550e8400-e29b-41d4-a716-44665544000${localAdventure.id}` : // Convert numeric to UUID format
+        '550e8400-e29b-41d4-a716-446655440001' // Default fallback
+      );
 
-    if (booking) {
-      setCreatedBooking(booking);
+      // Calculate total amount, handling both database and local adventure formats
+      const pricePerPerson = adventure.price_per_person || 
+        (localAdventure ? parseFloat(localAdventure.price.replace('$', '')) : 0);
+      const totalAmount = pricePerPerson * data.numberOfTravelers;
+
+      // Create booking directly with Supabase
+      const { data: bookingData, error } = await supabase
+        .from('bookings')
+        .insert({
+          user_id: user.id,
+          adventure_id: adventureId,
+          booking_date: data.bookingDate.toISOString().split('T')[0],
+          participants: data.numberOfTravelers,
+          total_amount: totalAmount,
+          special_requests: data.specialRequests || null,
+          status: 'pending',
+          payment_status: 'pending'
+        })
+        .select()
+        .single();
+
+      if (error) {
+        console.error('Error creating booking:', error);
+        toast.error('Failed to create booking. Please try again.');
+        return;
+      }
+
+      setCreatedBooking(bookingData);
       setCurrentStep(2); // Move to payment step
+      toast.success('Booking created! Please complete payment.');
+    } catch (error) {
+      console.error('Error in booking submission:', error);
+      toast.error('An error occurred. Please try again.');
     }
   };
 
-  const handlePaymentSuccess = () => {
-    setCurrentStep(3); // Move to confirmation step
-    toast.success('Booking confirmed! Check your email for details.');
+  const handlePaymentSuccess = async (paymentIntentId?: string) => {
+    try {
+      if (createdBooking && paymentIntentId) {
+        // Update booking with payment confirmation
+        const { error } = await supabase
+          .from('bookings')
+          .update({
+            status: 'confirmed',
+            payment_status: 'paid',
+            payment_intent_id: paymentIntentId
+          })
+          .eq('id', createdBooking.id);
+
+        if (error) {
+          console.error('Error updating booking:', error);
+          toast.error('Payment successful but booking update failed');
+        }
+      }
+      
+      setCurrentStep(3); // Move to confirmation step
+      toast.success('Booking confirmed! Check your email for details.');
+      
+      // Redirect to confirmation page after a short delay
+      setTimeout(() => {
+        navigate('/confirmation', { 
+          state: { 
+            booking: createdBooking,
+            adventure: adventure,
+            formData: form.getValues()
+          }
+        });
+      }, 2000);
+    } catch (error) {
+      console.error('Error in payment success handler:', error);
+      toast.error('Payment successful but confirmation failed');
+    }
   };
 
   if (isLoadingAdventure) {
@@ -187,7 +267,8 @@ const Booking = () => {
         </div>
 
         <Form {...form}>
-          <div className="mb-8">
+          <form onSubmit={form.handleSubmit(onSubmit)}>
+            <div className="mb-8">
             <h3 className="text-xl font-semibold mb-4">Current Step: {currentStepName}</h3>
             
             {currentStep === 0 && (
@@ -213,7 +294,7 @@ const Booking = () => {
             )}
             
             {currentStep === 1 && (
-              <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+              <div className="space-y-6">
                 {!isAuthenticated && (
                   <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4 mb-6">
                     <p className="text-yellow-800">Please sign in to continue with your booking.</p>
@@ -290,14 +371,32 @@ const Booking = () => {
                   )}
                 />
                 
+                <FormField
+                  control={form.control}
+                  name="specialRequests"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Special Requests (Optional)</FormLabel>
+                      <FormControl>
+                        <textarea 
+                          className="w-full p-3 border border-gray-300 rounded-md resize-vertical min-h-[80px]"
+                          placeholder="Any special dietary requirements, accessibility needs, or other requests..."
+                          {...field}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                
                 <Button 
-                  type="submit" 
+                  onClick={form.handleSubmit(onSubmit)}
                   className="w-full"
                   disabled={isCreatingBooking || !isAuthenticated}
                 >
                   {isCreatingBooking ? "Creating Booking..." : "Continue to Payment"}
                 </Button>
-              </form>
+              </div>
             )}
             
             {currentStep === 2 && createdBooking && (
@@ -309,7 +408,8 @@ const Booking = () => {
                     participants: createdBooking.participants,
                     totalAmount: createdBooking.total_amount,
                     fullName: form.getValues("fullName"),
-                    email: form.getValues("email")
+                    email: form.getValues("email"),
+                    bookingId: createdBooking.id
                   }}
                   onPaymentSuccess={handlePaymentSuccess}
                   isLoading={isCreatingPayment}
@@ -362,7 +462,8 @@ const Booking = () => {
                 </div>
               </div>
             )}
-          </div>
+            </div>
+          </form>
         </Form>
 
         {/* Navigation buttons */}

@@ -15,6 +15,7 @@ import Booking from "./pages/Booking";
 import BookingCheckout from "./pages/BookingCheckout";
 import AdventureDetail from "./pages/AdventureDetail";
 import SuccessPage from "./pages/booking/success";
+import Confirmation from "./pages/Confirmation";
 import NotFound from "./pages/NotFound";
 import AuthCallback from "./pages/auth/callback";
 import Header from "./components/Header";
@@ -55,6 +56,7 @@ const App = () => (
               <Route path="adventure/:id" element={<AdventureDetail />} />
               <Route path="booking/:id" element={<BookingCheckout />} />
               <Route path="booking/success" element={<SuccessPage />} />
+              <Route path="confirmation" element={<Confirmation />} />
               <Route path="auth/callback" element={<AuthCallback />} />
               <Route path="*" element={<NotFound />} />
             </Route>

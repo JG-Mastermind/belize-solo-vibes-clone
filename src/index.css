@@ -107,8 +107,14 @@
     @apply border-border;
   }
 
+  html,
   body {
     @apply bg-background text-foreground font-inter;
+  }
+
+  html.dark,
+  body.dark {
+    @apply bg-background text-foreground;
   }
 
   h1, h2, h3, h4, h5, h6 {

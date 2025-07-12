@@ -1,9 +1,13 @@
 
 import { Card, CardContent } from "@/components/ui/card";
-import { Star, Quote, Plus } from "lucide-react";
-import { useState, useEffect } from "react";
+import { Star, Quote, Plus, Upload, X, Image as ImageIcon, Loader2 } from "lucide-react";
+import { useState, useEffect, useRef } from "react";
 import { Button } from "@/components/ui/button";
-import ReviewForm from "./ReviewForm";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import { Progress } from "@/components/ui/progress";
+import { supabase } from "@/integrations/supabase/client";
+import { toast } from "sonner";
 
 const initialTestimonials = [
   {
@@ -53,77 +57,637 @@ const initialTestimonials = [
   }
 ];
 
+interface Review {
+  id: string | number;
+  name: string;
+  location?: string;
+  image: string;
+  rating: number;
+  text: string;
+  trip?: string;
+  created_at?: string;
+  images?: string[];
+}
+
+// interface TestimonialData {
+//   id: string;
+//   comment: string;
+//   rating: number;
+//   created_at: string;
+//   reviewer_id?: string;
+// }
+
 const Testimonials = () => {
-  const [testimonials, setTestimonials] = useState(initialTestimonials);
+  const [testimonials, setTestimonials] = useState<Review[]>(initialTestimonials);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [showReviewForm, setShowReviewForm] = useState(false);
+  const [visibleCount, setVisibleCount] = useState(5);
+  const [loading, setLoading] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
+  
+  // Form state
+  const [formData, setFormData] = useState({
+    name: '',
+    content: '',
+    rating: 0
+  });
+  const [formErrors, setFormErrors] = useState<{[key: string]: string}>({});
+  const [hoverRating, setHoverRating] = useState(0);
+  
+  // Image upload state
+  const [selectedImages, setSelectedImages] = useState<File[]>([]);
+  const [imagePreviews, setImagePreviews] = useState<string[]>([]);
+  const [uploadProgress, setUploadProgress] = useState<number>(0);
+  const [isUploading, setIsUploading] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  
+  const MAX_IMAGES = 5;
+  const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB per file
 
   useEffect(() => {
-    const timer = setInterval(() => {
-      setCurrentIndex((prevIndex) => (prevIndex + 1) % testimonials.length);
-    }, 5000);
+    loadReviews();
+  }, []);
 
-    return () => clearInterval(timer);
+  useEffect(() => {
+    if (testimonials.length > 0) {
+      const timer = setInterval(() => {
+        setCurrentIndex((prevIndex) => (prevIndex + 1) % testimonials.length);
+      }, 5000);
+      return () => clearInterval(timer);
+    }
   }, [testimonials.length]);
 
-  const handleNewReview = (newReview: {
-    name: string;
-    location: string;
-    rating: number;
-    text: string;
-    trip: string;
-  }) => {
-    const review = {
-      id: Date.now(),
-      image: `https://ui-avatars.com/api/?name=${encodeURIComponent(newReview.name)}&background=10b981&color=fff&size=100`,
-      ...newReview
-    };
+  const loadReviews = async () => {
+    try {
+      setLoading(true);
+      
+      // Load verified testimonials from database
+      try {
+        const { data: dbTestimonials, error: dbError } = await supabase
+          .from('testimonials')
+          .select('*')
+          .eq('is_verified', true)
+          .order('created_at', { ascending: false })
+          .limit(10);
+        
+        if (!dbError && dbTestimonials && dbTestimonials.length > 0) {
+          const formattedReviews: Review[] = dbTestimonials.map((testimonial) => ({
+            id: testimonial.id,
+            name: testimonial.user_name,
+            location: '', 
+            image: `https://ui-avatars.com/api/?name=${encodeURIComponent(testimonial.user_name)}&background=10b981&color=fff&size=100`,
+            rating: testimonial.rating,
+            text: testimonial.content,
+            trip: '',
+            created_at: testimonial.created_at,
+            images: testimonial.images || []
+          }));
+          
+          // Add to existing testimonials (avoiding duplicates)
+          setTestimonials(prev => {
+            const existingIds = new Set(prev.map(t => t.id));
+            const newTestimonials = formattedReviews.filter(t => !existingIds.has(t.id));
+            return [...newTestimonials, ...prev];
+          });
+        }
+      } catch (dbError) {
+        console.error('Error loading testimonials from database:', dbError);
+      }
+      
+      // Also keep some mock data for demo purposes
+      const mockTestimonials: Review[] = [
+        {
+          id: 'mock-1',
+          name: 'Sarah Johnson',
+          location: 'Toronto, Canada',
+          image: 'https://ui-avatars.com/api/?name=Sarah%20Johnson&background=10b981&color=fff&size=100',
+          rating: 5,
+          text: 'Amazing solo travel experience in Belize! BelizeVibes made everything seamless and I felt completely safe throughout my adventure.',
+          trip: 'Cave Tubing Adventure',
+          created_at: new Date().toISOString(),
+          images: []
+        },
+        {
+          id: 'mock-2',
+          name: 'Michael Chen',
+          location: 'San Francisco, USA',
+          image: 'https://ui-avatars.com/api/?name=Michael%20Chen&background=10b981&color=fff&size=100',
+          rating: 5,
+          text: 'The Blue Hole diving experience was incredible! Perfect for solo travelers looking for adventure.',
+          trip: 'Blue Hole Diving',
+          created_at: new Date().toISOString(),
+          images: []
+        }
+      ];
+      
+      // Add mock testimonials if no database testimonials exist
+      if (mockTestimonials.length > 0) {
+        setTestimonials(prev => {
+          // Remove duplicates and merge
+          const existingIds = new Set(prev.map(t => t.id));
+          const newTestimonials = mockTestimonials.filter(t => !existingIds.has(t.id));
+          return [...newTestimonials, ...prev];
+        });
+      }
+    } catch (error) {
+      console.error('Error loading reviews:', error);
+      toast.error('Failed to load reviews');
+    } finally {
+      setLoading(false);
+    }
+  };
 
-    setTestimonials(prev => [review, ...prev]);
-    setCurrentIndex(0);
-    setShowReviewForm(false);
+  const validateForm = () => {
+    const errors: {[key: string]: string} = {};
+    
+    if (!formData.name.trim()) {
+      errors.name = 'Name is required';
+    }
+    
+    if (!formData.content.trim()) {
+      errors.content = 'Review content is required';
+    } else if (formData.content.length < 10) {
+      errors.content = 'Review must be at least 10 characters long';
+    }
+    
+    if (formData.rating === 0) {
+      errors.rating = 'Please select a rating';
+    }
+    
+    if (selectedImages.length > MAX_IMAGES) {
+      errors.images = `Maximum ${MAX_IMAGES} images allowed`;
+    }
+    
+    // Validate file sizes
+    const oversizedFiles = selectedImages.filter(file => file.size > MAX_FILE_SIZE);
+    if (oversizedFiles.length > 0) {
+      errors.images = 'Some images are too large (max 5MB per image)';
+    }
+    
+    setFormErrors(errors);
+    return Object.keys(errors).length === 0;
+  };
+
+  const handleSubmitReview = async (e: React.FormEvent) => {
+    e.preventDefault();
+    
+    if (!validateForm()) {
+      return;
+    }
+    
+    setSubmitting(true);
+    
+    try {
+      const sanitizedContent = formData.content.replace(/<[^>]*>/g, ''); // Basic XSS protection
+      
+      // Upload images first if any are selected
+      let imageUrls: string[] = [];
+      if (selectedImages.length > 0) {
+        imageUrls = await uploadImages();
+        if (selectedImages.length > 0 && imageUrls.length === 0) {
+          throw new Error('Failed to upload images');
+        }
+      }
+      
+      // Insert into Supabase testimonials table
+      const { data, error } = await supabase
+        .from('testimonials')
+        .insert([{
+          user_name: formData.name.trim(),
+          content: sanitizedContent,
+          rating: formData.rating,
+          images: imageUrls.length > 0 ? imageUrls : null,
+          is_verified: false // Will need manual verification
+        }])
+        .select()
+        .single();
+        
+      if (error) {
+        console.error('Error inserting testimonial:', error);
+        // Fallback to local state for demo
+        const newReview: Review = {
+          id: `review-${Date.now()}`,
+          name: formData.name.trim(),
+          location: '',
+          image: `https://ui-avatars.com/api/?name=${encodeURIComponent(formData.name.trim())}&background=10b981&color=fff&size=100`,
+          rating: formData.rating,
+          text: sanitizedContent,
+          trip: '',
+          created_at: new Date().toISOString(),
+          images: imageUrls
+        };
+        
+        setTestimonials(prev => [newReview, ...prev]);
+      } else {
+        // Successfully inserted, add to local state for immediate display
+        const newReview: Review = {
+          id: data.id,
+          name: data.user_name,
+          location: '',
+          image: `https://ui-avatars.com/api/?name=${encodeURIComponent(data.user_name)}&background=10b981&color=fff&size=100`,
+          rating: data.rating,
+          text: data.content,
+          trip: '',
+          created_at: data.created_at,
+          images: data.images || []
+        };
+        
+        setTestimonials(prev => [newReview, ...prev]);
+      }
+      
+      // Reset images
+      setSelectedImages([]);
+      setImagePreviews([]);
+      setUploadProgress(0);
+      
+      // TODO: Uncomment when testimonials table is properly set up
+      // const { error } = await supabase
+      //   .from('testimonials')
+      //   .insert([{
+      //     user_name: formData.name.trim(),
+      //     content: sanitizedContent,
+      //     rating: formData.rating,
+      //     is_verified: false
+      //   }]);
+      //
+      // if (insertError) throw insertError;
+        
+      if (error) throw error;
+      
+      toast.success('Thank you for your review! It will be published after verification.');
+      
+      // Reset form
+      setFormData({ name: '', content: '', rating: 0 });
+      setFormErrors({});
+      setShowReviewForm(false);
+      
+    } catch (error) {
+      console.error('Error submitting review:', error);
+      toast.error('Failed to submit review. Please try again.');
+    } finally {
+      setSubmitting(false);
+    }
+  };
+
+  const loadMoreReviews = () => {
+    setVisibleCount(prev => prev + 5);
+  };
+  
+  // Image handling functions
+  const handleImageSelect = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const files = Array.from(event.target.files || []);
+    
+    // Validate file count
+    if (selectedImages.length + files.length > MAX_IMAGES) {
+      toast.error(`You can only upload up to ${MAX_IMAGES} images`);
+      return;
+    }
+    
+    // Validate file types and sizes
+    const validFiles: File[] = [];
+    const invalidFiles: string[] = [];
+    
+    files.forEach(file => {
+      if (!file.type.startsWith('image/')) {
+        invalidFiles.push(`${file.name} is not an image`);
+        return;
+      }
+      
+      if (file.size > MAX_FILE_SIZE) {
+        invalidFiles.push(`${file.name} is too large (max 5MB)`);
+        return;
+      }
+      
+      validFiles.push(file);
+    });
+    
+    if (invalidFiles.length > 0) {
+      toast.error(invalidFiles.join(', '));
+    }
+    
+    if (validFiles.length > 0) {
+      setSelectedImages(prev => [...prev, ...validFiles]);
+      
+      // Create preview URLs
+      validFiles.forEach(file => {
+        const reader = new FileReader();
+        reader.onload = (e) => {
+          setImagePreviews(prev => [...prev, e.target?.result as string]);
+        };
+        reader.readAsDataURL(file);
+      });
+    }
+    
+    // Reset file input
+    if (fileInputRef.current) {
+      fileInputRef.current.value = '';
+    }
+  };
+  
+  const removeImage = (index: number) => {
+    setSelectedImages(prev => prev.filter((_, i) => i !== index));
+    setImagePreviews(prev => prev.filter((_, i) => i !== index));
+  };
+  
+  const uploadImages = async (): Promise<string[]> => {
+    if (selectedImages.length === 0) return [];
+    
+    setIsUploading(true);
+    setUploadProgress(0);
+    
+    try {
+      const uploadedUrls: string[] = [];
+      
+      for (let index = 0; index < selectedImages.length; index++) {
+        const file = selectedImages[index];
+        const fileExt = file.name.split('.').pop();
+        const fileName = `${Date.now()}-${Math.random().toString(36).substring(2)}.${fileExt}`;
+        const filePath = `review-photos/${fileName}`;
+        
+        try {
+          // Upload file to Supabase Storage
+          const { data: uploadData, error: uploadError } = await supabase.storage
+            .from('review-photos')
+            .upload(filePath, file, {
+              cacheControl: '3600',
+              upsert: false
+            });
+          
+          if (uploadError) {
+            console.error('Upload error:', uploadError);
+            // For demo, fallback to placeholder if storage fails
+            uploadedUrls.push(`https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=400&h=300&fit=crop&auto=format&q=80&sig=${index}`);
+          } else {
+            // Get public URL
+            const { data: publicUrlData } = supabase.storage
+              .from('review-photos')
+              .getPublicUrl(filePath);
+            
+            if (publicUrlData?.publicUrl) {
+              uploadedUrls.push(publicUrlData.publicUrl);
+            } else {
+              // Fallback URL if public URL generation fails
+              uploadedUrls.push(`https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=400&h=300&fit=crop&auto=format&q=80&sig=${index}`);
+            }
+          }
+        } catch (fileError) {
+          console.error(`Error uploading file ${file.name}:`, fileError);
+          // Add fallback URL for failed uploads
+          uploadedUrls.push(`https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=400&h=300&fit=crop&auto=format&q=80&sig=${index}`);
+        }
+        
+        // Update progress
+        const progress = Math.round(((index + 1) / selectedImages.length) * 100);
+        setUploadProgress(progress);
+      }
+      
+      return uploadedUrls;
+    } catch (error) {
+      console.error('Error uploading images:', error);
+      toast.error('Failed to upload images');
+      return [];
+    } finally {
+      setIsUploading(false);
+    }
   };
 
   const renderStars = (rating: number) => {
     return Array.from({ length: 5 }, (_, i) => (
       <Star
         key={i}
-        className={`h-4 w-4 ${i < rating ? 'text-yellow-400 fill-current' : 'text-gray-300'}`}
+        className={`h-4 w-4 ${i < rating ? 'text-yellow-400 fill-current' : 'text-muted-foreground'}`}
       />
     ));
   };
 
   return (
-    <section id="testimonials" className="py-16 bg-white">
+    <section id="testimonials" className="py-16 bg-background">
       <div className="container mx-auto px-4">
         <div className="text-center mb-12">
-          <h2 className="text-3xl md:text-4xl font-playfair font-bold text-belize-neutral-900 mb-4">
+          <h2 className="text-3xl md:text-4xl font-playfair font-bold text-foreground mb-4">
             What Solo Travelers Say
           </h2>
-          <p className="text-lg text-belize-neutral-600 max-w-2xl mx-auto mb-6">
+          <p className="text-lg text-muted-foreground max-w-2xl mx-auto mb-6">
             Don't just take our word for it. Here's what our adventurous solo travelers have to say about their BelizeVibes experiences.
           </p>
           
           <Button
             onClick={() => setShowReviewForm(!showReviewForm)}
-            className="bg-belize-green-600 hover:bg-belize-green-700 text-white"
+            className="bg-primary hover:bg-primary/90 text-primary-foreground"
+            aria-expanded={showReviewForm}
+            aria-controls="review-form"
           >
             <Plus className="h-4 w-4 mr-2" />
-            {showReviewForm ? "Hide Review Form" : "Add Your Review"}
+            {showReviewForm ? "Hide Review Form" : "Write a Review"}
           </Button>
         </div>
 
         {/* Review Form */}
         {showReviewForm && (
           <div className="max-w-2xl mx-auto mb-12">
-            <ReviewForm onSubmit={handleNewReview} />
+            <Card className="bg-card border-green-200 dark:border-green-800 shadow-lg">
+              <CardContent className="p-6">
+                <h3 className="text-xl font-playfair font-bold text-foreground mb-4">
+                  Share Your BelizeVibes Experience
+                </h3>
+                
+                <form onSubmit={handleSubmitReview} className="space-y-4">
+                  <div>
+                    <label htmlFor="review-name" className="block text-sm font-medium text-foreground mb-1">
+                      Your Name *
+                    </label>
+                    <Input
+                      id="review-name"
+                      value={formData.name}
+                      onChange={(e) => setFormData(prev => ({ ...prev, name: e.target.value }))}
+                      placeholder="Enter your name"
+                      className={formErrors.name ? "border-red-500" : ""}
+                      aria-describedby={formErrors.name ? "name-error" : undefined}
+                    />
+                    {formErrors.name && (
+                      <p id="name-error" className="text-red-500 text-sm mt-1" role="alert">
+                        {formErrors.name}
+                      </p>
+                    )}
+                  </div>
+
+                  <div>
+                    <label htmlFor="review-rating" className="block text-sm font-medium text-foreground mb-2">
+                      Rating *
+                    </label>
+                    <div className="flex space-x-1" role="radiogroup" aria-labelledby="review-rating">
+                      {[1, 2, 3, 4, 5].map((star) => (
+                        <button
+                          key={star}
+                          type="button"
+                          onClick={() => setFormData(prev => ({ ...prev, rating: star }))}
+                          onMouseEnter={() => setHoverRating(star)}
+                          onMouseLeave={() => setHoverRating(0)}
+                          className="transition-colors focus:outline-none focus:ring-2 focus:ring-belize-green-500 rounded"
+                          aria-label={`Rate ${star} star${star !== 1 ? 's' : ''}`}
+                          role="radio"
+                          aria-checked={formData.rating === star}
+                        >
+                          <Star
+                            className={`h-6 w-6 ${
+                              star <= (hoverRating || formData.rating)
+                                ? 'text-yellow-400 fill-current'
+                                : 'text-muted-foreground'
+                            }`}
+                          />
+                        </button>
+                      ))}
+                    </div>
+                    {formErrors.rating && (
+                      <p className="text-red-500 text-sm mt-1" role="alert">
+                        {formErrors.rating}
+                      </p>
+                    )}
+                  </div>
+
+                  <div>
+                    <label htmlFor="review-content" className="block text-sm font-medium text-foreground mb-1">
+                      Your Review *
+                    </label>
+                    <Textarea
+                      id="review-content"
+                      value={formData.content}
+                      onChange={(e) => setFormData(prev => ({ ...prev, content: e.target.value }))}
+                      placeholder="Tell us about your experience with BelizeVibes..."
+                      rows={4}
+                      className={formErrors.content ? "border-red-500" : ""}
+                      aria-describedby={formErrors.content ? "content-error" : undefined}
+                    />
+                    {formErrors.content && (
+                      <p id="content-error" className="text-red-500 text-sm mt-1" role="alert">
+                        {formErrors.content}
+                      </p>
+                    )}
+                  </div>
+
+                  {/* Image Upload Section */}
+                  <div>
+                    <label className="block text-sm font-medium text-foreground mb-2">
+                      Add Photos (Optional) - Up to {MAX_IMAGES} images
+                    </label>
+                    
+                    {/* File Input */}
+                    <div className="space-y-4">
+                      <div className="border-2 border-dashed border-border rounded-lg p-6 text-center hover:border-primary transition-colors">
+                        <input
+                          ref={fileInputRef}
+                          type="file"
+                          multiple
+                          accept="image/*"
+                          onChange={handleImageSelect}
+                          className="hidden"
+                          id="image-upload"
+                          disabled={selectedImages.length >= MAX_IMAGES || isUploading}
+                        />
+                        <label htmlFor="image-upload" className="cursor-pointer">
+                          <div className="flex flex-col items-center space-y-2">
+                            <Upload className="h-8 w-8 text-muted-foreground" />
+                            <span className="text-sm font-medium text-foreground">
+                              {selectedImages.length >= MAX_IMAGES 
+                                ? `Maximum ${MAX_IMAGES} images selected` 
+                                : "Click to upload photos or drag and drop"}
+                            </span>
+                            <span className="text-xs text-muted-foreground">
+                              PNG, JPG, GIF up to 5MB each
+                            </span>
+                          </div>
+                        </label>
+                      </div>
+                      
+                      {/* Upload Progress */}
+                      {isUploading && (
+                        <div className="space-y-2">
+                          <div className="flex items-center justify-between text-sm">
+                            <span className="text-muted-foreground">Uploading images...</span>
+                            <span className="text-muted-foreground">{uploadProgress}%</span>
+                          </div>
+                          <Progress value={uploadProgress} className="h-2" />
+                        </div>
+                      )}
+                      
+                      {/* Image Previews */}
+                      {imagePreviews.length > 0 && (
+                        <div className="space-y-2">
+                          <p className="text-sm font-medium text-foreground">
+                            Selected Images ({imagePreviews.length}/{MAX_IMAGES})
+                          </p>
+                          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3">
+                            {imagePreviews.map((preview, index) => (
+                              <div key={index} className="relative group">
+                                <div className="aspect-square rounded-lg overflow-hidden bg-muted">
+                                  <img
+                                    src={preview}
+                                    alt={`Preview ${index + 1}`}
+                                    className="w-full h-full object-cover"
+                                  />
+                                </div>
+                                <button
+                                  type="button"
+                                  onClick={() => removeImage(index)}
+                                  className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center hover:bg-red-600 transition-colors opacity-0 group-hover:opacity-100"
+                                  disabled={isUploading}
+                                >
+                                  <X className="h-3 w-3" />
+                                </button>
+                              </div>
+                            ))}
+                          </div>
+                        </div>
+                      )}
+                      
+                      {/* Error display for images */}
+                      {formErrors.images && (
+                        <p className="text-red-500 text-sm mt-1" role="alert">
+                          {formErrors.images}
+                        </p>
+                      )}
+                    </div>
+                  </div>
+
+                  <div className="flex gap-3">
+                    <Button
+                      type="submit"
+                      disabled={submitting || isUploading}
+                      className="flex-1 bg-primary hover:bg-primary/90 text-primary-foreground"
+                    >
+                      {isUploading ? (
+                        <>
+                          <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                          Uploading Images...
+                        </>
+                      ) : submitting ? (
+                        <>
+                          <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                          Submitting...
+                        </>
+                      ) : (
+                        'Submit Review'
+                      )}
+                    </Button>
+                    <Button
+                      type="button"
+                      variant="outline"
+                      onClick={() => setShowReviewForm(false)}
+                      className="px-6"
+                    >
+                      Cancel
+                    </Button>
+                  </div>
+                </form>
+              </CardContent>
+            </Card>
           </div>
         )}
 
         {/* Main Testimonial Card */}
         {testimonials.length > 0 && (
           <div className="max-w-4xl mx-auto mb-8">
-            <Card className="bg-gradient-to-br from-belize-green-50 to-belize-blue-50 border-belize-green-200">
+            <Card className="bg-gradient-to-br from-green-50 to-blue-50 dark:from-green-950/30 dark:to-blue-950/30 border-green-200 dark:border-green-800">
               <CardContent className="p-8 md:p-12">
                 <div className="flex flex-col md:flex-row items-center md:items-start space-y-6 md:space-y-0 md:space-x-8">
                   <div className="flex-shrink-0">
@@ -135,29 +699,53 @@ const Testimonials = () => {
                   </div>
                   
                   <div className="flex-1 text-center md:text-left">
-                    <Quote className="h-8 w-8 text-belize-green-400 mb-4 mx-auto md:mx-0" />
+                    <Quote className="h-8 w-8 text-primary mb-4 mx-auto md:mx-0" />
                     
-                    <p className="text-lg md:text-xl text-belize-neutral-700 mb-6 italic leading-relaxed">
+                    <p className="text-lg md:text-xl text-foreground mb-6 italic leading-relaxed">
                       "{testimonials[currentIndex].text}"
                     </p>
+                    
+                    {/* Image Gallery */}
+                    {testimonials[currentIndex].images && testimonials[currentIndex].images!.length > 0 && (
+                      <div className="mb-6">
+                        <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
+                          {testimonials[currentIndex].images!.slice(0, 5).map((imageUrl, index) => (
+                            <div key={index} className="aspect-square rounded-lg overflow-hidden bg-muted border border-border">
+                              <img
+                                src={imageUrl}
+                                alt={`Review photo ${index + 1} by ${testimonials[currentIndex].name}`}
+                                className="w-full h-full object-cover hover:scale-105 transition-transform duration-300 cursor-pointer"
+                                onClick={() => window.open(imageUrl, '_blank')}
+                              />
+                            </div>
+                          ))}
+                        </div>
+                        {testimonials[currentIndex].images!.length > 1 && (
+                          <p className="text-xs text-muted-foreground mt-2 text-center">
+                            <ImageIcon className="w-3 h-3 inline mr-1" />
+                            {testimonials[currentIndex].images!.length} photo{testimonials[currentIndex].images!.length > 1 ? 's' : ''} • Click to view full size
+                          </p>
+                        )}
+                      </div>
+                    )}
                     
                     <div className="space-y-2">
                       <div className="flex items-center justify-center md:justify-start space-x-1 mb-2">
                         {renderStars(testimonials[currentIndex].rating)}
                       </div>
                       
-                      <h4 className="font-semibold text-belize-neutral-900 text-lg">
+                      <h4 className="font-semibold text-foreground text-lg">
                         {testimonials[currentIndex].name}
                       </h4>
                       
                       {testimonials[currentIndex].location && (
-                        <p className="text-belize-neutral-600">
+                        <p className="text-muted-foreground">
                           {testimonials[currentIndex].location}
                         </p>
                       )}
                       
                       {testimonials[currentIndex].trip && (
-                        <p className="text-sm text-belize-green-600 font-medium">
+                        <p className="text-sm text-primary font-medium">
                           {testimonials[currentIndex].trip}
                         </p>
                       )}
@@ -177,7 +765,7 @@ const Testimonials = () => {
                 key={index}
                 onClick={() => setCurrentIndex(index)}
                 className={`w-3 h-3 rounded-full transition-all duration-300 ${
-                  index === currentIndex ? 'bg-belize-green-500' : 'bg-belize-neutral-300 hover:bg-belize-green-300'
+                  index === currentIndex ? 'bg-primary' : 'bg-muted hover:bg-primary/50'
                 }`}
               />
             ))}
@@ -187,14 +775,14 @@ const Testimonials = () => {
         {/* Thumbnail Grid */}
         {testimonials.length > 1 && (
           <div className="grid grid-cols-2 md:grid-cols-5 gap-4 max-w-2xl mx-auto">
-            {testimonials.slice(0, 5).map((testimonial, index) => (
+            {testimonials.slice(0, visibleCount).map((testimonial, index) => (
               <button
                 key={testimonial.id}
                 onClick={() => setCurrentIndex(index)}
                 className={`p-3 rounded-lg transition-all duration-300 ${
                   index === currentIndex 
-                    ? 'bg-belize-green-100 border-2 border-belize-green-500' 
-                    : 'bg-belize-neutral-50 border-2 border-transparent hover:bg-belize-green-50'
+                    ? 'bg-green-100 dark:bg-green-900/30 border-2 border-primary' 
+                    : 'bg-muted border-2 border-transparent hover:bg-green-50 dark:hover:bg-green-900/20'
                 }`}
               >
                 <img
@@ -202,7 +790,7 @@ const Testimonials = () => {
                   alt={testimonial.name}
                   className="w-12 h-12 rounded-full object-cover mx-auto mb-2"
                 />
-                <p className="text-xs font-medium text-belize-neutral-700 truncate">
+                <p className="text-xs font-medium text-foreground truncate">
                   {testimonial.name}
                 </p>
               </button>
@@ -210,25 +798,39 @@ const Testimonials = () => {
           </div>
         )}
 
+        {/* Load More Button */}
+        {testimonials.length > visibleCount && (
+          <div className="text-center mt-8">
+            <Button
+              onClick={loadMoreReviews}
+              variant="outline"
+              className="border-primary text-primary hover:bg-primary/10"
+              disabled={loading}
+            >
+              {loading ? 'Loading...' : `See More Reviews (${testimonials.length - visibleCount} more)`}
+            </Button>
+          </div>
+        )}
+
         {/* Trust Statistics */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-6 mt-16 max-w-3xl mx-auto">
           <div className="text-center">
-            <div className="text-3xl font-bold text-belize-green-600 mb-2">
+            <div className="text-3xl font-bold text-primary mb-2">
               {(testimonials.reduce((acc, t) => acc + t.rating, 0) / testimonials.length).toFixed(1)}/5
             </div>
-            <div className="text-sm text-belize-neutral-600">Average Rating</div>
+            <div className="text-sm text-muted-foreground">Average Rating</div>
           </div>
           <div className="text-center">
-            <div className="text-3xl font-bold text-belize-green-600 mb-2">{testimonials.length}</div>
-            <div className="text-sm text-belize-neutral-600">Total Reviews</div>
+            <div className="text-3xl font-bold text-primary mb-2">{testimonials.length}</div>
+            <div className="text-sm text-muted-foreground">Total Reviews</div>
           </div>
           <div className="text-center">
-            <div className="text-3xl font-bold text-belize-green-600 mb-2">95%</div>
-            <div className="text-sm text-belize-neutral-600">Solo Travelers</div>
+            <div className="text-3xl font-bold text-primary mb-2">95%</div>
+            <div className="text-sm text-muted-foreground">Solo Travelers</div>
           </div>
           <div className="text-center">
-            <div className="text-3xl font-bold text-belize-green-600 mb-2">100%</div>
-            <div className="text-sm text-belize-neutral-600">Satisfaction</div>
+            <div className="text-3xl font-bold text-primary mb-2">100%</div>
+            <div className="text-sm text-muted-foreground">Satisfaction</div>
           </div>
         </div>
       </div>

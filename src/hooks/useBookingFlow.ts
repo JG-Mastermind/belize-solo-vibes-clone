@@ -12,6 +12,7 @@ export interface BookingData {
   email: string;
   phone: string;
   numberOfTravelers: number;
+  specialRequests?: string;
 }
 
 export const useBookingFlow = () => {
@@ -56,7 +57,9 @@ export const useBookingFlow = () => {
           booking_date: bookingData.bookingDate.toISOString().split('T')[0],
           participants: bookingData.numberOfTravelers,
           total_amount: totalAmount,
-          status: 'pending'
+          special_requests: bookingData.specialRequests || null,
+          status: 'pending',
+          payment_status: 'pending'
         })
         .select()
         .single();

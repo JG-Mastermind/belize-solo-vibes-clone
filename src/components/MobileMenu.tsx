@@ -10,8 +10,13 @@ import {
   SheetTrigger,
 } from '@/components/ui/sheet';
 import { Menu, Instagram, Youtube, Twitter, Facebook } from 'lucide-react';
+import { useAuth } from './auth/AuthProvider';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { Badge } from '@/components/ui/badge';
 
 const MobileMenu = () => {
+  const { user, signOut, getUserRole } = useAuth();
+  
   const navigationLinks = [
     { name: 'Home', path: '/' },
     { name: 'About', path: '/about' },
@@ -26,6 +31,14 @@ const MobileMenu = () => {
     { name: 'X', icon: Twitter, url: '#', color: 'text-blue-500' },
     { name: 'Facebook', icon: Facebook, url: '#', color: 'text-blue-600' },
   ];
+
+  const handleSignOut = async () => {
+    try {
+      await signOut();
+    } catch (error) {
+      console.error('Error signing out:', error);
+    }
+  };
 
   return (
     <Sheet>
@@ -43,6 +56,34 @@ const MobileMenu = () => {
         </SheetHeader>
         
         <div className="flex-1 flex flex-col justify-between py-8">
+          {/* User Profile Section (Mobile) */}
+          {user && (
+            <div className="mb-6 p-4 bg-muted/50 rounded-lg">
+              <div className="flex items-center gap-3 mb-3">
+                <Avatar className="h-12 w-12">
+                  <AvatarImage src={user.user_metadata?.avatar_url} />
+                  <AvatarFallback>
+                    {user.user_metadata?.first_name?.charAt(0)}{user.user_metadata?.last_name?.charAt(0)}
+                  </AvatarFallback>
+                </Avatar>
+                <div className="flex-1">
+                  <p className="text-sm font-medium">
+                    {user.user_metadata?.first_name} {user.user_metadata?.last_name}
+                  </p>
+                  <p className="text-xs text-muted-foreground">{user.email}</p>
+                </div>
+              </div>
+              <div className="flex items-center justify-between">
+                <Badge variant="secondary" className="text-xs">
+                  {getUserRole()?.charAt(0).toUpperCase()}{getUserRole()?.slice(1)}
+                </Badge>
+                <Button variant="outline" size="sm" onClick={handleSignOut}>
+                  Sign Out
+                </Button>
+              </div>
+            </div>
+          )}
+
           {/* Navigation Links */}
           <nav className="space-y-6">
             {navigationLinks.map((link) => (

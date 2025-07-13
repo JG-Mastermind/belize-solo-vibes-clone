@@ -51,10 +51,8 @@ const Header = () => {
 
           {/* Right side controls */}
           <div className="flex items-center space-x-3">
-            {/* User Profile - Hidden on small screens */}
-            <div className="hidden sm:block">
-              <UserProfile />
-            </div>
+            {/* User Profile - Now compact and shown on all screens */}
+            <UserProfile />
             
             {/* Mode Toggle */}
             <ModeToggle />

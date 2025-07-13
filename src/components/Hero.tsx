@@ -13,8 +13,8 @@ const Hero = () => {
         }}
       />
       
-      {/* Overlay */}
-      <div className="absolute inset-0 hero-gradient" />
+      {/* Overlay for text readability */}
+      <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/30 to-black/20" />
       
       {/* Content */}
       <div className="relative z-10 container mx-auto px-4 text-center text-white">
@@ -31,25 +31,25 @@ const Hero = () => {
 
           {/* Trust Elements */}
           <div className="flex flex-wrap justify-center gap-4 mb-8">
-            <div className="trust-badge">
-              <Star className="h-5 w-5 text-orange-500 mx-auto mb-1" />
-              <div className="text-sm font-semibold text-foreground">4.9/5 Rating</div>
-              <div className="text-xs text-muted-foreground">500+ Reviews</div>
+            <div className="bg-black/40 backdrop-blur-sm rounded-lg px-4 py-3 border border-white/20">
+              <Star className="h-5 w-5 text-orange-400 mx-auto mb-1" />
+              <div className="text-sm font-semibold text-white">4.9/5 Rating</div>
+              <div className="text-xs text-white/80">500+ Reviews</div>
             </div>
-            <div className="trust-badge">
-              <Users className="h-5 w-5 text-green-500 mx-auto mb-1" />
-              <div className="text-sm font-semibold text-foreground">Solo Friendly</div>
-              <div className="text-xs text-muted-foreground">Small Groups</div>
+            <div className="bg-black/40 backdrop-blur-sm rounded-lg px-4 py-3 border border-white/20">
+              <Users className="h-5 w-5 text-green-400 mx-auto mb-1" />
+              <div className="text-sm font-semibold text-white">Solo Friendly</div>
+              <div className="text-xs text-white/80">Small Groups</div>
             </div>
-            <div className="trust-badge">
-              <Shield className="h-5 w-5 text-blue-500 mx-auto mb-1" />
-              <div className="text-sm font-semibold text-foreground">Fully Insured</div>
-              <div className="text-xs text-muted-foreground">ATOL Protected</div>
+            <div className="bg-black/40 backdrop-blur-sm rounded-lg px-4 py-3 border border-white/20">
+              <Shield className="h-5 w-5 text-blue-400 mx-auto mb-1" />
+              <div className="text-sm font-semibold text-white">Fully Insured</div>
+              <div className="text-xs text-white/80">ATOL Protected</div>
             </div>
-            <div className="trust-badge">
-              <Leaf className="h-5 w-5 text-green-600 mx-auto mb-1" />
-              <div className="text-sm font-semibold text-foreground">Sustainable</div>
-              <div className="text-xs text-muted-foreground">Eco-Certified</div>
+            <div className="bg-black/40 backdrop-blur-sm rounded-lg px-4 py-3 border border-white/20">
+              <Leaf className="h-5 w-5 text-green-400 mx-auto mb-1" />
+              <div className="text-sm font-semibold text-white">Sustainable</div>
+              <div className="text-xs text-white/80">Eco-Certified</div>
             </div>
           </div>
 

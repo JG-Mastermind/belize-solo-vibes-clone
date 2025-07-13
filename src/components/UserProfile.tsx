@@ -5,8 +5,17 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
 import { SignInModal } from './auth/SignInModal';
 import { SignUpModal } from './auth/SignUpModal';
+import { User, LogOut, Settings } from 'lucide-react';
 import { toast } from 'sonner';
 
 export const UserProfile: React.FC = () => {
@@ -78,35 +87,50 @@ export const UserProfile: React.FC = () => {
   };
 
   return (
-    <div className="flex items-center gap-4">
-      <Card className="min-w-[200px]">
-        <CardHeader className="pb-3">
-          <div className="flex items-center gap-3">
-            <Avatar>
-              <AvatarImage src={userMetadata.avatar_url} />
-              <AvatarFallback>
-                {firstName.charAt(0)}{lastName.charAt(0)}
-              </AvatarFallback>
-            </Avatar>
-            <div>
-              <CardTitle className="text-sm">
-                {firstName} {lastName}
-              </CardTitle>
-              <p className="text-xs text-muted-foreground">{userEmail}</p>
-            </div>
+    <DropdownMenu>
+      <DropdownMenuTrigger asChild>
+        <Button variant="ghost" className="relative h-8 w-8 rounded-full">
+          <Avatar className="h-8 w-8">
+            <AvatarImage src={userMetadata.avatar_url} />
+            <AvatarFallback>
+              {firstName.charAt(0)}{lastName.charAt(0)}
+            </AvatarFallback>
+          </Avatar>
+        </Button>
+      </DropdownMenuTrigger>
+      <DropdownMenuContent className="w-56" align="end" forceMount>
+        <DropdownMenuLabel className="font-normal">
+          <div className="flex flex-col space-y-1">
+            <p className="text-sm font-medium leading-none">
+              {firstName} {lastName}
+            </p>
+            <p className="text-xs leading-none text-muted-foreground">
+              {userEmail}
+            </p>
           </div>
-        </CardHeader>
-        <CardContent className="pt-0">
-          <div className="flex items-center justify-between">
-            <Badge className={getRoleBadgeColor(userRole)}>
-              {capitalizeRole(userRole)}
-            </Badge>
-            <Button variant="outline" size="sm" onClick={handleSignOut}>
-              Sign Out
-            </Button>
-          </div>
-        </CardContent>
-      </Card>
-    </div>
+        </DropdownMenuLabel>
+        <DropdownMenuSeparator />
+        <DropdownMenuItem className="flex items-center justify-between">
+          <span>Role:</span>
+          <Badge className={getRoleBadgeColor(userRole)} variant="secondary">
+            {capitalizeRole(userRole)}
+          </Badge>
+        </DropdownMenuItem>
+        <DropdownMenuSeparator />
+        <DropdownMenuItem>
+          <User className="mr-2 h-4 w-4" />
+          <span>Profile</span>
+        </DropdownMenuItem>
+        <DropdownMenuItem>
+          <Settings className="mr-2 h-4 w-4" />
+          <span>Settings</span>
+        </DropdownMenuItem>
+        <DropdownMenuSeparator />
+        <DropdownMenuItem onClick={handleSignOut}>
+          <LogOut className="mr-2 h-4 w-4" />
+          <span>Sign out</span>
+        </DropdownMenuItem>
+      </DropdownMenuContent>
+    </DropdownMenu>
   );
 };

@@ -9,7 +9,7 @@ const Hero = () => {
       <div 
         className="absolute inset-0 bg-cover bg-center bg-no-repeat"
         style={{
-          backgroundImage: `url('https://images.unsplash.com/photo-1482938289607-e9573fc25ebb?w=1920&h=1080&fit=crop&crop=center')`
+          backgroundImage: `url('/images/belize-solo.jpg')`
         }}
       />
       
@@ -21,7 +21,7 @@ const Hero = () => {
         <div className="max-w-4xl mx-auto animate-fade-in">
           <h1 className="text-4xl md:text-6xl lg:text-7xl font-playfair font-bold mb-6 leading-tight">
             Discover Your Ultimate 
-            <span className="block text-belize-orange-500">Belize Adventure</span>
+            <span className="block text-orange-500">Belize Adventure</span>
           </h1>
           
           <p className="text-lg md:text-xl mb-8 max-w-2xl mx-auto opacity-90">
@@ -32,24 +32,24 @@ const Hero = () => {
           {/* Trust Elements */}
           <div className="flex flex-wrap justify-center gap-4 mb-8">
             <div className="trust-badge">
-              <Star className="h-5 w-5 text-belize-orange-500 mx-auto mb-1" />
-              <div className="text-sm font-semibold text-belize-neutral-800">4.9/5 Rating</div>
-              <div className="text-xs text-belize-neutral-600">500+ Reviews</div>
+              <Star className="h-5 w-5 text-orange-500 mx-auto mb-1" />
+              <div className="text-sm font-semibold text-foreground">4.9/5 Rating</div>
+              <div className="text-xs text-muted-foreground">500+ Reviews</div>
             </div>
             <div className="trust-badge">
-              <Users className="h-5 w-5 text-belize-green-500 mx-auto mb-1" />
-              <div className="text-sm font-semibold text-belize-neutral-800">Solo Friendly</div>
-              <div className="text-xs text-belize-neutral-600">Small Groups</div>
+              <Users className="h-5 w-5 text-green-500 mx-auto mb-1" />
+              <div className="text-sm font-semibold text-foreground">Solo Friendly</div>
+              <div className="text-xs text-muted-foreground">Small Groups</div>
             </div>
             <div className="trust-badge">
-              <Shield className="h-5 w-5 text-belize-blue-500 mx-auto mb-1" />
-              <div className="text-sm font-semibold text-belize-neutral-800">Fully Insured</div>
-              <div className="text-xs text-belize-neutral-600">ATOL Protected</div>
+              <Shield className="h-5 w-5 text-blue-500 mx-auto mb-1" />
+              <div className="text-sm font-semibold text-foreground">Fully Insured</div>
+              <div className="text-xs text-muted-foreground">ATOL Protected</div>
             </div>
             <div className="trust-badge">
-              <Leaf className="h-5 w-5 text-belize-green-600 mx-auto mb-1" />
-              <div className="text-sm font-semibold text-belize-neutral-800">Sustainable</div>
-              <div className="text-xs text-belize-neutral-600">Eco-Certified</div>
+              <Leaf className="h-5 w-5 text-green-600 mx-auto mb-1" />
+              <div className="text-sm font-semibold text-foreground">Sustainable</div>
+              <div className="text-xs text-muted-foreground">Eco-Certified</div>
             </div>
           </div>
 
@@ -57,14 +57,14 @@ const Hero = () => {
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Button 
               size="lg" 
-              className="bg-belize-orange-500 hover:bg-belize-orange-600 text-white px-8 py-3 text-lg font-semibold transition-all duration-300 hover:scale-105"
+              className="bg-orange-500 hover:bg-orange-600 text-white px-8 py-3 text-lg font-semibold transition-all duration-300 hover:scale-105"
             >
               Book Your Adventure
             </Button>
             <Button 
               size="lg" 
               variant="outline" 
-              className="border-white text-white hover:bg-white hover:text-belize-neutral-800 px-8 py-3 text-lg font-semibold transition-all duration-300"
+              className="border-white text-white hover:bg-white hover:text-foreground px-8 py-3 text-lg font-semibold transition-all duration-300"
             >
               View All Trips
             </Button>

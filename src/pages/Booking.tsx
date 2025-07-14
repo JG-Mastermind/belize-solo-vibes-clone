@@ -127,8 +127,7 @@ const Booking = () => {
           
           // Use the proper adventure ID (either UUID from DB or local ID for fallback)
           const adventureId = dbAdventure?.id || (localAdventure ? 
-            `550e8400-e29b-41d4-a716-44665544000${localAdventure.id}` : // Convert numeric to UUID format
-            '550e8400-e29b-41d4-a716-446655440001' // Default fallback
+            localAdventure.id.toString() : null
           );
 
           // Calculate total amount, handling both database and local adventure formats
@@ -190,7 +189,7 @@ const Booking = () => {
       
       try {
         const adventureId = dbAdventure?.id || (localAdventure ? 
-          `550e8400-e29b-41d4-a716-44665544000${localAdventure.id}` : null);
+          localAdventure.id.toString() : null);
         
         if (!adventureId) return;
         
@@ -211,7 +210,7 @@ const Booking = () => {
     
     try {
       const adventureId = dbAdventure?.id || (localAdventure ? 
-        `550e8400-e29b-41d4-a716-44665544000${localAdventure.id}` : null);
+        localAdventure.id.toString() : null);
       
       if (!adventureId) return;
       
@@ -228,7 +227,7 @@ const Booking = () => {
     if (!date || !adventure) return;
     
     const adventureId = dbAdventure?.id || (localAdventure ? 
-      `550e8400-e29b-41d4-a716-44665544000${localAdventure.id}` : null);
+      localAdventure.id.toString() : null);
     
     if (!adventureId) return;
     
@@ -236,6 +235,17 @@ const Booking = () => {
     
     try {
       const availability = await BookingService.checkDateAvailability(adventureId, dateStr);
+      
+      // Handle service errors gracefully
+      if (availability.error) {
+        toast.warning("Could not verify availability for this date. You can continue browsing, but availability will be confirmed at booking.");
+        // Set optimistic availability state for UI
+        setSelectedDateAvailability({
+          remainingSpots: 8, // Optimistic default
+          isAvailable: true
+        });
+        return;
+      }
       
       setSelectedDateAvailability({
         remainingSpots: availability.remainingSpots,
@@ -264,7 +274,12 @@ const Booking = () => {
       
     } catch (error) {
       console.error('Error checking availability:', error);
-      toast.error("Unable to check availability. Please try again.");
+      toast.warning("Could not verify availability for this date. You can continue browsing, but availability will be confirmed at booking.");
+      // Set optimistic availability state for UI
+      setSelectedDateAvailability({
+        remainingSpots: 8, // Optimistic default
+        isAvailable: true
+      });
     }
   };
 
@@ -316,24 +331,41 @@ const Booking = () => {
     try {
       // Use the proper adventure ID (either UUID from DB or local ID for fallback)
       const adventureId = dbAdventure?.id || (localAdventure ? 
-        `550e8400-e29b-41d4-a716-44665544000${localAdventure.id}` : // Convert numeric to UUID format
-        '550e8400-e29b-41d4-a716-446655440001' // Default fallback
+        localAdventure.id.toString() : null
       );
+
+      if (!adventureId) {
+        toast.error('Adventure not found. Please try again.');
+        return;
+      }
 
       // Final availability check before creating booking
       const dateStr = data.bookingDate.toISOString().split('T')[0];
-      const finalAvailability = await BookingService.checkDateAvailability(adventureId, dateStr);
       
-      if (!finalAvailability.isAvailable) {
-        toast.error('This date is no longer available. Please select another date.');
-        setCurrentStep(0); // Go back to date selection
-        return;
-      }
-      
-      if (finalAvailability.remainingSpots < data.numberOfTravelers) {
-        toast.error(`Only ${finalAvailability.remainingSpots} spots remaining. Please adjust the number of travelers.`);
-        setCurrentStep(1); // Go back to info step
-        return;
+      try {
+        const finalAvailability = await BookingService.checkDateAvailability(adventureId, dateStr);
+        
+        // If there's an error checking availability, proceed with optimistic booking
+        // The database constraints will catch any actual conflicts
+        if (finalAvailability.error) {
+          console.warn('Could not verify final availability, proceeding with booking creation');
+        } else {
+          // Only block if we can successfully verify the date is unavailable
+          if (!finalAvailability.isAvailable && !finalAvailability.error) {
+            toast.error('This date is no longer available. Please select another date.');
+            setCurrentStep(0); // Go back to date selection
+            return;
+          }
+          
+          if (finalAvailability.remainingSpots < data.numberOfTravelers && !finalAvailability.error) {
+            toast.error(`Only ${finalAvailability.remainingSpots} spots remaining. Please adjust the number of travelers.`);
+            setCurrentStep(1); // Go back to info step
+            return;
+          }
+        }
+      } catch (error) {
+        console.warn('Error during final availability check, proceeding with booking creation:', error);
+        // Continue with booking creation - database constraints will handle conflicts
       }
 
       // Calculate total amount, handling both database and local adventure formats

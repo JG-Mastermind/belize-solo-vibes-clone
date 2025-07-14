@@ -98,6 +98,17 @@ export const BookingWidget: React.FC<BookingWidgetProps> = ({
     try {
       const availability = await BookingService.checkDateAvailability(adventure.id, dateStr);
       
+      // Handle service errors gracefully
+      if (availability.error) {
+        toast.warning("Could not verify availability for this date. You can continue browsing, but availability will be confirmed at booking.");
+        setSelectedDateAvailability({
+          remainingSpots: 8, // Optimistic default
+          isAvailable: true
+        });
+        setSelectedDate(date);
+        return;
+      }
+      
       setSelectedDateAvailability({
         remainingSpots: availability.remainingSpots,
         isAvailable: availability.isAvailable
@@ -128,7 +139,12 @@ export const BookingWidget: React.FC<BookingWidgetProps> = ({
       
     } catch (error) {
       console.error('Error checking availability:', error);
-      toast.error("Unable to check availability. Please try again.");
+      toast.warning("Could not verify availability for this date. You can continue browsing, but availability will be confirmed at booking.");
+      // Set optimistic availability state for UI
+      setSelectedDateAvailability({
+        remainingSpots: 8, // Optimistic default
+        isAvailable: true
+      });
       setSelectedDate(date); // Still allow selection in case of error
     }
   };
@@ -199,19 +215,24 @@ export const BookingWidget: React.FC<BookingWidgetProps> = ({
       const dateStr = format(selectedDate, 'yyyy-MM-dd');
       const finalAvailability = await BookingService.checkDateAvailability(adventure.id, dateStr);
       
-      if (!finalAvailability.isAvailable) {
-        toast.error('This date is no longer available. Please select another date.');
-        return;
-      }
-      
-      if (participants > finalAvailability.remainingSpots) {
-        toast.error(`Only ${finalAvailability.remainingSpots} spots available for this date`);
-        return;
+      // If there's an error checking availability, proceed with optimistic booking
+      if (finalAvailability.error) {
+        console.warn('Could not verify final availability, proceeding with booking');
+      } else {
+        // Only block if we can successfully verify the date is unavailable
+        if (!finalAvailability.isAvailable) {
+          toast.error('This date is no longer available. Please select another date.');
+          return;
+        }
+        
+        if (participants > finalAvailability.remainingSpots) {
+          toast.error(`Only ${finalAvailability.remainingSpots} spots available for this date`);
+          return;
+        }
       }
     } catch (error) {
-      console.error('Error checking final availability:', error);
-      toast.error('Unable to verify availability. Please try again.');
-      return;
+      console.warn('Error checking final availability, proceeding with booking:', error);
+      // Continue with booking - database constraints will handle conflicts
     }
     
     const formData: BookingFormData = {

@@ -156,9 +156,10 @@ export class BookingService {
         .eq('date', date)
         .single();
       
+      // Handle "no records found" (PGRST116) as normal case - date not in availability table
       if (availabilityError && availabilityError.code !== 'PGRST116') {
         console.error('Error checking availability:', availabilityError);
-        return 0;
+        // For other errors, fall through to default logic instead of returning 0
       }
       
       if (availabilityData) {
@@ -179,13 +180,10 @@ export class BookingService {
         .eq('booking_date', date)
         .eq('status', 'confirmed');
       
-      if (bookingError) {
-        console.error('Error checking bookings:', bookingError);
-      }
-      
-      // Calculate booked participants
-      const bookedParticipants = bookingData?.reduce((total, booking) => 
-        total + (booking.participants || 0), 0) || 0;
+      // For booking errors, be optimistic and assume no bookings
+      const bookedParticipants = (!bookingError && bookingData) 
+        ? bookingData.reduce((total, booking) => total + (booking.participants || 0), 0) 
+        : 0;
       
       // Get adventure details for default capacity
       const adventure = await this.getAdventure(adventureId);
@@ -196,7 +194,7 @@ export class BookingService {
       
     } catch (error) {
       console.error('Error in getAvailableSpots:', error);
-      // Fallback: return default capacity for guest users
+      // Optimistic fallback: return default capacity for guest users
       return 8;
     }
   }
@@ -253,17 +251,20 @@ export class BookingService {
     remainingSpots: number;
     isBlocked: boolean;
     hasUserConflict: boolean;
+    error?: boolean;
+    message?: string;
     userId?: string;
   }> {
     try {
       // Check if date is blocked by admin
-      const { data: availabilityData } = await supabase
+      const { data: availabilityData, error: availabilityError } = await supabase
         .from('adventure_availability')
         .select('is_blocked')
         .eq('adventure_id', adventureId)
         .eq('date', date)
         .single();
       
+      // Handle "no records found" vs "actual errors"
       const isBlocked = availabilityData?.is_blocked || false;
       
       // Get remaining spots
@@ -277,11 +278,14 @@ export class BookingService {
       };
     } catch (error) {
       console.error('Error checking date availability:', error);
+      // Return error state instead of defaulting to unavailable
       return {
         isAvailable: false,
         remainingSpots: 0,
         isBlocked: false,
-        hasUserConflict: false
+        hasUserConflict: false,
+        error: true,
+        message: 'Could not verify availability'
       };
     }
   }

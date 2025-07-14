@@ -201,6 +201,91 @@ export class BookingService {
     }
   }
 
+  static async getDisabledDates(adventureId: string, userId?: string): Promise<string[]> {
+    try {
+      const disabledDates: string[] = [];
+      
+      // Get the next 365 days to check
+      const today = new Date();
+      const endDate = addDays(today, 365);
+      const startDate = format(today, 'yyyy-MM-dd');
+      const endDateStr = format(endDate, 'yyyy-MM-dd');
+      
+      // 1. Check for admin/guide blocked dates
+      const { data: blockedDates, error: blockedError } = await supabase
+        .from('adventure_availability')
+        .select('date')
+        .eq('adventure_id', adventureId)
+        .eq('is_blocked', true)
+        .gte('date', startDate)
+        .lte('date', endDateStr);
+      
+      if (!blockedError && blockedDates) {
+        disabledDates.push(...blockedDates.map(item => item.date));
+      }
+      
+      // 2. Check for user's existing bookings (prevent double-booking same day)
+      if (userId) {
+        const { data: userBookings, error: userBookingsError } = await supabase
+          .from('bookings')
+          .select('booking_date')
+          .eq('user_id', userId)
+          .eq('status', 'confirmed')
+          .gte('booking_date', startDate)
+          .lte('booking_date', endDateStr);
+        
+        if (!userBookingsError && userBookings) {
+          disabledDates.push(...userBookings.map(booking => booking.booking_date));
+        }
+      }
+      
+      // Remove duplicates and return
+      return [...new Set(disabledDates)];
+      
+    } catch (error) {
+      console.error('Error getting disabled dates:', error);
+      return [];
+    }
+  }
+
+  static async checkDateAvailability(adventureId: string, date: string): Promise<{
+    isAvailable: boolean;
+    remainingSpots: number;
+    isBlocked: boolean;
+    hasUserConflict: boolean;
+    userId?: string;
+  }> {
+    try {
+      // Check if date is blocked by admin
+      const { data: availabilityData } = await supabase
+        .from('adventure_availability')
+        .select('is_blocked')
+        .eq('adventure_id', adventureId)
+        .eq('date', date)
+        .single();
+      
+      const isBlocked = availabilityData?.is_blocked || false;
+      
+      // Get remaining spots
+      const remainingSpots = await this.getAvailableSpots(adventureId, date);
+      
+      return {
+        isAvailable: !isBlocked && remainingSpots > 0,
+        remainingSpots,
+        isBlocked,
+        hasUserConflict: false // This will be checked separately if userId is provided
+      };
+    } catch (error) {
+      console.error('Error checking date availability:', error);
+      return {
+        isAvailable: false,
+        remainingSpots: 0,
+        isBlocked: false,
+        hasUserConflict: false
+      };
+    }
+  }
+
   // Pricing Methods
   static calculatePricing(
     adventure: Adventure,

@@ -36,6 +36,11 @@ export const BookingWidget: React.FC<BookingWidgetProps> = ({
   const [availableSpots, setAvailableSpots] = useState<number>(0);
   const [isLoading, setIsLoading] = useState(false);
   const [showPromoInput, setShowPromoInput] = useState(false);
+  const [disabledDates, setDisabledDates] = useState<Date[]>([]);
+  const [selectedDateAvailability, setSelectedDateAvailability] = useState<{
+    remainingSpots: number;
+    isAvailable: boolean;
+  } | null>(null);
 
   // Available times for the selected date
   const availableTimes = [
@@ -53,6 +58,80 @@ export const BookingWidget: React.FC<BookingWidgetProps> = ({
   useEffect(() => {
     calculatePricing();
   }, [selectedDate, participants, appliedPromo]);
+
+  // Load disabled dates when component mounts or adventure changes
+  useEffect(() => {
+    const loadDisabledDates = async () => {
+      try {
+        const disabledDateStrings = await BookingService.getDisabledDates(adventure.id, user?.id);
+        const disabledDateObjects = disabledDateStrings.map(dateStr => new Date(dateStr));
+        setDisabledDates(disabledDateObjects);
+      } catch (error) {
+        console.error('Error loading disabled dates:', error);
+      }
+    };
+
+    loadDisabledDates();
+  }, [adventure.id, user?.id]);
+
+  // Function to refresh disabled dates (called after booking)
+  const refreshDisabledDates = async () => {
+    try {
+      const disabledDateStrings = await BookingService.getDisabledDates(adventure.id, user?.id);
+      const disabledDateObjects = disabledDateStrings.map(dateStr => new Date(dateStr));
+      setDisabledDates(disabledDateObjects);
+    } catch (error) {
+      console.error('Error refreshing disabled dates:', error);
+    }
+  };
+
+  // Function to handle date selection with availability checking
+  const handleDateSelection = async (date: Date | undefined) => {
+    if (!date) {
+      setSelectedDate(undefined);
+      setSelectedDateAvailability(null);
+      return;
+    }
+    
+    const dateStr = format(date, 'yyyy-MM-dd');
+    
+    try {
+      const availability = await BookingService.checkDateAvailability(adventure.id, dateStr);
+      
+      setSelectedDateAvailability({
+        remainingSpots: availability.remainingSpots,
+        isAvailable: availability.isAvailable
+      });
+      
+      // If the date is fully booked, show warning but allow selection for browsing
+      if (availability.remainingSpots <= 0 && !availability.isBlocked) {
+        toast.warning("This date is fully booked, but you can continue browsing trip details.");
+        setSelectedDate(date); // Set the date for browsing
+        // Don't return here - allow user to continue browsing
+      }
+      
+      // If the date is blocked by admin, prevent selection
+      if (availability.isBlocked) {
+        toast.error("This date is not available. Please select another date.");
+        setSelectedDate(date); // Still set the date so user can see it's selected
+        return;
+      }
+      
+      // If available, show success feedback
+      if (availability.isAvailable) {
+        const spotsMessage = availability.remainingSpots === 1 
+          ? "1 spot remaining" 
+          : `${availability.remainingSpots} spots remaining`;
+        toast.success(`Date selected! ${spotsMessage}`);
+        setSelectedDate(date);
+      }
+      
+    } catch (error) {
+      console.error('Error checking availability:', error);
+      toast.error("Unable to check availability. Please try again.");
+      setSelectedDate(date); // Still allow selection in case of error
+    }
+  };
 
   const checkAvailability = async () => {
     if (!selectedDate) return;
@@ -109,14 +188,29 @@ export const BookingWidget: React.FC<BookingWidgetProps> = ({
     }
   };
 
-  const handleBookNow = () => {
+  const handleBookNow = async () => {
     if (!selectedDate || !selectedTime || participants < 1) {
       toast.error('Please select date, time, and number of participants');
       return;
     }
     
-    if (participants > availableSpots) {
-      toast.error(`Only ${availableSpots} spots available for this date`);
+    // Perform final availability check before booking
+    try {
+      const dateStr = format(selectedDate, 'yyyy-MM-dd');
+      const finalAvailability = await BookingService.checkDateAvailability(adventure.id, dateStr);
+      
+      if (!finalAvailability.isAvailable) {
+        toast.error('This date is no longer available. Please select another date.');
+        return;
+      }
+      
+      if (participants > finalAvailability.remainingSpots) {
+        toast.error(`Only ${finalAvailability.remainingSpots} spots available for this date`);
+        return;
+      }
+    } catch (error) {
+      console.error('Error checking final availability:', error);
+      toast.error('Unable to verify availability. Please try again.');
       return;
     }
     
@@ -138,6 +232,9 @@ export const BookingWidget: React.FC<BookingWidgetProps> = ({
     };
     
     onBookingStart(formData);
+    
+    // Refresh disabled dates after starting booking process
+    await refreshDisabledDates();
   };
 
   const isDateDisabled = (date: Date) => {
@@ -145,7 +242,15 @@ export const BookingWidget: React.FC<BookingWidgetProps> = ({
     const minDate = addDays(today, 1); // Must book at least 1 day in advance
     const maxDate = addDays(today, adventure.max_advance_booking_days);
     
-    return isBefore(date, minDate) || isAfter(date, maxDate);
+    // Check basic date range constraints
+    if (isBefore(date, minDate) || isAfter(date, maxDate)) {
+      return true;
+    }
+    
+    // Check if date is in the disabled dates list (blocked, fully booked, or user conflict)
+    return disabledDates.some(disabledDate => 
+      disabledDate.toDateString() === date.toDateString()
+    );
   };
 
   const getDateAvailabilityStatus = () => {
@@ -196,16 +301,21 @@ export const BookingWidget: React.FC<BookingWidgetProps> = ({
               <Calendar
                 mode="single"
                 selected={selectedDate}
-                onSelect={setSelectedDate}
+                onSelect={handleDateSelection}
                 disabled={isDateDisabled}
                 initialFocus
               />
             </PopoverContent>
           </Popover>
           
-          {selectedDate && availabilityStatus && (
-            <Badge className={availabilityStatus.color}>
-              {availabilityStatus.message}
+          {selectedDate && selectedDateAvailability && (
+            <Badge className={selectedDateAvailability.isAvailable ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}>
+              {selectedDateAvailability.isAvailable 
+                ? selectedDateAvailability.remainingSpots === 1
+                  ? '1 spot remaining'
+                  : `${selectedDateAvailability.remainingSpots} spots remaining`
+                : 'Fully booked'
+              }
             </Badge>
           )}
         </div>
@@ -368,7 +478,12 @@ export const BookingWidget: React.FC<BookingWidgetProps> = ({
           onClick={handleBookNow}
           className="w-full bg-blue-600 hover:bg-blue-700 text-white"
           size="lg"
-          disabled={!selectedDate || !selectedTime || participants < 1 || availableSpots === 0}
+          disabled={
+            !selectedDate || 
+            !selectedTime || 
+            participants < 1
+            // Removed availability checks - let user proceed and check at final confirmation
+          }
         >
           <CreditCard className="w-5 h-5 mr-2" />
           {pricing ? `Book Now - $${pricing.totalAmount.toFixed(2)}` : 'Book Now'}

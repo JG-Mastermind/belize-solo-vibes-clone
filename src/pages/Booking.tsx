@@ -8,6 +8,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/components/auth/AuthProvider";
 import { useBookingFlow } from "@/hooks/useBookingFlow";
 import { useStripePayment } from "@/hooks/useStripePayment";
+import { BookingService } from "@/services/bookingService";
 import { Progress } from "@/components/ui/progress";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -52,6 +53,11 @@ const Booking = () => {
   const [showSignIn, setShowSignIn] = useState(false);
   const [createdBooking, setCreatedBooking] = useState<any>(null);
   const [paymentIntentCreated, setPaymentIntentCreated] = useState(false);
+  const [disabledDates, setDisabledDates] = useState<Date[]>([]);
+  const [selectedDateAvailability, setSelectedDateAvailability] = useState<{
+    remainingSpots: number;
+    isAvailable: boolean;
+  } | null>(null);
 
   // First try to get adventure from local data (fallback for numeric IDs)
   const localAdventure = adventures.find(adv => adv.id.toString() === id);
@@ -177,9 +183,107 @@ const Booking = () => {
     }
   }, [user, isAuthenticated, form]);
 
+  // Load disabled dates when adventure changes
+  useEffect(() => {
+    const loadDisabledDates = async () => {
+      if (!adventure) return;
+      
+      try {
+        const adventureId = dbAdventure?.id || (localAdventure ? 
+          `550e8400-e29b-41d4-a716-44665544000${localAdventure.id}` : null);
+        
+        if (!adventureId) return;
+        
+        const disabledDateStrings = await BookingService.getDisabledDates(adventureId, user?.id);
+        const disabledDateObjects = disabledDateStrings.map(dateStr => new Date(dateStr));
+        setDisabledDates(disabledDateObjects);
+      } catch (error) {
+        console.error('Error loading disabled dates:', error);
+      }
+    };
+
+    loadDisabledDates();
+  }, [adventure, user?.id, dbAdventure, localAdventure]);
+
+  // Refresh disabled dates when a booking is made
+  const refreshDisabledDates = async () => {
+    if (!adventure) return;
+    
+    try {
+      const adventureId = dbAdventure?.id || (localAdventure ? 
+        `550e8400-e29b-41d4-a716-44665544000${localAdventure.id}` : null);
+      
+      if (!adventureId) return;
+      
+      const disabledDateStrings = await BookingService.getDisabledDates(adventureId, user?.id);
+      const disabledDateObjects = disabledDateStrings.map(dateStr => new Date(dateStr));
+      setDisabledDates(disabledDateObjects);
+    } catch (error) {
+      console.error('Error refreshing disabled dates:', error);
+    }
+  };
+
+  // Function to check availability when a date is selected
+  const handleDateSelection = async (date: Date | undefined) => {
+    if (!date || !adventure) return;
+    
+    const adventureId = dbAdventure?.id || (localAdventure ? 
+      `550e8400-e29b-41d4-a716-44665544000${localAdventure.id}` : null);
+    
+    if (!adventureId) return;
+    
+    const dateStr = date.toISOString().split('T')[0];
+    
+    try {
+      const availability = await BookingService.checkDateAvailability(adventureId, dateStr);
+      
+      setSelectedDateAvailability({
+        remainingSpots: availability.remainingSpots,
+        isAvailable: availability.isAvailable
+      });
+      
+      // If the date is fully booked, show warning but allow selection for browsing
+      if (availability.remainingSpots <= 0 && !availability.isBlocked) {
+        toast.warning("This date is fully booked, but you can continue browsing trip details.");
+        // Don't return here - allow selection to continue
+      }
+      
+      // If the date is blocked by admin, prevent selection
+      if (availability.isBlocked) {
+        toast.error("This date is not available. Please select another date.");
+        return;
+      }
+      
+      // If available, show success feedback
+      if (availability.isAvailable) {
+        const spotsMessage = availability.remainingSpots === 1 
+          ? "1 spot remaining" 
+          : `${availability.remainingSpots} spots remaining`;
+        toast.success(`Date selected! ${spotsMessage}`);
+      }
+      
+    } catch (error) {
+      console.error('Error checking availability:', error);
+      toast.error("Unable to check availability. Please try again.");
+    }
+  };
+
   const onSubmit = async (data: BookingFormData) => {
     // Allow proceeding to step 1 (info collection) without authentication
     if (currentStep === 0) {
+      // Only block if the date is truly disabled (past, admin-blocked, or user conflict)
+      // Don't block for fully booked dates - user can continue browsing
+      if (data.bookingDate) {
+        const isPastDate = data.bookingDate < new Date(new Date().setHours(0, 0, 0, 0));
+        const isDisabledDate = disabledDates.some(disabledDate => 
+          disabledDate.toDateString() === data.bookingDate.toDateString()
+        );
+        
+        if (isPastDate || isDisabledDate) {
+          toast.error("Please select an available date before continuing.");
+          return;
+        }
+      }
       setCurrentStep(1);
       return;
     }
@@ -215,6 +319,22 @@ const Booking = () => {
         '550e8400-e29b-41d4-a716-446655440001' // Default fallback
       );
 
+      // Final availability check before creating booking
+      const dateStr = data.bookingDate.toISOString().split('T')[0];
+      const finalAvailability = await BookingService.checkDateAvailability(adventureId, dateStr);
+      
+      if (!finalAvailability.isAvailable) {
+        toast.error('This date is no longer available. Please select another date.');
+        setCurrentStep(0); // Go back to date selection
+        return;
+      }
+      
+      if (finalAvailability.remainingSpots < data.numberOfTravelers) {
+        toast.error(`Only ${finalAvailability.remainingSpots} spots remaining. Please adjust the number of travelers.`);
+        setCurrentStep(1); // Go back to info step
+        return;
+      }
+
       // Calculate total amount, handling both database and local adventure formats
       const pricePerPerson = adventure.price_per_person || 
         (localAdventure ? parseFloat(localAdventure.price.replace('$', '')) : 0);
@@ -245,6 +365,9 @@ const Booking = () => {
       setCreatedBooking(bookingData);
       setCurrentStep(2); // Move to payment step
       toast.success('Booking created! Please complete payment.');
+      
+      // Refresh disabled dates after booking creation
+      await refreshDisabledDates();
     } catch (error) {
       console.error('Error in booking submission:', error);
       toast.error('An error occurred. Please try again.');
@@ -272,6 +395,9 @@ const Booking = () => {
       
       setCurrentStep(3); // Move to confirmation step
       toast.success('Booking confirmed! Check your email for details.');
+      
+      // Refresh disabled dates after payment confirmation
+      await refreshDisabledDates();
       
       // Redirect to confirmation page after a short delay
       setTimeout(() => {
@@ -362,11 +488,49 @@ const Booking = () => {
                       <Calendar
                         mode="single"
                         selected={field.value}
-                        onSelect={field.onChange}
-                        disabled={(date) => date < new Date(new Date().setHours(0, 0, 0, 0))}
+                        onSelect={(date) => {
+                          // Handle availability checking
+                          handleDateSelection(date);
+                          
+                          // Only set the date if it's available
+                          if (date) {
+                            const isPastDate = date < new Date(new Date().setHours(0, 0, 0, 0));
+                            const isDisabledDate = disabledDates.some(disabledDate => 
+                              disabledDate.toDateString() === date.toDateString()
+                            );
+                            
+                            if (!isPastDate && !isDisabledDate) {
+                              field.onChange(date);
+                            }
+                          }
+                        }}
+                        disabled={(date) => {
+                          // Only disable past dates and truly blocked dates (admin blocked, user conflicts)
+                          // NOT fully booked dates (they should remain clickable)
+                          if (date < new Date(new Date().setHours(0, 0, 0, 0))) {
+                            return true;
+                          }
+                          
+                          // Disable dates that are in the disabled dates list (admin blocked, user conflicts)
+                          return disabledDates.some(disabledDate => 
+                            disabledDate.toDateString() === date.toDateString()
+                          );
+                        }}
                         className="rounded-md border"
                       />
                     </FormControl>
+                    {selectedDateAvailability && field.value && (
+                      <div className="text-center mt-2">
+                        <p className={`text-sm ${selectedDateAvailability.isAvailable ? 'text-green-600' : 'text-red-600'}`}>
+                          {selectedDateAvailability.isAvailable 
+                            ? selectedDateAvailability.remainingSpots === 1
+                              ? '1 spot remaining'
+                              : `${selectedDateAvailability.remainingSpots} spots remaining`
+                            : 'Date unavailable'
+                          }
+                        </p>
+                      </div>
+                    )}
                     <FormMessage />
                   </FormItem>
                 )}

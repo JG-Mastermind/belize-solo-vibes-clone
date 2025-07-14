@@ -20,7 +20,7 @@ const AdventureCards = () => {
   };
 
   const handleLearnMore = (id: number) => {
-    navigate(`/adventure/${id}`);
+    navigate(`/tours/${id}`);
   };
 
   return (

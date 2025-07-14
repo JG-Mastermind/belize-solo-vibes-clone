@@ -295,7 +295,8 @@ const Booking = () => {
       return;
     }
     
-    // Require authentication for actual booking creation at payment step
+    // This should only be reached from the final payment confirmation
+    // Authentication check will happen in the payment step UI
     if (!isAuthenticated) {
       setShowSignIn(true);
       return;
@@ -634,15 +635,45 @@ const Booking = () => {
             {currentStep === 2 && (
               <div className="space-y-6">
                 {!isAuthenticated ? (
-                  <div className="bg-blue-50 border border-blue-200 rounded-lg p-6 text-center">
-                    <h3 className="text-lg font-semibold text-blue-800 mb-2">Ready to Secure Your Adventure?</h3>
-                    <p className="text-blue-700 mb-4">Please sign in to complete your booking and payment.</p>
-                    <Button 
-                      onClick={() => setShowSignIn(true)}
-                      className="bg-blue-600 hover:bg-blue-700 text-white"
-                    >
-                      Sign In to Complete Booking
-                    </Button>
+                  <div className="bg-blue-50 border border-blue-200 rounded-lg p-6">
+                    <h3 className="text-lg font-semibold text-blue-800 mb-4">Booking Summary</h3>
+                    
+                    {/* Show booking summary for guest users */}
+                    <div className="space-y-3 mb-6">
+                      <div className="flex justify-between">
+                        <span className="text-blue-700">Adventure:</span>
+                        <span className="font-semibold text-blue-900">{adventure?.title}</span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span className="text-blue-700">Date:</span>
+                        <span className="font-semibold text-blue-900">{form.getValues("bookingDate")?.toLocaleDateString()}</span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span className="text-blue-700">Travelers:</span>
+                        <span className="font-semibold text-blue-900">{form.getValues("numberOfTravelers")}</span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span className="text-blue-700">Lead Guest:</span>
+                        <span className="font-semibold text-blue-900">{form.getValues("fullName")}</span>
+                      </div>
+                      <div className="border-t pt-2 flex justify-between">
+                        <span className="text-blue-700 font-semibold">Total:</span>
+                        <span className="font-bold text-blue-900 text-lg">
+                          ${((adventure?.price_per_person || (localAdventure ? parseFloat(localAdventure.price.replace('$', '')) : 0)) * form.getValues("numberOfTravelers")).toFixed(2)}
+                        </span>
+                      </div>
+                    </div>
+                    
+                    <div className="text-center">
+                      <h4 className="text-lg font-semibold text-blue-800 mb-2">Ready to Secure Your Adventure?</h4>
+                      <p className="text-blue-700 mb-4">Please sign in to complete your booking and payment.</p>
+                      <Button 
+                        onClick={() => setShowSignIn(true)}
+                        className="bg-blue-600 hover:bg-blue-700 text-white"
+                      >
+                        Sign In to Complete Booking
+                      </Button>
+                    </div>
                   </div>
                 ) : createdBooking ? (
                   <SimplePaymentForm

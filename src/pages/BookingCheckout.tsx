@@ -258,7 +258,7 @@ const BookingCheckout: React.FC = () => {
         <div className="mb-8">
           <Button
             variant="ghost"
-            onClick={() => navigate(`/adventure/${adventure.id}`)}
+            onClick={() => navigate(`/tours/${adventure.id}`)}
             className="mb-4"
           >
             <ArrowLeft className="w-4 h-4 mr-2" />

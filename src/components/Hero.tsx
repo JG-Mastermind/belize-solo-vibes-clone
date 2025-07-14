@@ -1,8 +1,35 @@
 
 import { Button } from "@/components/ui/button";
 import { Star, Users, Shield, Leaf } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 
 const Hero = () => {
+  const navigate = useNavigate();
+
+  const handleBookAdventure = () => {
+    // Navigate to adventures section or first adventure booking
+    const adventuresElement = document.getElementById('adventures');
+    if (adventuresElement) {
+      adventuresElement.scrollIntoView({ behavior: 'smooth' });
+    } else {
+      navigate('/booking/1'); // Default to first adventure
+    }
+  };
+
+  const handleViewAllTrips = () => {
+    const adventuresElement = document.getElementById('adventures');
+    if (adventuresElement) {
+      adventuresElement.scrollIntoView({ behavior: 'smooth' });
+    }
+  };
+
+  const handleViewReviews = () => {
+    const testimonialsElement = document.getElementById('testimonials');
+    if (testimonialsElement) {
+      testimonialsElement.scrollIntoView({ behavior: 'smooth' });
+    }
+  };
+
   return (
     <section className="relative min-h-screen flex items-center justify-center overflow-hidden">
       {/* Background Image */}
@@ -31,7 +58,10 @@ const Hero = () => {
 
           {/* Trust Elements */}
           <div className="flex flex-wrap justify-center gap-4 mb-8">
-            <div className="bg-black/40 backdrop-blur-sm rounded-lg px-4 py-3 border border-white/20">
+            <div 
+              className="bg-black/40 backdrop-blur-sm rounded-lg px-4 py-3 border border-white/20 cursor-pointer hover:bg-black/60 transition-colors duration-200"
+              onClick={handleViewReviews}
+            >
               <Star className="h-5 w-5 text-orange-400 mx-auto mb-1" />
               <div className="text-sm font-semibold text-white">4.9/5 Rating</div>
               <div className="text-xs text-white/80">500+ Reviews</div>
@@ -58,6 +88,7 @@ const Hero = () => {
             <Button 
               size="lg" 
               className="bg-orange-500 hover:bg-orange-600 text-white px-8 py-3 text-lg font-semibold transition-all duration-300 hover:scale-105"
+              onClick={handleBookAdventure}
             >
               Book Your Adventure
             </Button>
@@ -65,6 +96,7 @@ const Hero = () => {
               size="lg" 
               variant="outline" 
               className="border-white text-white hover:bg-white hover:text-foreground px-8 py-3 text-lg font-semibold transition-all duration-300"
+              onClick={handleViewAllTrips}
             >
               View All Trips
             </Button>

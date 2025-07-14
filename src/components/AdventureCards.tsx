@@ -7,6 +7,13 @@ import { adventures } from "@/data/adventures";
 const AdventureCards = () => {
   const navigate = useNavigate();
 
+  const handleViewAllAdventures = () => {
+    // Could navigate to a dedicated adventures page or show all adventures
+    // For now, we'll just scroll to the current section and show a message
+    // In a real app, you might navigate to '/adventures' or expand the view
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
   // The 'id' from your data is a number, so we use number here.
   const handleBookNow = (id: number) => {
     navigate(`/booking/${id}`);
@@ -105,7 +112,12 @@ const AdventureCards = () => {
         </div>
 
         <div className="text-center mt-12">
-          <Button size="lg" variant="outline" className="border-primary text-primary hover:bg-primary/10">
+          <Button 
+            size="lg" 
+            variant="outline" 
+            className="border-primary text-primary hover:bg-primary/10"
+            onClick={handleViewAllAdventures}
+          >
             View All Adventures
           </Button>
         </div>

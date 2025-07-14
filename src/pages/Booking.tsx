@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -112,6 +112,71 @@ const Booking = () => {
     },
   });
 
+  // Auto-create booking when user signs in at payment step
+  useEffect(() => {
+    const createBookingAfterAuth = async () => {
+      if (currentStep === 2 && isAuthenticated && !createdBooking && adventure && user) {
+        try {
+          const formData = form.getValues();
+          
+          // Use the proper adventure ID (either UUID from DB or local ID for fallback)
+          const adventureId = dbAdventure?.id || (localAdventure ? 
+            `550e8400-e29b-41d4-a716-44665544000${localAdventure.id}` : // Convert numeric to UUID format
+            '550e8400-e29b-41d4-a716-446655440001' // Default fallback
+          );
+
+          // Calculate total amount, handling both database and local adventure formats
+          const pricePerPerson = adventure.price_per_person || 
+            (localAdventure ? parseFloat(localAdventure.price.replace('$', '')) : 0);
+          const totalAmount = pricePerPerson * formData.numberOfTravelers;
+
+          // Create booking directly with Supabase
+          const { data: bookingData, error } = await supabase
+            .from('bookings')
+            .insert({
+              user_id: user.id,
+              adventure_id: adventureId,
+              booking_date: formData.bookingDate.toISOString().split('T')[0],
+              participants: formData.numberOfTravelers,
+              total_amount: totalAmount,
+              special_requests: formData.specialRequests || null,
+              status: 'pending',
+              payment_status: 'pending'
+            })
+            .select()
+            .single();
+
+          if (error) {
+            console.error('Error creating booking:', error);
+            toast.error('Failed to create booking. Please try again.');
+            return;
+          }
+
+          setCreatedBooking(bookingData);
+          toast.success('Booking created! Please complete payment.');
+        } catch (error) {
+          console.error('Error in automatic booking creation:', error);
+          toast.error('An error occurred. Please try again.');
+        }
+      }
+    };
+
+    createBookingAfterAuth();
+  }, [currentStep, isAuthenticated, createdBooking, adventure, user, form, dbAdventure, localAdventure]);
+
+  // Update form with user data when they sign in
+  useEffect(() => {
+    if (user && isAuthenticated) {
+      const currentValues = form.getValues();
+      const fullName = user.user_metadata?.first_name && user.user_metadata?.last_name 
+        ? `${user.user_metadata.first_name} ${user.user_metadata.last_name}`
+        : user.user_metadata?.full_name || currentValues.fullName;
+      
+      form.setValue('fullName', fullName);
+      form.setValue('email', user.email || currentValues.email);
+    }
+  }, [user, isAuthenticated, form]);
+
   const onSubmit = async (data: BookingFormData) => {
     // Allow proceeding to step 1 (info collection) without authentication
     if (currentStep === 0) {
@@ -119,7 +184,14 @@ const Booking = () => {
       return;
     }
     
-    // Require authentication for actual booking creation (step 1 -> 2)
+    // Allow proceeding to step 2 (payment) without authentication
+    // Authentication will be triggered at payment step
+    if (currentStep === 1) {
+      setCurrentStep(2);
+      return;
+    }
+    
+    // Require authentication for actual booking creation at payment step
     if (!isAuthenticated) {
       setShowSignIn(true);
       return;
@@ -303,18 +375,6 @@ const Booking = () => {
             
             {currentStep === 1 && (
               <div className="space-y-6">
-                {!isAuthenticated && (
-                  <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4 mb-6">
-                    <p className="text-yellow-800">Please sign in to continue with your booking.</p>
-                    <Button 
-                      type="button" 
-                      onClick={() => setShowSignIn(true)}
-                      className="mt-2"
-                    >
-                      Sign In
-                    </Button>
-                  </div>
-                )}
                 
                 <FormField
                   control={form.control}
@@ -400,28 +460,45 @@ const Booking = () => {
                 <Button 
                   onClick={form.handleSubmit(onSubmit)}
                   className="w-full"
-                  disabled={isCreatingBooking || !isAuthenticated}
+                  disabled={isCreatingBooking}
                 >
                   {isCreatingBooking ? "Creating Booking..." : "Continue to Payment"}
                 </Button>
               </div>
             )}
             
-            {currentStep === 2 && createdBooking && (
+            {currentStep === 2 && (
               <div className="space-y-6">
-                <SimplePaymentForm
-                  bookingData={{
-                    adventureTitle: adventure?.title || 'Adventure',
-                    bookingDate: form.getValues("bookingDate")?.toLocaleDateString() || '',
-                    participants: createdBooking.participants,
-                    totalAmount: createdBooking.total_amount,
-                    fullName: form.getValues("fullName"),
-                    email: form.getValues("email"),
-                    bookingId: createdBooking.id
-                  }}
-                  onPaymentSuccess={handlePaymentSuccess}
-                  isLoading={isCreatingPayment}
-                />
+                {!isAuthenticated ? (
+                  <div className="bg-blue-50 border border-blue-200 rounded-lg p-6 text-center">
+                    <h3 className="text-lg font-semibold text-blue-800 mb-2">Ready to Secure Your Adventure?</h3>
+                    <p className="text-blue-700 mb-4">Please sign in to complete your booking and payment.</p>
+                    <Button 
+                      onClick={() => setShowSignIn(true)}
+                      className="bg-blue-600 hover:bg-blue-700 text-white"
+                    >
+                      Sign In to Complete Booking
+                    </Button>
+                  </div>
+                ) : createdBooking ? (
+                  <SimplePaymentForm
+                    bookingData={{
+                      adventureTitle: adventure?.title || 'Adventure',
+                      bookingDate: form.getValues("bookingDate")?.toLocaleDateString() || '',
+                      participants: createdBooking.participants,
+                      totalAmount: createdBooking.total_amount,
+                      fullName: form.getValues("fullName"),
+                      email: form.getValues("email"),
+                      bookingId: createdBooking.id
+                    }}
+                    onPaymentSuccess={handlePaymentSuccess}
+                    isLoading={isCreatingPayment}
+                  />
+                ) : (
+                  <div className="bg-gray-50 border border-gray-200 rounded-lg p-6 text-center">
+                    <p className="text-gray-700">Creating your booking...</p>
+                  </div>
+                )}
               </div>
             )}
 

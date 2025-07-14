@@ -78,11 +78,6 @@ const AdventureDetail: React.FC = () => {
   };
 
   const handleBookNow = () => {
-    if (!user) {
-      toast.error('Please sign in to book this adventure');
-      return;
-    }
-    
     if (id) {
       BookingService.trackBookingStart(id);
       navigate(`/booking/${id}`);

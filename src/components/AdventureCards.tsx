@@ -17,13 +17,13 @@ const AdventureCards = () => {
   };
 
   return (
-    <section id="adventures" className="py-16 bg-belize-neutral-50">
+    <section id="adventures" className="py-16 bg-muted/20">
       <div className="container mx-auto px-4">
         <div className="text-center mb-12">
-          <h2 className="text-3xl md:text-4xl font-playfair font-bold text-belize-neutral-900 mb-4">
+          <h2 className="text-3xl md:text-4xl font-playfair font-bold text-foreground mb-4">
             Choose Your Adventure
           </h2>
-          <p className="text-lg text-belize-neutral-600 max-w-2xl mx-auto">
+          <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
             From ancient Maya ruins to pristine coral reefs, discover the best of Belize with our carefully curated adventures designed for solo travelers and small groups.
           </p>
         </div>
@@ -37,8 +37,8 @@ const AdventureCards = () => {
                   alt={adventure.title}
                   className="w-full h-48 object-cover"
                 />
-                <div className="absolute top-4 right-4 bg-white/90 backdrop-blur-sm rounded-full px-3 py-1">
-                  <span className="text-belize-orange-600 font-bold text-lg">{adventure.price}</span>
+                <div className="absolute top-4 right-4 bg-background/90 backdrop-blur-sm rounded-full px-3 py-1">
+                  <span className="text-orange-600 font-bold text-lg">{adventure.price}</span>
                 </div>
                 <div className="absolute bottom-4 left-4 flex items-center space-x-1 bg-black/50 backdrop-blur-sm rounded-full px-2 py-1">
                   <Star className="h-4 w-4 text-yellow-400 fill-current" />
@@ -48,20 +48,20 @@ const AdventureCards = () => {
               </div>
               
               <CardContent className="p-6">
-                <div className="flex items-center text-sm text-belize-neutral-600 mb-2">
+                <div className="flex items-center text-sm text-muted-foreground mb-2">
                   <MapPin className="h-4 w-4 mr-1" />
                   {adventure.location}
                 </div>
                 
-                <h3 className="text-xl font-playfair font-semibold text-belize-neutral-900 mb-2">
+                <h3 className="text-xl font-playfair font-semibold text-foreground mb-2">
                   {adventure.title}
                 </h3>
                 
-                <p className="text-belize-neutral-600 mb-4 line-clamp-2">
+                <p className="text-muted-foreground mb-4 line-clamp-2">
                   {adventure.description}
                 </p>
 
-                <div className="flex items-center justify-between text-sm text-belize-neutral-600 mb-4">
+                <div className="flex items-center justify-between text-sm text-muted-foreground mb-4">
                   <div className="flex items-center">
                     <Clock className="h-4 w-4 mr-1" />
                     {adventure.duration}
@@ -73,11 +73,11 @@ const AdventureCards = () => {
                 </div>
 
                 <div className="mb-4">
-                  <h4 className="text-sm font-semibold text-belize-neutral-800 mb-2">Highlights:</h4>
-                  <ul className="text-sm text-belize-neutral-600 space-y-1">
+                  <h4 className="text-sm font-semibold text-foreground mb-2">Highlights:</h4>
+                  <ul className="text-sm text-muted-foreground space-y-1">
                     {adventure.highlights.slice(0, 2).map((highlight, idx) => (
                       <li key={idx} className="flex items-center">
-                        <div className="w-1.5 h-1.5 bg-belize-green-500 rounded-full mr-2" />
+                        <div className="w-1.5 h-1.5 bg-primary rounded-full mr-2" />
                         {highlight}
                       </li>
                     ))}
@@ -87,13 +87,13 @@ const AdventureCards = () => {
                 <div className="flex space-x-2">
                   <Button 
                     onClick={() => handleBookNow(adventure.id)} 
-                    className="flex-1 bg-belize-green-500 hover:bg-belize-green-600 text-white"
+                    className="flex-1 bg-primary hover:bg-primary/90 text-primary-foreground"
                   >
                     Book Now
                   </Button>
                   <Button 
                     variant="outline" 
-                    className="flex-1 border-belize-green-500 text-belize-green-600 hover:bg-belize-green-50"
+                    className="flex-1 border-primary text-primary hover:bg-primary/10"
                     onClick={() => handleLearnMore(adventure.id)}
                   >
                     Learn More
@@ -105,7 +105,7 @@ const AdventureCards = () => {
         </div>
 
         <div className="text-center mt-12">
-          <Button size="lg" variant="outline" className="border-belize-green-500 text-belize-green-600 hover:bg-belize-green-50">
+          <Button size="lg" variant="outline" className="border-primary text-primary hover:bg-primary/10">
             View All Adventures
           </Button>
         </div>

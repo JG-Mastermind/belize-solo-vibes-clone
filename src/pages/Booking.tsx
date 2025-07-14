@@ -236,8 +236,9 @@ const Booking = () => {
   const currentStepName = steps[currentStep];
 
   return (
-    <div className="container mx-auto px-4 py-8">
-      <div className="max-w-2xl mx-auto">
+    <div className="min-h-screen bg-background text-foreground">
+      <div className="container mx-auto px-4 py-8">
+        <div className="max-w-2xl mx-auto">
         <h1 className="text-3xl font-bold mb-8">{adventure?.title || 'Adventure Booking'}</h1>
         
         <div className="mb-8">
@@ -489,11 +490,12 @@ const Booking = () => {
           </div>
         </div>
 
-        <SignInModal
-          isOpen={showSignIn}
-          onClose={() => setShowSignIn(false)}
-          onSwitchToSignUp={() => {}}
-        />
+          <SignInModal
+            isOpen={showSignIn}
+            onClose={() => setShowSignIn(false)}
+            onSwitchToSignUp={() => {}}
+          />
+        </div>
       </div>
     </div>
   );

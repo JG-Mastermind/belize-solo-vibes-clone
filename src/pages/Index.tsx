@@ -4,7 +4,7 @@ import Testimonials from "@/components/Testimonials";
 
 const Index = () => {
   return (
-    <div className="min-h-screen">
+    <div className="min-h-screen bg-background text-foreground">
       <Hero />
       <AdventureCards />
       <Testimonials />

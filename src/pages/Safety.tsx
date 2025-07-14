@@ -5,32 +5,32 @@ import { Button } from "@/components/ui/button";
 const Safety = () => {
   const safetyTopics = [
     {
-      icon: <Shield className="h-8 w-8 text-belize-blue-500" />,
+      icon: <Shield className="h-8 w-8 text-blue-500" />,
       title: "Travel Insurance",
       content: "We strongly recommend comprehensive travel insurance covering medical emergencies, trip cancellation, and adventure activities. Many standard policies exclude cave tubing and diving—ensure your policy covers all planned activities."
     },
     {
-      icon: <Phone className="h-8 w-8 text-belize-orange-500" />,
+      icon: <Phone className="h-8 w-8 text-orange-500" />,
       title: "Local Emergency Numbers",
       content: "Police: 911 or 90 • Fire/Ambulance: 911 • Tourist Police: 227-2222 • Our 24/7 Emergency Line: +501-XXX-XXXX. Save these numbers in your phone and keep a physical copy in your wallet."
     },
     {
-      icon: <Users className="h-8 w-8 text-belize-green-500" />,
+      icon: <Users className="h-8 w-8 text-green-500" />,
       title: "Group Support for Solo Travelers",
       content: "Never feel alone on your adventure. Our small group sizes (max 8 people) ensure personalized attention. Each group has certified guides with wilderness first aid training and satellite communication devices."
     },
     {
-      icon: <Heart className="h-8 w-8 text-belize-green-600" />,
+      icon: <Heart className="h-8 w-8 text-green-600" />,
       title: "Respecting Local Customs",
       content: "Belize is welcoming and diverse. Dress modestly when visiting villages or religious sites. Learn basic Creole greetings. Tip guides and service staff appropriately. Ask permission before photographing people."
     },
     {
-      icon: <Cloud className="h-8 w-8 text-belize-blue-600" />,
+      icon: <Cloud className="h-8 w-8 text-blue-600" />,
       title: "Weather Alerts",
       content: "Hurricane season runs June-November. Dry season (December-May) is ideal for most activities. We monitor weather constantly and will reschedule or modify trips for safety. Flash floods can occur during rainy season."
     },
     {
-      icon: <Droplets className="h-8 w-8 text-belize-blue-500" />,
+      icon: <Droplets className="h-8 w-8 text-blue-500" />,
       title: "Health and Water Safety",
       content: "Tap water is generally safe in tourist areas, but bottled water is recommended. Bring insect repellent for jungle excursions. No special vaccinations required, but consult your doctor. Sunscreen is essential year-round."
     }
@@ -46,7 +46,7 @@ const Safety = () => {
   ];
 
   return (
-    <React.Fragment>
+    <div className="min-h-screen bg-background text-foreground">
       {/* Hero Section */}
       <section className="relative min-h-[60vh] flex items-center justify-center overflow-hidden">
         <div 
@@ -68,7 +68,7 @@ const Safety = () => {
       </section>
 
       {/* Main Content */}
-      <section className="py-16">
+      <section className="py-16 bg-background">
         <div className="container mx-auto px-4">
           <div className="lg:grid lg:grid-cols-4 lg:gap-8">
             
@@ -76,16 +76,16 @@ const Safety = () => {
             <div className="lg:col-span-3">
               <div className="grid gap-8">
                 {safetyTopics.map((topic, index) => (
-                  <div key={index} className="bg-white rounded-xl shadow-lg p-6 hover:shadow-xl transition-shadow duration-300">
+                  <div key={index} className="bg-card rounded-xl shadow-lg p-6 hover:shadow-xl transition-shadow duration-300">
                     <div className="flex items-start space-x-4">
                       <div className="flex-shrink-0">
                         {topic.icon}
                       </div>
                       <div>
-                        <h3 className="text-xl font-playfair font-semibold text-belize-neutral-900 mb-3">
+                        <h3 className="text-xl font-playfair font-semibold text-foreground mb-3">
                           {topic.title}
                         </h3>
-                        <p className="text-belize-neutral-700 leading-relaxed">
+                        <p className="text-muted-foreground leading-relaxed">
                           {topic.content}
                         </p>
                       </div>
@@ -100,18 +100,18 @@ const Safety = () => {
               <div className="sticky top-8 space-y-6">
                 
                 {/* Emergency Contacts */}
-                <div className="bg-belize-orange-50 rounded-xl p-6 border border-belize-orange-200">
-                  <h3 className="text-lg font-playfair font-semibold text-belize-neutral-900 mb-4 flex items-center">
-                    <AlertTriangle className="h-5 w-5 text-belize-orange-500 mr-2" />
+                <div className="bg-orange-50 dark:bg-orange-950/20 rounded-xl p-6 border border-orange-200 dark:border-orange-800">
+                  <h3 className="text-lg font-playfair font-semibold text-foreground mb-4 flex items-center">
+                    <AlertTriangle className="h-5 w-5 text-orange-500 mr-2" />
                     Emergency Contacts
                   </h3>
                   <div className="space-y-3">
                     {emergencyContacts.map((contact, index) => (
                       <div key={index} className="text-sm">
-                        <div className="font-semibold text-belize-neutral-800">
+                        <div className="font-semibold text-foreground">
                           {contact.service}
                         </div>
-                        <div className="text-belize-neutral-600 font-mono">
+                        <div className="text-muted-foreground font-mono">
                           {contact.number}
                         </div>
                       </div>
@@ -120,31 +120,31 @@ const Safety = () => {
                 </div>
 
                 {/* Travel Alerts */}
-                <div className="bg-belize-blue-50 rounded-xl p-6 border border-belize-blue-200">
-                  <h3 className="text-lg font-playfair font-semibold text-belize-neutral-900 mb-3 flex items-center">
-                    <MapPin className="h-5 w-5 text-belize-blue-500 mr-2" />
+                <div className="bg-blue-50 dark:bg-blue-950/20 rounded-xl p-6 border border-blue-200 dark:border-blue-800">
+                  <h3 className="text-lg font-playfair font-semibold text-foreground mb-3 flex items-center">
+                    <MapPin className="h-5 w-5 text-blue-500 mr-2" />
                     Travel Resources
                   </h3>
                   <div className="space-y-3 text-sm">
-                    <a href="#" className="block text-belize-blue-600 hover:text-belize-blue-800 transition-colors">
+                    <a href="#" className="block text-blue-600 hover:text-blue-800 transition-colors">
                       Belize Government Travel Alerts
                     </a>
-                    <a href="#" className="block text-belize-blue-600 hover:text-belize-blue-800 transition-colors">
+                    <a href="#" className="block text-blue-600 hover:text-blue-800 transition-colors">
                       US State Department - Belize
                     </a>
-                    <a href="#" className="block text-belize-blue-600 hover:text-belize-blue-800 transition-colors">
+                    <a href="#" className="block text-blue-600 hover:text-blue-800 transition-colors">
                       Current Weather Conditions
                     </a>
                   </div>
                 </div>
 
                 {/* Weather Alert Badge */}
-                <div className="bg-belize-green-50 rounded-xl p-4 border border-belize-green-200 text-center">
+                <div className="bg-green-50 dark:bg-green-950/20 rounded-xl p-4 border border-green-200 dark:border-green-800 text-center">
                   <div className="text-2xl mb-2">🌤️</div>
-                  <div className="text-sm font-semibold text-belize-green-700">
+                  <div className="text-sm font-semibold text-green-700 dark:text-green-300">
                     Current Weather: Clear
                   </div>
-                  <div className="text-xs text-belize-green-600 mt-1">
+                  <div className="text-xs text-green-600 dark:text-green-400 mt-1">
                     Perfect conditions for adventures
                   </div>
                 </div>
@@ -155,21 +155,21 @@ const Safety = () => {
       </section>
 
       {/* CTA Section */}
-      <section className="py-16 bg-belize-neutral-50">
+      <section className="py-16 bg-muted/20">
         <div className="container mx-auto px-4 text-center">
-          <h2 className="text-3xl font-playfair font-bold text-belize-neutral-900 mb-4">
+          <h2 className="text-3xl font-playfair font-bold text-foreground mb-4">
             Still Have Questions?
           </h2>
-          <p className="text-lg text-belize-neutral-700 mb-8 max-w-2xl mx-auto">
+          <p className="text-lg text-muted-foreground mb-8 max-w-2xl mx-auto">
             Our team is available 24/7 during your trip and happy to answer any safety concerns before you book.
           </p>
-          <Button className="bg-belize-orange-500 hover:bg-belize-orange-600 text-white px-8 py-3 text-lg">
+          <Button className="bg-orange-500 hover:bg-orange-600 text-white px-8 py-3 text-lg">
             <Phone className="h-5 w-5 mr-2" />
             Contact Us Anytime
           </Button>
         </div>
       </section>
-    </React.Fragment>
+    </div>
   );
 };
 

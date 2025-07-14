@@ -19,7 +19,7 @@ interface SignInModalProps {
 }
 
 type AuthMode = 'signin' | 'signup' | 'reset';
-type AuthProvider = 'google' | 'apple';
+type AuthProvider = 'google' | 'apple' | 'instagram';
 
 export const SignInModal: React.FC<SignInModalProps> = ({ isOpen, onClose, onSwitchToSignUp }) => {
   const [mode, setMode] = useState<AuthMode>('signin');
@@ -106,7 +106,7 @@ export const SignInModal: React.FC<SignInModalProps> = ({ isOpen, onClose, onSwi
 
     try {
       if (mode === 'signin') {
-        const { error } = await signIn(email, password);
+        const { error } = await signIn(email, password, rememberMe);
         
         if (error) {
           if (error.message.includes('Invalid login credentials')) {
@@ -297,6 +297,27 @@ export const SignInModal: React.FC<SignInModalProps> = ({ isOpen, onClose, onSwi
                     )}
                   </Button>
                 )}
+
+                {/* Instagram Sign-In */}
+                <Button
+                  variant="outline"
+                  size="lg"
+                  className="w-full justify-center space-x-2 border-2 hover:border-pink-500 transition-colors"
+                  onClick={() => handleOAuthSignIn('instagram')}
+                  disabled={oauthLoading !== null}
+                >
+                  {oauthLoading === 'instagram' ? (
+                    <Loader2 className="h-5 w-5 animate-spin" />
+                  ) : (
+                    <svg className="h-5 w-5" viewBox="0 0 24 24" fill="currentColor">
+                      <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/>
+                    </svg>
+                  )}
+                  <span>Continue with Instagram</span>
+                  {preferredMethod === 'instagram' && (
+                    <span className="text-xs bg-pink-100 text-pink-800 px-2 py-1 rounded-full">Preferred</span>
+                  )}
+                </Button>
               </div>
 
               <div className="relative">
@@ -304,7 +325,7 @@ export const SignInModal: React.FC<SignInModalProps> = ({ isOpen, onClose, onSwi
                   <Separator className="w-full" />
                 </div>
                 <div className="relative flex justify-center text-xs uppercase">
-                  <span className="bg-white px-2 text-gray-500">Or continue with email</span>
+                  <span className="bg-background px-2 text-muted-foreground">Or continue with email</span>
                 </div>
               </div>
             </div>

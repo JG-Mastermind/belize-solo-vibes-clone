@@ -6,7 +6,9 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Progress } from "@/components/ui/progress";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { supabase } from "@/integrations/supabase/client";
+import { useAuth } from "@/components/auth/AuthProvider";
 import { toast } from "sonner";
 
 const initialTestimonials = [
@@ -78,6 +80,7 @@ interface Review {
 // }
 
 const Testimonials = () => {
+  const { user, getUserAvatar } = useAuth();
   const [testimonials, setTestimonials] = useState<Review[]>(initialTestimonials);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [showReviewForm, setShowReviewForm] = useState(false);
@@ -135,7 +138,7 @@ const Testimonials = () => {
             id: testimonial.id,
             name: testimonial.user_name,
             location: '', 
-            image: `https://ui-avatars.com/api/?name=${encodeURIComponent(testimonial.user_name)}&background=10b981&color=fff&size=100`,
+            image: testimonial.avatar_url || `https://ui-avatars.com/api/?name=${encodeURIComponent(testimonial.user_name)}&background=10b981&color=fff&size=100`,
             rating: testimonial.rating,
             text: testimonial.content,
             trip: '',
@@ -265,11 +268,16 @@ const Testimonials = () => {
       if (error) {
         console.error('Error inserting testimonial:', error);
         // Fallback to local state for demo
+        const userAvatar = getUserAvatar();
+        const userName = user?.user_metadata?.full_name || 
+                        `${user?.user_metadata?.first_name || ''} ${user?.user_metadata?.last_name || ''}`.trim() || 
+                        formData.name.trim();
+        
         const newReview: Review = {
           id: `review-${Date.now()}`,
-          name: formData.name.trim(),
+          name: userName,
           location: '',
-          image: `https://ui-avatars.com/api/?name=${encodeURIComponent(formData.name.trim())}&background=10b981&color=fff&size=100`,
+          image: userAvatar || `https://ui-avatars.com/api/?name=${encodeURIComponent(userName)}&background=10b981&color=fff&size=100`,
           rating: formData.rating,
           text: sanitizedContent,
           trip: '',
@@ -280,11 +288,16 @@ const Testimonials = () => {
         setTestimonials(prev => [newReview, ...prev]);
       } else {
         // Successfully inserted, add to local state for immediate display
+        const userAvatar = getUserAvatar();
+        const userName = user?.user_metadata?.full_name || 
+                        `${user?.user_metadata?.first_name || ''} ${user?.user_metadata?.last_name || ''}`.trim() || 
+                        data.user_name;
+        
         const newReview: Review = {
           id: data.id,
-          name: data.user_name,
+          name: userName,
           location: '',
-          image: `https://ui-avatars.com/api/?name=${encodeURIComponent(data.user_name)}&background=10b981&color=fff&size=100`,
+          image: userAvatar || `https://ui-avatars.com/api/?name=${encodeURIComponent(userName)}&background=10b981&color=fff&size=100`,
           rating: data.rating,
           text: data.content,
           trip: '',
@@ -691,11 +704,15 @@ const Testimonials = () => {
               <CardContent className="p-8 md:p-12">
                 <div className="flex flex-col md:flex-row items-center md:items-start space-y-6 md:space-y-0 md:space-x-8">
                   <div className="flex-shrink-0">
-                    <img
-                      src={testimonials[currentIndex].image}
-                      alt={testimonials[currentIndex].name}
-                      className="w-20 h-20 rounded-full object-cover border-4 border-white shadow-lg"
-                    />
+                    <Avatar className="w-20 h-20 border-4 border-white shadow-lg">
+                      <AvatarImage 
+                        src={testimonials[currentIndex].image} 
+                        alt={testimonials[currentIndex].name}
+                      />
+                      <AvatarFallback className="bg-primary text-primary-foreground text-xl">
+                        {testimonials[currentIndex].name.split(' ').map(n => n[0]).join('')}
+                      </AvatarFallback>
+                    </Avatar>
                   </div>
                   
                   <div className="flex-1 text-center md:text-left">
@@ -785,11 +802,15 @@ const Testimonials = () => {
                     : 'bg-muted border-2 border-transparent hover:bg-green-50 dark:hover:bg-green-900/20'
                 }`}
               >
-                <img
-                  src={testimonial.image}
-                  alt={testimonial.name}
-                  className="w-12 h-12 rounded-full object-cover mx-auto mb-2"
-                />
+                <Avatar className="w-12 h-12 mx-auto mb-2">
+                  <AvatarImage 
+                    src={testimonial.image} 
+                    alt={testimonial.name}
+                  />
+                  <AvatarFallback className="bg-primary text-primary-foreground text-xs">
+                    {testimonial.name.split(' ').map(n => n[0]).join('')}
+                  </AvatarFallback>
+                </Avatar>
                 <p className="text-xs font-medium text-foreground truncate">
                   {testimonial.name}
                 </p>

@@ -19,7 +19,7 @@ import { User, LogOut, Settings } from 'lucide-react';
 import { toast } from 'sonner';
 
 export const UserProfile: React.FC = () => {
-  const { user, signOut, loading, getUserRole } = useAuth();
+  const { user, signOut, loading, getUserRole, getUserAvatar } = useAuth();
   const [showSignIn, setShowSignIn] = useState(false);
   const [showSignUp, setShowSignUp] = useState(false);
 
@@ -72,6 +72,7 @@ export const UserProfile: React.FC = () => {
   const firstName = userMetadata.first_name || '';
   const lastName = userMetadata.last_name || '';
   const userRole = getUserRole() || 'traveler';
+  const avatarUrl = getUserAvatar();
   
   const getRoleBadgeColor = (role: string) => {
     switch (role) {
@@ -91,7 +92,7 @@ export const UserProfile: React.FC = () => {
       <DropdownMenuTrigger asChild>
         <Button variant="ghost" className="relative h-8 w-8 rounded-full">
           <Avatar className="h-8 w-8">
-            <AvatarImage src={userMetadata.avatar_url} />
+            <AvatarImage src={avatarUrl || userMetadata.avatar_url} />
             <AvatarFallback>
               {firstName.charAt(0)}{lastName.charAt(0)}
             </AvatarFallback>

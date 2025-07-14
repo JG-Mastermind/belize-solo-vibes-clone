@@ -8,7 +8,7 @@ interface AuthContextType {
   session: Session | null;
   loading: boolean;
   signUp: (email: string, password: string, metadata?: { first_name?: string; last_name?: string }) => Promise<{ data?: any; error?: any }>;
-  signIn: (email: string, password: string) => Promise<{ data?: any; error?: any }>;
+  signIn: (email: string, password: string, rememberMe?: boolean) => Promise<{ data?: any; error?: any }>;
   signInWithOAuth: (provider: Provider, options?: { redirectTo?: string }) => Promise<{ data?: any; error?: any }>;
   signOut: () => Promise<void>;
   resetPassword: (email: string) => Promise<{ data?: any; error?: any }>;
@@ -19,6 +19,9 @@ interface AuthContextType {
   isDeviceIOS: () => boolean;
   rememberSignInMethod: (method: string) => void;
   getPreferredSignInMethod: () => string | null;
+  updateUserProfile: (updates: any) => Promise<{ data?: any; error?: any }>;
+  getUserAvatar: () => string | null;
+  syncUserProfileWithSocial: () => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -59,6 +62,13 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     return () => subscription.unsubscribe();
   }, []);
 
+  // Sync user profile when user changes
+  useEffect(() => {
+    if (user) {
+      syncUserProfileWithSocial();
+    }
+  }, [user]);
+
   const signUp = async (email: string, password: string, metadata?: { first_name?: string; last_name?: string }) => {
     const { data, error } = await supabase.auth.signUp({
       email,
@@ -70,16 +80,30 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     return { data, error };
   };
 
-  const signIn = async (email: string, password: string) => {
+  const signIn = async (email: string, password: string, rememberMe: boolean = false) => {
     const { data, error } = await supabase.auth.signInWithPassword({
       email,
       password
     });
+    
+    // Handle remember me functionality
+    if (data.session && rememberMe) {
+      // Store session persistence preference
+      localStorage.setItem('supabase_remember_me', 'true');
+      localStorage.setItem('supabase_session', JSON.stringify(data.session));
+    } else {
+      localStorage.removeItem('supabase_remember_me');
+      localStorage.removeItem('supabase_session');
+    }
+    
     return { data, error };
   };
 
   const signOut = async () => {
     const { error } = await supabase.auth.signOut();
+    // Clear remember me data on sign out
+    localStorage.removeItem('supabase_remember_me');
+    localStorage.removeItem('supabase_session');
     if (error) throw error;
   };
 
@@ -94,6 +118,13 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         },
       },
     });
+    
+    // For social logins, we'll handle remember me after successful callback
+    if (data && provider) {
+      localStorage.setItem('supabase_remember_me', 'true');
+      localStorage.setItem('oauth_provider', provider);
+    }
+    
     return { data, error };
   };
 
@@ -143,6 +174,48 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     return localStorage.getItem('preferredSignInMethod');
   };
 
+  const updateUserProfile = async (updates: any) => {
+    const { data, error } = await supabase.auth.updateUser({
+      data: updates
+    });
+    return { data, error };
+  };
+
+  const getUserAvatar = () => {
+    return user?.user_metadata?.avatar_url || user?.user_metadata?.picture || null;
+  };
+
+  const syncUserProfileWithSocial = async () => {
+    if (!user) return;
+    
+    const avatarUrl = getUserAvatar();
+    const provider = localStorage.getItem('oauth_provider');
+    
+    if (avatarUrl && provider) {
+      // Update user profile with social avatar
+      try {
+        const { error } = await supabase
+          .from('user_profiles')
+          .upsert({
+            id: user.id,
+            email: user.email,
+            full_name: user.user_metadata?.full_name || `${user.user_metadata?.first_name || ''} ${user.user_metadata?.last_name || ''}`.trim(),
+            avatar_url: avatarUrl,
+            provider: provider,
+            updated_at: new Date().toISOString()
+          }, {
+            onConflict: 'id'
+          });
+        
+        if (error) {
+          console.error('Error syncing user profile:', error);
+        }
+      } catch (error) {
+        console.error('Error syncing user profile:', error);
+      }
+    }
+  };
+
   const value = {
     user,
     session,
@@ -158,7 +231,10 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     updateUserRole,
     isDeviceIOS,
     rememberSignInMethod,
-    getPreferredSignInMethod
+    getPreferredSignInMethod,
+    updateUserProfile,
+    getUserAvatar,
+    syncUserProfileWithSocial
   };
 
   return (

@@ -113,6 +113,13 @@ const Booking = () => {
   });
 
   const onSubmit = async (data: BookingFormData) => {
+    // Allow proceeding to step 1 (info collection) without authentication
+    if (currentStep === 0) {
+      setCurrentStep(1);
+      return;
+    }
+    
+    // Require authentication for actual booking creation (step 1 -> 2)
     if (!isAuthenticated) {
       setShowSignIn(true);
       return;

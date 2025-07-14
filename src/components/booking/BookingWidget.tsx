@@ -110,11 +110,6 @@ export const BookingWidget: React.FC<BookingWidgetProps> = ({
   };
 
   const handleBookNow = () => {
-    if (!user) {
-      toast.error('Please sign in to book this adventure');
-      return;
-    }
-    
     if (!selectedDate || !selectedTime || participants < 1) {
       toast.error('Please select date, time, and number of participants');
       return;

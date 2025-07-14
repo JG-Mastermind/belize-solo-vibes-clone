@@ -147,18 +147,58 @@ export class BookingService {
   }
 
   static async getAvailableSpots(adventureId: string, date: string): Promise<number> {
-    const { data, error } = await supabase
-      .from('adventure_availability')
-      .select('available_spots, booked_spots')
-      .eq('adventure_id', adventureId)
-      .eq('date', date)
-      .single();
-    
-    if (error || !data) {
-      return 0;
+    try {
+      // Check for blocked dates or unavailable dates first
+      const { data: availabilityData, error: availabilityError } = await supabase
+        .from('adventure_availability')
+        .select('available_spots, booked_spots, is_blocked, status')
+        .eq('adventure_id', adventureId)
+        .eq('date', date)
+        .single();
+      
+      if (availabilityError && availabilityError.code !== 'PGRST116') {
+        console.error('Error checking availability:', availabilityError);
+        return 0;
+      }
+      
+      if (availabilityData) {
+        // If date exists in availability table
+        if (availabilityData.is_blocked || availabilityData.status === 'unavailable') {
+          return 0; // Blocked by guide/admin or marked unavailable
+        }
+        
+        const available = availabilityData.available_spots - availabilityData.booked_spots;
+        return Math.max(0, available);
+      }
+      
+      // No availability record found - check for confirmed bookings on this date
+      const { data: bookingData, error: bookingError } = await supabase
+        .from('bookings')
+        .select('participants')
+        .eq('adventure_id', adventureId)
+        .eq('booking_date', date)
+        .eq('status', 'confirmed');
+      
+      if (bookingError) {
+        console.error('Error checking bookings:', bookingError);
+      }
+      
+      // Calculate booked participants
+      const bookedParticipants = bookingData?.reduce((total, booking) => 
+        total + (booking.participants || 0), 0) || 0;
+      
+      // Get adventure details for default capacity
+      const adventure = await this.getAdventure(adventureId);
+      const defaultCapacity = adventure?.max_participants || adventure?.daily_capacity || 8;
+      
+      // Default: all future dates are available unless specifically booked
+      return Math.max(0, defaultCapacity - bookedParticipants);
+      
+    } catch (error) {
+      console.error('Error in getAvailableSpots:', error);
+      // Fallback: return default capacity for guest users
+      return 8;
     }
-    
-    return data.available_spots - data.booked_spots;
   }
 
   // Pricing Methods

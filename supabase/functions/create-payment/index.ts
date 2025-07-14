@@ -48,7 +48,33 @@ serve(async (req) => {
       throw new Error("Booking not found");
     }
 
-    const stripe = new Stripe(Deno.env.get("STRIPE_SECRET_KEY") || "", {
+    // Environment-based Stripe secret key selection
+    const isProduction = Deno.env.get("NODE_ENV") === "production" || 
+                        Deno.env.get("DENO_ENV") === "production";
+    
+    const stripeSecretKey = isProduction 
+      ? Deno.env.get("STRIPE_SECRET_KEY_LIVE")
+      : Deno.env.get("STRIPE_SECRET_KEY_TEST") || Deno.env.get("STRIPE_SECRET_KEY");
+    
+    if (!stripeSecretKey) {
+      throw new Error("Stripe secret key not configured for current environment");
+    }
+    
+    // Validate key format to prevent test keys in production
+    const isTestKey = stripeSecretKey.startsWith("sk_test_");
+    const isLiveKey = stripeSecretKey.startsWith("sk_live_");
+    
+    if (isProduction && isTestKey) {
+      throw new Error("Test Stripe key detected in production environment");
+    }
+    
+    if (!isTestKey && !isLiveKey) {
+      throw new Error("Invalid Stripe secret key format");
+    }
+    
+    console.log(`Using ${isTestKey ? 'test' : 'live'} Stripe key in ${isProduction ? 'production' : 'development'} mode`);
+    
+    const stripe = new Stripe(stripeSecretKey, {
       apiVersion: "2023-10-16",
     });
 

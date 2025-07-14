@@ -21,7 +21,7 @@ export const useBookingFlow = () => {
 
   const createBooking = async (bookingData: BookingData) => {
     if (!user) {
-      toast.error('Please sign in to make a booking');
+      // Return null without error - authentication will be handled at payment step
       return null;
     }
 

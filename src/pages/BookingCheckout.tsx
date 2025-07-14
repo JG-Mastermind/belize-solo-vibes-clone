@@ -58,12 +58,7 @@ const BookingCheckout: React.FC = () => {
     }
   }, [id]);
 
-  useEffect(() => {
-    if (!user) {
-      toast.error('Please sign in to book an adventure');
-      navigate('/');
-    }
-  }, [user, navigate]);
+  // Removed authentication blocker - guests can now access booking flow
 
   useEffect(() => {
     if (adventure) {

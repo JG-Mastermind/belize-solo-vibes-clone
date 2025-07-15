@@ -7,19 +7,19 @@ interface AuthContextType {
   user: User | null;
   session: Session | null;
   loading: boolean;
-  signUp: (email: string, password: string, metadata?: { first_name?: string; last_name?: string }) => Promise<{ data?: any; error?: any }>;
-  signIn: (email: string, password: string, rememberMe?: boolean) => Promise<{ data?: any; error?: any }>;
-  signInWithOAuth: (provider: Provider, options?: { redirectTo?: string }) => Promise<{ data?: any; error?: any }>;
+  signUp: (email: string, password: string, metadata?: { first_name?: string; last_name?: string; user_type?: string }) => Promise<{ data?: unknown; error?: unknown }>;
+  signIn: (email: string, password: string, rememberMe?: boolean) => Promise<{ data?: unknown; error?: unknown }>;
+  signInWithOAuth: (provider: Provider, options?: { redirectTo?: string }) => Promise<{ data?: unknown; error?: unknown }>;
   signOut: () => Promise<void>;
-  resetPassword: (email: string) => Promise<{ data?: any; error?: any }>;
-  updatePassword: (password: string) => Promise<{ data?: any; error?: any }>;
-  resendConfirmation: (email: string) => Promise<{ data?: any; error?: any }>;
+  resetPassword: (email: string) => Promise<{ data?: unknown; error?: unknown }>;
+  updatePassword: (password: string) => Promise<{ data?: unknown; error?: unknown }>;
+  resendConfirmation: (email: string) => Promise<{ data?: unknown; error?: unknown }>;
   getUserRole: () => string | null;
-  updateUserRole: (role: string) => Promise<{ data?: any; error?: any }>;
+  updateUserRole: (role: string) => Promise<{ data?: unknown; error?: unknown }>;
   isDeviceIOS: () => boolean;
   rememberSignInMethod: (method: string) => void;
   getPreferredSignInMethod: () => string | null;
-  updateUserProfile: (updates: any) => Promise<{ data?: any; error?: any }>;
+  updateUserProfile: (updates: Record<string, unknown>) => Promise<{ data?: unknown; error?: unknown }>;
   getUserAvatar: () => string | null;
   syncUserProfileWithSocial: () => Promise<void>;
 }
@@ -69,7 +69,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     }
   }, [user]);
 
-  const signUp = async (email: string, password: string, metadata?: { first_name?: string; last_name?: string }) => {
+  const signUp = async (email: string, password: string, metadata?: { first_name?: string; last_name?: string; user_type?: string }) => {
     const { data, error } = await supabase.auth.signUp({
       email,
       password,
@@ -77,6 +77,23 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         data: metadata
       }
     });
+    
+    // If signup successful and user_type provided, update the users table
+    if (data.user && !error && metadata?.user_type) {
+      try {
+        const { error: updateError } = await supabase
+          .from('users')
+          .update({ user_type: metadata.user_type })
+          .eq('id', data.user.id);
+        
+        if (updateError) {
+          console.error('Error updating user type:', updateError);
+        }
+      } catch (updateError) {
+        console.error('Error updating user type:', updateError);
+      }
+    }
+    
     return { data, error };
   };
 
@@ -151,13 +168,32 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   };
 
   const getUserRole = () => {
-    return user?.user_metadata?.role || null;
+    // Try to get role from user metadata first, then fallback to database query if needed
+    return user?.user_metadata?.role || user?.user_metadata?.user_type || null;
   };
 
   const updateUserRole = async (role: string) => {
+    // Update user metadata
     const { data, error } = await supabase.auth.updateUser({
-      data: { role }
+      data: { role, user_type: role }
     });
+    
+    // Also update the users table if user exists
+    if (user && !error) {
+      try {
+        const { error: updateError } = await supabase
+          .from('users')
+          .update({ user_type: role })
+          .eq('id', user.id);
+        
+        if (updateError) {
+          console.error('Error updating user type in database:', updateError);
+        }
+      } catch (updateError) {
+        console.error('Error updating user type in database:', updateError);
+      }
+    }
+    
     return { data, error };
   };
 
@@ -174,7 +210,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     return localStorage.getItem('preferredSignInMethod');
   };
 
-  const updateUserProfile = async (updates: any) => {
+  const updateUserProfile = async (updates: Record<string, unknown>) => {
     const { data, error } = await supabase.auth.updateUser({
       data: updates
     });

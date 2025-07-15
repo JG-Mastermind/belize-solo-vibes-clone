@@ -6,11 +6,19 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Separator } from '@/components/ui/separator';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
 import { useAuth } from './AuthProvider';
 import { RoleSelection } from './RoleSelection';
 import { toast } from 'sonner';
 import { Eye, EyeOff, Mail, Lock, Loader2 } from 'lucide-react';
 import analytics from '@/utils/analytics';
+import { useNavigate } from 'react-router-dom';
 
 interface SignInModalProps {
   isOpen: boolean;
@@ -22,6 +30,7 @@ type AuthMode = 'signin' | 'signup' | 'reset';
 type AuthProvider = 'google' | 'apple' | 'instagram';
 
 export const SignInModal: React.FC<SignInModalProps> = ({ isOpen, onClose, onSwitchToSignUp }) => {
+  const navigate = useNavigate();
   const [mode, setMode] = useState<AuthMode>('signin');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -35,6 +44,7 @@ export const SignInModal: React.FC<SignInModalProps> = ({ isOpen, onClose, onSwi
   const [loading, setLoading] = useState(false);
   const [oauthLoading, setOauthLoading] = useState<AuthProvider | null>(null);
   const [showRoleSelection, setShowRoleSelection] = useState(false);
+  const [selectedRole, setSelectedRole] = useState<'guide' | 'admin'>('guide');
   const [emailErrors, setEmailErrors] = useState<string[]>([]);
   const [passwordErrors, setPasswordErrors] = useState<string[]>([]);
   
@@ -46,7 +56,8 @@ export const SignInModal: React.FC<SignInModalProps> = ({ isOpen, onClose, onSwi
     isDeviceIOS, 
     rememberSignInMethod, 
     getPreferredSignInMethod,
-    getUserRole
+    getUserRole,
+    updateUserRole
   } = useAuth();
 
   useEffect(() => {
@@ -120,25 +131,29 @@ export const SignInModal: React.FC<SignInModalProps> = ({ isOpen, onClose, onSwi
           toast.success('Successfully signed in!');
           rememberSignInMethod('email');
           
-          // Check if user needs to select a role
-          if (!getUserRole()) {
-            setShowRoleSelection(true);
-          } else {
-            onClose();
+          // Update user role if not already set
+          const currentRole = getUserRole();
+          if (!currentRole || currentRole !== selectedRole) {
+            await updateUserRole(selectedRole);
           }
           
+          onClose();
           resetForm();
+          
+          // Redirect to appropriate dashboard
+          redirectToDashboard(selectedRole);
         }
       } else if (mode === 'signup') {
         const { error } = await signUp(email, password, {
           first_name: firstName,
-          last_name: lastName
+          last_name: lastName,
+          user_type: selectedRole
         });
         
         if (error) {
           toast.error(error.message);
         } else {
-          toast.success('Account created! Please check your email for verification.');
+          toast.success('Account created! Please check your email for verification, then sign in to access your dashboard.');
           setMode('signin');
           resetForm();
         }
@@ -170,6 +185,7 @@ export const SignInModal: React.FC<SignInModalProps> = ({ isOpen, onClose, onSwi
       } else {
         rememberSignInMethod(provider);
         toast.success(`Redirecting to ${provider}...`);
+        // Note: OAuth redirection happens automatically, role selection will be handled in auth callback
       }
     } catch (error) {
       toast.error('An unexpected error occurred');
@@ -186,6 +202,7 @@ export const SignInModal: React.FC<SignInModalProps> = ({ isOpen, onClose, onSwi
     setConfirmPassword('');
     setShowPassword(false);
     setShowConfirmPassword(false);
+    setSelectedRole('guide');
     setEmailErrors([]);
     setPasswordErrors([]);
     setAgreeToTerms(false);
@@ -205,6 +222,19 @@ export const SignInModal: React.FC<SignInModalProps> = ({ isOpen, onClose, onSwi
 
   const isIOS = isDeviceIOS();
   const preferredMethod = getPreferredSignInMethod();
+
+  // Helper function to redirect to appropriate dashboard
+  const redirectToDashboard = (role: string) => {
+    const dashboardRoutes = {
+      'guide': '/dashboard/guide',
+      'admin': '/dashboard/admin',
+      'traveler': '/dashboard/traveler',
+      'host': '/dashboard/traveler' // fallback to traveler
+    };
+    
+    const route = dashboardRoutes[role as keyof typeof dashboardRoutes] || '/dashboard/guide';
+    navigate(route);
+  };
 
   return (
     <>
@@ -334,25 +364,54 @@ export const SignInModal: React.FC<SignInModalProps> = ({ isOpen, onClose, onSwi
           {/* Email Authentication Form */}
           <form onSubmit={handleEmailAuth} className="space-y-4">
             {mode === 'signup' && (
-              <div className="grid grid-cols-2 gap-4">
-                <div className="space-y-2">
-                  <Label htmlFor="firstName">First Name</Label>
-                  <Input
-                    id="firstName"
-                    value={firstName}
-                    onChange={(e) => setFirstName(e.target.value)}
-                    required
-                  />
+              <>
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="firstName">First Name</Label>
+                    <Input
+                      id="firstName"
+                      value={firstName}
+                      onChange={(e) => setFirstName(e.target.value)}
+                      required
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="lastName">Last Name</Label>
+                    <Input
+                      id="lastName"
+                      value={lastName}
+                      onChange={(e) => setLastName(e.target.value)}
+                      required
+                    />
+                  </div>
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="lastName">Last Name</Label>
-                  <Input
-                    id="lastName"
-                    value={lastName}
-                    onChange={(e) => setLastName(e.target.value)}
-                    required
-                  />
+                  <Label htmlFor="role">Account Type</Label>
+                  <Select value={selectedRole} onValueChange={(value: 'guide' | 'admin') => setSelectedRole(value)}>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select your role" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="guide">Tour Guide</SelectItem>
+                      <SelectItem value="admin">Admin</SelectItem>
+                    </SelectContent>
+                  </Select>
                 </div>
+              </>
+            )}
+
+            {mode === 'signin' && (
+              <div className="space-y-2">
+                <Label htmlFor="role">Account Type</Label>
+                <Select value={selectedRole} onValueChange={(value: 'guide' | 'admin') => setSelectedRole(value)}>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select your role" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="guide">Tour Guide</SelectItem>
+                    <SelectItem value="admin">Admin</SelectItem>
+                  </SelectContent>
+                </Select>
               </div>
             )}
 

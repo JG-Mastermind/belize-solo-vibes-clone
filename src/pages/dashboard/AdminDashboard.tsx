@@ -1,10 +1,13 @@
 
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
 import { StatsCard } from '@/components/dashboard/StatsCard';
 import { BookingsTable } from '@/components/dashboard/BookingsTable';
 import { RevenueChart, BookingsChart } from '@/components/dashboard/DashboardCharts';
 import { AIAssistantPanel } from '@/components/dashboard/AIAssistantPanel';
 import { useAuth } from '@/components/auth/AuthProvider';
+import { useAdventureCreation } from '@/contexts/AdventureCreationContext';
+import { toast } from 'sonner';
 import {
   Users,
   BookOpen,
@@ -14,6 +17,21 @@ import {
 
 const AdminDashboard = () => {
   const { user } = useAuth();
+  const navigate = useNavigate();
+  const { setPrefilledData } = useAdventureCreation();
+  
+  const handleAIGenerated = (data: { image: string; description: string; title?: string }) => {
+    // Store the generated data in context
+    setPrefilledData({
+      title: data.title,
+      description: data.description,
+      image: data.image,
+    });
+    
+    // Navigate to the create adventure page
+    navigate('/dashboard/create-adventure');
+    toast.success('Redirecting to adventure creation form...');
+  };
   
   return (
     <div className="space-y-6">
@@ -28,10 +46,7 @@ const AdminDashboard = () => {
       {user && (
         <AIAssistantPanel 
           userType={user.user_metadata?.role || 'admin'}
-          onUseGenerated={(data) => {
-            console.log('Generated content:', data);
-            // Future: Pre-fill adventure creation form
-          }}
+          onUseGenerated={handleAIGenerated}
         />
       )}
 

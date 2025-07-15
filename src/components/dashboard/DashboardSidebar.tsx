@@ -23,6 +23,7 @@ import {
   CreditCard,
   AlertTriangle,
   MessageSquare,
+  Plus,
 } from 'lucide-react';
 
 const navigationItems = [
@@ -45,6 +46,11 @@ const navigationItems = [
     title: 'Adventures',
     icon: MapPin,
     url: '/dashboard/adventures',
+  },
+  {
+    title: 'Create Adventure',
+    icon: Plus,
+    url: '/dashboard/create-adventure',
   },
   {
     title: 'Messages',

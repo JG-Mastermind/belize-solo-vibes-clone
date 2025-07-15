@@ -24,7 +24,7 @@ import { toast } from 'sonner';
 interface AIAssistantPanelProps {
   userType: string;
   className?: string;
-  onUseGenerated?: (data: { image: string; description: string }) => void;
+  onUseGenerated?: (data: { image: string; description: string; title?: string }) => void;
 }
 
 interface GeneratedContent {
@@ -97,7 +97,14 @@ export const AIAssistantPanel: React.FC<AIAssistantPanelProps> = ({
 
   const handleUseContent = () => {
     if (generatedContent && onUseGenerated) {
-      onUseGenerated(generatedContent);
+      // Extract potential title from prompt
+      const extractedTitle = prompt.length > 5 ? 
+        prompt.charAt(0).toUpperCase() + prompt.slice(1) : '';
+      
+      onUseGenerated({
+        ...generatedContent,
+        title: extractedTitle
+      });
       toast.success('Content applied to form!');
     }
   };

@@ -6,6 +6,7 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route, Outlet } from "react-router-dom";
 import { AuthProvider } from "./components/auth/AuthProvider";
+import { AdventureCreationProvider } from "./contexts/AdventureCreationContext";
 import Index from "./pages/Index";
 import Contact from "./pages/Contact";
 import Blog from "./pages/Blog";
@@ -25,6 +26,7 @@ import { DashboardLayout } from "./components/dashboard/DashboardLayout";
 import AdminDashboard from "./pages/dashboard/AdminDashboard";
 import GuideDashboard from "./pages/dashboard/GuideDashboard";
 import TravelerDashboard from "./pages/dashboard/TravelerDashboard";
+import CreateAdventure from "./pages/dashboard/CreateAdventure";
 
 const queryClient = new QueryClient();
 
@@ -42,11 +44,12 @@ const App = () => (
   <QueryClientProvider client={queryClient}>
     <TooltipProvider>
       <AuthProvider>
-        <Toaster />
-        <Sonner />
-        <BrowserRouter>
-          <ScrollToTop />
-          <Routes>
+        <AdventureCreationProvider>
+          <Toaster />
+          <Sonner />
+          <BrowserRouter>
+            <ScrollToTop />
+            <Routes>
             <Route path="/" element={<AppLayout />}>
               <Route index element={<Index />} />
               <Route path="contact" element={<Contact />} />
@@ -66,11 +69,13 @@ const App = () => (
               <Route path="admin" element={<AdminDashboard />} />
               <Route path="guide" element={<GuideDashboard />} />
               <Route path="traveler" element={<TravelerDashboard />} />
+              <Route path="create-adventure" element={<CreateAdventure />} />
             </Route>
             
             <Route path="*" element={<NotFound />} />
           </Routes>
         </BrowserRouter>
+        </AdventureCreationProvider>
       </AuthProvider>
     </TooltipProvider>
   </QueryClientProvider>

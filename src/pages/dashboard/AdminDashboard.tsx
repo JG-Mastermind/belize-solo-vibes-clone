@@ -3,6 +3,8 @@ import React from 'react';
 import { StatsCard } from '@/components/dashboard/StatsCard';
 import { BookingsTable } from '@/components/dashboard/BookingsTable';
 import { RevenueChart, BookingsChart } from '@/components/dashboard/DashboardCharts';
+import { AIAssistantPanel } from '@/components/dashboard/AIAssistantPanel';
+import { useAuth } from '@/components/auth/AuthProvider';
 import {
   Users,
   BookOpen,
@@ -11,6 +13,8 @@ import {
 } from 'lucide-react';
 
 const AdminDashboard = () => {
+  const { user } = useAuth();
+  
   return (
     <div className="space-y-6">
       <div>
@@ -19,6 +23,17 @@ const AdminDashboard = () => {
           Platform overview and management tools
         </p>
       </div>
+
+      {/* AI Assistant Panel */}
+      {user && (
+        <AIAssistantPanel 
+          userType={user.user_metadata?.role || 'admin'}
+          onUseGenerated={(data) => {
+            console.log('Generated content:', data);
+            // Future: Pre-fill adventure creation form
+          }}
+        />
+      )}
 
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
         <StatsCard

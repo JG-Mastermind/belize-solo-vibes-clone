@@ -44,7 +44,7 @@ export const SignInModal: React.FC<SignInModalProps> = ({ isOpen, onClose, onSwi
   const [loading, setLoading] = useState(false);
   const [oauthLoading, setOauthLoading] = useState<AuthProvider | null>(null);
   const [showRoleSelection, setShowRoleSelection] = useState(false);
-  const [selectedRole, setSelectedRole] = useState<'guide' | 'admin'>('guide');
+  const [selectedRole, setSelectedRole] = useState<'traveler' | 'guide' | 'admin'>('traveler');
   const [emailErrors, setEmailErrors] = useState<string[]>([]);
   const [passwordErrors, setPasswordErrors] = useState<string[]>([]);
   
@@ -202,7 +202,7 @@ export const SignInModal: React.FC<SignInModalProps> = ({ isOpen, onClose, onSwi
     setConfirmPassword('');
     setShowPassword(false);
     setShowConfirmPassword(false);
-    setSelectedRole('guide');
+    setSelectedRole('traveler');
     setEmailErrors([]);
     setPasswordErrors([]);
     setAgreeToTerms(false);
@@ -387,11 +387,12 @@ export const SignInModal: React.FC<SignInModalProps> = ({ isOpen, onClose, onSwi
                 </div>
                 <div className="space-y-2">
                   <Label htmlFor="role">Account Type</Label>
-                  <Select value={selectedRole} onValueChange={(value: 'guide' | 'admin') => setSelectedRole(value)}>
+                  <Select value={selectedRole} onValueChange={(value: 'traveler' | 'guide' | 'admin') => setSelectedRole(value)}>
                     <SelectTrigger>
                       <SelectValue placeholder="Select your role" />
                     </SelectTrigger>
                     <SelectContent>
+                      <SelectItem value="traveler">Traveler</SelectItem>
                       <SelectItem value="guide">Tour Guide</SelectItem>
                       <SelectItem value="admin">Admin</SelectItem>
                     </SelectContent>
@@ -403,11 +404,12 @@ export const SignInModal: React.FC<SignInModalProps> = ({ isOpen, onClose, onSwi
             {mode === 'signin' && (
               <div className="space-y-2">
                 <Label htmlFor="role">Account Type</Label>
-                <Select value={selectedRole} onValueChange={(value: 'guide' | 'admin') => setSelectedRole(value)}>
+                <Select value={selectedRole} onValueChange={(value: 'traveler' | 'guide' | 'admin') => setSelectedRole(value)}>
                   <SelectTrigger>
                     <SelectValue placeholder="Select your role" />
                   </SelectTrigger>
                   <SelectContent>
+                    <SelectItem value="traveler">Traveler</SelectItem>
                     <SelectItem value="guide">Tour Guide</SelectItem>
                     <SelectItem value="admin">Admin</SelectItem>
                   </SelectContent>

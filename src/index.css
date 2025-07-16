@@ -132,10 +132,52 @@
   }
   
   .sidebar-nav-item {
-    @apply flex items-center gap-3 px-4 py-3 text-sm font-medium transition-colors hover:bg-accent hover:text-accent-foreground rounded-md;
+    @apply flex items-center gap-3 px-4 py-3 text-sm font-medium transition-colors hover:bg-sidebar-accent hover:text-sidebar-accent-foreground rounded-md;
   }
   
   .sidebar-nav-item.active {
-    @apply bg-primary text-primary-foreground;
+    @apply bg-sidebar-primary text-sidebar-primary-foreground;
+  }
+
+  /* Mobile-first responsive utilities */
+  .container {
+    @apply w-full mx-auto px-4 sm:px-6 lg:px-8;
+  }
+
+  /* Improved focus states for accessibility */
+  .focus-ring {
+    @apply focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 focus:ring-offset-background;
+  }
+
+  /* Mobile-optimized button spacing */
+  .mobile-button-group {
+    @apply flex gap-1 sm:gap-2 md:gap-3;
+  }
+
+  /* Responsive text sizing */
+  .responsive-text-sm {
+    @apply text-xs sm:text-sm;
+  }
+
+  .responsive-text-base {
+    @apply text-sm sm:text-base;
+  }
+
+  .responsive-text-lg {
+    @apply text-base sm:text-lg;
+  }
+
+  /* Mobile menu improvements */
+  .mobile-menu-overlay {
+    @apply fixed inset-0 z-50 bg-background/80 backdrop-blur-sm;
+  }
+
+  /* Navigation active states */
+  .nav-link-active {
+    @apply text-foreground font-medium;
+  }
+
+  .nav-link-inactive {
+    @apply text-muted-foreground hover:text-foreground transition-colors;
   }
 }

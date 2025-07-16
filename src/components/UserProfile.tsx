@@ -38,11 +38,20 @@ export const UserProfile: React.FC = () => {
 
   if (!user) {
     return (
-      <div className="flex gap-2">
-        <Button variant="outline" onClick={() => setShowSignIn(true)}>
+      <div className="flex gap-1 sm:gap-2">
+        <Button 
+          variant="outline" 
+          size="sm" 
+          onClick={() => setShowSignIn(true)}
+          className="text-xs sm:text-sm"
+        >
           Sign In
         </Button>
-        <Button onClick={() => setShowSignUp(true)}>
+        <Button 
+          size="sm" 
+          onClick={() => setShowSignUp(true)}
+          className="text-xs sm:text-sm"
+        >
           Sign Up
         </Button>
         
@@ -76,10 +85,10 @@ export const UserProfile: React.FC = () => {
   
   const getRoleBadgeColor = (role: string) => {
     switch (role) {
-      case 'guide': return 'bg-green-100 text-green-800';
-      case 'host': return 'bg-purple-100 text-purple-800';
-      case 'admin': return 'bg-red-100 text-red-800';
-      default: return 'bg-blue-100 text-blue-800';
+      case 'guide': return 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400';
+      case 'host': return 'bg-purple-100 text-purple-800 dark:bg-purple-900/30 dark:text-purple-400';
+      case 'admin': return 'bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-400';
+      default: return 'bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-400';
     }
   };
   

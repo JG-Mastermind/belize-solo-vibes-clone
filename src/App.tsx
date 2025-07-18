@@ -7,7 +7,8 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route, Outlet } from "react-router-dom";
 import { AuthProvider } from "./components/auth/AuthProvider";
 import { AdventureCreationProvider } from "./contexts/AdventureCreationContext";
-import Index from "./pages/Index";
+import LandingPage from "./pages/LandingPage";
+import AdventuresPage from "./pages/AdventuresPage";
 import Contact from "./pages/Contact";
 import Blog from "./pages/Blog";
 import About from "./pages/About";
@@ -51,7 +52,8 @@ const App = () => (
             <ScrollToTop />
             <Routes>
             <Route path="/" element={<AppLayout />}>
-              <Route index element={<Index />} />
+              <Route index element={<LandingPage />} />
+              <Route path="adventures" element={<AdventuresPage />} />
               <Route path="contact" element={<Contact />} />
               <Route path="blog" element={<Blog />} />
               <Route path="about" element={<About />} />

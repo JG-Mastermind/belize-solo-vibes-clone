@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Clock, DollarSign, Star } from "lucide-react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { supabase } from "@/lib/supabase";
 import { toast } from "sonner";
 
@@ -53,6 +53,7 @@ const AdventureCards = ({
 }: AdventureCardsProps) => {
   const [tours, setTours] = useState<Tour[]>([]);
   const [loading, setLoading] = useState(true);
+  const navigate = useNavigate();
 
   // Fetch tours from Supabase if not provided as props
   useEffect(() => {
@@ -135,6 +136,14 @@ const AdventureCards = ({
     );
   }
 
+  const handleBookNow = (tourId: string) => {
+    navigate(`/booking/${tourId}`);
+  };
+
+  const handleLearnMore = (tourId: string) => {
+    navigate(`/adventure/${tourId}`);
+  };
+
   const AdventureGrid = () => (
     <div className={`grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 ${className}`}>
       {toursToDisplay.map((tour) => {
@@ -148,7 +157,7 @@ const AdventureCards = ({
             className="group bg-card border-border hover:shadow-lg transition-all duration-300 hover:scale-[1.02] focus-within:ring-2 focus-within:ring-ring focus-within:ring-offset-2"
           >
             {/* Image Container */}
-            <div className="relative overflow-hidden rounded-t-lg">
+            <div className="relative group overflow-hidden rounded-t-lg">
               <img 
                 src={imageUrl} 
                 alt={`${tour.title} adventure tour in ${tour.location_name}`}
@@ -159,6 +168,10 @@ const AdventureCards = ({
                   target.src = '/placeholder-image.jpg';
                 }}
               />
+              
+              {/* Hover Overlay */}
+              <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity duration-300 z-10"></div>
+              
               {/* Price Badge */}
               <div className="absolute top-3 right-3 bg-background/95 backdrop-blur-sm border border-border rounded-lg px-2 py-1 shadow-sm">
                 <div className="flex items-center gap-1">
@@ -212,20 +225,22 @@ const AdventureCards = ({
                 </div>
               </div>
 
-              {/* View Details Button */}
-              <Button 
-                asChild 
-                className="w-full focus-ring"
-                size="sm"
-              >
-                <Link 
-                  to={`/AdventureDetail/${tour.id}`}
-                  className="inline-flex items-center justify-center"
-                  aria-label={`View details for ${tour.title} adventure`}
+              {/* Action Buttons */}
+              <div className="flex justify-between mt-4 space-x-2">
+                <Button
+                  onClick={() => handleBookNow(tour.id)}
+                  className="flex-1 bg-primary text-white rounded-md py-2 px-4 hover:bg-primary/80"
                 >
-                  View Details
-                </Link>
-              </Button>
+                  Book Now
+                </Button>
+                <Button
+                  onClick={() => handleLearnMore(tour.id)}
+                  variant="outline"
+                  className="flex-1 text-foreground border-muted bg-muted hover:bg-muted/80"
+                >
+                  Learn More
+                </Button>
+              </div>
             </CardContent>
           </Card>
         );

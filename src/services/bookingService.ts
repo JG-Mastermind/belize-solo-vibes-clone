@@ -16,24 +16,24 @@ export class BookingService {
   // Adventure Methods
   static async getAdventure(id: string): Promise<Adventure | null> {
     try {
-      // First try to fetch from Supabase adventures table
+      // First try to fetch from Supabase tours table
       const { data: adventureData, error: adventureError } = await supabase
-        .from('adventures')
+        .from('tours')
         .select('*')
         .eq('id', id)
         .eq('is_active', true)
         .single();
       
       if (!adventureError && adventureData) {
-        // Transform adventures table data to Adventure format for booking types
+        // Transform tours table data to Adventure format for booking types
         return {
           id: adventureData.id,
-          guide_id: adventureData.guide_id || '',
+          guide_id: adventureData.provider_id || '',
           title: adventureData.title,
           description: adventureData.description || '',
-          location: adventureData.location || '',
+          location: adventureData.location_name || '',
           duration_hours: adventureData.duration_hours || 8,
-          difficulty_level: (adventureData.difficulty_level as any) || 'moderate',
+          difficulty_level: 'moderate' as any,
           max_participants: adventureData.max_participants || 12,
           base_price: adventureData.price_per_person || 0,
           group_discount_percentage: 0,
@@ -45,11 +45,11 @@ export class BookingService {
           meeting_point: '',
           what_to_bring: [],
           not_suitable_for: [],
-          includes: adventureData.includes || [],
-          requirements: adventureData.requirements || [],
-          featured_image_url: adventureData.image_urls?.[0] || '',
-          image_urls: adventureData.image_urls || [],
-          gallery_images: adventureData.image_urls || [],
+          includes: [],
+          requirements: [],
+          featured_image_url: adventureData.images?.[0] || '',
+          image_urls: adventureData.images || [],
+          gallery_images: adventureData.images || [],
           video_url: '',
           highlights: [],
           itinerary: {},

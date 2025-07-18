@@ -1,5 +1,5 @@
 
-import React, { useState } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import {
@@ -19,6 +19,8 @@ const MobileMenu = () => {
   const { user, signOut, getUserRole } = useAuth();
   const location = useLocation();
   const [isOpen, setIsOpen] = useState(false);
+  const triggerRef = useRef<HTMLButtonElement>(null);
+  const firstLinkRef = useRef<HTMLAnchorElement>(null);
   
   const currentPath = location.pathname;
 
@@ -40,6 +42,17 @@ const MobileMenu = () => {
     setIsOpen(false);
   };
 
+  // Focus management
+  useEffect(() => {
+    if (isOpen && firstLinkRef.current) {
+      // Focus first navigation link when menu opens
+      firstLinkRef.current.focus();
+    } else if (!isOpen && triggerRef.current) {
+      // Return focus to trigger when menu closes
+      triggerRef.current.focus();
+    }
+  }, [isOpen]);
+
   const socialIcons = {
     Instagram,
     YouTube: Youtube,
@@ -50,12 +63,19 @@ const MobileMenu = () => {
   return (
     <Sheet open={isOpen} onOpenChange={setIsOpen}>
       <SheetTrigger asChild>
-        <Button variant="ghost" size="icon" className="md:hidden">
+        <Button 
+          ref={triggerRef}
+          variant="ghost" 
+          size="icon" 
+          className="md:hidden min-w-[44px] min-h-[44px] p-2"
+          aria-expanded={isOpen}
+          aria-controls="mobile-menu"
+        >
           <Menu className="h-6 w-6" />
           <span className="sr-only">Open menu</span>
         </Button>
       </SheetTrigger>
-      <SheetContent side="top" className="w-full h-full flex flex-col bg-background">
+      <SheetContent side="top" className="w-full h-full flex flex-col bg-background" id="mobile-menu">
         <SheetHeader className="text-left">
           <SheetTitle className="text-2xl font-bold text-primary">
             BelizeVibes
@@ -93,9 +113,10 @@ const MobileMenu = () => {
 
           {/* Navigation Links */}
           <nav className="space-y-6">
-            {publicNavigationItems.map((item) => (
+            {publicNavigationItems.map((item, index) => (
               <Link
                 key={item.path}
+                ref={index === 0 ? firstLinkRef : null}
                 to={item.path}
                 onClick={handleLinkClick}
                 className={`block text-2xl font-medium transition-colors ${

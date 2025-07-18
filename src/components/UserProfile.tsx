@@ -1,8 +1,7 @@
 
-import React, { useState } from 'react';
+import React from 'react';
 import { useAuth } from './auth/AuthProvider';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
 import {
@@ -13,15 +12,11 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
-import { SignInModal } from './auth/SignInModal';
-import { SignUpModal } from './auth/SignUpModal';
 import { User, LogOut, Settings } from 'lucide-react';
 import { toast } from 'sonner';
 
 export const UserProfile: React.FC = () => {
-  const { user, signOut, loading, getUserRole, getUserAvatar } = useAuth();
-  const [showSignIn, setShowSignIn] = useState(false);
-  const [showSignUp, setShowSignUp] = useState(false);
+  const { user, signOut, getUserRole, getUserAvatar } = useAuth();
 
   const handleSignOut = async () => {
     try {
@@ -32,48 +27,9 @@ export const UserProfile: React.FC = () => {
     }
   };
 
-  if (loading) {
-    return <div className="flex justify-center p-4">Loading...</div>;
-  }
-
+  // This component now only handles authenticated users
   if (!user) {
-    return (
-      <div className="flex gap-1 sm:gap-2">
-        <Button 
-          variant="outline" 
-          size="sm" 
-          onClick={() => setShowSignIn(true)}
-          className="text-xs sm:text-sm"
-        >
-          Sign In
-        </Button>
-        <Button 
-          size="sm" 
-          onClick={() => setShowSignUp(true)}
-          className="text-xs sm:text-sm"
-        >
-          Sign Up
-        </Button>
-        
-        <SignInModal
-          isOpen={showSignIn}
-          onClose={() => setShowSignIn(false)}
-          onSwitchToSignUp={() => {
-            setShowSignIn(false);
-            setShowSignUp(true);
-          }}
-        />
-        
-        <SignUpModal
-          isOpen={showSignUp}
-          onClose={() => setShowSignUp(false)}
-          onSwitchToSignIn={() => {
-            setShowSignUp(false);
-            setShowSignIn(true);
-          }}
-        />
-      </div>
-    );
+    return null;
   }
 
   const userMetadata = user.user_metadata || {};

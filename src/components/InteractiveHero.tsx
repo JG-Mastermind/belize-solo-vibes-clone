@@ -1,28 +1,51 @@
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Search } from "lucide-react";
+import { useRef, useState, useEffect } from "react";
 
 const InteractiveHero = () => {
+  const videoRef = useRef<HTMLVideoElement>(null);
+  const [isScrolled, setIsScrolled] = useState(false);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      setIsScrolled(window.scrollY > 10);
+    };
+
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
+  useEffect(() => {
+    if (isScrolled) {
+      videoRef.current?.pause();
+    } else {
+      videoRef.current?.play();
+    }
+  }, [isScrolled]);
   return (
     <section className="relative h-screen flex items-center justify-center text-white overflow-hidden">
       {/* Video Background */}
       <div className="absolute top-0 left-0 w-full h-full z-0">
         {/* Placeholder for video, you can replace this with a real <video> tag later */}
         <div className="bg-black w-full h-full">
-            {/* Example using a static image as a placeholder */}
-            <img 
-                src="https://images.unsplash.com/photo-1482938289607-e9573fc25ebb?w=1920&h=1080&fit=crop&crop=center" 
-                alt="Belize beach"
+            <video
+                ref={videoRef}
+                src="/images/Caribbean_Beach_Video.mp4"
+                autoPlay
+                loop
+                muted
                 className="w-full h-full object-cover"
             />
+            <div className="absolute inset-0 z-10"></div>
         </div>
       </div>
       
       {/* Dark Overlay */}
-      <div className="absolute top-0 left-0 w-full h-full bg-black/50 z-10"></div>
+      <div className="absolute top-0 left-0 w-full h-full bg-black/50 z-20"></div>
       
       {/* Content */}
-      <div className="relative z-20 container mx-auto px-4 text-center">
+      <div className="relative z-30 container mx-auto px-4 text-center">
         <h1 className="text-4xl md:text-6xl font-playfair font-bold mb-4 leading-tight">
           Your Adventure Awaits
         </h1>

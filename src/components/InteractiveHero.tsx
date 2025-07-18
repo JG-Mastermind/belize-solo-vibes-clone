@@ -1,15 +1,16 @@
+import React, { useState, useEffect, useRef } from 'react';
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Search } from "lucide-react";
-import { useRef, useState, useEffect } from "react";
 
 const InteractiveHero = () => {
-  const videoRef = useRef<HTMLVideoElement>(null);
   const [isScrolled, setIsScrolled] = useState(false);
+  const videoRef = useRef<HTMLVideoElement>(null);
 
   useEffect(() => {
     const handleScroll = () => {
-      setIsScrolled(window.scrollY > 10);
+      const scrolled = window.scrollY > 10;
+      setIsScrolled(scrolled);
     };
 
     window.addEventListener('scroll', handleScroll);
@@ -17,34 +18,42 @@ const InteractiveHero = () => {
   }, []);
 
   useEffect(() => {
-    if (isScrolled) {
-      videoRef.current?.pause();
-    } else {
-      videoRef.current?.play();
+    if (videoRef.current) {
+      if (isScrolled) {
+        videoRef.current.pause();
+      } else {
+        videoRef.current.play().catch(error => {
+          console.error("Video play failed:", error);
+        });
+      }
     }
   }, [isScrolled]);
+
   return (
     <section className="relative h-screen flex items-center justify-center text-white overflow-hidden">
-      {/* Video Background */}
+      
+      {/* Video Background Layer */}
       <div className="absolute top-0 left-0 w-full h-full z-0">
-        {/* Placeholder for video, you can replace this with a real <video> tag later */}
-        <div className="bg-black w-full h-full">
-            <video
-                ref={videoRef}
-                src="/images/Caribbean_Beach_Video.mp4"
-                autoPlay
-                loop
-                muted
-                className="w-full h-full object-cover"
-            />
-            <div className="absolute inset-0 z-10"></div>
-        </div>
+        <video 
+          ref={videoRef}
+          autoPlay 
+          loop 
+          muted 
+          playsInline
+          className="w-full h-full object-cover"
+          src="/images/Caribbean_Beach_Video.mp4"
+        >
+          Your browser does not support the video tag.
+        </video>
       </div>
       
-      {/* Dark Overlay */}
-      <div className="absolute top-0 left-0 w-full h-full bg-black/50 z-20"></div>
+      {/* Click-blocking Overlay Layer */}
+      <div className="absolute inset-0 z-10"></div>
       
-      {/* Content */}
+      {/* Dark Tint Overlay Layer */}
+      <div className="absolute inset-0 bg-black/50 z-20"></div>
+      
+      {/* Content Layer */}
       <div className="relative z-30 container mx-auto px-4 text-center">
         <h1 className="text-4xl md:text-6xl font-playfair font-bold mb-4 leading-tight">
           Your Adventure Awaits
@@ -53,12 +62,11 @@ const InteractiveHero = () => {
           What's your vibe? Search for an adventure or choose a popular experience.
         </p>
 
-        {/* Search Bar */}
         <div className="max-w-xl mx-auto mb-6">
           <div className="relative">
             <Input
               type="search"
-              placeholder="E.g., 'cave tubing', 'jungle ruins', 'snorkeling'"
+              placeholder="E.g., 'cave tubing', 'jungle ruins'"
               className="w-full h-14 pl-6 pr-16 rounded-full text-lg text-black"
             />
             <Button
@@ -71,7 +79,6 @@ const InteractiveHero = () => {
           </div>
         </div>
 
-        {/* Quick Action Buttons */}
         <div className="flex flex-wrap items-center justify-center gap-4">
           <Button variant="outline" className="bg-white/20 border-white backdrop-blur-sm hover:bg-white/30">
             Cave Tubing

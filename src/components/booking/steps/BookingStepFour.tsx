@@ -161,7 +161,7 @@ export const BookingStepFour: React.FC<BookingStepFourProps> = ({
       <Card>
         <CardHeader>
           <CardTitle className="text-lg">Enhance Your Adventure</CardTitle>
-          <p className="text-sm text-gray-600">
+          <p className="text-sm text-muted-foreground">
             Add optional extras to make your experience even more memorable
           </p>
         </CardHeader>
@@ -169,26 +169,26 @@ export const BookingStepFour: React.FC<BookingStepFourProps> = ({
           <div className="space-y-6">
             {Object.entries(groupedAddOns).map(([category, categoryAddOns]) => (
               <div key={category} className="space-y-3">
-                <h3 className="font-semibold text-gray-900">{category}</h3>
+                <h3 className="font-semibold text-foreground">{category}</h3>
                 <div className="space-y-3">
                   {categoryAddOns.map((addon) => (
                     <div key={addon.id} className="border rounded-lg p-4 hover:shadow-md transition-shadow">
                       <div className="flex items-start justify-between">
                         <div className="flex items-start space-x-3 flex-1">
-                          <div className="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center">
+                          <div className="w-10 h-10 bg-primary/10 rounded-lg flex items-center justify-center">
                             {addon.icon}
                           </div>
                           <div className="flex-1">
                             <div className="flex items-center space-x-2 mb-1">
                               <h4 className="font-semibold">{addon.name}</h4>
                               {addon.popular && (
-                                <Badge variant="secondary" className="bg-orange-100 text-orange-800">
+                                <Badge variant="secondary" className="bg-warning/10 text-warning">
                                   Popular
                                 </Badge>
                               )}
                             </div>
-                            <p className="text-sm text-gray-600 mb-2">{addon.description}</p>
-                            <div className="text-lg font-bold text-blue-600">${addon.price}</div>
+                            <p className="text-sm text-muted-foreground mb-2">{addon.description}</p>
+                            <div className="text-lg font-bold text-primary">${addon.price}</div>
                           </div>
                         </div>
                         
@@ -227,9 +227,9 @@ export const BookingStepFour: React.FC<BookingStepFourProps> = ({
 
       {/* Add-ons Summary */}
       {formData.selectedAddOns && formData.selectedAddOns.length > 0 && (
-        <Card className="border-green-200 bg-green-50">
+        <Card className="border-primary bg-primary/10">
           <CardHeader>
-            <CardTitle className="text-lg text-green-800">Selected Add-ons</CardTitle>
+            <CardTitle className="text-lg text-primary-foreground">Selected Add-ons</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="space-y-2">
@@ -244,7 +244,7 @@ export const BookingStepFour: React.FC<BookingStepFourProps> = ({
                 </div>
               ))}
               <div className="border-t pt-2 mt-2">
-                <div className="flex justify-between items-center font-semibold text-green-800">
+                <div className="flex justify-between items-center font-semibold text-primary-foreground">
                   <span>Add-ons Total</span>
                   <span>${getTotalAddOnsCost().toFixed(2)}</span>
                 </div>
@@ -280,10 +280,10 @@ export const BookingStepFour: React.FC<BookingStepFourProps> = ({
             </div>
             
             {formData.promoCode && (
-              <div className="p-3 bg-green-50 border border-green-200 rounded-lg">
+              <div className="p-3 bg-primary/10 border border-primary rounded-lg">
                 <div className="flex items-center space-x-2">
-                  <Gift className="w-4 h-4 text-green-600" />
-                  <span className="text-sm font-medium text-green-800">
+                  <Gift className="w-4 h-4 text-primary" />
+                  <span className="text-sm font-medium text-primary-foreground">
                     Promo code "{formData.promoCode}" applied!
                   </span>
                 </div>
@@ -300,7 +300,7 @@ export const BookingStepFour: React.FC<BookingStepFourProps> = ({
             <MessageCircle className="w-5 h-5 mr-2" />
             Special Requests
           </CardTitle>
-          <p className="text-sm text-gray-600">
+          <p className="text-sm text-muted-foreground">
             Let us know if you have any special requests or additional information
           </p>
         </CardHeader>
@@ -314,7 +314,7 @@ export const BookingStepFour: React.FC<BookingStepFourProps> = ({
               onChange={(e) => handleSpecialRequestsChange(e.target.value)}
               rows={4}
             />
-            <p className="text-xs text-gray-500">
+            <p className="text-xs text-muted-foreground">
               We'll do our best to accommodate your requests, though some may not be possible depending on availability.
             </p>
           </div>
@@ -322,28 +322,28 @@ export const BookingStepFour: React.FC<BookingStepFourProps> = ({
       </Card>
 
       {/* Popular Add-on Recommendations */}
-      <Card className="border-blue-200 bg-blue-50">
+      <Card className="border-primary bg-primary/10">
         <CardHeader>
-          <CardTitle className="text-lg text-blue-800">💡 Popular Combinations</CardTitle>
+          <CardTitle className="text-lg text-primary-foreground">💡 Popular Combinations</CardTitle>
         </CardHeader>
         <CardContent>
           <div className="space-y-3">
-            <div className="p-3 bg-white rounded-lg border border-blue-200">
-              <h4 className="font-semibold text-blue-900 mb-1">Memory Package</h4>
-              <p className="text-sm text-blue-800 mb-2">
+            <div className="p-3 bg-background rounded-lg border border-primary">
+              <h4 className="font-semibold text-foreground mb-1">Memory Package</h4>
+              <p className="text-sm text-primary-foreground mb-2">
                 Professional Photos + Souvenir Pack = $60 (Save $5!)
               </p>
-              <div className="text-xs text-blue-700">
+              <div className="text-xs text-primary">
                 Most popular choice for first-time visitors
               </div>
             </div>
             
-            <div className="p-3 bg-white rounded-lg border border-blue-200">
-              <h4 className="font-semibold text-blue-900 mb-1">Comfort Package</h4>
-              <p className="text-sm text-blue-800 mb-2">
+            <div className="p-3 bg-background rounded-lg border border-primary">
+              <h4 className="font-semibold text-foreground mb-1">Comfort Package</h4>
+              <p className="text-sm text-primary-foreground mb-2">
                 Hotel Pickup + Gourmet Lunch = $35 (Save $5!)
               </p>
-              <div className="text-xs text-blue-700">
+              <div className="text-xs text-primary">
                 Perfect for a hassle-free experience
               </div>
             </div>

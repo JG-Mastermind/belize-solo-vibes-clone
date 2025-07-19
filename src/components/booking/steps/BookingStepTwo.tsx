@@ -103,7 +103,7 @@ export const BookingStepTwo: React.FC<BookingStepTwoProps> = ({
               
               <div className="text-center">
                 <div className="text-3xl font-bold">{formData.participants}</div>
-                <div className="text-sm text-gray-600">
+                <div className="text-sm text-muted-foreground">
                   {formData.participants === 1 ? 'Participant' : 'Participants'}
                 </div>
               </div>
@@ -126,12 +126,12 @@ export const BookingStepTwo: React.FC<BookingStepTwoProps> = ({
                   onClick={() => handleParticipantChange(count)}
                   className={`p-4 rounded-lg border-2 transition-all text-center ${
                     formData.participants === count
-                      ? 'border-blue-500 bg-blue-50'
-                      : 'border-gray-200 hover:border-gray-300'
+                      ? 'border-primary bg-primary/10'
+                      : 'border-border hover:border-border/70'
                   }`}
                 >
                   <div className="text-lg font-semibold">{count}</div>
-                  <div className="text-xs text-gray-600">
+                  <div className="text-xs text-muted-foreground">
                     {count === 1 ? 'Solo' : count === 2 ? 'Couple' : 'Group'}
                   </div>
                 </button>
@@ -140,10 +140,10 @@ export const BookingStepTwo: React.FC<BookingStepTwoProps> = ({
 
             {/* Availability Warning */}
             {availableSpots > 0 && availableSpots <= 3 && (
-              <div className="p-3 bg-orange-50 border border-orange-200 rounded-lg">
+              <div className="p-3 bg-warning/10 border border-warning rounded-lg">
                 <div className="flex items-center space-x-2">
                   <div className="w-2 h-2 bg-orange-500 rounded-full animate-pulse"></div>
-                  <span className="text-sm font-medium text-orange-800">
+                  <span className="text-sm font-medium text-warning-foreground">
                     Only {availableSpots} spots left for this date!
                   </span>
                 </div>
@@ -170,20 +170,20 @@ export const BookingStepTwo: React.FC<BookingStepTwoProps> = ({
               </div>
               
               {pricing.groupDiscount > 0 && (
-                <div className="flex justify-between items-center text-green-600">
+                <div className="flex justify-between items-center text-primary">
                   <span>Group discount</span>
                   <span>-${pricing.groupDiscount.toFixed(2)}</span>
                 </div>
               )}
               
               {pricing.earlyBirdDiscount > 0 && (
-                <div className="flex justify-between items-center text-green-600">
+                <div className="flex justify-between items-center text-primary">
                   <span>Early bird discount</span>
                   <span>-${pricing.earlyBirdDiscount.toFixed(2)}</span>
                 </div>
               )}
               
-              <div className="flex justify-between items-center text-sm text-gray-600">
+              <div className="flex justify-between items-center text-sm text-muted-foreground">
                 <span>Taxes & fees</span>
                 <span>${pricing.taxAmount.toFixed(2)}</span>
               </div>
@@ -201,9 +201,9 @@ export const BookingStepTwo: React.FC<BookingStepTwoProps> = ({
 
       {/* Discounts Available */}
       {discounts.length > 0 && (
-        <Card className="border-green-200 bg-green-50">
+        <Card className="border-primary bg-primary/10">
           <CardHeader>
-            <CardTitle className="text-lg flex items-center text-green-800">
+            <CardTitle className="text-lg flex items-center text-primary-foreground">
               <Percent className="w-5 h-5 mr-2" />
               Available Discounts
             </CardTitle>
@@ -212,12 +212,12 @@ export const BookingStepTwo: React.FC<BookingStepTwoProps> = ({
             <div className="space-y-3">
               {discounts.map((discount, index) => (
                 <div key={index} className="flex items-center space-x-3 p-3 bg-white rounded-lg border border-green-200">
-                  <div className="w-8 h-8 bg-green-500 rounded-full flex items-center justify-center">
+                  <div className="w-8 h-8 bg-primary rounded-full flex items-center justify-center">
                     <span className="text-white text-sm font-bold">{discount.value}%</span>
                   </div>
                   <div>
-                    <div className="font-semibold text-green-800">{discount.type}</div>
-                    <div className="text-sm text-green-700">{discount.description}</div>
+                    <div className="font-semibold text-primary-foreground">{discount.type}</div>
+                    <div className="text-sm text-primary">{discount.description}</div>
                   </div>
                 </div>
               ))}
@@ -228,13 +228,13 @@ export const BookingStepTwo: React.FC<BookingStepTwoProps> = ({
 
       {/* Solo Traveler Support */}
       {formData.participants === 1 && (
-        <Card className="border-purple-200 bg-purple-50">
+        <Card className="border-accent bg-accent/10">
           <CardContent className="pt-4">
             <div className="flex items-center space-x-2">
-              <Heart className="w-5 h-5 text-purple-600" />
+              <Heart className="w-5 h-5 text-accent-foreground" />
               <div>
-                <h3 className="font-semibold text-purple-800">Solo Traveler Friendly</h3>
-                <p className="text-sm text-purple-700">
+                <h3 className="font-semibold text-accent-foreground">Solo Traveler Friendly</h3>
+                <p className="text-sm text-accent-foreground/80">
                   This adventure is perfect for solo travelers. You'll join a small group of like-minded adventurers!
                 </p>
               </div>
@@ -245,13 +245,13 @@ export const BookingStepTwo: React.FC<BookingStepTwoProps> = ({
 
       {/* Group Benefits */}
       {formData.participants >= 4 && (
-        <Card className="border-blue-200 bg-blue-50">
+        <Card className="border-primary bg-primary/10">
           <CardContent className="pt-4">
             <div className="flex items-center space-x-2">
-              <Users className="w-5 h-5 text-blue-600" />
+              <Users className="w-5 h-5 text-primary" />
               <div>
-                <h3 className="font-semibold text-blue-800">Group Benefits</h3>
-                <p className="text-sm text-blue-700">
+                <h3 className="font-semibold text-primary-foreground">Group Benefits</h3>
+                <p className="text-sm text-primary">
                   Great choice for groups! You'll get a discount and can enjoy a more personalized experience.
                 </p>
               </div>

@@ -71,15 +71,15 @@ export const BookingStepOne: React.FC<BookingStepOneProps> = ({
     if (!selectedDate) return null;
     
     if (isCheckingAvailability) {
-      return { status: 'loading', message: 'Checking availability...', color: 'bg-blue-100 text-blue-800' };
+      return { status: 'loading', message: 'Checking availability...', color: 'bg-primary/10 text-primary' };
     }
     
     if (availableSpots === 0) {
-      return { status: 'full', message: 'Fully booked', color: 'bg-red-100 text-red-800' };
+      return { status: 'full', message: 'Fully booked', color: 'bg-destructive/10 text-destructive' };
     } else if (availableSpots <= 3) {
       return { status: 'limited', message: `Only ${availableSpots} spots left`, color: 'bg-orange-100 text-orange-800' };
     } else {
-      return { status: 'available', message: `${availableSpots} spots available`, color: 'bg-green-100 text-green-800' };
+      return { status: 'available', message: `${availableSpots} spots available`, color: 'bg-primary/10 text-primary' };
     }
   };
 
@@ -112,8 +112,8 @@ export const BookingStepOne: React.FC<BookingStepOneProps> = ({
             <div className="space-y-4">
               {selectedDate ? (
                 <div className="space-y-3">
-                  <div className="p-4 bg-blue-50 rounded-lg">
-                    <h3 className="font-semibold text-blue-900 mb-2">
+                  <div className="p-4 bg-muted rounded-lg">
+                    <h3 className="font-semibold text-foreground mb-2">
                       {format(selectedDate, 'EEEE, MMMM d, yyyy')}
                     </h3>
                     
@@ -125,9 +125,9 @@ export const BookingStepOne: React.FC<BookingStepOneProps> = ({
                   </div>
                   
                   {/* Weather Info (Mock) */}
-                  <div className="p-4 bg-gray-50 rounded-lg">
+                  <div className="p-4 bg-muted rounded-lg">
                     <h4 className="font-medium mb-2">Weather Forecast</h4>
-                    <div className="flex items-center space-x-2 text-sm text-gray-600">
+                    <div className="flex items-center space-x-2 text-sm text-muted-foreground">
                       <span>🌤️ 82°F</span>
                       <span>•</span>
                       <span>Partly cloudy</span>
@@ -137,9 +137,9 @@ export const BookingStepOne: React.FC<BookingStepOneProps> = ({
                   </div>
                 </div>
               ) : (
-                <div className="p-4 bg-gray-50 rounded-lg text-center">
-                  <CalendarIcon className="w-12 h-12 mx-auto text-gray-400 mb-2" />
-                  <p className="text-gray-600">Select a date to check availability</p>
+                <div className="p-4 bg-muted rounded-lg text-center">
+                  <CalendarIcon className="w-12 h-12 mx-auto text-muted-foreground mb-2" />
+                  <p className="text-muted-foreground">Select a date to check availability</p>
                 </div>
               )}
             </div>
@@ -164,13 +164,13 @@ export const BookingStepOne: React.FC<BookingStepOneProps> = ({
                   onClick={() => handleTimeSelect(slot.value)}
                   className={`p-4 rounded-lg border-2 transition-all text-left ${
                     formData.selectedTime === slot.value
-                      ? 'border-blue-500 bg-blue-50'
-                      : 'border-gray-200 hover:border-gray-300'
+                      ? 'border-primary bg-primary/10'
+                      : 'border-border hover:border-border/70'
                   }`}
                 >
                   <div className="font-semibold">{slot.label}</div>
-                  <div className="text-sm text-gray-600">{slot.description}</div>
-                  <div className="text-xs text-gray-500 mt-1">
+                  <div className="text-sm text-muted-foreground">{slot.description}</div>
+                  <div className="text-xs text-muted-foreground mt-1">
                     {adventure.duration_hours} hours
                   </div>
                 </button>
@@ -223,7 +223,7 @@ export const BookingStepOne: React.FC<BookingStepOneProps> = ({
 
       {/* Early Bird Discount */}
       {adventure.early_bird_discount_percentage > 0 && selectedDate && (
-        <Card className="border-green-200 bg-green-50">
+        <Card className="border-primary bg-primary/10">
           <CardContent className="pt-4">
             <div className="flex items-center space-x-2">
               <div className="w-8 h-8 bg-green-500 rounded-full flex items-center justify-center">

@@ -252,7 +252,7 @@ const BookingCheckout: React.FC = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 py-8">
+    <div className="min-h-screen bg-muted py-8">
       <div className="container mx-auto px-4">
         {/* Header */}
         <div className="mb-8">
@@ -268,7 +268,7 @@ const BookingCheckout: React.FC = () => {
           <div className="flex items-center justify-between">
             <div>
               <h1 className="text-3xl font-bold">{adventure.title}</h1>
-              <p className="text-gray-600 flex items-center mt-2">
+              <p className="text-muted-foreground flex items-center mt-2">
                 <MapPin className="w-4 h-4 mr-1" />
                 {adventure.location}
               </p>
@@ -278,7 +278,7 @@ const BookingCheckout: React.FC = () => {
               <div className="text-2xl font-bold">
                 {pricing ? `$${pricing.totalAmount.toFixed(2)}` : `$${adventure.base_price}`}
               </div>
-              <div className="text-sm text-gray-500">
+              <div className="text-sm text-muted-foreground">
                 {formData.participants} participant{formData.participants > 1 ? 's' : ''}
               </div>
             </div>
@@ -307,7 +307,7 @@ const BookingCheckout: React.FC = () => {
                     Step {currentStep} of {steps.length}
                   </Badge>
                 </CardTitle>
-                <p className="text-gray-600">{steps[currentStep - 1].description}</p>
+                <p className="text-muted-foreground">{steps[currentStep - 1].description}</p>
               </CardHeader>
               <CardContent>
                 {renderStep()}
@@ -347,13 +347,13 @@ const BookingCheckout: React.FC = () => {
             
             {/* Mobile Sticky Summary */}
             {currentStep < 5 && (
-              <div className="lg:hidden fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 p-4 shadow-lg z-50">
+              <div className="lg:hidden fixed bottom-0 left-0 right-0 bg-background border-t border-border p-4 shadow-lg z-50">
                 <div className="flex items-center justify-between mb-3">
                   <div>
                     <div className="font-semibold">
                       {pricing ? `$${pricing.totalAmount.toFixed(2)}` : `$${adventure.base_price}`}
                     </div>
-                    <div className="text-sm text-gray-500">
+                    <div className="text-sm text-muted-foreground">
                       {formData.participants} participant{formData.participants > 1 ? 's' : ''}
                     </div>
                   </div>

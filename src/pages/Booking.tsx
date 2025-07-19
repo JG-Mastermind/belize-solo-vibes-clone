@@ -644,7 +644,7 @@ const Booking = () => {
                       <FormLabel>Special Requests (Optional)</FormLabel>
                       <FormControl>
                         <textarea 
-                          className="w-full p-3 border border-gray-300 rounded-md resize-vertical min-h-[80px]"
+                          className="w-full p-3 border border-border rounded-md resize-vertical min-h-[80px]"
                           placeholder="Any special dietary requirements, accessibility needs, or other requests..."
                           {...field}
                         />
@@ -667,38 +667,38 @@ const Booking = () => {
             {currentStep === 2 && (
               <div className="space-y-6">
                 {!isAuthenticated ? (
-                  <div className="bg-blue-50 border border-blue-200 rounded-lg p-6">
-                    <h3 className="text-lg font-semibold text-blue-800 mb-4">Booking Summary</h3>
+                  <div className="bg-primary/10 border border-primary rounded-lg p-6">
+                    <h3 className="text-lg font-semibold text-primary-foreground mb-4">Booking Summary</h3>
                     
                     {/* Show booking summary for guest users */}
                     <div className="space-y-3 mb-6">
                       <div className="flex justify-between">
-                        <span className="text-blue-700">Adventure:</span>
-                        <span className="font-semibold text-blue-900">{adventure?.title}</span>
+                        <span className="text-primary">Adventure:</span>
+                        <span className="font-semibold text-primary-foreground">{adventure?.title}</span>
                       </div>
                       <div className="flex justify-between">
-                        <span className="text-blue-700">Date:</span>
-                        <span className="font-semibold text-blue-900">{form.getValues("bookingDate")?.toLocaleDateString()}</span>
+                        <span className="text-primary">Date:</span>
+                        <span className="font-semibold text-primary-foreground">{form.getValues("bookingDate")?.toLocaleDateString()}</span>
                       </div>
                       <div className="flex justify-between">
-                        <span className="text-blue-700">Travelers:</span>
-                        <span className="font-semibold text-blue-900">{form.getValues("numberOfTravelers")}</span>
+                        <span className="text-primary">Travelers:</span>
+                        <span className="font-semibold text-primary-foreground">{form.getValues("numberOfTravelers")}</span>
                       </div>
                       <div className="flex justify-between">
-                        <span className="text-blue-700">Lead Guest:</span>
-                        <span className="font-semibold text-blue-900">{form.getValues("fullName")}</span>
+                        <span className="text-primary">Lead Guest:</span>
+                        <span className="font-semibold text-primary-foreground">{form.getValues("fullName")}</span>
                       </div>
                       <div className="border-t pt-2 flex justify-between">
-                        <span className="text-blue-700 font-semibold">Total:</span>
-                        <span className="font-bold text-blue-900 text-lg">
+                        <span className="text-primary font-semibold">Total:</span>
+                        <span className="font-bold text-primary-foreground text-lg">
                           ${((adventure?.price_per_person || (localAdventure ? parseFloat(localAdventure.price.replace('$', '')) : 0)) * form.getValues("numberOfTravelers")).toFixed(2)}
                         </span>
                       </div>
                     </div>
                     
                     <div className="text-center">
-                      <h4 className="text-lg font-semibold text-blue-800 mb-2">Ready to Secure Your Adventure?</h4>
-                      <p className="text-blue-700 mb-4">Please sign in to complete your booking and payment.</p>
+                      <h4 className="text-lg font-semibold text-primary-foreground mb-2">Ready to Secure Your Adventure?</h4>
+                      <p className="text-primary mb-4">Please sign in to complete your booking and payment.</p>
                       <Button 
                         onClick={() => setShowSignIn(true)}
                         className="bg-blue-600 hover:bg-blue-700 text-white"

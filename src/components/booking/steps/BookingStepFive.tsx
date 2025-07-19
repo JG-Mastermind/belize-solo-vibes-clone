@@ -116,7 +116,7 @@ export const BookingStepFive: React.FC<BookingStepFiveProps> = ({
               />
               <div className="flex-1">
                 <h3 className="font-semibold text-lg">{adventure.title}</h3>
-                <div className="space-y-1 text-sm text-gray-600">
+                <div className="space-y-1 text-sm text-muted-foreground">
                   <div className="flex items-center space-x-1">
                     <MapPin className="w-4 h-4" />
                     <span>{adventure.location}</span>
@@ -140,7 +140,7 @@ export const BookingStepFive: React.FC<BookingStepFiveProps> = ({
             {/* Guest Information */}
             <div className="border-t pt-4">
               <h4 className="font-semibold mb-2">Lead Guest</h4>
-              <div className="text-sm text-gray-600">
+              <div className="text-sm text-muted-foreground">
                 <div>{formData.leadGuest.name}</div>
                 <div>{formData.leadGuest.email}</div>
                 <div>{formData.leadGuest.phone}</div>
@@ -179,21 +179,21 @@ export const BookingStepFive: React.FC<BookingStepFiveProps> = ({
               </div>
               
               {pricing.groupDiscount > 0 && (
-                <div className="flex justify-between text-green-600">
+                <div className="flex justify-between text-primary">
                   <span>Group discount</span>
                   <span>-${pricing.groupDiscount.toFixed(2)}</span>
                 </div>
               )}
               
               {pricing.earlyBirdDiscount > 0 && (
-                <div className="flex justify-between text-green-600">
+                <div className="flex justify-between text-primary">
                   <span>Early bird discount</span>
                   <span>-${pricing.earlyBirdDiscount.toFixed(2)}</span>
                 </div>
               )}
               
               {pricing.promoDiscount > 0 && (
-                <div className="flex justify-between text-green-600">
+                <div className="flex justify-between text-primary">
                   <span>Promo discount</span>
                   <span>-${pricing.promoDiscount.toFixed(2)}</span>
                 </div>
@@ -235,8 +235,8 @@ export const BookingStepFive: React.FC<BookingStepFiveProps> = ({
                 onClick={() => handlePaymentMethodChange(method.id as any)}
                 className={`w-full p-4 border-2 rounded-lg transition-all text-left ${
                   selectedPaymentMethod === method.id
-                    ? 'border-blue-500 bg-blue-50'
-                    : 'border-gray-200 hover:border-gray-300'
+                    ? 'border-primary bg-primary/10'
+                    : 'border-border hover:border-border/70'
                 }`}
               >
                 <div className="flex items-center justify-between">
@@ -246,21 +246,21 @@ export const BookingStepFive: React.FC<BookingStepFiveProps> = ({
                       <div className="font-semibold flex items-center space-x-2">
                         <span>{method.name}</span>
                         {method.popular && (
-                          <Badge variant="secondary" className="bg-green-100 text-green-800">
+                          <Badge variant="secondary" className="bg-primary/10 text-primary">
                             Popular
                           </Badge>
                         )}
                       </div>
-                      <div className="text-sm text-gray-600">{method.description}</div>
+                      <div className="text-sm text-muted-foreground">{method.description}</div>
                     </div>
                   </div>
                   <div className={`w-4 h-4 rounded-full border-2 ${
                     selectedPaymentMethod === method.id
-                      ? 'bg-blue-500 border-blue-500'
-                      : 'border-gray-300'
+                      ? 'bg-primary border-primary'
+                      : 'border-border'
                   }`}>
                     {selectedPaymentMethod === method.id && (
-                      <div className="w-full h-full rounded-full bg-blue-500" />
+                      <div className="w-full h-full rounded-full bg-primary" />
                     )}
                   </div>
                 </div>
@@ -272,9 +272,9 @@ export const BookingStepFive: React.FC<BookingStepFiveProps> = ({
 
       {/* Payment Plan Details */}
       {selectedPaymentMethod === 'payment_plan' && pricing && (
-        <Card className="border-blue-200 bg-blue-50">
+        <Card className="border-primary bg-primary/10">
           <CardHeader>
-            <CardTitle className="text-lg text-blue-800">Payment Plan Details</CardTitle>
+            <CardTitle className="text-lg text-primary-foreground">Payment Plan Details</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="space-y-3">
@@ -290,7 +290,7 @@ export const BookingStepFive: React.FC<BookingStepFiveProps> = ({
                 <span>In 2 months</span>
                 <span className="font-semibold">${(pricing.totalAmount / 3).toFixed(2)}</span>
               </div>
-              <div className="text-xs text-blue-700 mt-2">
+              <div className="text-xs text-primary mt-2">
                 No interest charges. Automatic payments from your selected payment method.
               </div>
             </div>
@@ -309,19 +309,19 @@ export const BookingStepFive: React.FC<BookingStepFiveProps> = ({
         <CardContent>
           <div className="space-y-3">
             <div className="flex items-center space-x-2">
-              <Lock className="w-4 h-4 text-green-600" />
+              <Lock className="w-4 h-4 text-primary" />
               <span className="text-sm">SSL encrypted secure payment</span>
             </div>
             <div className="flex items-center space-x-2">
-              <Shield className="w-4 h-4 text-green-600" />
+              <Shield className="w-4 h-4 text-primary" />
               <span className="text-sm">PCI DSS compliant processing</span>
             </div>
             <div className="flex items-center space-x-2">
-              <CheckCircle className="w-4 h-4 text-green-600" />
+              <CheckCircle className="w-4 h-4 text-primary" />
               <span className="text-sm">Instant booking confirmation</span>
             </div>
             <div className="flex items-center space-x-2">
-              <AlertCircle className="w-4 h-4 text-green-600" />
+              <AlertCircle className="w-4 h-4 text-primary" />
               <span className="text-sm">Free cancellation up to 24 hours</span>
             </div>
           </div>
@@ -340,22 +340,22 @@ export const BookingStepFive: React.FC<BookingStepFiveProps> = ({
               />
               <Label htmlFor="terms" className="text-sm leading-relaxed">
                 I agree to the{' '}
-                <a href="/terms" className="text-blue-600 hover:underline" target="_blank">
+                <a href="/terms" className="text-primary hover:underline" target="_blank">
                   Terms of Service
                 </a>
                 ,{' '}
-                <a href="/privacy" className="text-blue-600 hover:underline" target="_blank">
+                <a href="/privacy" className="text-primary hover:underline" target="_blank">
                   Privacy Policy
                 </a>
                 , and{' '}
-                <a href="/cancellation" className="text-blue-600 hover:underline" target="_blank">
+                <a href="/cancellation" className="text-primary hover:underline" target="_blank">
                   Cancellation Policy
                 </a>
                 . I understand that this booking is subject to availability and confirmation.
               </Label>
             </div>
             
-            <div className="text-xs text-gray-500 space-y-1">
+            <div className="text-xs text-muted-foreground space-y-1">
               <p>
                 • You will receive a confirmation email with booking details and QR code
               </p>
@@ -371,12 +371,12 @@ export const BookingStepFive: React.FC<BookingStepFiveProps> = ({
       </Card>
 
       {/* Complete Booking Button */}
-      <Card className="border-green-200 bg-green-50">
+      <Card className="border-primary bg-primary/10">
         <CardContent className="pt-6">
           <Button
             onClick={onPayment}
             disabled={!canProceed || isSubmitting}
-            className="w-full bg-green-600 hover:bg-green-700 text-white py-4 text-lg font-semibold"
+            className="w-full bg-primary hover:bg-primary/90 text-primary-foreground py-4 text-lg font-semibold"
             size="lg"
           >
             {isSubmitting ? (
@@ -389,7 +389,7 @@ export const BookingStepFive: React.FC<BookingStepFiveProps> = ({
             )}
           </Button>
           
-          <p className="text-center text-sm text-gray-600 mt-3">
+          <p className="text-center text-sm text-muted-foreground mt-3">
             You will be redirected to our secure payment processor
           </p>
         </CardContent>

@@ -112,7 +112,7 @@ export const BookingStepThree: React.FC<BookingStepThreeProps> = ({
             <User className="w-5 h-5 mr-2" />
             Lead Guest Information
           </CardTitle>
-          <p className="text-sm text-gray-600">
+          <p className="text-sm text-muted-foreground">
             This person will be the main contact for this booking
           </p>
         </CardHeader>
@@ -153,7 +153,7 @@ export const BookingStepThree: React.FC<BookingStepThreeProps> = ({
                 placeholder="your@email.com"
                 required
               />
-              <p className="text-xs text-gray-500">
+              <p className="text-xs text-muted-foreground">
                 We'll send booking confirmations and updates to this email
               </p>
             </div>
@@ -165,7 +165,7 @@ export const BookingStepThree: React.FC<BookingStepThreeProps> = ({
       <Card>
         <CardHeader>
           <CardTitle className="text-lg">Experience Level</CardTitle>
-          <p className="text-sm text-gray-600">
+          <p className="text-sm text-muted-foreground">
             Help us provide the best experience for your skill level
           </p>
         </CardHeader>
@@ -177,12 +177,12 @@ export const BookingStepThree: React.FC<BookingStepThreeProps> = ({
                 onClick={() => handleGuestDetailsChange('experienceLevel', level.value)}
                 className={`p-4 rounded-lg border-2 transition-all text-left ${
                   formData.guestDetails.experienceLevel === level.value
-                    ? 'border-blue-500 bg-blue-50'
-                    : 'border-gray-200 hover:border-gray-300'
+                    ? 'border-primary bg-primary/10'
+                    : 'border-border hover:border-border/70'
                 }`}
               >
                 <div className="font-semibold">{level.label}</div>
-                <div className="text-sm text-gray-600">{level.description}</div>
+                <div className="text-sm text-muted-foreground">{level.description}</div>
               </button>
             ))}
           </div>
@@ -193,7 +193,7 @@ export const BookingStepThree: React.FC<BookingStepThreeProps> = ({
       <Card>
         <CardHeader>
           <CardTitle className="text-lg">Dietary Restrictions & Allergies</CardTitle>
-          <p className="text-sm text-gray-600">
+          <p className="text-sm text-muted-foreground">
             Let us know about any dietary needs or allergies
           </p>
         </CardHeader>
@@ -234,7 +234,7 @@ export const BookingStepThree: React.FC<BookingStepThreeProps> = ({
             <AlertTriangle className="w-5 h-5 mr-2" />
             Emergency Contact
           </CardTitle>
-          <p className="text-sm text-gray-600">
+          <p className="text-sm text-muted-foreground">
             Someone we can contact in case of emergency
           </p>
         </CardHeader>
@@ -273,7 +273,7 @@ export const BookingStepThree: React.FC<BookingStepThreeProps> = ({
             <Bell className="w-5 h-5 mr-2" />
             Communication Preferences
           </CardTitle>
-          <p className="text-sm text-gray-600">
+          <p className="text-sm text-muted-foreground">
             How would you like to receive updates about your booking?
           </p>
         </CardHeader>
@@ -320,9 +320,9 @@ export const BookingStepThree: React.FC<BookingStepThreeProps> = ({
 
       {/* Adventure-Specific Requirements */}
       {adventure.requirements && adventure.requirements.length > 0 && (
-        <Card className="border-orange-200 bg-orange-50">
+        <Card className="border-warning bg-warning/10">
           <CardHeader>
-            <CardTitle className="text-lg flex items-center text-orange-800">
+            <CardTitle className="text-lg flex items-center text-warning-foreground">
               <AlertTriangle className="w-5 h-5 mr-2" />
               Adventure Requirements
             </CardTitle>
@@ -332,7 +332,7 @@ export const BookingStepThree: React.FC<BookingStepThreeProps> = ({
               {adventure.requirements.map((requirement, index) => (
                 <div key={index} className="flex items-start space-x-2">
                   <div className="w-2 h-2 bg-orange-500 rounded-full mt-2 flex-shrink-0"></div>
-                  <span className="text-sm text-orange-800">{requirement}</span>
+                  <span className="text-sm text-warning-foreground">{requirement}</span>
                 </div>
               ))}
             </div>
@@ -343,7 +343,7 @@ export const BookingStepThree: React.FC<BookingStepThreeProps> = ({
       {/* Data Privacy */}
       <Card>
         <CardContent className="pt-4">
-          <div className="text-xs text-gray-500">
+          <div className="text-xs text-muted-foreground">
             <p className="mb-2">
               By providing your information, you agree to our Privacy Policy and Terms of Service.
               Your data will be used to process your booking and provide customer support.

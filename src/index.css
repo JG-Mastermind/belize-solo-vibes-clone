@@ -215,7 +215,8 @@
 }
 
 .booking-flow-container .trust-badge {
-  color: #22c55e !important;
+  color: #1f2937 !important;
+  font-weight: 500;
 }
 
 .booking-flow-container .security-text {
@@ -232,4 +233,9 @@
 .booking-flow-container .important-info {
   border-left: 4px solid #22c55e !important;
   padding-left: 1rem;
+}
+
+/* Dark mode support for trust badges */
+.dark .booking-flow-container .trust-badge {
+  color: #f8fafc !important;
 }

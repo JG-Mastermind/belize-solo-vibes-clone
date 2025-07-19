@@ -48,27 +48,50 @@ export const BookingSummary: React.FC<BookingSummaryProps> = ({
     }
   };
 
+  const getDynamicSalesCopy = (adventure: Adventure) => {
+    const title = adventure.title || 'this incredible experience';
+    const location = adventure.location || 'beautiful Belize';
+    
+    // Universal template that works for any adventure type
+    return `This is the adventure of a lifetime waiting for you in pristine ${location}. You'll experience something most people only dream about - ${title} in an authentic, unforgettable way. The natural beauty and expert local guides will create memories that last forever. Don't let this incredible opportunity slip away when you're so close to booking. You're almost there - complete your booking now and start your unforgettable Belizean adventure!`;
+  };
+
+  const handleLocationClick = () => {
+    const location = adventure.location || 'Belize';
+    const mapsUrl = `https://maps.google.com/maps?q=${encodeURIComponent(location)}`;
+    window.open(mapsUrl, '_blank', 'noopener,noreferrer');
+  };
+
   return (
-    <Card className="sticky top-4">
+    <Card className="sticky top-4 overflow-hidden">
+      {/* Hero Image */}
+      <div className="relative">
+        <img
+          src={adventure.featured_image_url || '/placeholder.svg'}
+          alt={adventure.title}
+          className="w-full aspect-[16/9] object-cover"
+        />
+        <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent" />
+      </div>
+      
       <CardHeader>
         <CardTitle className="text-lg">Booking Summary</CardTitle>
       </CardHeader>
       <CardContent className="space-y-4">
         {/* Adventure Details */}
         <div className="space-y-3">
-          <div className="flex items-start space-x-3">
-            <img
-              src={adventure.featured_image_url || '/placeholder.svg'}
-              alt={adventure.title}
-              className="w-16 h-16 rounded-lg object-cover"
-            />
-            <div className="flex-1">
-              <h3 className="font-semibold line-clamp-2">{adventure.title}</h3>
-              <p className="text-sm text-gray-600 flex items-center mt-1">
-                <MapPin className="w-3 h-3 mr-1" />
-                {adventure.location}
-              </p>
-            </div>
+          <div>
+            <h3 className="text-orange-400 font-bold text-lg leading-tight">{adventure.title}</h3>
+            <p className="text-sm text-white mt-2 leading-relaxed mb-4">
+              {getDynamicSalesCopy(adventure)}
+            </p>
+            <p 
+              className="text-sm text-orange-400 hover:text-orange-300 cursor-pointer underline flex items-center mt-3"
+              onClick={handleLocationClick}
+            >
+              <MapPin className="w-3 h-3 mr-1" />
+              {adventure.location}
+            </p>
           </div>
         </div>
 
@@ -80,21 +103,21 @@ export const BookingSummary: React.FC<BookingSummaryProps> = ({
           
           {formData.selectedDate && (
             <div className="flex items-center space-x-2 text-sm">
-              <Calendar className="w-4 h-4 text-gray-500" />
+              <Calendar className="w-4 h-4 text-orange-400" />
               <span>{formatDate(formData.selectedDate)}</span>
             </div>
           )}
           
           {formData.selectedTime && (
             <div className="flex items-center space-x-2 text-sm">
-              <Clock className="w-4 h-4 text-gray-500" />
+              <Clock className="w-4 h-4 text-orange-400" />
               <span>{formatTime(formData.selectedTime)}</span>
             </div>
           )}
           
           {formData.participants > 0 && (
             <div className="flex items-center space-x-2 text-sm">
-              <Users className="w-4 h-4 text-gray-500" />
+              <Users className="w-4 h-4 text-orange-400" />
               <span>{formData.participants} participant{formData.participants > 1 ? 's' : ''}</span>
             </div>
           )}
@@ -185,7 +208,7 @@ export const BookingSummary: React.FC<BookingSummaryProps> = ({
               
               <div className="flex justify-between items-center">
                 <span className="font-semibold text-lg">Total</span>
-                <span className="font-bold text-xl">${pricing.totalAmount.toFixed(2)}</span>
+                <span className="font-bold text-xl text-green-500">${pricing.totalAmount.toFixed(2)}</span>
               </div>
             </div>
           </>
@@ -194,17 +217,17 @@ export const BookingSummary: React.FC<BookingSummaryProps> = ({
         {/* Trust Indicators */}
         <div className="pt-4 border-t border-gray-100">
           <div className="space-y-2">
-            <div className="flex items-center space-x-2 text-sm text-gray-600">
-              <Shield className="w-4 h-4" />
-              <span>Free cancellation up to 24 hours</span>
+            <div className="flex items-center space-x-2 text-sm">
+              <Shield className="w-4 h-4 trust-icon" />
+              <span className="trust-badge">Free cancellation up to 24 hours</span>
             </div>
-            <div className="flex items-center space-x-2 text-sm text-gray-600">
-              <CreditCard className="w-4 h-4" />
-              <span>Secure payment processing</span>
+            <div className="flex items-center space-x-2 text-sm">
+              <CreditCard className="w-4 h-4 trust-icon" />
+              <span className="trust-badge">Secure payment processing</span>
             </div>
-            <div className="flex items-center space-x-2 text-sm text-gray-600">
-              <AlertCircle className="w-4 h-4" />
-              <span>Instant confirmation</span>
+            <div className="flex items-center space-x-2 text-sm">
+              <AlertCircle className="w-4 h-4 trust-icon" />
+              <span className="trust-badge">Instant confirmation</span>
             </div>
           </div>
         </div>

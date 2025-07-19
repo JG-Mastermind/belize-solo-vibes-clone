@@ -309,20 +309,20 @@ export const BookingStepFive: React.FC<BookingStepFiveProps> = ({
         <CardContent>
           <div className="space-y-3">
             <div className="flex items-center space-x-2">
-              <Lock className="w-4 h-4 text-primary" />
-              <span className="text-sm">SSL encrypted secure payment</span>
+              <Lock className="w-4 h-4 trust-icon" />
+              <span className="text-sm trust-badge">SSL encrypted secure payment</span>
             </div>
             <div className="flex items-center space-x-2">
-              <Shield className="w-4 h-4 text-primary" />
-              <span className="text-sm">PCI DSS compliant processing</span>
+              <Shield className="w-4 h-4 trust-icon" />
+              <span className="text-sm trust-badge">PCI DSS compliant processing</span>
             </div>
             <div className="flex items-center space-x-2">
-              <CheckCircle className="w-4 h-4 text-primary" />
-              <span className="text-sm">Instant booking confirmation</span>
+              <CheckCircle className="w-4 h-4 trust-icon" />
+              <span className="text-sm trust-badge">Instant booking confirmation</span>
             </div>
             <div className="flex items-center space-x-2">
-              <AlertCircle className="w-4 h-4 text-primary" />
-              <span className="text-sm">Free cancellation up to 24 hours</span>
+              <AlertCircle className="w-4 h-4 trust-icon" />
+              <span className="text-sm trust-badge">Free cancellation up to 24 hours</span>
             </div>
           </div>
         </CardContent>

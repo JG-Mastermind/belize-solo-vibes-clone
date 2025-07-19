@@ -181,3 +181,26 @@
     @apply text-muted-foreground hover:text-foreground transition-colors;
   }
 }
+/* BOOKING FLOW CONVERSION STYLES - ISOLATED */
+.booking-flow-container {
+  /* Foundation ready for Claude Code enhancement */
+}
+
+.booking-flow-container .btn-convert {
+  background: #22c55e !important;
+  border-color: #22c55e !important;
+  color: white !important;
+}
+
+.booking-flow-container .price-highlight {
+  color: #22c55e !important;
+  font-weight: 600;
+}
+
+.booking-flow-container .urgent-text {
+  color: #f59e0b !important;
+}
+
+.booking-flow-container .trust-icon {
+  color: #22c55e !important;
+}

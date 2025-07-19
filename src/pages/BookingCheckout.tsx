@@ -255,137 +255,139 @@ const BookingCheckout: React.FC = () => {
   }
 
   return (
-    <div className="min-h-screen bg-muted py-8">
-      <div className="container mx-auto px-4">
-        {/* Header */}
-        <div className="mb-8">
-          <Button
-            variant="ghost"
-            onClick={() => navigate(`/tours/${adventure.id}`)}
-            className="mb-4"
-          >
-            <ArrowLeft className="w-4 h-4 mr-2" />
-            Back to Adventure
-          </Button>
-          
-          <div className="flex items-center justify-between">
-            <div>
-              <h1 className="text-3xl font-bold">{adventure.title}</h1>
-              <p className="text-muted-foreground flex items-center mt-2">
-                <MapPin className="w-4 h-4 mr-1" />
-                {adventure.location}
-              </p>
-            </div>
+    <div className="booking-flow-container">
+      <div className="min-h-screen bg-muted py-8">
+        <div className="container mx-auto px-4">
+          {/* Header */}
+          <div className="mb-8">
+            <Button
+              variant="ghost"
+              onClick={() => navigate(`/tours/${adventure.id}`)}
+              className="mb-4"
+            >
+              <ArrowLeft className="w-4 h-4 mr-2" />
+              Back to Adventure
+            </Button>
             
-            <div className="text-right">
-              <div className="text-2xl font-bold">
-                {pricing ? `$${pricing.totalAmount.toFixed(2)}` : `$${adventure.base_price}`}
+            <div className="flex items-center justify-between">
+              <div>
+                <h1 className="text-3xl font-bold">{adventure.title}</h1>
+                <p className="text-muted-foreground flex items-center mt-2">
+                  <MapPin className="w-4 h-4 mr-1" />
+                  {adventure.location}
+                </p>
               </div>
-              <div className="text-sm text-muted-foreground">
-                {formData.participants} participant{formData.participants > 1 ? 's' : ''}
-              </div>
-            </div>
-          </div>
-        </div>
-
-        {/* Progress Indicator */}
-        <div className="mb-8">
-          <BookingStepIndicator 
-            steps={steps.map(step => ({
-              ...step,
-              completed: step.id < currentStep,
-              current: step.id === currentStep
-            }))} 
-          />
-        </div>
-
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-          {/* Main Content */}
-          <div className="lg:col-span-2">
-            <Card>
-              <CardHeader>
-                <CardTitle className="flex items-center justify-between">
-                  <span>{steps[currentStep - 1].title}</span>
-                  <Badge variant="outline">
-                    Step {currentStep} of {steps.length}
-                  </Badge>
-                </CardTitle>
-                <p className="text-muted-foreground">{steps[currentStep - 1].description}</p>
-              </CardHeader>
-              <CardContent>
-                {renderStep()}
-              </CardContent>
-            </Card>
-
-            {/* Navigation */}
-            {currentStep < 5 && (
-              <div className="flex justify-between mt-6">
-                <Button
-                  variant="outline"
-                  onClick={handlePrevious}
-                  disabled={currentStep === 1}
-                >
-                  <ArrowLeft className="w-4 h-4 mr-2" />
-                  Previous
-                </Button>
-                
-                <Button
-                  variant="outline"
-                  onClick={handleNext}
-                  disabled={!canProceedToNext()}
-                >
-                  Next
-                  <ArrowRight className="w-4 h-4 ml-2" />
-                </Button>
-              </div>
-            )}
-          </div>
-
-          {/* Sidebar */}
-          <div className="space-y-6">
-            <BookingSummary
-              adventure={adventure}
-              formData={formData}
-              pricing={pricing}
-            />
-            
-            {/* Mobile Sticky Summary */}
-            {currentStep < 5 && (
-              <div className="lg:hidden fixed bottom-0 left-0 right-0 bg-background border-t border-border p-4 shadow-lg z-50">
-                <div className="flex items-center justify-between mb-3">
-                  <div>
-                    <div className="font-semibold">
-                      {pricing ? `$${pricing.totalAmount.toFixed(2)}` : `$${adventure.base_price}`}
-                    </div>
-                    <div className="text-sm text-muted-foreground">
-                      {formData.participants} participant{formData.participants > 1 ? 's' : ''}
-                    </div>
-                  </div>
-                  
-                  <div className="flex gap-2">
-                    <Button
-                      variant="outline"
-                      onClick={handlePrevious}
-                      disabled={currentStep === 1}
-                      size="sm"
-                    >
-                      <ArrowLeft className="w-4 h-4 mr-1" />
-                      Previous
-                    </Button>
-                    
-                    <Button
-                      variant="outline"
-                      onClick={handleNext}
-                      disabled={!canProceedToNext()}
-                      size="sm"
-                    >
-                      Next
-                      <ArrowRight className="w-4 h-4 ml-1" />
-                    </Button>
-                  </div>
+              
+              <div className="text-right">
+                <div className="text-2xl font-bold price-highlight">
+                  {pricing ? `$${pricing.totalAmount.toFixed(2)}` : `$${adventure.base_price}`}
+                </div>
+                <div className="text-sm text-muted-foreground">
+                  {formData.participants} participant{formData.participants > 1 ? 's' : ''}
                 </div>
               </div>
-            )}
+            </div>
+          </div>
+
+          {/* Progress Indicator */}
+          <div className="mb-8">
+            <BookingStepIndicator 
+              steps={steps.map(step => ({
+                ...step,
+                completed: step.id < currentStep,
+                current: step.id === currentStep
+              }))} 
+            />
+          </div>
+
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            {/* Main Content */}
+            <div className="lg:col-span-2">
+              <Card>
+                <CardHeader>
+                  <CardTitle className="flex items-center justify-between">
+                    <span>{steps[currentStep - 1].title}</span>
+                    <Badge variant="outline">
+                      Step {currentStep} of {steps.length}
+                    </Badge>
+                  </CardTitle>
+                  <p className="text-muted-foreground">{steps[currentStep - 1].description}</p>
+                </CardHeader>
+                <CardContent>
+                  {renderStep()}
+                </CardContent>
+              </Card>
+
+              {/* Navigation */}
+              {currentStep < 5 && (
+                <div className="flex justify-between mt-6">
+                  <Button
+                    variant="outline"
+                    onClick={handlePrevious}
+                    disabled={currentStep === 1}
+                  >
+                    <ArrowLeft className="w-4 h-4 mr-2" />
+                    Previous
+                  </Button>
+                  
+                  <Button
+                    className="btn-convert"
+                    onClick={handleNext}
+                    disabled={!canProceedToNext()}
+                  >
+                    Next
+                    <ArrowRight className="w-4 h-4 ml-2" />
+                  </Button>
+                </div>
+              )}
+            </div>
+
+            {/* Sidebar */}
+            <div className="space-y-6">
+              <BookingSummary
+                adventure={adventure}
+                formData={formData}
+                pricing={pricing}
+              />
+              
+              {/* Mobile Sticky Summary */}
+              {currentStep < 5 && (
+                <div className="lg:hidden fixed bottom-0 left-0 right-0 bg-background border-t border-border p-4 shadow-lg z-50">
+                  <div className="flex items-center justify-between mb-3">
+                    <div>
+                      <div className="font-semibold price-highlight">
+                        {pricing ? `$${pricing.totalAmount.toFixed(2)}` : `$${adventure.base_price}`}
+                      </div>
+                      <div className="text-sm text-muted-foreground">
+                        {formData.participants} participant{formData.participants > 1 ? 's' : ''}
+                      </div>
+                    </div>
+                    
+                    <div className="flex gap-2">
+                      <Button
+                        variant="outline"
+                        onClick={handlePrevious}
+                        disabled={currentStep === 1}
+                        size="sm"
+                      >
+                        <ArrowLeft className="w-4 h-4 mr-1" />
+                        Previous
+                      </Button>
+                      
+                      <Button
+                        className="btn-convert"
+                        onClick={handleNext}
+                        disabled={!canProceedToNext()}
+                        size="sm"
+                      >
+                        Next
+                        <ArrowRight className="w-4 h-4 ml-1" />
+                      </Button>
+                    </div>
+                  </div>
+                </div>
+              )}
+            </div>
           </div>
         </div>
       </div>

@@ -42,16 +42,17 @@ const Header = () => {
   return (
     <header className={cn(
       "fixed top-0 left-0 right-0 z-40 transition-all duration-300",
+      "text-gray-900 dark:text-white",
       scrolled
-        ? "bg-background/95 backdrop-blur-sm border-b border-border/40 text-foreground"
-        : "bg-transparent text-white border-transparent"
+        ? "bg-background/95 backdrop-blur-sm border-b border-border/40"
+        : "bg-transparent border-transparent"
     )}>
       <div className="container mx-auto px-4 py-3">
         <div className="flex items-center justify-between">
           {/* Logo */}
           <Link 
             to="/" 
-            className="text-xl md:text-2xl font-bold transition-colors hover:opacity-80"
+            className="text-xl md:text-2xl font-bold transition-colors hover:opacity-80 text-gray-900 dark:text-white"
           >
             BelizeVibes
           </Link>
@@ -63,7 +64,7 @@ const Header = () => {
                 key={item.path}
                 to={item.path}
                 className={cn(
-                  "text-sm font-medium transition-colors hover:opacity-80",
+                  "text-sm font-medium transition-colors hover:opacity-80 text-gray-900 dark:text-white",
                   isActive(item.path) ? "opacity-100" : "opacity-80"
                 )}
               >

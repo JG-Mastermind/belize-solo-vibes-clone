@@ -25,6 +25,8 @@ const BookingCheckout: React.FC = () => {
   
   const [adventure, setAdventure] = useState<Adventure | null>(null);
   const [currentStep, setCurrentStep] = useState<number>(1);
+  
+
   const [loading, setLoading] = useState(true);
   const [formData, setFormData] = useState<BookingFormData>({
     selectedDate: '',
@@ -41,6 +43,7 @@ const BookingCheckout: React.FC = () => {
     notifications: { email: true, sms: false, whatsapp: false },
     promoCode: '',
   });
+
   
   const [pricing, setPricing] = useState<PricingBreakdown | null>(null);
 
@@ -78,7 +81,7 @@ const BookingCheckout: React.FC = () => {
       // Try to restore from cart
       const cartData = await BookingService.getCart(user?.id || null, id);
       if (cartData && cartData.cart_data) {
-        setFormData(cartData.cart_data);
+        setFormData(cartData.cart_data as BookingFormData);
         setCurrentStep(cartData.step_completed + 1);
       }
     } catch (error) {
@@ -235,7 +238,7 @@ const BookingCheckout: React.FC = () => {
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
-        <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-blue-500"></div>
+        <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-primary"></div>
       </div>
     );
   }
@@ -327,6 +330,7 @@ const BookingCheckout: React.FC = () => {
                 </Button>
                 
                 <Button
+                  variant="outline"
                   onClick={handleNext}
                   disabled={!canProceedToNext()}
                 >
@@ -358,14 +362,27 @@ const BookingCheckout: React.FC = () => {
                     </div>
                   </div>
                   
-                  <Button
-                    onClick={handleNext}
-                    disabled={!canProceedToNext()}
-                    size="sm"
-                  >
-                    Next
-                    <ArrowRight className="w-4 h-4 ml-2" />
-                  </Button>
+                  <div className="flex gap-2">
+                    <Button
+                      variant="outline"
+                      onClick={handlePrevious}
+                      disabled={currentStep === 1}
+                      size="sm"
+                    >
+                      <ArrowLeft className="w-4 h-4 mr-1" />
+                      Previous
+                    </Button>
+                    
+                    <Button
+                      variant="outline"
+                      onClick={handleNext}
+                      disabled={!canProceedToNext()}
+                      size="sm"
+                    >
+                      Next
+                      <ArrowRight className="w-4 h-4 ml-1" />
+                    </Button>
+                  </div>
                 </div>
               </div>
             )}

@@ -11,9 +11,9 @@ export const BookingStepIndicator: React.FC<BookingStepIndicatorProps> = ({ step
     <div className="w-full">
       {/* Progress Bar */}
       <div className="relative mb-8">
-        <div className="absolute top-5 left-0 right-0 h-0.5 bg-gray-200"></div>
+        <div className="absolute top-5 left-0 right-0 h-0.5 bg-muted"></div>
         <div 
-          className="absolute top-5 left-0 h-0.5 bg-blue-600 transition-all duration-300 ease-in-out"
+          className="absolute top-5 left-0 h-0.5 bg-primary transition-all duration-300 ease-in-out"
           style={{ width: `${((steps.filter(s => s.completed).length) / (steps.length - 1)) * 100}%` }}
         ></div>
         
@@ -24,10 +24,10 @@ export const BookingStepIndicator: React.FC<BookingStepIndicatorProps> = ({ step
               <div className={`
                 w-10 h-10 rounded-full flex items-center justify-center text-sm font-medium mb-2 transition-all duration-200
                 ${step.completed 
-                  ? 'bg-blue-600 text-white' 
+                  ? 'bg-primary text-primary-foreground' 
                   : step.current 
-                    ? 'bg-blue-100 text-blue-600 ring-2 ring-blue-600' 
-                    : 'bg-gray-200 text-gray-500'
+                    ? 'bg-primary/10 text-primary ring-2 ring-primary' 
+                    : 'bg-muted text-muted-foreground'
                 }
               `}>
                 {step.completed ? (
@@ -41,11 +41,11 @@ export const BookingStepIndicator: React.FC<BookingStepIndicatorProps> = ({ step
               <div className="text-center">
                 <div className={`
                   text-sm font-medium mb-1
-                  ${step.current ? 'text-blue-600' : step.completed ? 'text-gray-900' : 'text-gray-500'}
+                  ${step.current ? 'text-primary' : step.completed ? 'text-foreground' : 'text-muted-foreground'}
                 `}>
                   {step.title}
                 </div>
-                <div className="text-xs text-gray-500 hidden sm:block">
+                <div className="text-xs text-muted-foreground hidden sm:block">
                   {step.description}
                 </div>
               </div>
@@ -56,13 +56,13 @@ export const BookingStepIndicator: React.FC<BookingStepIndicatorProps> = ({ step
       
       {/* Mobile Progress Bar */}
       <div className="sm:hidden mb-4">
-        <div className="flex items-center justify-between text-sm text-gray-600 mb-2">
+        <div className="flex items-center justify-between text-sm text-muted-foreground mb-2">
           <span>Step {steps.find(s => s.current)?.id || 1} of {steps.length}</span>
           <span>{Math.round(((steps.filter(s => s.completed).length) / steps.length) * 100)}% Complete</span>
         </div>
-        <div className="w-full bg-gray-200 rounded-full h-2">
+        <div className="w-full bg-muted rounded-full h-2">
           <div 
-            className="bg-blue-600 h-2 rounded-full transition-all duration-300 ease-in-out"
+            className="bg-primary h-2 rounded-full transition-all duration-300 ease-in-out"
             style={{ width: `${((steps.filter(s => s.completed).length) / steps.length) * 100}%` }}
           ></div>
         </div>

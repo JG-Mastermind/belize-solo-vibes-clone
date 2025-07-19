@@ -36,8 +36,8 @@ export default {
 					dark: '#E2E8F0', // Slate-200
 				},
 				primary: {
-					DEFAULT: '#2563EB', // Blue-600
-					dark: '#1E3A8A', // Blue-900
+					DEFAULT: 'hsl(var(--primary))',
+					dark: 'hsl(var(--primary))',
 					foreground: 'hsl(var(--primary-foreground))'
 				},
 				secondary: {

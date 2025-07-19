@@ -15,7 +15,7 @@
     --popover: 0 0% 100%;
     --popover-foreground: 222.2 84% 4.9%;
 
-    --primary: 45 96% 53%;
+    --primary: 217.2 91.2% 59.8%;
     --primary-foreground: 26 83% 14%;
 
     --secondary: 210 40% 96%;
@@ -32,25 +32,25 @@
 
     --border: 214.3 31.8% 91.4%;
     --input: 214.3 31.8% 91.4%;
-    --ring: 45 96% 53%;
+    --ring: 217.2 91.2% 59.8%;
 
     --radius: 0.5rem;
 
     /* TailAdmin specific colors */
     --sidebar-background: 0 0% 100%;
     --sidebar-foreground: 222.2 84% 4.9%;
-    --sidebar-primary: 45 96% 53%;
+    --sidebar-primary: 217.2 91.2% 59.8%;
     --sidebar-primary-foreground: 26 83% 14%;
     --sidebar-accent: 210 40% 96%;
     --sidebar-accent-foreground: 222.2 84% 4.9%;
     --sidebar-border: 214.3 31.8% 91.4%;
-    --sidebar-ring: 45 96% 53%;
+    --sidebar-ring: 217.2 91.2% 59.8%;
 
     /* Dashboard specific colors */
     --dashboard-bg: 210 40% 98%;
     --dashboard-card: 0 0% 100%;
     --dashboard-border: 214.3 31.8% 91.4%;
-    --chart-primary: 45 96% 53%;
+    --chart-primary: 217.2 91.2% 59.8%;
     --chart-secondary: 210 40% 96%;
   }
 
@@ -64,7 +64,7 @@
     --popover: 222.2 84% 4.9%;
     --popover-foreground: 210 40% 98%;
 
-    --primary: 48 96% 64%;
+    --primary: 217.2 91.2% 59.8%;
     --primary-foreground: 26 83% 14%;
 
     --secondary: 217.2 32.6% 17.5%;
@@ -81,23 +81,23 @@
 
     --border: 217.2 32.6% 17.5%;
     --input: 217.2 32.6% 17.5%;
-    --ring: 48 96% 64%;
+    --ring: 217.2 91.2% 59.8%;
 
     /* TailAdmin Dark Mode */
     --sidebar-background: 222.2 84% 4.9%;
     --sidebar-foreground: 210 40% 98%;
-    --sidebar-primary: 48 96% 64%;
+    --sidebar-primary: 217.2 91.2% 59.8%;
     --sidebar-primary-foreground: 26 83% 14%;
     --sidebar-accent: 217.2 32.6% 17.5%;
     --sidebar-accent-foreground: 210 40% 98%;
     --sidebar-border: 217.2 32.6% 17.5%;
-    --sidebar-ring: 48 96% 64%;
+    --sidebar-ring: 217.2 91.2% 59.8%;
 
     /* Dashboard Dark Mode */
     --dashboard-bg: 217.2 32.6% 17.5%;
     --dashboard-card: 222.2 84% 4.9%;
     --dashboard-border: 217.2 32.6% 17.5%;
-    --chart-primary: 48 96% 64%;
+    --chart-primary: 217.2 91.2% 59.8%;
     --chart-secondary: 217.2 32.6% 17.5%;
   }
 }

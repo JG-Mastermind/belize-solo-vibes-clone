@@ -279,7 +279,7 @@ const BookingCheckout: React.FC = () => {
               </div>
               
               <div className="text-right">
-                <div className="text-2xl font-bold price-highlight">
+                <div className="text-2xl font-bold price-highlight total-amount">
                   {pricing ? `$${pricing.totalAmount.toFixed(2)}` : `$${adventure.base_price}`}
                 </div>
                 <div className="text-sm text-muted-foreground">
@@ -355,7 +355,7 @@ const BookingCheckout: React.FC = () => {
                 <div className="lg:hidden fixed bottom-0 left-0 right-0 bg-background border-t border-border p-4 shadow-lg z-50">
                   <div className="flex items-center justify-between mb-3">
                     <div>
-                      <div className="font-semibold price-highlight">
+                      <div className="font-semibold price-highlight total-amount">
                         {pricing ? `$${pricing.totalAmount.toFixed(2)}` : `$${adventure.base_price}`}
                       </div>
                       <div className="text-sm text-muted-foreground">

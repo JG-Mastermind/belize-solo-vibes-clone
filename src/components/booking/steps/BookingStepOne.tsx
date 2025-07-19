@@ -77,7 +77,7 @@ export const BookingStepOne: React.FC<BookingStepOneProps> = ({
     if (availableSpots === 0) {
       return { status: 'full', message: 'Fully booked', color: 'bg-destructive/10 text-destructive' };
     } else if (availableSpots <= 3) {
-      return { status: 'limited', message: `Only ${availableSpots} spots left`, color: 'bg-orange-100 text-orange-800' };
+      return { status: 'limited', message: `Only ${availableSpots} spots left`, color: 'bg-orange-100 text-orange-800 spots-available' };
     } else {
       return { status: 'available', message: `${availableSpots} spots available`, color: 'bg-primary/10 text-primary' };
     }
@@ -184,12 +184,12 @@ export const BookingStepOne: React.FC<BookingStepOneProps> = ({
       <Card>
         <CardHeader>
           <CardTitle className="text-lg flex items-center">
-            <AlertCircle className="w-5 h-5 mr-2" />
+            <AlertCircle className="w-5 h-5 mr-2 trust-badge" />
             Important Information
           </CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="space-y-3 text-sm">
+          <div className="space-y-3 text-sm important-info">
             <div className="flex items-start space-x-2">
               <div className="w-2 h-2 bg-blue-500 rounded-full mt-2 flex-shrink-0"></div>
               <div>

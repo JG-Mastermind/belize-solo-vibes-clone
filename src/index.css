@@ -204,3 +204,32 @@
 .booking-flow-container .trust-icon {
   color: #22c55e !important;
 }
+
+.booking-flow-container .spots-available {
+  color: #f59e0b !important;
+  font-weight: 600;
+}
+
+.booking-flow-container .urgent-indicator {
+  color: #f59e0b !important;
+}
+
+.booking-flow-container .trust-badge {
+  color: #22c55e !important;
+}
+
+.booking-flow-container .security-text {
+  color: #22c55e !important;
+  font-weight: 500;
+}
+
+.booking-flow-container .total-amount {
+  color: #22c55e !important;
+  font-size: 1.25rem;
+  font-weight: bold;
+}
+
+.booking-flow-container .important-info {
+  border-left: 4px solid #22c55e !important;
+  padding-left: 1rem;
+}

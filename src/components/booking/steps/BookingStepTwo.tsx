@@ -84,7 +84,7 @@ export const BookingStepTwo: React.FC<BookingStepTwoProps> = ({
       <Card>
         <CardHeader>
           <CardTitle className="text-lg flex items-center">
-            <Users className="w-5 h-5 mr-2" />
+            <Users className="w-5 h-5 mr-2 text-orange-400" />
             How Many People?
           </CardTitle>
         </CardHeader>
@@ -263,21 +263,35 @@ export const BookingStepTwo: React.FC<BookingStepTwoProps> = ({
       {/* Capacity Information */}
       <Card>
         <CardHeader>
-          <CardTitle className="text-lg">Capacity Information</CardTitle>
+          <CardTitle className="text-lg flex items-center">
+            <Users className="w-5 h-5 mr-2 text-orange-400" />
+            Capacity Information
+          </CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="space-y-2 text-sm">
-            <div className="flex justify-between">
-              <span>Maximum group size:</span>
-              <span className="font-semibold">{adventure.max_participants} people</span>
+          <div className="space-y-3 text-sm important-info">
+            <div className="flex items-start space-x-2">
+              <div className="w-2 h-2 bg-blue-500 rounded-full mt-2 flex-shrink-0"></div>
+              <div className="flex justify-between w-full">
+                <span><strong>Maximum group size:</strong></span>
+                <span className="font-semibold">{adventure.max_participants} people</span>
+              </div>
             </div>
-            <div className="flex justify-between">
-              <span>Available spots for this date:</span>
-              <span className="font-semibold">{availableSpots} spots</span>
+            
+            <div className="flex items-start space-x-2">
+              <div className="w-2 h-2 bg-green-500 rounded-full mt-2 flex-shrink-0"></div>
+              <div className="flex justify-between w-full">
+                <span><strong>Available spots for this date:</strong></span>
+                <span className="font-semibold">{availableSpots} spots</span>
+              </div>
             </div>
-            <div className="flex justify-between">
-              <span>Your selection:</span>
-              <span className="font-semibold">{formData.participants} participant{formData.participants > 1 ? 's' : ''}</span>
+            
+            <div className="flex items-start space-x-2">
+              <div className="w-2 h-2 bg-orange-500 rounded-full mt-2 flex-shrink-0"></div>
+              <div className="flex justify-between w-full">
+                <span><strong>Your selection:</strong></span>
+                <span className="font-semibold">{formData.participants} participant{formData.participants > 1 ? 's' : ''}</span>
+              </div>
             </div>
           </div>
         </CardContent>

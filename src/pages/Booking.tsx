@@ -482,7 +482,7 @@ const Booking = () => {
         <div className="mb-8">
           <div className="flex justify-between items-center mb-4">
             <h2 className="text-lg font-semibold">Booking Progress</h2>
-            <span className="text-sm text-muted-foreground">
+            <span className="text-sm text-green-500 font-medium">
               Step {currentStep + 1} of {steps.length}
             </span>
           </div>

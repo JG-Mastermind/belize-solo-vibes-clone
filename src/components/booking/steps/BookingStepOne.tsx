@@ -79,7 +79,7 @@ export const BookingStepOne: React.FC<BookingStepOneProps> = ({
     } else if (availableSpots <= 3) {
       return { status: 'limited', message: `Only ${availableSpots} spots left`, color: 'bg-orange-100 text-orange-800 spots-available' };
     } else {
-      return { status: 'available', message: `${availableSpots} spots available`, color: 'bg-primary/10 text-primary' };
+      return { status: 'available', message: `${availableSpots} spots available`, color: 'bg-primary/10 text-green-500 hover:bg-gray-800' };
     }
   };
 
@@ -91,14 +91,14 @@ export const BookingStepOne: React.FC<BookingStepOneProps> = ({
       <Card>
         <CardHeader>
           <CardTitle className="text-lg flex items-center">
-            <CalendarIcon className="w-5 h-5 mr-2" />
+            <CalendarIcon className="w-5 h-5 mr-2 text-orange-400" />
             Select Your Date
           </CardTitle>
         </CardHeader>
         <CardContent>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             {/* Calendar */}
-            <div>
+            <div className="flex justify-center">
               <Calendar
                 mode="single"
                 selected={selectedDate}
@@ -127,7 +127,7 @@ export const BookingStepOne: React.FC<BookingStepOneProps> = ({
                   {/* Weather Info (Mock) */}
                   <div className="p-4 bg-muted rounded-lg">
                     <h4 className="font-medium mb-2">Weather Forecast</h4>
-                    <div className="flex items-center space-x-2 text-sm text-muted-foreground">
+                    <div className="flex items-center space-x-2 text-sm text-green-500">
                       <span>🌤️ 82°F</span>
                       <span>•</span>
                       <span>Partly cloudy</span>
@@ -152,7 +152,7 @@ export const BookingStepOne: React.FC<BookingStepOneProps> = ({
         <Card>
           <CardHeader>
             <CardTitle className="text-lg flex items-center">
-              <Clock className="w-5 h-5 mr-2" />
+              <Clock className="w-5 h-5 mr-2 text-orange-400" />
               Choose Your Time
             </CardTitle>
           </CardHeader>
@@ -184,7 +184,7 @@ export const BookingStepOne: React.FC<BookingStepOneProps> = ({
       <Card>
         <CardHeader>
           <CardTitle className="text-lg flex items-center">
-            <AlertCircle className="w-5 h-5 mr-2 trust-badge" />
+            <AlertCircle className="w-5 h-5 mr-2 text-orange-400" />
             Important Information
           </CardTitle>
         </CardHeader>

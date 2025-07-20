@@ -6,7 +6,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Badge } from '@/components/ui/badge';
-import { User, Phone, Mail, AlertTriangle, MessageCircle, Bell } from 'lucide-react';
+import { User, Phone, Mail, AlertTriangle, MessageCircle, Bell, Utensils, Award, Shield, CheckCircle } from 'lucide-react';
 import { Adventure, BookingFormData } from '@/types/booking';
 import { useAuth } from '@/components/auth/AuthProvider';
 
@@ -109,7 +109,7 @@ export const BookingStepThree: React.FC<BookingStepThreeProps> = ({
       <Card>
         <CardHeader>
           <CardTitle className="text-lg flex items-center">
-            <User className="w-5 h-5 mr-2" />
+            <User className="w-5 h-5 mr-2 text-orange-400" />
             Lead Guest Information
           </CardTitle>
           <p className="text-sm text-muted-foreground">
@@ -164,7 +164,10 @@ export const BookingStepThree: React.FC<BookingStepThreeProps> = ({
       {/* Experience Level */}
       <Card>
         <CardHeader>
-          <CardTitle className="text-lg">Experience Level</CardTitle>
+          <CardTitle className="text-lg flex items-center">
+            <Award className="w-5 h-5 mr-2 text-orange-400" />
+            Experience Level
+          </CardTitle>
           <p className="text-sm text-muted-foreground">
             Help us provide the best experience for your skill level
           </p>
@@ -192,7 +195,10 @@ export const BookingStepThree: React.FC<BookingStepThreeProps> = ({
       {/* Dietary Restrictions */}
       <Card>
         <CardHeader>
-          <CardTitle className="text-lg">Dietary Restrictions & Allergies</CardTitle>
+          <CardTitle className="text-lg flex items-center">
+            <Utensils className="w-5 h-5 mr-2 text-orange-400" />
+            Dietary Restrictions & Allergies
+          </CardTitle>
           <p className="text-sm text-muted-foreground">
             Let us know about any dietary needs or allergies
           </p>
@@ -231,7 +237,7 @@ export const BookingStepThree: React.FC<BookingStepThreeProps> = ({
       <Card>
         <CardHeader>
           <CardTitle className="text-lg flex items-center">
-            <AlertTriangle className="w-5 h-5 mr-2" />
+            <AlertTriangle className="w-5 h-5 mr-2 text-orange-400" />
             Emergency Contact
           </CardTitle>
           <p className="text-sm text-muted-foreground">
@@ -270,7 +276,7 @@ export const BookingStepThree: React.FC<BookingStepThreeProps> = ({
       <Card>
         <CardHeader>
           <CardTitle className="text-lg flex items-center">
-            <Bell className="w-5 h-5 mr-2" />
+            <Bell className="w-5 h-5 mr-2 text-orange-400" />
             Communication Preferences
           </CardTitle>
           <p className="text-sm text-muted-foreground">
@@ -340,17 +346,43 @@ export const BookingStepThree: React.FC<BookingStepThreeProps> = ({
         </Card>
       )}
 
-      {/* Data Privacy */}
+      {/* Privacy & Security Information */}
       <Card>
-        <CardContent className="pt-4">
-          <div className="text-xs text-muted-foreground">
-            <p className="mb-2">
-              By providing your information, you agree to our Privacy Policy and Terms of Service.
-              Your data will be used to process your booking and provide customer support.
-            </p>
-            <p>
-              We'll only contact you about your booking unless you opt-in to marketing communications.
-            </p>
+        <CardHeader>
+          <CardTitle className="text-lg flex items-center">
+            <Shield className="w-5 h-5 mr-2 text-orange-400" />
+            Privacy & Security
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="space-y-3 text-sm important-info">
+            <div className="flex items-start space-x-2">
+              <div className="w-2 h-2 bg-green-500 rounded-full mt-2 flex-shrink-0"></div>
+              <div>
+                <strong>Secure Data Processing:</strong> All personal information is encrypted and stored securely
+              </div>
+            </div>
+            
+            <div className="flex items-start space-x-2">
+              <div className="w-2 h-2 bg-blue-500 rounded-full mt-2 flex-shrink-0"></div>
+              <div>
+                <strong>Limited Data Use:</strong> Information used only for booking processing and customer support
+              </div>
+            </div>
+            
+            <div className="flex items-start space-x-2">
+              <div className="w-2 h-2 bg-orange-500 rounded-full mt-2 flex-shrink-0"></div>
+              <div>
+                <strong>No Spam Policy:</strong> We'll only contact you about your booking unless you opt-in
+              </div>
+            </div>
+            
+            <div className="flex items-start space-x-2">
+              <div className="w-2 h-2 bg-purple-500 rounded-full mt-2 flex-shrink-0"></div>
+              <div>
+                <strong>Privacy Compliant:</strong> Full compliance with Privacy Policy and Terms of Service
+              </div>
+            </div>
           </div>
         </CardContent>
       </Card>

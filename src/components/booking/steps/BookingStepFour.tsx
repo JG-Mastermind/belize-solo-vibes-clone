@@ -5,7 +5,7 @@ import { Badge } from '@/components/ui/badge';
 import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
-import { Plus, Minus, Camera, Utensils, Car, Gift, MessageCircle, Star } from 'lucide-react';
+import { Plus, Minus, Camera, Utensils, Car, Gift, MessageCircle, Star, Sparkles, Lightbulb } from 'lucide-react';
 import { Adventure, BookingFormData } from '@/types/booking';
 import { toast } from 'sonner';
 
@@ -26,6 +26,16 @@ interface AddOn {
   maxQuantity?: number;
 }
 
+interface Combo {
+  id: string;
+  name: string;
+  description: string;
+  items: string[]; // AddOn IDs that are included
+  bundlePrice: number;
+  savings: number;
+  badge: string;
+}
+
 export const BookingStepFour: React.FC<BookingStepFourProps> = ({
   adventure,
   formData,
@@ -33,6 +43,7 @@ export const BookingStepFour: React.FC<BookingStepFourProps> = ({
 }) => {
   const [promoCode, setPromoCode] = useState(formData.promoCode || '');
   const [isValidatingPromo, setIsValidatingPromo] = useState(false);
+  const [selectedCombos, setSelectedCombos] = useState<string[]>([]);
 
   // Mock add-ons data (in real app, this would come from the adventure or API)
   const addOns: AddOn[] = [
@@ -41,7 +52,7 @@ export const BookingStepFour: React.FC<BookingStepFourProps> = ({
       name: 'Professional Photos',
       description: 'Get high-quality photos of your adventure taken by our professional photographer',
       price: 45,
-      icon: <Camera className="w-5 h-5" />,
+      icon: <Camera className="w-5 h-5 text-orange-500" />,
       category: 'Photography',
       popular: true
     },
@@ -50,7 +61,7 @@ export const BookingStepFour: React.FC<BookingStepFourProps> = ({
       name: 'Gourmet Lunch',
       description: 'Enjoy a delicious locally-sourced lunch with vegetarian options available',
       price: 25,
-      icon: <Utensils className="w-5 h-5" />,
+      icon: <Utensils className="w-5 h-5 text-orange-500" />,
       category: 'Food & Drink'
     },
     {
@@ -58,7 +69,7 @@ export const BookingStepFour: React.FC<BookingStepFourProps> = ({
       name: 'Hotel Pickup',
       description: 'Convenient pickup and drop-off from your hotel in the main tourist areas',
       price: 15,
-      icon: <Car className="w-5 h-5" />,
+      icon: <Car className="w-5 h-5 text-orange-500" />,
       category: 'Transportation'
     },
     {
@@ -66,7 +77,7 @@ export const BookingStepFour: React.FC<BookingStepFourProps> = ({
       name: 'Premium Gear Upgrade',
       description: 'Upgrade to premium adventure gear for enhanced comfort and safety',
       price: 35,
-      icon: <Star className="w-5 h-5" />,
+      icon: <Star className="w-5 h-5 text-orange-500" />,
       category: 'Equipment'
     },
     {
@@ -74,8 +85,30 @@ export const BookingStepFour: React.FC<BookingStepFourProps> = ({
       name: 'Adventure Souvenir Pack',
       description: 'Take home a branded t-shirt, water bottle, and photo album',
       price: 20,
-      icon: <Gift className="w-5 h-5" />,
+      icon: <Gift className="w-5 h-5 text-orange-500" />,
       category: 'Souvenirs'
+    }
+  ];
+
+  // Combo packages
+  const combos: Combo[] = [
+    {
+      id: 'memory',
+      name: 'Memory Package',
+      description: 'Professional Photos + Souvenir Pack = $60 (Save $5!)',
+      items: ['photos', 'souvenir'],
+      bundlePrice: 60,
+      savings: 5,
+      badge: 'Most popular choice for first-time visitors'
+    },
+    {
+      id: 'comfort',
+      name: 'Comfort Package', 
+      description: 'Hotel Pickup + Gourmet Lunch = $35 (Save $5!)',
+      items: ['transport', 'lunch'],
+      bundlePrice: 35,
+      savings: 5,
+      badge: 'Perfect for a hassle-free experience'
     }
   ];
 
@@ -140,6 +173,62 @@ export const BookingStepFour: React.FC<BookingStepFourProps> = ({
     onUpdate({ specialRequests: value });
   };
 
+  const handleComboSelect = (comboId: string) => {
+    const combo = combos.find(c => c.id === comboId);
+    if (!combo) return;
+
+    const isSelected = selectedCombos.includes(comboId);
+    
+    if (isSelected) {
+      // Deselect combo - remove bundle and restore individual items if they were selected before
+      setSelectedCombos(prev => prev.filter(id => id !== comboId));
+      
+      // Remove combo from selected add-ons
+      const currentAddOns = formData.selectedAddOns || [];
+      const newAddOns = currentAddOns.filter(addon => addon.id !== `combo-${comboId}`);
+      onUpdate({ selectedAddOns: newAddOns });
+      
+      toast.info(`${combo.name} removed`);
+    } else {
+      // Select combo - check for conflicts with individual items
+      const currentAddOns = formData.selectedAddOns || [];
+      const conflictingItems = currentAddOns.filter(addon => combo.items.includes(addon.id));
+      
+      if (conflictingItems.length > 0) {
+        // Remove individual items and add combo
+        const nonConflictingAddOns = currentAddOns.filter(addon => !combo.items.includes(addon.id));
+        const comboAddOn = {
+          id: `combo-${comboId}`,
+          name: combo.name,
+          price: combo.bundlePrice,
+          quantity: 1
+        };
+        
+        onUpdate({ selectedAddOns: [...nonConflictingAddOns, comboAddOn] });
+        
+        const itemNames = conflictingItems.map(item => item.name).join(', ');
+        toast.success(`${combo.name} selected! Replaced individual items: ${itemNames}. You save $${combo.savings}!`);
+      } else {
+        // No conflicts, just add combo
+        const comboAddOn = {
+          id: `combo-${comboId}`,
+          name: combo.name,
+          price: combo.bundlePrice,
+          quantity: 1
+        };
+        
+        onUpdate({ selectedAddOns: [...currentAddOns, comboAddOn] });
+        toast.success(`${combo.name} added! You save $${combo.savings}!`);
+      }
+      
+      setSelectedCombos(prev => [...prev, comboId]);
+    }
+  };
+
+  const isComboSelected = (comboId: string) => {
+    return selectedCombos.includes(comboId);
+  };
+
   const getTotalAddOnsCost = () => {
     return (formData.selectedAddOns || []).reduce((total, addon) => {
       return total + (addon.price * addon.quantity);
@@ -160,7 +249,10 @@ export const BookingStepFour: React.FC<BookingStepFourProps> = ({
       {/* Add-ons Selection */}
       <Card>
         <CardHeader>
-          <CardTitle className="text-lg">Enhance Your Adventure</CardTitle>
+          <CardTitle className="text-lg flex items-center">
+            <Sparkles className="w-5 h-5 mr-2 text-orange-500" />
+            Enhance Your Adventure
+          </CardTitle>
           <p className="text-sm text-muted-foreground">
             Add optional extras to make your experience even more memorable
           </p>
@@ -172,37 +264,44 @@ export const BookingStepFour: React.FC<BookingStepFourProps> = ({
                 <h3 className="font-semibold text-foreground">{category}</h3>
                 <div className="space-y-3">
                   {categoryAddOns.map((addon) => (
-                    <div key={addon.id} className="border rounded-lg p-4 hover:shadow-md transition-shadow">
-                      <div className="flex items-start justify-between">
-                        <div className="flex items-start space-x-3 flex-1">
-                          <div className="w-10 h-10 bg-primary/10 rounded-lg flex items-center justify-center">
-                            {addon.icon}
+                    <div key={addon.id} className="border rounded-lg p-3 sm:p-4 hover:shadow-md transition-shadow">
+                      <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3 sm:gap-0">
+                        <div className="flex items-start space-x-3 flex-1 min-w-0">
+                          {/* Icon and Pricing Column */}
+                          <div className="flex flex-col items-center space-y-1 flex-shrink-0">
+                            <div className="w-10 h-10 bg-primary/10 rounded-lg flex items-center justify-center">
+                              {addon.icon}
+                            </div>
+                            <div className="text-sm sm:text-base font-bold text-green-600">${addon.price}</div>
                           </div>
-                          <div className="flex-1">
-                            <div className="flex items-center space-x-2 mb-1">
-                              <h4 className="font-semibold">{addon.name}</h4>
+                          
+                          {/* Content Column */}
+                          <div className="flex-1 min-w-0">
+                            <div className="flex flex-col sm:flex-row sm:items-center sm:space-x-2 mb-1">
+                              <h4 className="font-semibold text-base sm:text-lg">{addon.name}</h4>
                               {addon.popular && (
-                                <Badge variant="secondary" className="bg-warning/10 text-warning">
+                                <Badge variant="secondary" className="bg-orange-100 text-orange-800 text-xs mt-1 sm:mt-0 w-fit">
                                   Popular
                                 </Badge>
                               )}
                             </div>
-                            <p className="text-sm text-muted-foreground mb-2">{addon.description}</p>
-                            <div className="text-lg font-bold text-primary">${addon.price}</div>
+                            <p className="text-sm sm:text-base text-muted-foreground break-words">{addon.description}</p>
                           </div>
                         </div>
                         
-                        <div className="flex items-center space-x-2 ml-4">
+                        {/* Quantity Controls */}
+                        <div className="flex items-center justify-center sm:justify-end space-x-2 sm:ml-4 mt-2 sm:mt-0">
                           <Button
                             variant="outline"
                             size="sm"
                             onClick={() => handleAddOnChange(addon.id, Math.max(0, getAddOnQuantity(addon.id) - 1))}
                             disabled={getAddOnQuantity(addon.id) === 0}
+                            className="min-w-[44px] min-h-[44px] sm:min-w-[36px] sm:min-h-[36px]"
                           >
                             <Minus className="w-4 h-4" />
                           </Button>
                           
-                          <span className="w-8 text-center font-semibold">
+                          <span className="w-8 sm:w-8 text-center font-semibold text-base sm:text-lg">
                             {getAddOnQuantity(addon.id)}
                           </span>
                           
@@ -211,6 +310,7 @@ export const BookingStepFour: React.FC<BookingStepFourProps> = ({
                             size="sm"
                             onClick={() => handleAddOnChange(addon.id, getAddOnQuantity(addon.id) + 1)}
                             disabled={addon.maxQuantity && getAddOnQuantity(addon.id) >= addon.maxQuantity}
+                            className="min-w-[44px] min-h-[44px] sm:min-w-[36px] sm:min-h-[36px]"
                           >
                             <Plus className="w-4 h-4" />
                           </Button>
@@ -258,7 +358,7 @@ export const BookingStepFour: React.FC<BookingStepFourProps> = ({
       <Card>
         <CardHeader>
           <CardTitle className="text-lg flex items-center">
-            <Gift className="w-5 h-5 mr-2" />
+            <Gift className="w-5 h-5 mr-2 text-orange-500" />
             Promo Code
           </CardTitle>
         </CardHeader>
@@ -297,7 +397,7 @@ export const BookingStepFour: React.FC<BookingStepFourProps> = ({
       <Card>
         <CardHeader>
           <CardTitle className="text-lg flex items-center">
-            <MessageCircle className="w-5 h-5 mr-2" />
+            <MessageCircle className="w-5 h-5 mr-2 text-orange-500" />
             Special Requests
           </CardTitle>
           <p className="text-sm text-muted-foreground">
@@ -321,32 +421,49 @@ export const BookingStepFour: React.FC<BookingStepFourProps> = ({
         </CardContent>
       </Card>
 
-      {/* Popular Add-on Recommendations */}
-      <Card className="border-primary bg-primary/10">
+      {/* Popular Combinations */}
+      <Card>
         <CardHeader>
-          <CardTitle className="text-lg text-primary-foreground">💡 Popular Combinations</CardTitle>
+          <CardTitle className="text-lg flex items-center">
+            <Lightbulb className="w-5 h-5 mr-2 text-orange-500" />
+            Popular Combinations
+          </CardTitle>
+          <p className="text-sm text-muted-foreground">
+            Save money with these popular bundle packages
+          </p>
         </CardHeader>
         <CardContent>
           <div className="space-y-3">
-            <div className="p-3 bg-background rounded-lg border border-primary">
-              <h4 className="font-semibold text-foreground mb-1">Memory Package</h4>
-              <p className="text-sm text-primary-foreground mb-2">
-                Professional Photos + Souvenir Pack = $60 (Save $5!)
-              </p>
-              <div className="text-xs text-primary">
-                Most popular choice for first-time visitors
-              </div>
-            </div>
-            
-            <div className="p-3 bg-background rounded-lg border border-primary">
-              <h4 className="font-semibold text-foreground mb-1">Comfort Package</h4>
-              <p className="text-sm text-primary-foreground mb-2">
-                Hotel Pickup + Gourmet Lunch = $35 (Save $5!)
-              </p>
-              <div className="text-xs text-primary">
-                Perfect for a hassle-free experience
-              </div>
-            </div>
+            {combos.map((combo) => (
+              <button
+                key={combo.id}
+                onClick={() => handleComboSelect(combo.id)}
+                className={`w-full p-3 sm:p-4 rounded-lg border-2 transition-all text-left min-h-[44px] ${
+                  isComboSelected(combo.id)
+                    ? 'border-primary bg-primary/10'
+                    : 'border-border hover:border-border/70'
+                }`}
+              >
+                <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-2 sm:gap-0">
+                  <div className="flex-1 min-w-0">
+                    <h4 className="font-semibold text-foreground mb-1 text-sm sm:text-base">{combo.name}</h4>
+                    <p className="text-xs sm:text-sm text-muted-foreground mb-2 break-words">
+                      {combo.description}
+                    </p>
+                    <div className="text-xs text-primary">
+                      {combo.badge}
+                    </div>
+                  </div>
+                  <div className="sm:ml-4 self-start">
+                    {isComboSelected(combo.id) && (
+                      <Badge variant="default" className="bg-primary text-primary-foreground text-xs">
+                        Selected
+                      </Badge>
+                    )}
+                  </div>
+                </div>
+              </button>
+            ))}
           </div>
         </CardContent>
       </Card>

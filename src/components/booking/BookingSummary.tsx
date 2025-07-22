@@ -170,10 +170,10 @@ export const BookingSummary: React.FC<BookingSummaryProps> = ({
                   <span>${pricing.subtotal.toFixed(2)}</span>
                 </div>
                 
-                {pricing.groupDiscount > 0 && (
+                {formData.participants >= 4 && (
                   <div className="flex justify-between text-green-600">
                     <span>Group discount</span>
-                    <span>-${pricing.groupDiscount.toFixed(2)}</span>
+                    <span>-${(pricing.subtotal * 0.1).toFixed(2)}</span>
                   </div>
                 )}
                 

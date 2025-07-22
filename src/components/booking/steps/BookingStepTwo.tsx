@@ -169,10 +169,10 @@ export const BookingStepTwo: React.FC<BookingStepTwoProps> = ({
                 <span className="font-semibold">${pricing.subtotal.toFixed(2)}</span>
               </div>
               
-              {pricing.groupDiscount > 0 && (
-                <div className="flex justify-between items-center text-primary">
-                  <span>Group discount</span>
-                  <span>-${pricing.groupDiscount.toFixed(2)}</span>
+              {formData.participants >= 4 && (
+                <div className="flex justify-between text-green-600">
+                  <span>Group discount (10% off)</span>
+                  <span>-${(pricing.subtotal * 0.1).toFixed(2)}</span>
                 </div>
               )}
               
@@ -231,7 +231,7 @@ export const BookingStepTwo: React.FC<BookingStepTwoProps> = ({
         <Card className="border-accent bg-accent/10">
           <CardContent className="pt-4">
             <div className="flex items-center space-x-2">
-              <Heart className="w-5 h-5 text-accent-foreground" />
+              <Heart className="w-5 h-5 text-yellow-500" />
               <div>
                 <h3 className="font-semibold text-accent-foreground">Solo Traveler Friendly</h3>
                 <p className="text-sm text-accent-foreground/80">
@@ -248,10 +248,10 @@ export const BookingStepTwo: React.FC<BookingStepTwoProps> = ({
         <Card className="border-primary bg-primary/10">
           <CardContent className="pt-4">
             <div className="flex items-center space-x-2">
-              <Users className="w-5 h-5 text-primary" />
+              <Users className="w-5 h-5 text-orange-400" />
               <div>
-                <h3 className="font-semibold text-primary-foreground">Group Benefits</h3>
-                <p className="text-sm text-primary">
+                <h3 className="font-semibold text-white">Group Benefits</h3>
+                <p className="text-sm text-green-600">
                   Great choice for groups! You'll get a discount and can enjoy a more personalized experience.
                 </p>
               </div>

@@ -329,7 +329,7 @@ export const BookingStepFour: React.FC<BookingStepFourProps> = ({
       {formData.selectedAddOns && formData.selectedAddOns.length > 0 && (
         <Card className="border-primary bg-primary/10">
           <CardHeader>
-            <CardTitle className="text-lg text-primary-foreground">Selected Add-ons</CardTitle>
+            <CardTitle className="text-lg text-green-600">Selected Add-ons</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="space-y-2">
@@ -344,9 +344,9 @@ export const BookingStepFour: React.FC<BookingStepFourProps> = ({
                 </div>
               ))}
               <div className="border-t pt-2 mt-2">
-                <div className="flex justify-between items-center font-semibold text-primary-foreground">
-                  <span>Add-ons Total</span>
-                  <span>${getTotalAddOnsCost().toFixed(2)}</span>
+                <div className="flex justify-between items-center font-semibold">
+                  <span className="text-green-600">Add-ons Total</span>
+                  <span className="text-green-500">${getTotalAddOnsCost().toFixed(2)}</span>
                 </div>
               </div>
             </div>

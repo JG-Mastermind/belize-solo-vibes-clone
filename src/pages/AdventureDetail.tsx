@@ -117,13 +117,13 @@ const AdventureDetail: React.FC = () => {
       case 'moderate': return 'bg-yellow-100 text-yellow-800';
       case 'challenging': return 'bg-orange-100 text-orange-800';
       case 'extreme': return 'bg-red-100 text-red-800';
-      default: return 'bg-gray-100 text-gray-800';
+      default: return 'bg-muted text-muted-foreground';
     }
   };
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
+      <div className="min-h-screen flex items-center justify-center bg-background">
         <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-blue-500"></div>
       </div>
     );
@@ -131,9 +131,9 @@ const AdventureDetail: React.FC = () => {
 
   if (!adventure) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
+      <div className="min-h-screen flex items-center justify-center bg-background">
         <div className="text-center">
-          <h1 className="text-2xl font-bold mb-4">Adventure Not Found</h1>
+          <h1 className="text-2xl font-bold mb-4 text-foreground">Adventure Not Found</h1>
           <Button onClick={() => navigate('/')}>Return Home</Button>
         </div>
       </div>
@@ -146,7 +146,7 @@ const AdventureDetail: React.FC = () => {
   ].filter(Boolean);
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-blue-50 dark:bg-blue-950/20">
       {/* Hero Section */}
       <div className="relative h-96 lg:h-[600px] overflow-hidden">
         <ImageGallery 
@@ -210,24 +210,24 @@ const AdventureDetail: React.FC = () => {
           {/* Main Content */}
           <div className="lg:col-span-2 space-y-8">
             {/* Overview */}
-            <Card>
+            <Card className="dark:bg-card">
               <CardHeader>
                 <div className="flex items-center justify-between">
                   <CardTitle className="text-2xl">Overview</CardTitle>
                   <div className="flex items-center space-x-2">
                     <Star className="w-5 h-5 text-yellow-500 fill-current" />
                     <span className="font-semibold">{adventure.average_rating}</span>
-                    <span className="text-gray-500">({adventure.total_reviews} reviews)</span>
+                    <span className="text-muted-foreground">({adventure.total_reviews} reviews)</span>
                   </div>
                 </div>
               </CardHeader>
               <CardContent>
-                <p className="text-gray-700 mb-6">{adventure.description}</p>
+                <p className="text-foreground mb-6">{adventure.description}</p>
                 
                 {/* Highlights */}
                 {adventure.highlights && adventure.highlights.length > 0 && (
                   <div className="mb-6">
-                    <h3 className="text-lg font-semibold mb-3">Highlights</h3>
+                    <h3 className="text-lg font-semibold mb-3 text-foreground">Highlights</h3>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                       {adventure.highlights.map((highlight, index) => (
                         <div key={index} className="flex items-center space-x-2">
@@ -242,7 +242,7 @@ const AdventureDetail: React.FC = () => {
                 {/* What's Included */}
                 {adventure.includes && adventure.includes.length > 0 && (
                   <div className="mb-6">
-                    <h3 className="text-lg font-semibold mb-3">What's Included</h3>
+                    <h3 className="text-lg font-semibold mb-3 text-foreground">What's Included</h3>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                       {adventure.includes.map((item, index) => (
                         <div key={index} className="flex items-center space-x-2">
@@ -257,7 +257,7 @@ const AdventureDetail: React.FC = () => {
                 {/* What to Bring */}
                 {adventure.what_to_bring && adventure.what_to_bring.length > 0 && (
                   <div className="mb-6">
-                    <h3 className="text-lg font-semibold mb-3">What to Bring</h3>
+                    <h3 className="text-lg font-semibold mb-3 text-foreground">What to Bring</h3>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                       {adventure.what_to_bring.map((item, index) => (
                         <div key={index} className="flex items-center space-x-2">
@@ -272,7 +272,7 @@ const AdventureDetail: React.FC = () => {
                 {/* Not Suitable For */}
                 {adventure.not_suitable_for && adventure.not_suitable_for.length > 0 && (
                   <div>
-                    <h3 className="text-lg font-semibold mb-3">Not Suitable For</h3>
+                    <h3 className="text-lg font-semibold mb-3 text-foreground">Not Suitable For</h3>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                       {adventure.not_suitable_for.map((item, index) => (
                         <div key={index} className="flex items-center space-x-2">
@@ -295,24 +295,24 @@ const AdventureDetail: React.FC = () => {
               </TabsList>
               
               <TabsContent value="reviews" className="space-y-4">
-                <Card>
+                <Card className="dark:bg-card">
                   <CardHeader>
                     <CardTitle>Reviews ({reviews.length})</CardTitle>
                   </CardHeader>
                   <CardContent>
                     {reviews.length === 0 ? (
                       <div className="text-center py-8">
-                        <MessageCircle className="w-12 h-12 mx-auto text-gray-400 mb-4" />
-                        <p className="text-gray-500">No reviews yet. Be the first to share your experience!</p>
+                        <MessageCircle className="w-12 h-12 mx-auto text-muted-foreground mb-4" />
+                        <p className="text-muted-foreground">No reviews yet. Be the first to share your experience!</p>
                       </div>
                     ) : (
                       <div className="space-y-6">
                         {reviews.map((review) => (
-                          <div key={review.id} className="border-b pb-6 last:border-b-0">
+                          <div key={review.id} className="border-b border-border pb-6 last:border-b-0">
                             <div className="flex items-start space-x-4">
                               <div className="flex-shrink-0">
-                                <div className="w-10 h-10 bg-gray-300 rounded-full flex items-center justify-center">
-                                  <Users className="w-5 h-5 text-gray-600" />
+                                <div className="w-10 h-10 bg-muted rounded-full flex items-center justify-center">
+                                  <Users className="w-5 h-5 text-muted-foreground" />
                                 </div>
                               </div>
                               <div className="flex-1">
@@ -324,12 +324,12 @@ const AdventureDetail: React.FC = () => {
                                         className={`w-4 h-4 ${
                                           i < review.rating
                                             ? 'text-yellow-500 fill-current'
-                                            : 'text-gray-300'
+                                            : 'text-muted'
                                         }`}
                                       />
                                     ))}
                                   </div>
-                                  <span className="text-sm text-gray-500">
+                                  <span className="text-sm text-muted-foreground">
                                     {new Date(review.created_at).toLocaleDateString()}
                                   </span>
                                   {review.is_verified && (
@@ -339,10 +339,10 @@ const AdventureDetail: React.FC = () => {
                                   )}
                                 </div>
                                 {review.title && (
-                                  <h4 className="font-semibold mb-2">{review.title}</h4>
+                                  <h4 className="font-semibold mb-2 text-foreground">{review.title}</h4>
                                 )}
                                 {review.comment && (
-                                  <p className="text-gray-700">{review.comment}</p>
+                                  <p className="text-foreground">{review.comment}</p>
                                 )}
                               </div>
                             </div>
@@ -355,23 +355,23 @@ const AdventureDetail: React.FC = () => {
               </TabsContent>
               
               <TabsContent value="itinerary">
-                <Card>
+                <Card className="dark:bg-card">
                   <CardHeader>
                     <CardTitle>Itinerary</CardTitle>
                   </CardHeader>
                   <CardContent>
-                    <p className="text-gray-500">Detailed itinerary coming soon...</p>
+                    <p className="text-muted-foreground">Detailed itinerary coming soon...</p>
                   </CardContent>
                 </Card>
               </TabsContent>
               
               <TabsContent value="faqs">
-                <Card>
+                <Card className="dark:bg-card">
                   <CardHeader>
                     <CardTitle>Frequently Asked Questions</CardTitle>
                   </CardHeader>
                   <CardContent>
-                    <p className="text-gray-500">FAQs coming soon...</p>
+                    <p className="text-muted-foreground">FAQs coming soon...</p>
                   </CardContent>
                 </Card>
               </TabsContent>
@@ -381,11 +381,11 @@ const AdventureDetail: React.FC = () => {
           {/* Sidebar */}
           <div className="space-y-6">
             {/* Pricing Widget */}
-            <Card className="sticky top-4">
+            <Card className="sticky top-4 dark:bg-card">
               <CardHeader>
                 <CardTitle className="text-2xl">
                   From ${adventure.base_price}
-                  <span className="text-lg font-normal text-gray-500">/person</span>
+                  <span className="text-lg font-normal text-muted-foreground">/person</span>
                 </CardTitle>
               </CardHeader>
               <CardContent className="space-y-4">
@@ -397,7 +397,7 @@ const AdventureDetail: React.FC = () => {
                   Book Now
                 </Button>
                 
-                <div className="text-center text-sm text-gray-500">
+                <div className="text-center text-sm text-muted-foreground">
                   Free cancellation up to 24 hours before
                 </div>
                 
@@ -406,15 +406,15 @@ const AdventureDetail: React.FC = () => {
                 {/* Quick Details */}
                 <div className="space-y-3">
                   <div className="flex items-center justify-between">
-                    <span className="text-sm text-gray-600">Duration</span>
-                    <span className="text-sm font-medium">{adventure.duration_hours} hours</span>
+                    <span className="text-sm text-muted-foreground">Duration</span>
+                    <span className="text-sm font-medium text-foreground">{adventure.duration_hours} hours</span>
                   </div>
                   <div className="flex items-center justify-between">
-                    <span className="text-sm text-gray-600">Group Size</span>
-                    <span className="text-sm font-medium">Up to {adventure.max_participants}</span>
+                    <span className="text-sm text-muted-foreground">Group Size</span>
+                    <span className="text-sm font-medium text-foreground">Up to {adventure.max_participants}</span>
                   </div>
                   <div className="flex items-center justify-between">
-                    <span className="text-sm text-gray-600">Difficulty</span>
+                    <span className="text-sm text-muted-foreground">Difficulty</span>
                     <Badge className={getDifficultyColor(adventure.difficulty_level)}>
                       {adventure.difficulty_level}
                     </Badge>
@@ -427,7 +427,7 @@ const AdventureDetail: React.FC = () => {
             <SocialProof adventure={adventure} />
             
             {/* Safety & Trust */}
-            <Card>
+            <Card className="dark:bg-card">
               <CardHeader>
                 <CardTitle className="text-lg flex items-center">
                   <Shield className="w-5 h-5 mr-2" />

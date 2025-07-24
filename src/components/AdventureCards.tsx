@@ -1,6 +1,7 @@
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Star, Clock, Users, MapPin } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 
 // NOTE: Adventure data is unchanged
 const adventures = [
@@ -160,6 +161,8 @@ const adventures = [
 ];
 
 const AdventureCards = () => {
+  const navigate = useNavigate();
+
   return (
     <section id="adventures" className="py-16 bg-blue-50 dark:bg-blue-950/20">
       <div className="container mx-auto px-4">
@@ -229,10 +232,17 @@ const AdventureCards = () => {
                 </div>
 
                 <div className="flex space-x-2">
-                  <Button className="flex-1 bg-orange-600 hover:bg-orange-700 text-white transition-colors duration-300">
+                  <Button 
+                    onClick={() => navigate(`/booking/${adventure.id}`)}
+                    className="flex-1 bg-orange-600 hover:bg-orange-700 text-white transition-colors duration-300"
+                  >
                     Book Now
                   </Button>
-                  <Button variant="outline" className="flex-1 border-orange-600 text-orange-600 hover:bg-orange-50 transition-colors duration-300">
+                  <Button 
+                    onClick={() => navigate(`/adventure/${adventure.id}`)}
+                    variant="outline" 
+                    className="flex-1 border-orange-600 text-orange-600 hover:bg-orange-50 transition-colors duration-300"
+                  >
                     Learn More
                   </Button>
                 </div>

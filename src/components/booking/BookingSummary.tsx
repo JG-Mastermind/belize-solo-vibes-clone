@@ -81,12 +81,12 @@ export const BookingSummary: React.FC<BookingSummaryProps> = ({
         {/* Adventure Details */}
         <div className="space-y-3">
           <div>
-            <h3 className="text-orange-400 font-bold text-lg leading-tight">{adventure.title}</h3>
-            <p className="text-sm text-white mt-2 leading-relaxed mb-4">
+            <h3 className="text-foreground font-bold text-lg leading-tight">{adventure.title}</h3>
+            <p className="text-sm text-muted-foreground mt-2 leading-relaxed mb-4">
               {getDynamicSalesCopy(adventure)}
             </p>
             <p 
-              className="text-sm text-orange-400 hover:text-orange-300 cursor-pointer underline flex items-center mt-3"
+              className="text-sm text-belize-orange-500 hover:text-belize-orange-600 cursor-pointer underline flex items-center mt-3"
               onClick={handleLocationClick}
             >
               <MapPin className="w-3 h-3 mr-1" />
@@ -99,26 +99,26 @@ export const BookingSummary: React.FC<BookingSummaryProps> = ({
 
         {/* Booking Details */}
         <div className="space-y-3">
-          <h4 className="font-medium">Your Selection</h4>
+          <h4 className="font-medium text-foreground">Your Selection</h4>
           
           {formData.selectedDate && (
             <div className="flex items-center space-x-2 text-sm">
               <Calendar className="w-4 h-4 text-orange-400" />
-              <span>{formatDate(formData.selectedDate)}</span>
+              <span className="text-foreground">{formatDate(formData.selectedDate)}</span>
             </div>
           )}
           
           {formData.selectedTime && (
             <div className="flex items-center space-x-2 text-sm">
               <Clock className="w-4 h-4 text-orange-400" />
-              <span>{formatTime(formData.selectedTime)}</span>
+              <span className="text-foreground">{formatTime(formData.selectedTime)}</span>
             </div>
           )}
           
           {formData.participants > 0 && (
             <div className="flex items-center space-x-2 text-sm">
               <Users className="w-4 h-4 text-orange-400" />
-              <span>{formData.participants} participant{formData.participants > 1 ? 's' : ''}</span>
+              <span className="text-foreground">{formData.participants} participant{formData.participants > 1 ? 's' : ''}</span>
             </div>
           )}
         </div>
@@ -128,11 +128,11 @@ export const BookingSummary: React.FC<BookingSummaryProps> = ({
           <>
             <Separator />
             <div className="space-y-3">
-              <h4 className="font-medium">Add-ons</h4>
+              <h4 className="font-medium text-foreground">Add-ons</h4>
               {formData.selectedAddOns.map((addon, index) => (
                 <div key={index} className="flex items-center justify-between text-sm">
-                  <span>{addon.name}</span>
-                  <span>${addon.price.toFixed(2)}</span>
+                  <span className="text-foreground">{addon.name}</span>
+                  <span className="text-foreground">${addon.price.toFixed(2)}</span>
                 </div>
               ))}
             </div>
@@ -162,52 +162,52 @@ export const BookingSummary: React.FC<BookingSummaryProps> = ({
           <>
             <Separator />
             <div className="space-y-3">
-              <h4 className="font-medium">Price Details</h4>
+              <h4 className="font-medium text-foreground">Price Details</h4>
               
               <div className="space-y-2 text-sm">
                 <div className="flex justify-between">
-                  <span>${adventure.base_price} × {formData.participants}</span>
-                  <span>${pricing.subtotal.toFixed(2)}</span>
+                  <span className="text-foreground">${adventure.base_price} × {formData.participants}</span>
+                  <span className="text-foreground">${pricing.subtotal.toFixed(2)}</span>
                 </div>
                 
                 {formData.participants >= 4 && (
                   <div className="flex justify-between text-green-600">
-                    <span>Group discount</span>
+                    <span className="text-green-600">Group discount</span>
                     <span>-${(pricing.subtotal * 0.1).toFixed(2)}</span>
                   </div>
                 )}
                 
                 {pricing.earlyBirdDiscount > 0 && (
                   <div className="flex justify-between text-green-600">
-                    <span>Early bird discount</span>
+                    <span className="text-green-600">Early bird discount</span>
                     <span>-${pricing.earlyBirdDiscount.toFixed(2)}</span>
                   </div>
                 )}
                 
                 {pricing.promoDiscount > 0 && (
                   <div className="flex justify-between text-green-600">
-                    <span>Promo discount</span>
+                    <span className="text-green-600">Promo discount</span>
                     <span>-${pricing.promoDiscount.toFixed(2)}</span>
                   </div>
                 )}
                 
                 {pricing.addOnsTotal > 0 && (
                   <div className="flex justify-between">
-                    <span>Add-ons</span>
-                    <span>${pricing.addOnsTotal.toFixed(2)}</span>
+                    <span className="text-foreground">Add-ons</span>
+                    <span className="text-foreground">${pricing.addOnsTotal.toFixed(2)}</span>
                   </div>
                 )}
                 
                 <div className="flex justify-between">
-                  <span>Taxes & fees</span>
-                  <span>${pricing.taxAmount.toFixed(2)}</span>
+                  <span className="text-foreground">Taxes & fees</span>
+                  <span className="text-foreground">${pricing.taxAmount.toFixed(2)}</span>
                 </div>
               </div>
               
               <Separator />
               
               <div className="flex justify-between items-center">
-                <span className="font-semibold text-lg">Total</span>
+                <span className="font-semibold text-lg text-foreground">Total</span>
                 <span className="font-bold text-xl text-green-500">${pricing.totalAmount.toFixed(2)}</span>
               </div>
             </div>
@@ -219,25 +219,25 @@ export const BookingSummary: React.FC<BookingSummaryProps> = ({
           <div className="space-y-2">
             <div className="flex items-center space-x-2 text-sm">
               <Shield className="w-4 h-4 trust-icon" />
-              <span className="trust-badge">Free cancellation up to 24 hours</span>
+              <span className="text-muted-foreground">Free cancellation up to 24 hours</span>
             </div>
             <div className="flex items-center space-x-2 text-sm">
               <CreditCard className="w-4 h-4 trust-icon" />
-              <span className="trust-badge">Secure payment processing</span>
+              <span className="text-muted-foreground">Secure payment processing</span>
             </div>
             <div className="flex items-center space-x-2 text-sm">
               <AlertCircle className="w-4 h-4 trust-icon" />
-              <span className="trust-badge">Instant confirmation</span>
+              <span className="text-muted-foreground">Instant confirmation</span>
             </div>
           </div>
         </div>
 
         {/* Contact Information */}
         <div className="pt-4 border-t border-gray-100">
-          <div className="text-center text-sm text-gray-600">
+          <div className="text-center text-sm text-muted-foreground">
             <p>Need help? Contact us at</p>
-            <p className="font-medium text-blue-600">support@belizevibes.com</p>
-            <p className="font-medium text-blue-600">+1 (501) 555-0123</p>
+            <p className="font-medium text-foreground">support@belizevibes.com</p>
+            <p className="font-medium text-foreground">+1 (501) 555-0123</p>
           </div>
         </div>
       </CardContent>

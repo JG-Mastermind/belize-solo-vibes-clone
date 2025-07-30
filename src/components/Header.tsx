@@ -5,9 +5,14 @@ import { Globe, User } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { ModeToggle } from '@/components/mode-toggle';
 import MobileMenu from '@/components/MobileMenu';
+import { useAuth } from '@/components/auth/AuthProvider';
+import { SignInModal } from '@/components/auth/SignInModal';
+import { UserProfile } from '@/components/UserProfile';
 
 const Header = () => {
   const [scrolled, setScrolled] = useState(false);
+  const [isSignInModalOpen, setIsSignInModalOpen] = useState(false);
+  const { user } = useAuth();
 
   useEffect(() => {
     const handleScroll = () => {
@@ -52,9 +57,18 @@ const Header = () => {
               <Globe className="h-5 w-5" />
             </Button>
             
-            <Button variant="ghost" size="icon" className={cn("text-foreground", scrolled ? "hover:bg-accent" : "hover:bg-foreground/10")}>
-              <User className="h-5 w-5" />
-            </Button>
+            {user ? (
+              <UserProfile />
+            ) : (
+              <Button 
+                variant="ghost" 
+                size="icon" 
+                className={cn("text-foreground", scrolled ? "hover:bg-accent" : "hover:bg-foreground/10")}
+                onClick={() => setIsSignInModalOpen(true)}
+              >
+                <User className="h-5 w-5" />
+              </Button>
+            )}
             
             <ModeToggle />
             
@@ -64,6 +78,12 @@ const Header = () => {
           </div>
         </div>
       </div>
+      
+      <SignInModal 
+        isOpen={isSignInModalOpen} 
+        onClose={() => setIsSignInModalOpen(false)} 
+        onSwitchToSignUp={() => {}} 
+      />
     </header>
   );
 };

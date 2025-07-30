@@ -8,11 +8,19 @@ import MobileMenu from '@/components/MobileMenu';
 import { useAuth } from '@/components/auth/AuthProvider';
 import { SignInModal } from '@/components/auth/SignInModal';
 import { UserProfile } from '@/components/UserProfile';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
+import { useTranslation } from 'react-i18next';
 
 const Header = () => {
   const [scrolled, setScrolled] = useState(false);
   const [isSignInModalOpen, setIsSignInModalOpen] = useState(false);
   const { user } = useAuth();
+  const { t, i18n } = useTranslation(['navigation', 'common']);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -22,6 +30,14 @@ const Header = () => {
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
+
+  const handleLanguageChange = (newLanguage: string) => {
+    console.log('handleLanguageChange called with:', newLanguage);
+    console.log('Current i18n language:', i18n.language);
+    i18n.changeLanguage(newLanguage).then(() => {
+      console.log('Language changed to:', i18n.language);
+    });
+  };
   
   const navLinkClass = ({ isActive }: { isActive: boolean }) =>
     cn(
@@ -43,19 +59,37 @@ const Header = () => {
           </Link>
           
           <nav className="hidden md:flex items-center space-x-6">
-            <NavLink to="/" className={navLinkClass} end>Home</NavLink>
-            <NavLink to="/adventures" className={navLinkClass}>Adventures</NavLink>
-            <a href="/adventures#testimonials" className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors">Reviews</a>
-            <NavLink to="/about" className={navLinkClass}>About</NavLink>
-            <NavLink to="/blog" className={navLinkClass}>Blog</NavLink>
-            <NavLink to="/safety" className={navLinkClass}>Safety</NavLink>
-            <NavLink to="/contact" className={navLinkClass}>Contact</NavLink>
+            <NavLink to="/" className={navLinkClass} end>{t('navigation:home')}</NavLink>
+            <NavLink to="/adventures" className={navLinkClass}>{t('navigation:adventures')}</NavLink>
+            <a href="/adventures#testimonials" className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors">{t('navigation:reviews')}</a>
+            <NavLink to="/about" className={navLinkClass}>{t('navigation:about')}</NavLink>
+            <NavLink to="/blog" className={navLinkClass}>{t('navigation:blog')}</NavLink>
+            <NavLink to="/safety" className={navLinkClass}>{t('navigation:safety')}</NavLink>
+            <NavLink to="/contact" className={navLinkClass}>{t('navigation:contact')}</NavLink>
           </nav>
 
           <div className="flex items-center space-x-2 md:space-x-3">
-            <Button variant="ghost" size="icon" className={cn("text-foreground", scrolled ? "hover:bg-accent" : "hover:bg-foreground/10")}>
-              <Globe className="h-5 w-5" />
-            </Button>
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="ghost" size="icon" className={cn("text-foreground", scrolled ? "hover:bg-accent" : "hover:bg-foreground/10")}>
+                  <Globe className="h-5 w-5" />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end">
+                <DropdownMenuItem 
+                  onClick={() => handleLanguageChange('en')}
+                  className={i18n.language === 'en' ? 'bg-accent' : ''}
+                >
+                  English
+                </DropdownMenuItem>
+                <DropdownMenuItem 
+                  onClick={() => handleLanguageChange('fr-ca')}
+                  className={i18n.language === 'fr-ca' ? 'bg-accent' : ''}
+                >
+                  Français (Canada)
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
             
             {user ? (
               <UserProfile />

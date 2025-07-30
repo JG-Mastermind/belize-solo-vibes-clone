@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useParams, useNavigate, useLocation } from 'react-router-dom';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Progress } from '@/components/ui/progress';
@@ -21,10 +21,11 @@ import { BookingSummary } from '@/components/booking/BookingSummary';
 const BookingCheckout: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
+  const location = useLocation();
   const { user } = useAuth();
   
   const [adventure, setAdventure] = useState<Adventure | null>(null);
-  const [currentStep, setCurrentStep] = useState<number>(1);
+  const currentStep = parseInt(new URLSearchParams(location.search).get('step') || '1');
   
 
   const [loading, setLoading] = useState(true);
@@ -85,7 +86,7 @@ const BookingCheckout: React.FC = () => {
       if (cartData && cartData.cart_data) {
         console.log('✅ CART RESTORE: Found cart data, step_completed:', cartData.step_completed);
         setFormData(cartData.cart_data as BookingFormData);
-        setCurrentStep(cartData.step_completed + 1);
+        navigate(`/booking/${id}?step=${cartData.step_completed + 1}`);
         console.log('🎯 CART RESTORE: Set currentStep to:', cartData.step_completed + 1);
       } else {
         console.log('❌ CART RESTORE: No cart data found or invalid cart_data');
@@ -151,14 +152,14 @@ const BookingCheckout: React.FC = () => {
     }
     
     if (currentStep < 5) {
-      setCurrentStep(currentStep + 1);
+      navigate(`/booking/${id}?step=${currentStep + 1}`);
       window.scrollTo(0, 0);
     }
   };
 
   const handlePrevious = () => {
     if (currentStep > 1) {
-      setCurrentStep(currentStep - 1);
+      navigate(`/booking/${id}?step=${currentStep - 1}`);
       window.scrollTo(0, 0);
     }
   };

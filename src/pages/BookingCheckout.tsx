@@ -79,10 +79,16 @@ const BookingCheckout: React.FC = () => {
       setAdventure(adventureData);
       
       // Try to restore from cart
+      console.log('🔍 CART RESTORE: Attempting to restore cart for user:', user?.id || 'guest', 'adventure:', id);
       const cartData = await BookingService.getCart(user?.id || null, id);
+      console.log('📦 CART RESTORE: Retrieved cart data:', cartData);
       if (cartData && cartData.cart_data) {
+        console.log('✅ CART RESTORE: Found cart data, step_completed:', cartData.step_completed);
         setFormData(cartData.cart_data as BookingFormData);
         setCurrentStep(cartData.step_completed + 1);
+        console.log('🎯 CART RESTORE: Set currentStep to:', cartData.step_completed + 1);
+      } else {
+        console.log('❌ CART RESTORE: No cart data found or invalid cart_data');
       }
     } catch (error) {
       console.error('Error loading adventure:', error);
@@ -106,7 +112,9 @@ const BookingCheckout: React.FC = () => {
   const saveToCart = async () => {
     if (!adventure || !user) return;
     
+    console.log('💾 CART SAVE: Saving to cart - step:', currentStep, 'user:', user.id, 'adventure:', adventure.id);
     await BookingService.saveToCart(user.id, adventure.id, formData, currentStep);
+    console.log('✅ CART SAVE: Cart saved successfully');
   };
 
   const updateFormData = (updates: Partial<BookingFormData>) => {
@@ -144,12 +152,14 @@ const BookingCheckout: React.FC = () => {
     
     if (currentStep < 5) {
       setCurrentStep(currentStep + 1);
+      window.scrollTo(0, 0);
     }
   };
 
   const handlePrevious = () => {
     if (currentStep > 1) {
       setCurrentStep(currentStep - 1);
+      window.scrollTo(0, 0);
     }
   };
 

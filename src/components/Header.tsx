@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import { Link, NavLink } from 'react-router-dom';
+import { useState, useEffect } from 'react';
+import { Link, NavLink, useNavigate, useLocation } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Globe, User } from 'lucide-react';
 import { cn } from '@/lib/utils';
@@ -21,6 +21,8 @@ const Header = () => {
   const [isSignInModalOpen, setIsSignInModalOpen] = useState(false);
   const { user } = useAuth();
   const { t, i18n } = useTranslation(['navigation', 'common']);
+  const navigate = useNavigate();
+  const location = useLocation();
 
   useEffect(() => {
     const handleScroll = () => {
@@ -37,6 +39,26 @@ const Header = () => {
     i18n.changeLanguage(newLanguage).then(() => {
       console.log('Language changed to:', i18n.language);
     });
+  };
+
+  const handleReviewsClick = (e: React.MouseEvent) => {
+    e.preventDefault();
+    if (location.pathname === '/adventures') {
+      // Already on adventures page, just scroll to testimonials
+      const element = document.getElementById('testimonials');
+      if (element) {
+        element.scrollIntoView({ behavior: 'smooth' });
+      }
+    } else {
+      // Navigate to adventures page first, then scroll
+      navigate('/adventures');
+      setTimeout(() => {
+        const element = document.getElementById('testimonials');
+        if (element) {
+          element.scrollIntoView({ behavior: 'smooth' });
+        }
+      }, 100);
+    }
   };
   
   const navLinkClass = ({ isActive }: { isActive: boolean }) =>
@@ -61,7 +83,7 @@ const Header = () => {
           <nav className="hidden md:flex items-center space-x-6">
             <NavLink to="/" className={navLinkClass} end>{t('navigation:home')}</NavLink>
             <NavLink to="/adventures" className={navLinkClass}>{t('navigation:adventures')}</NavLink>
-            <a href="/adventures#testimonials" className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors">{t('navigation:reviews')}</a>
+            <button onClick={handleReviewsClick} className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors">{t('navigation:reviews')}</button>
             <NavLink to="/about" className={navLinkClass}>{t('navigation:about')}</NavLink>
             <NavLink to="/blog" className={navLinkClass}>{t('navigation:blog')}</NavLink>
             <NavLink to="/safety" className={navLinkClass}>{t('navigation:safety')}</NavLink>
@@ -83,8 +105,8 @@ const Header = () => {
                   English
                 </DropdownMenuItem>
                 <DropdownMenuItem 
-                  onClick={() => handleLanguageChange('fr-ca')}
-                  className={i18n.language === 'fr-ca' ? 'bg-accent' : ''}
+                  onClick={() => handleLanguageChange('fr-CA')}
+                  className={i18n.language === 'fr-CA' ? 'bg-accent' : ''}
                 >
                   Français (Canada)
                 </DropdownMenuItem>

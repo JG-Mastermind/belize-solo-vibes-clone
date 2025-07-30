@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>i18n Debug Test</title>
+</head>
+<body>
+    <h1>i18n Debug Test</h1>
+    <div id="results"></div>
+    
+    <script type="module">
+        // Import the i18n configuration
+        import i18n from './src/lib/i18n.ts';
+        
+        const results = document.getElementById('results');
+        
+        // Wait for i18n to initialize
+        i18n.on('initialized', () => {
+            results.innerHTML += `<p><strong>i18n initialized!</strong></p>`;
+            results.innerHTML += `<p>Current language: ${i18n.language}</p>`;
+            results.innerHTML += `<p>Resolved language: ${i18n.resolvedLanguage}</p>`;
+            results.innerHTML += `<p>Languages: ${JSON.stringify(i18n.languages)}</p>`;
+            
+            // Test translations
+            results.innerHTML += `<h2>Translation Tests:</h2>`;
+            results.innerHTML += `<p>navigation:home = "${i18n.t('navigation:home')}"</p>`;
+            results.innerHTML += `<p>navigation:adventures = "${i18n.t('navigation:adventures')}"</p>`;
+            results.innerHTML += `<p>common:signIn = "${i18n.t('common:signIn')}"</p>`;
+            
+            // Test language change
+            results.innerHTML += `<h2>Language Change Test:</h2>`;
+            results.innerHTML += `<button onclick="testLanguageChange()">Test Language Change to French</button>`;
+            
+            window.testLanguageChange = () => {
+                i18n.changeLanguage('fr-ca', () => {
+                    results.innerHTML += `<p>Language changed to: ${i18n.language}</p>`;
+                    results.innerHTML += `<p>navigation:home = "${i18n.t('navigation:home')}"</p>`;
+                    results.innerHTML += `<p>navigation:adventures = "${i18n.t('navigation:adventures')}"</p>`;
+                });
+            };
+        });
+        
+        i18n.on('failedLoading', (lng, ns, msg) => {
+            results.innerHTML += `<p style="color: red;">Failed loading: ${lng} ${ns} ${msg}</p>`;
+        });
+        
+        i18n.on('missingKey', (lng, ns, key) => {
+            results.innerHTML += `<p style="color: orange;">Missing key: ${lng} ${ns} ${key}</p>`;
+        });
+    </script>
+</body>
+</html>

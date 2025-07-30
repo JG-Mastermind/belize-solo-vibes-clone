@@ -322,7 +322,9 @@ const BookingCheckout: React.FC = () => {
               {currentStep < 5 && (
                 <div className="flex justify-between mt-6">
                   <Button
-                    variant="outline"
+                    type="button"
+                    variant="default"
+                    className="w-32"
                     onClick={handlePrevious}
                     disabled={currentStep === 1}
                   >
@@ -331,7 +333,9 @@ const BookingCheckout: React.FC = () => {
                   </Button>
                   
                   <Button
-                    className="btn-convert"
+                    type="button"
+                    variant="default"
+                    className="w-32"
                     onClick={handleNext}
                     disabled={!canProceedToNext()}
                   >
@@ -363,22 +367,26 @@ const BookingCheckout: React.FC = () => {
                       </div>
                     </div>
                     
-                    <div className="flex gap-2">
+                    <div className="flex justify-between">
                       <Button
-                        variant="outline"
+                        type="button"
+                        variant="default"
+                        size="sm"
+                        className="w-32"
                         onClick={handlePrevious}
                         disabled={currentStep === 1}
-                        size="sm"
                       >
                         <ArrowLeft className="w-4 h-4 mr-1" />
                         Previous
                       </Button>
                       
                       <Button
-                        className="btn-convert"
+                        type="button"
+                        variant="default"
+                        size="sm"
+                        className="w-32"
                         onClick={handleNext}
                         disabled={!canProceedToNext()}
-                        size="sm"
                       >
                         Next
                         <ArrowRight className="w-4 h-4 ml-1" />

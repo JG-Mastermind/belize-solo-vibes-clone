@@ -780,9 +780,12 @@ const Booking = () => {
 
         {/* Navigation buttons */}
         <div className="text-center">
-          <div className="space-x-4">
+          <div className="flex gap-4">
             <Button
-              variant="outline"
+              type="button"
+              variant="default"
+              size="lg"
+              className="flex-1"
               onClick={() => setCurrentStep(Math.max(0, currentStep - 1))}
               disabled={currentStep === 0 || (currentStep === 2 && (false))}
             >
@@ -790,6 +793,10 @@ const Booking = () => {
             </Button>
             {currentStep < 2 && (
               <Button
+                type="button"
+                variant="default"
+                size="lg"
+                className="flex-1"
                 onClick={() => setCurrentStep(Math.min(steps.length - 1, currentStep + 1))}
                 disabled={currentStep === steps.length - 1 || 
                   (currentStep === 0 && !form.getValues("bookingDate")) ||

@@ -2,6 +2,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Star, Clock, Users, MapPin } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 
 // NOTE: Adventure data is unchanged
 const adventures = [
@@ -162,16 +163,17 @@ const adventures = [
 
 const AdventureCards = () => {
   const navigate = useNavigate();
+  const { t } = useTranslation(['adventureCards', 'common']);
 
   return (
     <section id="adventures" className="py-16 bg-blue-50 dark:bg-blue-950/20">
       <div className="container mx-auto px-4">
         <div className="text-center mb-12">
           <h2 className="text-3xl md:text-4xl font-playfair font-bold text-foreground mb-4">
-            Choose Your Adventure
+            {t('adventureCards:title')}
           </h2>
           <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-            From ancient Maya ruins to pristine coral reefs, discover the best of Belize with our carefully curated adventures designed for solo travelers and small groups.
+            {t('adventureCards:subtitle')}
           </p>
         </div>
 
@@ -220,7 +222,7 @@ const AdventureCards = () => {
                 </div>
 
                 <div className="mb-4">
-                  <h4 className="text-sm font-semibold text-foreground mb-2">Highlights:</h4>
+                  <h4 className="text-sm font-semibold text-foreground mb-2">{t('adventureCards:highlights')}</h4>
                   <ul className="text-sm text-muted-foreground space-y-1">
                     {adventure.highlights.slice(0, 2).map((highlight, idx) => (
                       <li key={idx} className="flex items-center">
@@ -236,14 +238,14 @@ const AdventureCards = () => {
                     onClick={() => navigate(`/booking/${adventure.id}`)}
                     className="flex-1 bg-orange-600 hover:bg-orange-700 text-white transition-colors duration-300"
                   >
-                    Book Now
+                    {t('common:bookNow')}
                   </Button>
                   <Button 
                     onClick={() => navigate(`/adventure/${adventure.id}`)}
                     variant="outline" 
                     className="flex-1 border-orange-600 text-orange-600 hover:bg-orange-50 transition-colors duration-300"
                   >
-                    Learn More
+                    {t('common:learnMore')}
                   </Button>
                 </div>
               </CardContent>
@@ -253,7 +255,7 @@ const AdventureCards = () => {
 
         <div className="text-center mt-12">
           <Button size="lg" variant="outline">
-            View All Adventures
+            {t('adventureCards:viewAllAdventures')}
           </Button>
         </div>
       </div>

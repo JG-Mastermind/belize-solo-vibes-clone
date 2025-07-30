@@ -1,6 +1,7 @@
 import { Button } from "@/components/ui/button";
 import { Star, Users, Shield, Leaf } from "lucide-react";
 import { Link } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 
 // Tour type for prop
 type Tour = {
@@ -23,6 +24,8 @@ interface HeroProps {
 }
 
 const Hero = ({ featuredTour }: HeroProps) => {
+  const { t } = useTranslation(['hero', 'common']);
+  
   const handleLearnMore = () => {
     document.getElementById('adventures')?.scrollIntoView({ behavior: 'smooth' });
   };
@@ -51,13 +54,12 @@ const Hero = ({ featuredTour }: HeroProps) => {
       <div className="relative z-10 container mx-auto px-4 text-center text-white">
         <div className="max-w-4xl mx-auto animate-fade-in">
           <h1 className="text-4xl md:text-6xl lg:text-7xl font-playfair font-bold mb-6 leading-tight">
-            Discover Your Ultimate 
-            <span className="block text-orange-500">Belize Adventure</span>
+            {t('hero:title_part1')} 
+            <span className="block text-orange-500">{t('hero:title_part2')}</span>
           </h1>
           
           <p className="text-lg md:text-xl mb-8 max-w-2xl mx-auto opacity-90">
-            Join solo-friendly adventures through pristine jungles, ancient caves, and crystal-clear waters. 
-            Expert guides, sustainable travel, unforgettable memories.
+            {t('hero:subtitle')}
           </p>
 
           {/* Trust Elements */}
@@ -67,23 +69,23 @@ const Hero = ({ featuredTour }: HeroProps) => {
               onClick={handleViewReviews}
             >
               <Star className="h-5 w-5 text-orange-400 mx-auto mb-1" />
-              <div className="text-sm font-semibold text-white">4.9/5 Rating</div>
-              <div className="text-xs text-white/80">500+ Reviews</div>
+              <div className="text-sm font-semibold text-white">{t('hero:rating')}</div>
+              <div className="text-xs text-white/80">{t('hero:reviews')}</div>
             </div>
             <div className="bg-black/40 backdrop-blur-sm rounded-lg px-4 py-3 border border-white/20">
               <Users className="h-5 w-5 text-green-400 mx-auto mb-1" />
-              <div className="text-sm font-semibold text-white">Solo Friendly</div>
-              <div className="text-xs text-white/80">Small Groups</div>
+              <div className="text-sm font-semibold text-white">{t('hero:soloFriendly')}</div>
+              <div className="text-xs text-white/80">{t('hero:smallGroups')}</div>
             </div>
             <div className="bg-black/40 backdrop-blur-sm rounded-lg px-4 py-3 border border-white/20">
               <Shield className="h-5 w-5 text-blue-400 mx-auto mb-1" />
-              <div className="text-sm font-semibold text-white">Fully Insured</div>
-              <div className="text-xs text-white/80">ATOL Protected</div>
+              <div className="text-sm font-semibold text-white">{t('hero:fullyInsured')}</div>
+              <div className="text-xs text-white/80">{t('hero:atolProtected')}</div>
             </div>
             <div className="bg-black/40 backdrop-blur-sm rounded-lg px-4 py-3 border border-white/20">
               <Leaf className="h-5 w-5 text-green-400 mx-auto mb-1" />
-              <div className="text-sm font-semibold text-white">Sustainable</div>
-              <div className="text-xs text-white/80">Eco-Certified</div>
+              <div className="text-sm font-semibold text-white">{t('hero:sustainable')}</div>
+              <div className="text-xs text-white/80">{t('hero:ecoCertified')}</div>
             </div>
           </div>
 
@@ -99,7 +101,7 @@ const Hero = ({ featuredTour }: HeroProps) => {
                 aria-label={`Book ${featuredTour.title} for $${featuredTour.price_per_person}`}
               >
                 <Link to={`/AdventureDetail/${featuredTour.id}`}>
-                  Book Now - ${featuredTour.price_per_person}
+                  {t('hero:bookNowPrice')}{featuredTour.price_per_person}
                 </Link>
               </Button>
             ) : (
@@ -108,9 +110,9 @@ const Hero = ({ featuredTour }: HeroProps) => {
                 variant="default"
                 className="bg-gray-500 text-white px-8 py-3 text-lg font-semibold opacity-50 cursor-not-allowed"
                 disabled
-                aria-label="Loading tours..."
+                aria-label={t('hero:loadingTours')}
               >
-                Loading Tours...
+                {t('hero:loadingTours')}
               </Button>
             )}
 
@@ -120,16 +122,16 @@ const Hero = ({ featuredTour }: HeroProps) => {
               variant="ghost" 
               className="border-2 border-white text-white hover:bg-white hover:text-gray-900 px-8 py-3 text-lg font-semibold transition-all duration-300 backdrop-blur-sm"
               onClick={handleLearnMore}
-              aria-label="Learn more about our adventures"
+              aria-label={t('common:learnMore')}
             >
-              Learn More
+              {t('common:learnMore')}
             </Button>
           </div>
 
           {/* Featured Tour Info */}
           {featuredTour && (
             <div className="mb-8 text-center">
-              <p className="text-sm text-white/80 mb-2">Featured Adventure:</p>
+              <p className="text-sm text-white/80 mb-2">{t('hero:featuredAdventure')}</p>
               <div className="bg-black/30 backdrop-blur-sm rounded-lg px-4 py-3 border border-white/20 inline-block">
                 <h3 className="text-lg font-semibold text-white mb-1">{featuredTour.title}</h3>
                 <p className="text-sm text-white/90">

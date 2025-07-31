@@ -7,6 +7,7 @@ import { Checkbox } from '@/components/ui/checkbox';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Badge } from '@/components/ui/badge';
 import { User, Phone, Mail, AlertTriangle, MessageCircle, Bell, Utensils, Award, Shield, CheckCircle } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 import { Adventure, BookingFormData } from '@/types/booking';
 import { useAuth } from '@/components/auth/AuthProvider';
 
@@ -22,6 +23,7 @@ export const BookingStepThree: React.FC<BookingStepThreeProps> = ({
   onUpdate
 }) => {
   const { user } = useAuth();
+  const { t } = useTranslation(['booking']);
   const [dietaryOther, setDietaryOther] = useState('');
 
   useEffect(() => {
@@ -78,20 +80,20 @@ export const BookingStepThree: React.FC<BookingStepThreeProps> = ({
   };
 
   const dietaryOptions = [
-    'Vegetarian',
-    'Vegan',
-    'Gluten-free',
-    'Dairy-free',
-    'Nut allergy',
-    'Shellfish allergy',
-    'Other'
+    { key: 'vegetarian', label: t('booking:step3.dietary.vegetarian') },
+    { key: 'vegan', label: t('booking:step3.dietary.vegan') },
+    { key: 'glutenFree', label: t('booking:step3.dietary.glutenFree') },
+    { key: 'dairyFree', label: t('booking:step3.dietary.dairyFree') },
+    { key: 'nutAllergy', label: t('booking:step3.dietary.nutAllergy') },
+    { key: 'shellfishAllergy', label: t('booking:step3.dietary.shellfishAllergy') },
+    { key: 'other', label: t('booking:step3.dietary.other') }
   ];
 
   const experienceLevels = [
-    { value: 'beginner', label: 'Beginner', description: 'First time or very limited experience' },
-    { value: 'intermediate', label: 'Intermediate', description: 'Some experience with similar activities' },
-    { value: 'advanced', label: 'Advanced', description: 'Extensive experience and confident' },
-    { value: 'expert', label: 'Expert', description: 'Professional level or extensive experience' }
+    { value: 'beginner', label: t('booking:step3.experienceLevels.beginner.label'), description: t('booking:step3.experienceLevels.beginner.description') },
+    { value: 'intermediate', label: t('booking:step3.experienceLevels.intermediate.label'), description: t('booking:step3.experienceLevels.intermediate.description') },
+    { value: 'advanced', label: t('booking:step3.experienceLevels.advanced.label'), description: t('booking:step3.experienceLevels.advanced.description') },
+    { value: 'expert', label: t('booking:step3.experienceLevels.expert.label'), description: t('booking:step3.experienceLevels.expert.description') }
   ];
 
   const handleDietaryChange = (option: string, checked: boolean) => {
@@ -110,51 +112,51 @@ export const BookingStepThree: React.FC<BookingStepThreeProps> = ({
         <CardHeader>
           <CardTitle className="text-lg flex items-center">
             <User className="w-5 h-5 mr-2 text-orange-400" />
-            Lead Guest Information
+            {t('booking:step3.headers.leadGuestInformation')}
           </CardTitle>
           <p className="text-sm text-muted-foreground">
-            This person will be the main contact for this booking
+            {t('booking:step3.descriptions.leadGuest')}
           </p>
         </CardHeader>
         <CardContent>
           <div className="space-y-4">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="space-y-2">
-                <Label htmlFor="fullName">Full Name *</Label>
+                <Label htmlFor="fullName">{t('booking:step3.labels.fullName')}</Label>
                 <Input
                   id="fullName"
                   value={formData.leadGuest.name}
                   onChange={(e) => handleLeadGuestChange('name', e.target.value)}
-                  placeholder="Enter your full name"
+                  placeholder={t('booking:step3.placeholders.enterFullName')}
                   required
                 />
               </div>
               
               <div className="space-y-2">
-                <Label htmlFor="phone">Phone Number *</Label>
+                <Label htmlFor="phone">{t('booking:step3.labels.phoneNumber')}</Label>
                 <Input
                   id="phone"
                   type="tel"
                   value={formData.leadGuest.phone}
                   onChange={(e) => handleLeadGuestChange('phone', e.target.value)}
-                  placeholder="+1 (555) 123-4567"
+                  placeholder={t('booking:step3.placeholders.phoneFormat')}
                   required
                 />
               </div>
             </div>
             
             <div className="space-y-2">
-              <Label htmlFor="email">Email Address *</Label>
+              <Label htmlFor="email">{t('booking:step3.labels.emailAddress')}</Label>
               <Input
                 id="email"
                 type="email"
                 value={formData.leadGuest.email}
                 onChange={(e) => handleLeadGuestChange('email', e.target.value)}
-                placeholder="your@email.com"
+                placeholder={t('booking:step3.placeholders.emailFormat')}
                 required
               />
               <p className="text-xs text-muted-foreground">
-                We'll send booking confirmations and updates to this email
+                {t('booking:step3.messages.emailConfirmation')}
               </p>
             </div>
           </div>
@@ -166,10 +168,10 @@ export const BookingStepThree: React.FC<BookingStepThreeProps> = ({
         <CardHeader>
           <CardTitle className="text-lg flex items-center">
             <Award className="w-5 h-5 mr-2 text-orange-400" />
-            Experience Level
+            {t('booking:step3.headers.experienceLevel')}
           </CardTitle>
           <p className="text-sm text-muted-foreground">
-            Help us provide the best experience for your skill level
+            {t('booking:step3.descriptions.experienceLevel')}
           </p>
         </CardHeader>
         <CardContent>
@@ -197,35 +199,35 @@ export const BookingStepThree: React.FC<BookingStepThreeProps> = ({
         <CardHeader>
           <CardTitle className="text-lg flex items-center">
             <Utensils className="w-5 h-5 mr-2 text-orange-400" />
-            Dietary Restrictions & Allergies
+            {t('booking:step3.headers.dietaryRestrictions')}
           </CardTitle>
           <p className="text-sm text-muted-foreground">
-            Let us know about any dietary needs or allergies
+            {t('booking:step3.descriptions.dietary')}
           </p>
         </CardHeader>
         <CardContent>
           <div className="space-y-4">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
               {dietaryOptions.map((option) => (
-                <div key={option} className="flex items-center space-x-2">
+                <div key={option.key} className="flex items-center space-x-2">
                   <Checkbox
-                    id={option}
-                    checked={formData.guestDetails.dietaryRestrictions?.includes(option) || false}
-                    onCheckedChange={(checked) => handleDietaryChange(option, checked as boolean)}
+                    id={option.key}
+                    checked={formData.guestDetails.dietaryRestrictions?.includes(option.key) || false}
+                    onCheckedChange={(checked) => handleDietaryChange(option.key, checked as boolean)}
                   />
-                  <Label htmlFor={option} className="text-sm">{option}</Label>
+                  <Label htmlFor={option.key} className="text-sm">{option.label}</Label>
                 </div>
               ))}
             </div>
             
-            {formData.guestDetails.dietaryRestrictions?.includes('Other') && (
+            {formData.guestDetails.dietaryRestrictions?.includes('other') && (
               <div className="space-y-2">
-                <Label htmlFor="dietaryOther">Please specify</Label>
+                <Label htmlFor="dietaryOther">{t('booking:step3.labels.pleaseSpecify')}</Label>
                 <Input
                   id="dietaryOther"
                   value={dietaryOther}
                   onChange={(e) => setDietaryOther(e.target.value)}
-                  placeholder="Please describe your dietary needs"
+                  placeholder={t('booking:step3.placeholders.dietaryNeeds')}
                 />
               </div>
             )}
@@ -238,33 +240,33 @@ export const BookingStepThree: React.FC<BookingStepThreeProps> = ({
         <CardHeader>
           <CardTitle className="text-lg flex items-center">
             <AlertTriangle className="w-5 h-5 mr-2 text-orange-400" />
-            Emergency Contact
+            {t('booking:step3.headers.emergencyContact')}
           </CardTitle>
           <p className="text-sm text-muted-foreground">
-            Someone we can contact in case of emergency
+            {t('booking:step3.descriptions.emergencyContact')}
           </p>
         </CardHeader>
         <CardContent>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="space-y-2">
-              <Label htmlFor="emergencyName">Full Name *</Label>
+              <Label htmlFor="emergencyName">{t('booking:step3.labels.fullName')}</Label>
               <Input
                 id="emergencyName"
                 value={formData.guestDetails.emergencyContact.name}
                 onChange={(e) => handleEmergencyContactChange('name', e.target.value)}
-                placeholder="Emergency contact name"
+                placeholder={t('booking:step3.placeholders.emergencyContactName')}
                 required
               />
             </div>
             
             <div className="space-y-2">
-              <Label htmlFor="emergencyPhone">Phone Number *</Label>
+              <Label htmlFor="emergencyPhone">{t('booking:step3.labels.phoneNumber')}</Label>
               <Input
                 id="emergencyPhone"
                 type="tel"
                 value={formData.guestDetails.emergencyContact.phone}
                 onChange={(e) => handleEmergencyContactChange('phone', e.target.value)}
-                placeholder="+1 (555) 123-4567"
+                placeholder={t('booking:step3.placeholders.phoneFormat')}
                 required
               />
             </div>
@@ -277,10 +279,10 @@ export const BookingStepThree: React.FC<BookingStepThreeProps> = ({
         <CardHeader>
           <CardTitle className="text-lg flex items-center">
             <Bell className="w-5 h-5 mr-2 text-orange-400" />
-            Communication Preferences
+            {t('booking:step3.headers.communicationPreferences')}
           </CardTitle>
           <p className="text-sm text-muted-foreground">
-            How would you like to receive updates about your booking?
+            {t('booking:step3.descriptions.communications')}
           </p>
         </CardHeader>
         <CardContent>
@@ -293,7 +295,7 @@ export const BookingStepThree: React.FC<BookingStepThreeProps> = ({
               />
               <Label htmlFor="email" className="flex items-center space-x-2">
                 <Mail className="w-4 h-4" />
-                <span>Email notifications</span>
+                <span>{t('booking:step3.notifications.email')}</span>
               </Label>
             </div>
             
@@ -305,7 +307,7 @@ export const BookingStepThree: React.FC<BookingStepThreeProps> = ({
               />
               <Label htmlFor="sms" className="flex items-center space-x-2">
                 <MessageCircle className="w-4 h-4" />
-                <span>SMS notifications</span>
+                <span>{t('booking:step3.notifications.sms')}</span>
               </Label>
             </div>
             
@@ -317,7 +319,7 @@ export const BookingStepThree: React.FC<BookingStepThreeProps> = ({
               />
               <Label htmlFor="whatsapp" className="flex items-center space-x-2">
                 <Phone className="w-4 h-4" />
-                <span>WhatsApp notifications</span>
+                <span>{t('booking:step3.notifications.whatsapp')}</span>
               </Label>
             </div>
           </div>
@@ -330,7 +332,7 @@ export const BookingStepThree: React.FC<BookingStepThreeProps> = ({
           <CardHeader>
             <CardTitle className="text-lg flex items-center text-warning-foreground">
               <AlertTriangle className="w-5 h-5 mr-2" />
-              Adventure Requirements
+              {t('booking:step3.headers.adventureRequirements')}
             </CardTitle>
           </CardHeader>
           <CardContent>
@@ -351,7 +353,7 @@ export const BookingStepThree: React.FC<BookingStepThreeProps> = ({
         <CardHeader>
           <CardTitle className="text-lg flex items-center">
             <Shield className="w-5 h-5 mr-2 text-orange-400" />
-            Privacy & Security
+            {t('booking:step3.headers.privacySecurity')}
           </CardTitle>
         </CardHeader>
         <CardContent>

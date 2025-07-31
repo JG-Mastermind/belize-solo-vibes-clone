@@ -8,6 +8,7 @@ import { Input } from '@/components/ui/input';
 import { Plus, Minus, Camera, Utensils, Car, Gift, MessageCircle, Star, Sparkles, Lightbulb } from 'lucide-react';
 import { Adventure, BookingFormData } from '@/types/booking';
 import { toast } from 'sonner';
+import { useTranslation } from 'react-i18next';
 
 interface BookingStepFourProps {
   adventure: Adventure;
@@ -41,6 +42,7 @@ export const BookingStepFour: React.FC<BookingStepFourProps> = ({
   formData,
   onUpdate
 }) => {
+  const { t } = useTranslation(['booking']);
   const [promoCode, setPromoCode] = useState(formData.promoCode || '');
   const [isValidatingPromo, setIsValidatingPromo] = useState(false);
   const [selectedCombos, setSelectedCombos] = useState<string[]>([]);
@@ -49,44 +51,44 @@ export const BookingStepFour: React.FC<BookingStepFourProps> = ({
   const addOns: AddOn[] = [
     {
       id: 'photos',
-      name: 'Professional Photos',
-      description: 'Get high-quality photos of your adventure taken by our professional photographer',
+      name: t('booking:step4.addOns.photos.name'),
+      description: t('booking:step4.addOns.photos.description'),
       price: 45,
       icon: <Camera className="w-5 h-5 text-orange-500" />,
-      category: 'Photography',
+      category: t('booking:step4.addOns.photos.category'),
       popular: true
     },
     {
       id: 'lunch',
-      name: 'Gourmet Lunch',
-      description: 'Enjoy a delicious locally-sourced lunch with vegetarian options available',
+      name: t('booking:step4.addOns.lunch.name'),
+      description: t('booking:step4.addOns.lunch.description'),
       price: 25,
       icon: <Utensils className="w-5 h-5 text-orange-500" />,
-      category: 'Food & Drink'
+      category: t('booking:step4.addOns.lunch.category')
     },
     {
       id: 'transport',
-      name: 'Hotel Pickup',
-      description: 'Convenient pickup and drop-off from your hotel in the main tourist areas',
+      name: t('booking:step4.addOns.transport.name'),
+      description: t('booking:step4.addOns.transport.description'),
       price: 15,
       icon: <Car className="w-5 h-5 text-orange-500" />,
-      category: 'Transportation'
+      category: t('booking:step4.addOns.transport.category')
     },
     {
       id: 'gear',
-      name: 'Premium Gear Upgrade',
-      description: 'Upgrade to premium adventure gear for enhanced comfort and safety',
+      name: t('booking:step4.addOns.gear.name'),
+      description: t('booking:step4.addOns.gear.description'),
       price: 35,
       icon: <Star className="w-5 h-5 text-orange-500" />,
-      category: 'Equipment'
+      category: t('booking:step4.addOns.gear.category')
     },
     {
       id: 'souvenir',
-      name: 'Adventure Souvenir Pack',
-      description: 'Take home a branded t-shirt, water bottle, and photo album',
+      name: t('booking:step4.addOns.souvenir.name'),
+      description: t('booking:step4.addOns.souvenir.description'),
       price: 20,
       icon: <Gift className="w-5 h-5 text-orange-500" />,
-      category: 'Souvenirs'
+      category: t('booking:step4.addOns.souvenir.category')
     }
   ];
 
@@ -94,21 +96,21 @@ export const BookingStepFour: React.FC<BookingStepFourProps> = ({
   const combos: Combo[] = [
     {
       id: 'memory',
-      name: 'Memory Package',
-      description: 'Professional Photos + Souvenir Pack = $60 (Save $5!)',
+      name: t('booking:step4.combos.memory.name'),
+      description: t('booking:step4.combos.memory.description', { bundlePrice: 60, savings: 5 }),
       items: ['photos', 'souvenir'],
       bundlePrice: 60,
       savings: 5,
-      badge: 'Most popular choice for first-time visitors'
+      badge: t('booking:step4.combos.memory.badge')
     },
     {
       id: 'comfort',
-      name: 'Comfort Package', 
-      description: 'Hotel Pickup + Gourmet Lunch = $35 (Save $5!)',
+      name: t('booking:step4.combos.comfort.name'), 
+      description: t('booking:step4.combos.comfort.description', { bundlePrice: 35, savings: 5 }),
       items: ['transport', 'lunch'],
       bundlePrice: 35,
       savings: 5,
-      badge: 'Perfect for a hassle-free experience'
+      badge: t('booking:step4.combos.comfort.badge')
     }
   ];
 
@@ -150,7 +152,7 @@ export const BookingStepFour: React.FC<BookingStepFourProps> = ({
 
   const handlePromoCodeSubmit = async () => {
     if (!promoCode.trim()) {
-      toast.error('Please enter a promo code');
+      toast.error(t('booking:step4.messages.enterPromoCode'));
       return;
     }
 
@@ -160,10 +162,10 @@ export const BookingStepFour: React.FC<BookingStepFourProps> = ({
     setTimeout(() => {
       const validCodes = ['WELCOME10', 'EARLY20', 'GROUPSAVE'];
       if (validCodes.includes(promoCode.toUpperCase())) {
-        toast.success('Promo code applied successfully!');
+        toast.success(t('booking:step4.messages.promoSuccess'));
         onUpdate({ promoCode: promoCode.toUpperCase() });
       } else {
-        toast.error('Invalid or expired promo code');
+        toast.error(t('booking:step4.messages.promoInvalid'));
       }
       setIsValidatingPromo(false);
     }, 1000);
@@ -188,7 +190,7 @@ export const BookingStepFour: React.FC<BookingStepFourProps> = ({
       const newAddOns = currentAddOns.filter(addon => addon.id !== `combo-${comboId}`);
       onUpdate({ selectedAddOns: newAddOns });
       
-      toast.info(`${combo.name} removed`);
+      toast.info(t('booking:step4.messages.comboRemoved', { name: combo.name }));
     } else {
       // Select combo - check for conflicts with individual items
       const currentAddOns = formData.selectedAddOns || [];
@@ -207,7 +209,7 @@ export const BookingStepFour: React.FC<BookingStepFourProps> = ({
         onUpdate({ selectedAddOns: [...nonConflictingAddOns, comboAddOn] });
         
         const itemNames = conflictingItems.map(item => item.name).join(', ');
-        toast.success(`${combo.name} selected! Replaced individual items: ${itemNames}. You save $${combo.savings}!`);
+        toast.success(t('booking:step4.messages.comboSelectedWithReplace', { name: combo.name, items: itemNames, savings: combo.savings }));
       } else {
         // No conflicts, just add combo
         const comboAddOn = {
@@ -218,7 +220,7 @@ export const BookingStepFour: React.FC<BookingStepFourProps> = ({
         };
         
         onUpdate({ selectedAddOns: [...currentAddOns, comboAddOn] });
-        toast.success(`${combo.name} added! You save $${combo.savings}!`);
+        toast.success(t('booking:step4.messages.comboAdded', { name: combo.name, savings: combo.savings }));
       }
       
       setSelectedCombos(prev => [...prev, comboId]);
@@ -251,10 +253,10 @@ export const BookingStepFour: React.FC<BookingStepFourProps> = ({
         <CardHeader>
           <CardTitle className="text-lg flex items-center">
             <Sparkles className="w-5 h-5 mr-2 text-orange-500" />
-            Enhance Your Adventure
+            {t('booking:step4.headers.enhanceAdventure')}
           </CardTitle>
           <p className="text-sm text-muted-foreground">
-            Add optional extras to make your experience even more memorable
+            {t('booking:step4.descriptions.enhanceAdventure')}
           </p>
         </CardHeader>
         <CardContent>
@@ -281,7 +283,7 @@ export const BookingStepFour: React.FC<BookingStepFourProps> = ({
                               <h4 className="font-semibold text-base sm:text-lg">{addon.name}</h4>
                               {addon.popular && (
                                 <Badge variant="secondary" className="bg-orange-100 text-orange-800 text-xs mt-1 sm:mt-0 w-fit">
-                                  Popular
+                                  {t('booking:step4.labels.popular')}
                                 </Badge>
                               )}
                             </div>
@@ -329,7 +331,7 @@ export const BookingStepFour: React.FC<BookingStepFourProps> = ({
       {formData.selectedAddOns && formData.selectedAddOns.length > 0 && (
         <Card className="border-primary bg-primary/10">
           <CardHeader>
-            <CardTitle className="text-lg text-green-600">Selected Add-ons</CardTitle>
+            <CardTitle className="text-lg text-green-600">{t('booking:step4.labels.selectedAddOns')}</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="space-y-2">
@@ -345,7 +347,7 @@ export const BookingStepFour: React.FC<BookingStepFourProps> = ({
               ))}
               <div className="border-t pt-2 mt-2">
                 <div className="flex justify-between items-center font-semibold">
-                  <span className="text-green-600">Add-ons Total</span>
+                  <span className="text-green-600">{t('booking:step4.labels.addOnsTotal')}</span>
                   <span className="text-green-500">${getTotalAddOnsCost().toFixed(2)}</span>
                 </div>
               </div>
@@ -359,14 +361,14 @@ export const BookingStepFour: React.FC<BookingStepFourProps> = ({
         <CardHeader>
           <CardTitle className="text-lg flex items-center">
             <Gift className="w-5 h-5 mr-2 text-orange-500" />
-            Promo Code
+            {t('booking:step4.headers.promoCode')}
           </CardTitle>
         </CardHeader>
         <CardContent>
           <div className="space-y-4">
             <div className="flex space-x-2">
               <Input
-                placeholder="Enter promo code"
+                placeholder={t('booking:step4.placeholders.promoCode')}
                 value={promoCode}
                 onChange={(e) => setPromoCode(e.target.value.toUpperCase())}
                 className="flex-1"
@@ -375,7 +377,7 @@ export const BookingStepFour: React.FC<BookingStepFourProps> = ({
                 onClick={handlePromoCodeSubmit}
                 disabled={isValidatingPromo || !promoCode.trim()}
               >
-                {isValidatingPromo ? 'Checking...' : 'Apply'}
+                {isValidatingPromo ? t('booking:step4.buttons.checking') : t('booking:step4.buttons.apply')}
               </Button>
             </div>
             
@@ -384,7 +386,7 @@ export const BookingStepFour: React.FC<BookingStepFourProps> = ({
                 <div className="flex items-center space-x-2">
                   <Gift className="w-4 h-4 text-primary" />
                   <span className="text-sm font-medium text-primary-foreground">
-                    Promo code "{formData.promoCode}" applied!
+                    {t('booking:step4.messages.promoApplied', { code: formData.promoCode })}
                   </span>
                 </div>
               </div>
@@ -398,24 +400,24 @@ export const BookingStepFour: React.FC<BookingStepFourProps> = ({
         <CardHeader>
           <CardTitle className="text-lg flex items-center">
             <MessageCircle className="w-5 h-5 mr-2 text-orange-500" />
-            Special Requests
+            {t('booking:step4.headers.specialRequests')}
           </CardTitle>
           <p className="text-sm text-muted-foreground">
-            Let us know if you have any special requests or additional information
+            {t('booking:step4.descriptions.specialRequests')}
           </p>
         </CardHeader>
         <CardContent>
           <div className="space-y-2">
-            <Label htmlFor="specialRequests">Additional Information (Optional)</Label>
+            <Label htmlFor="specialRequests">{t('booking:step4.labels.additionalInfo')}</Label>
             <Textarea
               id="specialRequests"
-              placeholder="e.g., celebrating a special occasion, mobility considerations, specific dietary needs not mentioned earlier..."
+              placeholder={t('booking:step4.placeholders.specialRequests')}
               value={formData.specialRequests}
               onChange={(e) => handleSpecialRequestsChange(e.target.value)}
               rows={4}
             />
             <p className="text-xs text-muted-foreground">
-              We'll do our best to accommodate your requests, though some may not be possible depending on availability.
+              {t('booking:step4.messages.accommodateRequests')}
             </p>
           </div>
         </CardContent>
@@ -426,10 +428,10 @@ export const BookingStepFour: React.FC<BookingStepFourProps> = ({
         <CardHeader>
           <CardTitle className="text-lg flex items-center">
             <Lightbulb className="w-5 h-5 mr-2 text-orange-500" />
-            Popular Combinations
+            {t('booking:step4.headers.popularCombinations')}
           </CardTitle>
           <p className="text-sm text-muted-foreground">
-            Save money with these popular bundle packages
+            {t('booking:step4.descriptions.popularCombinations')}
           </p>
         </CardHeader>
         <CardContent>
@@ -457,7 +459,7 @@ export const BookingStepFour: React.FC<BookingStepFourProps> = ({
                   <div className="sm:ml-4 self-start">
                     {isComboSelected(combo.id) && (
                       <Badge variant="default" className="bg-primary text-primary-foreground text-xs">
-                        Selected
+                        {t('booking:step4.labels.selected')}
                       </Badge>
                     )}
                   </div>

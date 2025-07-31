@@ -200,6 +200,50 @@ i18n
             },
             stepXOfY: 'Step {{current}} of {{total}}',
           },
+          step2: {
+            headers: {
+              howManyPeople: 'How Many People?',
+              priceBreakdown: 'Price Breakdown',
+              availableDiscounts: 'Available Discounts',
+              capacityInformation: 'Capacity Information',
+            },
+            labels: {
+              participant: 'Participant',
+              participants: 'Participants',
+              solo: 'Solo',
+              couple: 'Couple',
+              group: 'Group',
+              total: 'Total',
+              spots: 'spots',
+            },
+            messages: {
+              onlyXSpotsLeft: 'Only {{count}} spots left for this date!',
+              soloTravelerFriendly: 'Solo Traveler Friendly',
+              soloDescription: 'This adventure is perfect for solo travelers. You\'ll join a small group of like-minded adventurers!',
+              groupBenefits: 'Group Benefits',
+              groupDescription: 'Great choice for groups! You\'ll get a discount and can enjoy a more personalized experience.',
+            },
+            pricing: {
+              participantCount: '${{price}} × {{count}} participant',
+              participantCountPlural: '${{price}} × {{count}} participants',
+              groupDiscount: 'Group discount ({{percent}}% off)',
+              earlyBirdDiscount: 'Early bird discount',
+              taxesAndFees: 'Taxes & fees',
+            },
+            capacity: {
+              maxGroupSize: 'Maximum group size:',
+              availableSpots: 'Available spots for this date:',
+              yourSelection: 'Your selection:',
+            },
+            discountTypes: {
+              groupDiscount: 'Group Discount',
+              earlyBird: 'Early Bird',
+            },
+            discountDescriptions: {
+              groupDiscountDesc: '{{percent}}% off for groups of 4+',
+              earlyBirdDesc: '{{percent}}% off when booking {{days}} days ahead',
+            },
+          },
           labels: {
             selectDate: 'Select Date',
             selectTime: 'Select Time',
@@ -258,6 +302,234 @@ i18n
             },
             duration: {
               hours: '{{count}} hours',
+            },
+          },
+          step3: {
+            headers: {
+              leadGuestInformation: 'Lead Guest Information',
+              experienceLevel: 'Experience Level',
+              dietaryRestrictions: 'Dietary Restrictions & Allergies',
+              emergencyContact: 'Emergency Contact',
+              communicationPreferences: 'Communication Preferences',
+              adventureRequirements: 'Adventure Requirements',
+              privacySecurity: 'Privacy & Security',
+            },
+            descriptions: {
+              leadGuest: 'This person will be the main contact for this booking',
+              experienceLevel: 'Help us provide the best experience for your skill level',
+              dietary: 'Let us know about any dietary needs or allergies',
+              emergencyContact: 'Someone we can contact in case of emergency',
+              communications: 'How would you like to receive updates about your booking?',
+            },
+            labels: {
+              fullName: 'Full Name *',
+              phoneNumber: 'Phone Number *',
+              emailAddress: 'Email Address *',
+              pleaseSpecify: 'Please specify',
+            },
+            placeholders: {
+              enterFullName: 'Enter your full name',
+              phoneFormat: '+1 (555) 123-4567',
+              emailFormat: 'your@email.com',
+              emergencyContactName: 'Emergency contact name',
+              dietaryNeeds: 'Please describe your dietary needs',
+            },
+            experienceLevels: {
+              beginner: {
+                label: 'Beginner',
+                description: 'First time or very limited experience',
+              },
+              intermediate: {
+                label: 'Intermediate', 
+                description: 'Some experience with similar activities',
+              },
+              advanced: {
+                label: 'Advanced',
+                description: 'Extensive experience and confident',
+              },
+              expert: {
+                label: 'Expert',
+                description: 'Professional level or extensive experience',
+              },
+            },
+            dietary: {
+              vegetarian: 'Vegetarian',
+              vegan: 'Vegan',
+              glutenFree: 'Gluten-free',
+              dairyFree: 'Dairy-free',
+              nutAllergy: 'Nut allergy',
+              shellfishAllergy: 'Shellfish allergy',
+              other: 'Other',
+            },
+            notifications: {
+              email: 'Email notifications',
+              sms: 'SMS notifications',
+              whatsapp: 'WhatsApp notifications',
+            },
+            messages: {
+              emailConfirmation: 'We\'ll send booking confirmations and updates to this email',
+            },
+            privacy: {
+              secureDataProcessing: 'Secure Data Processing:',
+              secureDataDesc: 'All personal information is encrypted and stored securely',
+              limitedDataUse: 'Limited Data Use:',
+              limitedDataDesc: 'Information used only for booking processing and customer support',
+              noSpamPolicy: 'No Spam Policy:',
+              noSpamDesc: 'We\'ll only contact you about your booking unless you opt-in',
+              privacyCompliant: 'Privacy Compliant:',
+              privacyCompliantDesc: 'Full compliance with Privacy Policy and Terms of Service',
+            },
+          },
+          step4: {
+            headers: {
+              enhanceAdventure: 'Enhance Your Adventure',
+              promoCode: 'Promo Code',
+              specialRequests: 'Special Requests',
+              popularCombinations: 'Popular Combinations',
+            },
+            descriptions: {
+              enhanceAdventure: 'Add optional extras to make your experience even more memorable',
+              specialRequests: 'Let us know if you have any special requests or additional information',
+              popularCombinations: 'Save money with these popular bundle packages',
+            },
+            addOns: {
+              photos: {
+                name: 'Professional Photos',
+                description: 'Get high-quality photos of your adventure taken by our professional photographer',
+                category: 'Photography',
+              },
+              lunch: {
+                name: 'Gourmet Lunch',
+                description: 'Enjoy a delicious locally-sourced lunch with vegetarian options available',
+                category: 'Food & Drink',
+              },
+              transport: {
+                name: 'Hotel Pickup',
+                description: 'Convenient pickup and drop-off from your hotel in the main tourist areas',
+                category: 'Transportation',
+              },
+              gear: {
+                name: 'Premium Gear Upgrade',
+                description: 'Upgrade to premium adventure gear for enhanced comfort and safety',
+                category: 'Equipment',
+              },
+              souvenir: {
+                name: 'Adventure Souvenir Pack',
+                description: 'Take home a branded t-shirt, water bottle, and photo album',
+                category: 'Souvenirs',
+              },
+            },
+            combos: {
+              memory: {
+                name: 'Memory Package',
+                description: 'Professional Photos + Souvenir Pack = ${{bundlePrice}} (Save ${{savings}}!)',
+                badge: 'Most popular choice for first-time visitors',
+              },
+              comfort: {
+                name: 'Comfort Package',
+                description: 'Hotel Pickup + Gourmet Lunch = ${{bundlePrice}} (Save ${{savings}}!)',
+                badge: 'Perfect for a hassle-free experience',
+              },
+            },
+            labels: {
+              popular: 'Popular',
+              selectedAddOns: 'Selected Add-ons',
+              addOnsTotal: 'Add-ons Total',
+              selected: 'Selected',
+              additionalInfo: 'Additional Information (Optional)',
+            },
+            placeholders: {
+              promoCode: 'Enter promo code',
+              specialRequests: 'e.g., celebrating a special occasion, mobility considerations, specific dietary needs not mentioned earlier...',
+            },
+            buttons: {
+              apply: 'Apply',
+              checking: 'Checking...',
+            },
+            messages: {
+              enterPromoCode: 'Please enter a promo code',
+              promoSuccess: 'Promo code applied successfully!',
+              promoInvalid: 'Invalid or expired promo code',
+              promoApplied: 'Promo code "{{code}}" applied!',
+              comboRemoved: '{{name}} removed',
+              comboSelectedWithReplace: '{{name}} selected! Replaced individual items: {{items}}. You save ${{savings}}!',
+              comboAdded: '{{name}} added! You save ${{savings}}!',
+              accommodateRequests: 'We\'ll do our best to accommodate your requests, though some may not be possible depending on availability.',
+            },
+          },
+          step5: {
+            headers: {
+              bookingSummary: 'Booking Summary',
+              priceBreakdown: 'Price Breakdown',
+              paymentMethod: 'Payment Method',
+              paymentPlanDetails: 'Payment Plan Details',
+              securityTrust: 'Security & Trust',
+            },
+            labels: {
+              leadGuest: 'Lead Guest',
+              addons: 'Add-ons',
+              participant: 'participant',
+              participants: 'participants',
+              popular: 'Popular',
+              today: 'Today',
+              in1Month: 'In 1 month',
+              in2Months: 'In 2 months',
+            },
+            paymentMethods: {
+              card: {
+                name: 'Credit or Debit Card',
+                description: 'Visa, Mastercard, American Express',
+              },
+              applePay: {
+                name: 'Apple Pay',
+                description: 'Quick and secure payment',
+              },
+              googlePay: {
+                name: 'Google Pay',
+                description: 'Pay with your Google account',
+              },
+              paymentPlan: {
+                name: 'Payment Plan',
+                description: 'Pay in 3 monthly installments',
+              },
+            },
+            pricing: {
+              groupDiscount: 'Group discount',
+              earlyBirdDiscount: 'Early bird discount',
+              promoDiscount: 'Promo discount',
+              addons: 'Add-ons',
+              taxesFees: 'Taxes & fees',
+              total: 'Total',
+            },
+            paymentPlan: {
+              noInterestDescription: 'No interest charges. Automatic payments from your selected payment method.',
+            },
+            security: {
+              sslEncrypted: 'SSL encrypted secure payment',
+              pciCompliant: 'PCI DSS compliant processing',
+              instantConfirmation: 'Instant booking confirmation',
+              freeCancellation: 'Free cancellation up to 24 hours',
+            },
+            terms: {
+              agreementText: 'I agree to the',
+              termsOfService: 'Terms of Service',
+              privacyPolicy: 'Privacy Policy',
+              cancellationPolicy: 'Cancellation Policy',
+              and: 'and',
+              comma: ',',
+              bookingSubjectText: '. I understand that this booking is subject to availability and confirmation.',
+            },
+            confirmation: {
+              emailConfirmation: '• You will receive a confirmation email with booking details and QR code',
+              teamContact: '• Our team will contact you 24 hours before your adventure with final details',
+              freeCancellation: '• Free cancellation up to 24 hours before your scheduled adventure',
+            },
+            buttons: {
+              processingBooking: 'Processing your booking...',
+              completeBooking: 'Complete Booking',
+            },
+            messages: {
+              redirectMessage: 'You will be redirected to our secure payment processor',
             },
           },
         }
@@ -442,6 +714,50 @@ i18n
             },
             stepXOfY: 'Étape {{current}} de {{total}}',
           },
+          step2: {
+            headers: {
+              howManyPeople: 'Combien de Personnes?',
+              priceBreakdown: 'Détail des Prix',
+              availableDiscounts: 'Réductions Disponibles',
+              capacityInformation: 'Information Capacité',
+            },
+            labels: {
+              participant: 'Participant',
+              participants: 'Participants',
+              solo: 'Solo',
+              couple: 'Couple',
+              group: 'Groupe',
+              total: 'Total',
+              spots: 'places',
+            },
+            messages: {
+              onlyXSpotsLeft: 'Seulement {{count}} places restantes pour cette date!',
+              soloTravelerFriendly: 'Idéal pour Voyageurs Solo',
+              soloDescription: 'Cette aventure est parfaite pour les voyageurs solo. Vous rejoindrez un petit groupe d\'aventuriers partageant les mêmes idées!',
+              groupBenefits: 'Avantages Groupe',
+              groupDescription: 'Excellent choix pour les groupes! Vous obtiendrez une remise et pourrez profiter d\'une expérience plus personnalisée.',
+            },
+            pricing: {
+              participantCount: '{{price}}$ × {{count}} participant',
+              participantCountPlural: '{{price}}$ × {{count}} participants',
+              groupDiscount: 'Remise groupe ({{percent}}% réduc.)',
+              earlyBirdDiscount: 'Remise lève-tôt',
+              taxesAndFees: 'Taxes et frais',
+            },
+            capacity: {
+              maxGroupSize: 'Taille max. du groupe:',
+              availableSpots: 'Places disponibles pour cette date:',
+              yourSelection: 'Votre sélection:',
+            },
+            discountTypes: {
+              groupDiscount: 'Remise Groupe',
+              earlyBird: 'Lève-tôt',
+            },
+            discountDescriptions: {
+              groupDiscountDesc: '{{percent}}% réduc. pour groupes de 4+',
+              earlyBirdDesc: '{{percent}}% réduc. en réservant {{days}} jours à l\'avance',
+            },
+          },
           labels: {
             selectDate: 'Sélectionner Date',
             selectTime: 'Sélectionner Heure',
@@ -500,6 +816,234 @@ i18n
             },
             duration: {
               hours: '{{count}} heures',
+            },
+          },
+          step3: {
+            headers: {
+              leadGuestInformation: 'Informations Invité Principal',
+              experienceLevel: 'Niveau d\'Expérience',
+              dietaryRestrictions: 'Restrictions Alimentaires et Allergies',
+              emergencyContact: 'Contact d\'Urgence',
+              communicationPreferences: 'Préférences de Communication',
+              adventureRequirements: 'Exigences de l\'Aventure',
+              privacySecurity: 'Confidentialité et Sécurité',
+            },
+            descriptions: {
+              leadGuest: 'Cette personne sera le contact principal pour cette réservation',
+              experienceLevel: 'Aidez-nous à offrir la meilleure expérience selon votre niveau',
+              dietary: 'Faites-nous savoir vos besoins alimentaires ou allergies',
+              emergencyContact: 'Quelqu\'un que nous pouvons contacter en cas d\'urgence',
+              communications: 'Comment souhaitez-vous recevoir les mises à jour de votre réservation?',
+            },
+            labels: {
+              fullName: 'Nom Complet *',
+              phoneNumber: 'Numéro de Téléphone *',
+              emailAddress: 'Adresse Email *',
+              pleaseSpecify: 'Veuillez préciser',
+            },
+            placeholders: {
+              enterFullName: 'Entrez votre nom complet',
+              phoneFormat: '+1 (555) 123-4567',
+              emailFormat: 'votre@email.com',
+              emergencyContactName: 'Nom du contact d\'urgence',
+              dietaryNeeds: 'Veuillez décrire vos besoins alimentaires',
+            },
+            experienceLevels: {
+              beginner: {
+                label: 'Débutant',
+                description: 'Première fois ou expérience très limitée',
+              },
+              intermediate: {
+                label: 'Intermédiaire', 
+                description: 'Quelque expérience avec des activités similaires',
+              },
+              advanced: {
+                label: 'Avancé',
+                description: 'Expérience étendue et confiant',
+              },
+              expert: {
+                label: 'Expert',
+                description: 'Niveau professionnel ou expérience étendue',
+              },
+            },
+            dietary: {
+              vegetarian: 'Végétarien',
+              vegan: 'Végétalien',
+              glutenFree: 'Sans gluten',
+              dairyFree: 'Sans produits laitiers',
+              nutAllergy: 'Allergie aux noix',
+              shellfishAllergy: 'Allergie aux fruits de mer',
+              other: 'Autre',
+            },
+            notifications: {
+              email: 'Notifications par email',
+              sms: 'Notifications par SMS',
+              whatsapp: 'Notifications WhatsApp',
+            },
+            messages: {
+              emailConfirmation: 'Nous enverrons les confirmations de réservation et mises à jour à cette adresse',
+            },
+            privacy: {
+              secureDataProcessing: 'Traitement Sécurisé des Données:',
+              secureDataDesc: 'Toutes les informations personnelles sont cryptées et stockées en sécurité',
+              limitedDataUse: 'Utilisation Limitée des Données:',
+              limitedDataDesc: 'Informations utilisées uniquement pour le traitement des réservations et support client',
+              noSpamPolicy: 'Politique Anti-Spam:',
+              noSpamDesc: 'Nous vous contacterons seulement concernant votre réservation sauf opt-in',
+              privacyCompliant: 'Conforme à la Confidentialité:',
+              privacyCompliantDesc: 'Conformité complète avec la Politique de Confidentialité et Conditions de Service',
+            },
+          },
+          step4: {
+            headers: {
+              enhanceAdventure: 'Améliorez Votre Aventure',
+              promoCode: 'Code Promo',
+              specialRequests: 'Demandes Spéciales',
+              popularCombinations: 'Combinaisons Populaires',
+            },
+            descriptions: {
+              enhanceAdventure: 'Ajoutez des extras optionnels pour rendre votre expérience encore plus mémorable',
+              specialRequests: 'Faites-nous savoir si vous avez des demandes spéciales ou informations supplémentaires',
+              popularCombinations: 'Économisez avec ces forfaits groupés populaires',
+            },
+            addOns: {
+              photos: {
+                name: 'Photos Professionnelles',
+                description: 'Obtenez des photos haute qualité de votre aventure prises par notre photographe professionnel',
+                category: 'Photographie',
+              },
+              lunch: {
+                name: 'Lunch Gourmet',
+                description: 'Savourez un délicieux lunch de source locale avec options végétariennes disponibles',
+                category: 'Nourriture et Boissons',
+              },
+              transport: {
+                name: 'Ramassage à l\'Hôtel',
+                description: 'Ramassage et dépôt pratique depuis votre hôtel dans les principales zones touristiques',
+                category: 'Transport',
+              },
+              gear: {
+                name: 'Amélioration Équipement Premium',
+                description: 'Améliorez vers l\'équipement d\'aventure premium pour un confort et sécurité accrus',
+                category: 'Équipement',
+              },
+              souvenir: {
+                name: 'Pack Souvenir Aventure',
+                description: 'Ramenez un t-shirt de marque, bouteille d\'eau et album photo',
+                category: 'Souvenirs',
+              },
+            },
+            combos: {
+              memory: {
+                name: 'Forfait Souvenir',
+                description: 'Photos Professionnelles + Pack Souvenir = {{bundlePrice}}$ (Économisez {{savings}}$!)',
+                badge: 'Choix le plus populaire pour les visiteurs première fois',
+              },
+              comfort: {
+                name: 'Forfait Confort',
+                description: 'Ramassage Hôtel + Lunch Gourmet = {{bundlePrice}}$ (Économisez {{savings}}$!)',
+                badge: 'Parfait pour une expérience sans tracas',
+              },
+            },
+            labels: {
+              popular: 'Populaire',
+              selectedAddOns: 'Extras Sélectionnés',
+              addOnsTotal: 'Total Extras',
+              selected: 'Sélectionné',
+              additionalInfo: 'Informations Supplémentaires (Optionnel)',
+            },
+            placeholders: {
+              promoCode: 'Entrez le code promo',
+              specialRequests: 'ex: célébrer une occasion spéciale, considérations mobilité, besoins alimentaires spécifiques non mentionnés...',
+            },
+            buttons: {
+              apply: 'Appliquer',
+              checking: 'Vérification...',
+            },
+            messages: {
+              enterPromoCode: 'Veuillez entrer un code promo',
+              promoSuccess: 'Code promo appliqué avec succès!',
+              promoInvalid: 'Code promo invalide ou expiré',
+              promoApplied: 'Code promo "{{code}}" appliqué!',
+              comboRemoved: '{{name}} retiré',
+              comboSelectedWithReplace: '{{name}} sélectionné! Articles individuels remplacés: {{items}}. Vous économisez {{savings}}$!',
+              comboAdded: '{{name}} ajouté! Vous économisez {{savings}}$!',
+              accommodateRequests: 'Nous ferons de notre mieux pour accommoder vos demandes, bien que certaines ne soient pas possibles selon la disponibilité.',
+            },
+          },
+          step5: {
+            headers: {
+              bookingSummary: 'Résumé de Réservation',
+              priceBreakdown: 'Détail des Prix',
+              paymentMethod: 'Méthode de Paiement',
+              paymentPlanDetails: 'Détails Plan de Paiement',
+              securityTrust: 'Sécurité et Confiance',
+            },
+            labels: {
+              leadGuest: 'Invité Principal',
+              addons: 'Extras',
+              participant: 'participant',
+              participants: 'participants',
+              popular: 'Populaire',
+              today: 'Aujourd\'hui',
+              in1Month: 'Dans 1 mois',
+              in2Months: 'Dans 2 mois',
+            },
+            paymentMethods: {
+              card: {
+                name: 'Carte de Crédit ou Débit',
+                description: 'Visa, Mastercard, American Express',
+              },
+              applePay: {
+                name: 'Apple Pay',
+                description: 'Paiement rapide et sécurisé',
+              },
+              googlePay: {
+                name: 'Google Pay',
+                description: 'Payez avec votre compte Google',
+              },
+              paymentPlan: {
+                name: 'Plan de Paiement',
+                description: 'Payez en 3 versements mensuels',
+              },
+            },
+            pricing: {
+              groupDiscount: 'Remise groupe',
+              earlyBirdDiscount: 'Remise lève-tôt',
+              promoDiscount: 'Remise promo',
+              addons: 'Extras',
+              taxesFees: 'Taxes et frais',
+              total: 'Total',
+            },
+            paymentPlan: {
+              noInterestDescription: 'Aucun frais d\'intérêt. Paiements automatiques depuis votre méthode de paiement sélectionnée.',
+            },
+            security: {
+              sslEncrypted: 'Paiement sécurisé crypté SSL',
+              pciCompliant: 'Traitement conforme PCI DSS',
+              instantConfirmation: 'Confirmation de réservation instantanée',
+              freeCancellation: 'Annulation gratuite jusqu\'à 24 heures',
+            },
+            terms: {
+              agreementText: 'J\'accepte les',
+              termsOfService: 'Conditions de Service',
+              privacyPolicy: 'Politique de Confidentialité',
+              cancellationPolicy: 'Politique d\'Annulation',
+              and: 'et',
+              comma: ',',
+              bookingSubjectText: '. Je comprends que cette réservation est sujette à disponibilité et confirmation.',
+            },
+            confirmation: {
+              emailConfirmation: '• Vous recevrez un email de confirmation avec détails de réservation et code QR',
+              teamContact: '• Notre équipe vous contactera 24 heures avant votre aventure avec les détails finaux',
+              freeCancellation: '• Annulation gratuite jusqu\'à 24 heures avant votre aventure prévue',
+            },
+            buttons: {
+              processingBooking: 'Traitement de votre réservation...',
+              completeBooking: 'Compléter la Réservation',
+            },
+            messages: {
+              redirectMessage: 'Vous serez redirigé vers notre processeur de paiement sécurisé',
             },
           },
         }

@@ -3,6 +3,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Users, Plus, Minus, DollarSign, Percent, Heart } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 import { Adventure, BookingFormData } from '@/types/booking';
 import { BookingService } from '@/services/bookingService';
 
@@ -17,6 +18,7 @@ export const BookingStepTwo: React.FC<BookingStepTwoProps> = ({
   formData,
   onUpdate
 }) => {
+  const { t } = useTranslation(['booking']);
   const [availableSpots, setAvailableSpots] = useState<number>(0);
   const [pricing, setPricing] = useState<any>(null);
 
@@ -59,17 +61,17 @@ export const BookingStepTwo: React.FC<BookingStepTwoProps> = ({
     
     if (adventure.group_discount_percentage > 0 && formData.participants >= 4) {
       discounts.push({
-        type: 'Group Discount',
+        type: t('booking:step2.discountTypes.groupDiscount'),
         value: adventure.group_discount_percentage,
-        description: `${adventure.group_discount_percentage}% off for groups of 4+`
+        description: t('booking:step2.discountDescriptions.groupDiscountDesc', { percent: adventure.group_discount_percentage })
       });
     }
     
     if (adventure.early_bird_discount_percentage > 0) {
       discounts.push({
-        type: 'Early Bird',
+        type: t('booking:step2.discountTypes.earlyBird'),
         value: adventure.early_bird_discount_percentage,
-        description: `${adventure.early_bird_discount_percentage}% off when booking ${adventure.early_bird_days} days ahead`
+        description: t('booking:step2.discountDescriptions.earlyBirdDesc', { percent: adventure.early_bird_discount_percentage, days: adventure.early_bird_days })
       });
     }
     
@@ -85,7 +87,7 @@ export const BookingStepTwo: React.FC<BookingStepTwoProps> = ({
         <CardHeader>
           <CardTitle className="text-lg flex items-center">
             <Users className="w-5 h-5 mr-2 text-orange-400" />
-            How Many People?
+            {t('booking:step2.headers.howManyPeople')}
           </CardTitle>
         </CardHeader>
         <CardContent>
@@ -104,7 +106,7 @@ export const BookingStepTwo: React.FC<BookingStepTwoProps> = ({
               <div className="text-center">
                 <div className="text-3xl font-bold">{formData.participants}</div>
                 <div className="text-sm text-muted-foreground">
-                  {formData.participants === 1 ? 'Participant' : 'Participants'}
+                  {formData.participants === 1 ? t('booking:step2.labels.participant') : t('booking:step2.labels.participants')}
                 </div>
               </div>
               
@@ -132,7 +134,7 @@ export const BookingStepTwo: React.FC<BookingStepTwoProps> = ({
                 >
                   <div className="text-lg font-semibold">{count}</div>
                   <div className="text-xs text-muted-foreground">
-                    {count === 1 ? 'Solo' : count === 2 ? 'Couple' : 'Group'}
+                    {count === 1 ? t('booking:step2.labels.solo') : count === 2 ? t('booking:step2.labels.couple') : t('booking:step2.labels.group')}
                   </div>
                 </button>
               ))}
@@ -144,7 +146,7 @@ export const BookingStepTwo: React.FC<BookingStepTwoProps> = ({
                 <div className="flex items-center space-x-2">
                   <div className="w-2 h-2 bg-orange-500 rounded-full animate-pulse"></div>
                   <span className="text-sm font-medium text-warning-foreground">
-                    Only {availableSpots} spots left for this date!
+                    {t('booking:step2.messages.onlyXSpotsLeft', { count: availableSpots })}
                   </span>
                 </div>
               </div>
@@ -159,38 +161,38 @@ export const BookingStepTwo: React.FC<BookingStepTwoProps> = ({
           <CardHeader>
             <CardTitle className="text-lg flex items-center">
               <DollarSign className="w-5 h-5 mr-2" />
-              Price Breakdown
+              {t('booking:step2.headers.priceBreakdown')}
             </CardTitle>
           </CardHeader>
           <CardContent>
             <div className="space-y-3">
               <div className="flex justify-between items-center">
-                <span>${adventure.base_price} × {formData.participants} participant{formData.participants > 1 ? 's' : ''}</span>
+                <span>{formData.participants === 1 ? t('booking:step2.pricing.participantCount', { price: adventure.base_price, count: formData.participants }) : t('booking:step2.pricing.participantCountPlural', { price: adventure.base_price, count: formData.participants })}</span>
                 <span className="font-semibold">${pricing.subtotal.toFixed(2)}</span>
               </div>
               
               {formData.participants >= 4 && (
                 <div className="flex justify-between text-green-600">
-                  <span>Group discount (10% off)</span>
+                  <span>{t('booking:step2.pricing.groupDiscount', { percent: 10 })}</span>
                   <span>-${(pricing.subtotal * 0.1).toFixed(2)}</span>
                 </div>
               )}
               
               {pricing.earlyBirdDiscount > 0 && (
                 <div className="flex justify-between items-center text-primary">
-                  <span>Early bird discount</span>
+                  <span>{t('booking:step2.pricing.earlyBirdDiscount')}</span>
                   <span>-${pricing.earlyBirdDiscount.toFixed(2)}</span>
                 </div>
               )}
               
               <div className="flex justify-between items-center text-sm text-muted-foreground">
-                <span>Taxes & fees</span>
+                <span>{t('booking:step2.pricing.taxesAndFees')}</span>
                 <span>${pricing.taxAmount.toFixed(2)}</span>
               </div>
               
               <div className="border-t pt-3">
                 <div className="flex justify-between items-center text-lg font-bold">
-                  <span>Total</span>
+                  <span>{t('booking:step2.labels.total')}</span>
                   <span>${pricing.totalAmount.toFixed(2)}</span>
                 </div>
               </div>
@@ -205,7 +207,7 @@ export const BookingStepTwo: React.FC<BookingStepTwoProps> = ({
           <CardHeader>
             <CardTitle className="text-lg flex items-center text-primary-foreground">
               <Percent className="w-5 h-5 mr-2" />
-              Available Discounts
+              {t('booking:step2.headers.availableDiscounts')}
             </CardTitle>
           </CardHeader>
           <CardContent>
@@ -233,9 +235,9 @@ export const BookingStepTwo: React.FC<BookingStepTwoProps> = ({
             <div className="flex items-center space-x-2">
               <Heart className="w-5 h-5 text-yellow-500" />
               <div>
-                <h3 className="font-semibold text-accent-foreground">Solo Traveler Friendly</h3>
+                <h3 className="font-semibold text-accent-foreground">{t('booking:step2.messages.soloTravelerFriendly')}</h3>
                 <p className="text-sm text-accent-foreground/80">
-                  This adventure is perfect for solo travelers. You'll join a small group of like-minded adventurers!
+                  {t('booking:step2.messages.soloDescription')}
                 </p>
               </div>
             </div>
@@ -250,9 +252,9 @@ export const BookingStepTwo: React.FC<BookingStepTwoProps> = ({
             <div className="flex items-center space-x-2">
               <Users className="w-5 h-5 text-orange-400" />
               <div>
-                <h3 className="font-semibold text-white">Group Benefits</h3>
+                <h3 className="font-semibold text-white">{t('booking:step2.messages.groupBenefits')}</h3>
                 <p className="text-sm text-green-600">
-                  Great choice for groups! You'll get a discount and can enjoy a more personalized experience.
+                  {t('booking:step2.messages.groupDescription')}
                 </p>
               </div>
             </div>
@@ -265,7 +267,7 @@ export const BookingStepTwo: React.FC<BookingStepTwoProps> = ({
         <CardHeader>
           <CardTitle className="text-lg flex items-center">
             <Users className="w-5 h-5 mr-2 text-orange-400" />
-            Capacity Information
+            {t('booking:step2.headers.capacityInformation')}
           </CardTitle>
         </CardHeader>
         <CardContent>
@@ -273,7 +275,7 @@ export const BookingStepTwo: React.FC<BookingStepTwoProps> = ({
             <div className="flex items-start space-x-2">
               <div className="w-2 h-2 bg-blue-500 rounded-full mt-2 flex-shrink-0"></div>
               <div className="flex justify-between w-full">
-                <span><strong>Maximum group size:</strong></span>
+                <span><strong>{t('booking:step2.capacity.maxGroupSize')}</strong></span>
                 <span className="font-semibold">{adventure.max_participants} people</span>
               </div>
             </div>
@@ -281,16 +283,16 @@ export const BookingStepTwo: React.FC<BookingStepTwoProps> = ({
             <div className="flex items-start space-x-2">
               <div className="w-2 h-2 bg-green-500 rounded-full mt-2 flex-shrink-0"></div>
               <div className="flex justify-between w-full">
-                <span><strong>Available spots for this date:</strong></span>
-                <span className="font-semibold">{availableSpots} spots</span>
+                <span><strong>{t('booking:step2.capacity.availableSpots')}</strong></span>
+                <span className="font-semibold">{availableSpots} {t('booking:step2.labels.spots')}</span>
               </div>
             </div>
             
             <div className="flex items-start space-x-2">
               <div className="w-2 h-2 bg-orange-500 rounded-full mt-2 flex-shrink-0"></div>
               <div className="flex justify-between w-full">
-                <span><strong>Your selection:</strong></span>
-                <span className="font-semibold">{formData.participants} participant{formData.participants > 1 ? 's' : ''}</span>
+                <span><strong>{t('booking:step2.capacity.yourSelection')}</strong></span>
+                <span className="font-semibold">{formData.participants} {formData.participants === 1 ? t('booking:step2.labels.participant') : t('booking:step2.labels.participants')}</span>
               </div>
             </div>
           </div>

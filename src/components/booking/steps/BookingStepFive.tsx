@@ -21,6 +21,7 @@ import {
 import { Adventure, BookingFormData, PricingBreakdown } from '@/types/booking';
 import { format } from 'date-fns';
 import { getDateFnsLocale } from '@/lib/locale';
+import { useTranslation } from 'react-i18next';
 
 interface BookingStepFiveProps {
   adventure: Adventure;
@@ -39,6 +40,7 @@ export const BookingStepFive: React.FC<BookingStepFiveProps> = ({
   onPayment,
   isSubmitting
 }) => {
+  const { t } = useTranslation(['booking']);
   const [acceptedTerms, setAcceptedTerms] = useState(false);
   const [selectedPaymentMethod, setSelectedPaymentMethod] = useState<'card' | 'apple_pay' | 'google_pay' | 'payment_plan'>('card');
 
@@ -65,30 +67,30 @@ export const BookingStepFive: React.FC<BookingStepFiveProps> = ({
   const paymentMethods = [
     {
       id: 'card',
-      name: 'Credit or Debit Card',
+      name: t('booking:step5.paymentMethods.card.name'),
       icon: <CreditCard className="w-5 h-5" />,
-      description: 'Visa, Mastercard, American Express',
+      description: t('booking:step5.paymentMethods.card.description'),
       popular: true
     },
     {
       id: 'apple_pay',
-      name: 'Apple Pay',
+      name: t('booking:step5.paymentMethods.applePay.name'),
       icon: <Smartphone className="w-5 h-5" />,
-      description: 'Quick and secure payment',
+      description: t('booking:step5.paymentMethods.applePay.description'),
       available: /iPad|iPhone|iPod/.test(navigator.userAgent)
     },
     {
       id: 'google_pay',
-      name: 'Google Pay',
+      name: t('booking:step5.paymentMethods.googlePay.name'),
       icon: <Smartphone className="w-5 h-5" />,
-      description: 'Pay with your Google account',
+      description: t('booking:step5.paymentMethods.googlePay.description'),
       available: true
     },
     {
       id: 'payment_plan',
-      name: 'Payment Plan',
+      name: t('booking:step5.paymentMethods.paymentPlan.name'),
       icon: <DollarSign className="w-5 h-5" />,
-      description: 'Pay in 3 monthly installments',
+      description: t('booking:step5.paymentMethods.paymentPlan.description'),
       available: pricing && pricing.totalAmount >= 200
     }
   ];
@@ -104,7 +106,7 @@ export const BookingStepFive: React.FC<BookingStepFiveProps> = ({
       {/* Booking Summary */}
       <Card>
         <CardHeader>
-          <CardTitle className="text-lg">Booking Summary</CardTitle>
+          <CardTitle className="text-lg">{t('booking:step5.headers.bookingSummary')}</CardTitle>
         </CardHeader>
         <CardContent>
           <div className="space-y-4">
@@ -132,7 +134,7 @@ export const BookingStepFive: React.FC<BookingStepFiveProps> = ({
                   </div>
                   <div className="flex items-center space-x-1">
                     <Users className="w-4 h-4" />
-                    <span>{formData.participants} participant{formData.participants > 1 ? 's' : ''}</span>
+                    <span>{formData.participants} {formData.participants > 1 ? t('booking:step5.labels.participants') : t('booking:step5.labels.participant')}</span>
                   </div>
                 </div>
               </div>
@@ -140,7 +142,7 @@ export const BookingStepFive: React.FC<BookingStepFiveProps> = ({
 
             {/* Guest Information */}
             <div className="border-t pt-4">
-              <h4 className="font-semibold mb-2">Lead Guest</h4>
+              <h4 className="font-semibold mb-2">{t('booking:step5.labels.leadGuest')}</h4>
               <div className="text-sm text-muted-foreground">
                 <div>{formData.leadGuest.name}</div>
                 <div>{formData.leadGuest.email}</div>
@@ -151,7 +153,7 @@ export const BookingStepFive: React.FC<BookingStepFiveProps> = ({
             {/* Add-ons */}
             {formData.selectedAddOns && formData.selectedAddOns.length > 0 && (
               <div className="border-t pt-4">
-                <h4 className="font-semibold mb-2">Add-ons</h4>
+                <h4 className="font-semibold mb-2">{t('booking:step5.labels.addons')}</h4>
                 <div className="space-y-1">
                   {formData.selectedAddOns.map((addon, index) => (
                     <div key={index} className="flex justify-between text-sm">
@@ -170,7 +172,7 @@ export const BookingStepFive: React.FC<BookingStepFiveProps> = ({
       {pricing && (
         <Card>
           <CardHeader>
-            <CardTitle className="text-lg">Price Breakdown</CardTitle>
+            <CardTitle className="text-lg">{t('booking:step5.headers.priceBreakdown')}</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="space-y-3">
@@ -181,41 +183,41 @@ export const BookingStepFive: React.FC<BookingStepFiveProps> = ({
               
               {pricing.groupDiscount > 0 && (
                 <div className="flex justify-between text-primary">
-                  <span>Group discount</span>
+                  <span>{t('booking:step5.pricing.groupDiscount')}</span>
                   <span>-${pricing.groupDiscount.toFixed(2)}</span>
                 </div>
               )}
               
               {pricing.earlyBirdDiscount > 0 && (
                 <div className="flex justify-between text-primary">
-                  <span>Early bird discount</span>
+                  <span>{t('booking:step5.pricing.earlyBirdDiscount')}</span>
                   <span>-${pricing.earlyBirdDiscount.toFixed(2)}</span>
                 </div>
               )}
               
               {pricing.promoDiscount > 0 && (
                 <div className="flex justify-between text-primary">
-                  <span>Promo discount</span>
+                  <span>{t('booking:step5.pricing.promoDiscount')}</span>
                   <span>-${pricing.promoDiscount.toFixed(2)}</span>
                 </div>
               )}
               
               {pricing.addOnsTotal > 0 && (
                 <div className="flex justify-between">
-                  <span>Add-ons</span>
+                  <span>{t('booking:step5.pricing.addons')}</span>
                   <span>${pricing.addOnsTotal.toFixed(2)}</span>
                 </div>
               )}
               
               <div className="flex justify-between">
-                <span>Taxes & fees</span>
+                <span>{t('booking:step5.pricing.taxesFees')}</span>
                 <span>${pricing.taxAmount.toFixed(2)}</span>
               </div>
               
               <Separator />
               
               <div className="flex justify-between items-center text-xl font-bold">
-                <span>Total</span>
+                <span>{t('booking:step5.pricing.total')}</span>
                 <span>${pricing.totalAmount.toFixed(2)}</span>
               </div>
             </div>
@@ -226,7 +228,7 @@ export const BookingStepFive: React.FC<BookingStepFiveProps> = ({
       {/* Payment Method */}
       <Card>
         <CardHeader>
-          <CardTitle className="text-lg">Payment Method</CardTitle>
+          <CardTitle className="text-lg">{t('booking:step5.headers.paymentMethod')}</CardTitle>
         </CardHeader>
         <CardContent>
           <div className="space-y-3">
@@ -248,7 +250,7 @@ export const BookingStepFive: React.FC<BookingStepFiveProps> = ({
                         <span>{method.name}</span>
                         {method.popular && (
                           <Badge variant="secondary" className="bg-primary/10 text-primary">
-                            Popular
+                            {t('booking:step5.labels.popular')}
                           </Badge>
                         )}
                       </div>
@@ -275,24 +277,24 @@ export const BookingStepFive: React.FC<BookingStepFiveProps> = ({
       {selectedPaymentMethod === 'payment_plan' && pricing && (
         <Card className="border-primary bg-primary/10">
           <CardHeader>
-            <CardTitle className="text-lg text-primary-foreground">Payment Plan Details</CardTitle>
+            <CardTitle className="text-lg text-primary-foreground">{t('booking:step5.headers.paymentPlanDetails')}</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="space-y-3">
               <div className="flex justify-between items-center">
-                <span>Today</span>
+                <span>{t('booking:step5.labels.today')}</span>
                 <span className="font-semibold">${(pricing.totalAmount / 3).toFixed(2)}</span>
               </div>
               <div className="flex justify-between items-center">
-                <span>In 1 month</span>
+                <span>{t('booking:step5.labels.in1Month')}</span>
                 <span className="font-semibold">${(pricing.totalAmount / 3).toFixed(2)}</span>
               </div>
               <div className="flex justify-between items-center">
-                <span>In 2 months</span>
+                <span>{t('booking:step5.labels.in2Months')}</span>
                 <span className="font-semibold">${(pricing.totalAmount / 3).toFixed(2)}</span>
               </div>
               <div className="text-xs text-primary mt-2">
-                No interest charges. Automatic payments from your selected payment method.
+                {t('booking:step5.paymentPlan.noInterestDescription')}
               </div>
             </div>
           </CardContent>
@@ -304,26 +306,26 @@ export const BookingStepFive: React.FC<BookingStepFiveProps> = ({
         <CardHeader>
           <CardTitle className="text-lg flex items-center">
             <Shield className="w-5 h-5 mr-2" />
-            Security & Trust
+            {t('booking:step5.headers.securityTrust')}
           </CardTitle>
         </CardHeader>
         <CardContent>
           <div className="space-y-3">
             <div className="flex items-center space-x-2">
               <Lock className="w-4 h-4 trust-icon" />
-              <span className="text-sm trust-badge">SSL encrypted secure payment</span>
+              <span className="text-sm trust-badge">{t('booking:step5.security.sslEncrypted')}</span>
             </div>
             <div className="flex items-center space-x-2">
               <Shield className="w-4 h-4 trust-icon" />
-              <span className="text-sm trust-badge">PCI DSS compliant processing</span>
+              <span className="text-sm trust-badge">{t('booking:step5.security.pciCompliant')}</span>
             </div>
             <div className="flex items-center space-x-2">
               <CheckCircle className="w-4 h-4 trust-icon" />
-              <span className="text-sm trust-badge">Instant booking confirmation</span>
+              <span className="text-sm trust-badge">{t('booking:step5.security.instantConfirmation')}</span>
             </div>
             <div className="flex items-center space-x-2">
               <AlertCircle className="w-4 h-4 trust-icon" />
-              <span className="text-sm trust-badge">Free cancellation up to 24 hours</span>
+              <span className="text-sm trust-badge">{t('booking:step5.security.freeCancellation')}</span>
             </div>
           </div>
         </CardContent>
@@ -340,31 +342,31 @@ export const BookingStepFive: React.FC<BookingStepFiveProps> = ({
                 onCheckedChange={(checked) => setAcceptedTerms(checked as boolean)}
               />
               <Label htmlFor="terms" className="text-sm leading-relaxed">
-                I agree to the{' '}
+                {t('booking:step5.terms.agreementText')}{' '}
                 <a href="/terms" className="text-primary hover:underline" target="_blank">
-                  Terms of Service
+                  {t('booking:step5.terms.termsOfService')}
                 </a>
-                ,{' '}
+                {t('booking:step5.terms.comma')}{' '}
                 <a href="/privacy" className="text-primary hover:underline" target="_blank">
-                  Privacy Policy
+                  {t('booking:step5.terms.privacyPolicy')}
                 </a>
-                , and{' '}
+                {t('booking:step5.terms.comma')} {t('booking:step5.terms.and')}{' '}
                 <a href="/cancellation" className="text-primary hover:underline" target="_blank">
-                  Cancellation Policy
+                  {t('booking:step5.terms.cancellationPolicy')}
                 </a>
-                . I understand that this booking is subject to availability and confirmation.
+                {t('booking:step5.terms.bookingSubjectText')}
               </Label>
             </div>
             
             <div className="text-xs text-muted-foreground space-y-1">
               <p>
-                • You will receive a confirmation email with booking details and QR code
+                {t('booking:step5.confirmation.emailConfirmation')}
               </p>
               <p>
-                • Our team will contact you 24 hours before your adventure with final details
+                {t('booking:step5.confirmation.teamContact')}
               </p>
               <p>
-                • Free cancellation up to 24 hours before your scheduled adventure
+                {t('booking:step5.confirmation.freeCancellation')}
               </p>
             </div>
           </div>
@@ -381,17 +383,17 @@ export const BookingStepFive: React.FC<BookingStepFiveProps> = ({
             size="lg"
           >
             {isSubmitting ? (
-              'Processing your booking...'
+              t('booking:step5.buttons.processingBooking')
             ) : (
               <>
                 <Lock className="w-5 h-5 mr-2" />
-                Complete Booking - {pricing ? `$${pricing.totalAmount.toFixed(2)}` : '$0.00'}
+                {t('booking:step5.buttons.completeBooking')} - {pricing ? `$${pricing.totalAmount.toFixed(2)}` : '$0.00'}
               </>
             )}
           </Button>
           
           <p className="text-center text-sm text-muted-foreground mt-3">
-            You will be redirected to our secure payment processor
+            {t('booking:step5.messages.redirectMessage')}
           </p>
         </CardContent>
       </Card>

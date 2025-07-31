@@ -6,6 +6,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Separator } from '@/components/ui/separator';
+import { useTranslation } from 'react-i18next';
 import {
   Select,
   SelectContent,
@@ -31,6 +32,7 @@ type AuthProvider = 'google' | 'apple' | 'instagram';
 
 export const SignInModal: React.FC<SignInModalProps> = ({ isOpen, onClose, onSwitchToSignUp }) => {
   const navigate = useNavigate();
+  const { t } = useTranslation(['auth', 'common']);
   const [mode, setMode] = useState<AuthMode>('signin');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -72,20 +74,20 @@ export const SignInModal: React.FC<SignInModalProps> = ({ isOpen, onClose, onSwi
 
   const validateEmail = (email: string): string[] => {
     const errors: string[] = [];
-    if (!email) errors.push('Email is required');
-    else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) errors.push('Please enter a valid email address');
+    if (!email) errors.push(t('auth:validation.emailRequired'));
+    else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) errors.push(t('auth:validation.validEmailRequired'));
     return errors;
   };
 
   const validatePassword = (password: string, isSignUp: boolean = false): string[] => {
     const errors: string[] = [];
-    if (!password) errors.push('Password is required');
+    if (!password) errors.push(t('auth:validation.passwordRequired'));
     else if (isSignUp) {
-      if (password.length < 8) errors.push('Password must be at least 8 characters');
-      if (!/[A-Z]/.test(password)) errors.push('Password must contain an uppercase letter');
-      if (!/[a-z]/.test(password)) errors.push('Password must contain a lowercase letter');
-      if (!/\d/.test(password)) errors.push('Password must contain a number');
-      if (!/[!@#$%^&*(),.?":{}|<>]/.test(password)) errors.push('Password must contain a special character');
+      if (password.length < 8) errors.push(t('auth:validation.passwordMinLength'));
+      if (!/[A-Z]/.test(password)) errors.push(t('auth:validation.passwordUppercase'));
+      if (!/[a-z]/.test(password)) errors.push(t('auth:validation.passwordLowercase'));
+      if (!/\d/.test(password)) errors.push(t('auth:validation.passwordNumber'));
+      if (!/[!@#$%^&*(),.?":{}|<>]/.test(password)) errors.push(t('auth:validation.passwordSpecialChar'));
     }
     return errors;
   };
@@ -104,12 +106,12 @@ export const SignInModal: React.FC<SignInModalProps> = ({ isOpen, onClose, onSwi
     }
 
     if (mode === 'signup' && password !== confirmPassword) {
-      toast.error('Passwords do not match');
+      toast.error(t('auth:messages.passwordsDoNotMatch'));
       return;
     }
 
     if (mode === 'signup' && !agreeToTerms) {
-      toast.error('Please accept the terms and conditions');
+      toast.error(t('auth:messages.acceptTerms'));
       return;
     }
 
@@ -121,14 +123,14 @@ export const SignInModal: React.FC<SignInModalProps> = ({ isOpen, onClose, onSwi
         
         if (error) {
           if (error.message.includes('Invalid login credentials')) {
-            toast.error('Invalid email or password');
+            toast.error(t('auth:messages.invalidCredentials'));
           } else if (error.message.includes('Email not confirmed')) {
-            toast.error('Please check your email and click the confirmation link');
+            toast.error(t('auth:messages.emailNotConfirmed'));
           } else {
             toast.error(error.message);
           }
         } else {
-          toast.success('Successfully signed in!');
+          toast.success(t('auth:messages.signInSuccess'));
           rememberSignInMethod('email');
           
           // Update user role if not already set
@@ -153,7 +155,7 @@ export const SignInModal: React.FC<SignInModalProps> = ({ isOpen, onClose, onSwi
         if (error) {
           toast.error(error.message);
         } else {
-          toast.success('Account created! Please check your email for verification, then sign in to access your dashboard.');
+          toast.success(t('auth:messages.accountCreated'));
           setMode('signin');
           resetForm();
         }
@@ -163,12 +165,12 @@ export const SignInModal: React.FC<SignInModalProps> = ({ isOpen, onClose, onSwi
         if (error) {
           toast.error(error.message);
         } else {
-          toast.success('Password reset email sent! Check your inbox.');
+          toast.success(t('auth:messages.resetEmailSent'));
           setMode('signin');
         }
       }
     } catch (error) {
-      toast.error('An unexpected error occurred');
+      toast.error(t('auth:messages.unexpectedError'));
     } finally {
       setLoading(false);
     }
@@ -181,14 +183,14 @@ export const SignInModal: React.FC<SignInModalProps> = ({ isOpen, onClose, onSwi
       const { error } = await signInWithOAuth(provider);
       
       if (error) {
-        toast.error(`Failed to sign in with ${provider}`);
+        toast.error(`${t('auth:messages.oauthFailed')} ${provider}`);
       } else {
         rememberSignInMethod(provider);
-        toast.success(`Redirecting to ${provider}...`);
+        toast.success(`${t('auth:messages.oauthRedirecting')} ${provider}...`);
         // Note: OAuth redirection happens automatically, role selection will be handled in auth callback
       }
     } catch (error) {
-      toast.error('An unexpected error occurred');
+      toast.error(t('auth:messages.unexpectedError'));
     } finally {
       setOauthLoading(null);
     }
@@ -242,14 +244,14 @@ export const SignInModal: React.FC<SignInModalProps> = ({ isOpen, onClose, onSwi
         <DialogContent className="sm:max-w-[480px] max-h-[90vh] overflow-y-auto">
           <DialogHeader>
             <DialogTitle className="text-2xl font-bold text-center">
-              {mode === 'signin' ? 'Welcome Back!' : 
-               mode === 'signup' ? 'Join BelizeVibes' : 
-               'Reset Password'}
+              {mode === 'signin' ? t('auth:titles.welcomeBack') : 
+               mode === 'signup' ? t('auth:titles.joinBelizeVibes') : 
+               t('auth:titles.resetPassword')}
             </DialogTitle>
             <p className="text-center text-gray-600">
-              {mode === 'signin' ? 'Sign in to book your next adventure' : 
-               mode === 'signup' ? 'Start your adventure journey today' : 
-               'We\'ll send you a link to reset your password'}
+              {mode === 'signin' ? t('auth:subtitles.signIn') : 
+               mode === 'signup' ? t('auth:subtitles.signUp') : 
+               t('auth:subtitles.reset')}
             </p>
           </DialogHeader>
 
@@ -343,9 +345,9 @@ export const SignInModal: React.FC<SignInModalProps> = ({ isOpen, onClose, onSwi
                       <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/>
                     </svg>
                   )}
-                  <span>Continue with Instagram</span>
+                  <span>{t('auth:buttons.continueWithInstagram')}</span>
                   {preferredMethod === 'instagram' && (
-                    <span className="text-xs bg-pink-100 text-pink-800 px-2 py-1 rounded-full">Preferred</span>
+                    <span className="text-xs bg-pink-100 text-pink-800 px-2 py-1 rounded-full">{t('auth:buttons.preferred')}</span>
                   )}
                 </Button>
               </div>
@@ -355,7 +357,7 @@ export const SignInModal: React.FC<SignInModalProps> = ({ isOpen, onClose, onSwi
                   <Separator className="w-full" />
                 </div>
                 <div className="relative flex justify-center text-xs uppercase">
-                  <span className="bg-background px-2 text-muted-foreground">Or continue with email</span>
+                  <span className="bg-background px-2 text-muted-foreground">{t('auth:separators.orContinueWithEmail')}</span>
                 </div>
               </div>
             </div>
@@ -367,7 +369,7 @@ export const SignInModal: React.FC<SignInModalProps> = ({ isOpen, onClose, onSwi
               <>
                 <div className="grid grid-cols-2 gap-4">
                   <div className="space-y-2">
-                    <Label htmlFor="firstName">First Name</Label>
+                    <Label htmlFor="firstName">{t('auth:labels.firstName')}</Label>
                     <Input
                       id="firstName"
                       value={firstName}
@@ -376,7 +378,7 @@ export const SignInModal: React.FC<SignInModalProps> = ({ isOpen, onClose, onSwi
                     />
                   </div>
                   <div className="space-y-2">
-                    <Label htmlFor="lastName">Last Name</Label>
+                    <Label htmlFor="lastName">{t('auth:labels.lastName')}</Label>
                     <Input
                       id="lastName"
                       value={lastName}
@@ -386,15 +388,15 @@ export const SignInModal: React.FC<SignInModalProps> = ({ isOpen, onClose, onSwi
                   </div>
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="role">Account Type</Label>
+                  <Label htmlFor="role">{t('auth:labels.accountType')}</Label>
                   <Select value={selectedRole} onValueChange={(value: 'traveler' | 'guide' | 'admin') => setSelectedRole(value)}>
                     <SelectTrigger>
-                      <SelectValue placeholder="Select your role" />
+                      <SelectValue placeholder={t('auth:placeholders.selectRole')} />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="traveler">Traveler</SelectItem>
-                      <SelectItem value="guide">Tour Guide</SelectItem>
-                      <SelectItem value="admin">Admin</SelectItem>
+                      <SelectItem value="traveler">{t('auth:roles.traveler')}</SelectItem>
+                      <SelectItem value="guide">{t('auth:roles.guide')}</SelectItem>
+                      <SelectItem value="admin">{t('auth:roles.admin')}</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
@@ -418,7 +420,7 @@ export const SignInModal: React.FC<SignInModalProps> = ({ isOpen, onClose, onSwi
             )}
 
             <div className="space-y-2">
-              <Label htmlFor="email">Email</Label>
+              <Label htmlFor="email">{t('auth:labels.email')}</Label>
               <div className="relative">
                 <Mail className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
                 <Input
@@ -427,7 +429,7 @@ export const SignInModal: React.FC<SignInModalProps> = ({ isOpen, onClose, onSwi
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   className={`pl-10 ${emailErrors.length > 0 ? 'border-red-500' : ''}`}
-                  placeholder="Enter your email"
+                  placeholder={t('auth:placeholders.enterEmail')}
                   required
                 />
               </div>
@@ -438,7 +440,7 @@ export const SignInModal: React.FC<SignInModalProps> = ({ isOpen, onClose, onSwi
 
             {mode !== 'reset' && (
               <div className="space-y-2">
-                <Label htmlFor="password">Password</Label>
+                <Label htmlFor="password">{t('auth:labels.password')}</Label>
                 <div className="relative">
                   <Lock className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
                   <Input
@@ -447,7 +449,7 @@ export const SignInModal: React.FC<SignInModalProps> = ({ isOpen, onClose, onSwi
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
                     className={`pl-10 pr-10 ${passwordErrors.length > 0 ? 'border-red-500' : ''}`}
-                    placeholder="Enter your password"
+                    placeholder={t('auth:placeholders.enterPassword')}
                     required
                   />
                   <button
@@ -466,7 +468,7 @@ export const SignInModal: React.FC<SignInModalProps> = ({ isOpen, onClose, onSwi
 
             {mode === 'signup' && (
               <div className="space-y-2">
-                <Label htmlFor="confirmPassword">Confirm Password</Label>
+                <Label htmlFor="confirmPassword">{t('auth:labels.confirmPassword')}</Label>
                 <div className="relative">
                   <Lock className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
                   <Input
@@ -475,7 +477,7 @@ export const SignInModal: React.FC<SignInModalProps> = ({ isOpen, onClose, onSwi
                     value={confirmPassword}
                     onChange={(e) => setConfirmPassword(e.target.value)}
                     className="pl-10 pr-10"
-                    placeholder="Confirm your password"
+                    placeholder={t('auth:placeholders.confirmPassword')}
                     required
                   />
                   <button
@@ -498,7 +500,7 @@ export const SignInModal: React.FC<SignInModalProps> = ({ isOpen, onClose, onSwi
                     onCheckedChange={(checked) => setRememberMe(checked as boolean)}
                   />
                   <Label htmlFor="remember" className="text-sm font-normal">
-                    Remember me
+                    {t('auth:labels.rememberMe')}
                   </Label>
                 </div>
                 <button
@@ -506,7 +508,7 @@ export const SignInModal: React.FC<SignInModalProps> = ({ isOpen, onClose, onSwi
                   onClick={() => setMode('reset')}
                   className="text-sm text-blue-600 hover:underline"
                 >
-                  Forgot password?
+                  {t('auth:buttons.forgotPassword')}
                 </button>
               </div>
             )}
@@ -519,10 +521,10 @@ export const SignInModal: React.FC<SignInModalProps> = ({ isOpen, onClose, onSwi
                   onCheckedChange={(checked) => setAgreeToTerms(checked as boolean)}
                 />
                 <Label htmlFor="terms" className="text-sm font-normal">
-                  I agree to the{' '}
-                  <a href="/terms" className="text-blue-600 hover:underline">Terms of Service</a>
-                  {' '}and{' '}
-                  <a href="/privacy" className="text-blue-600 hover:underline">Privacy Policy</a>
+                  {t('auth:labels.agreeToTerms')}{' '}
+                  <a href="/terms" className="text-blue-600 hover:underline">{t('auth:labels.termsOfService')}</a>
+                  {' '}{t('auth:labels.and')}{' '}
+                  <a href="/privacy" className="text-blue-600 hover:underline">{t('auth:labels.privacyPolicy')}</a>
                 </Label>
               </div>
             )}
@@ -531,14 +533,14 @@ export const SignInModal: React.FC<SignInModalProps> = ({ isOpen, onClose, onSwi
               {loading ? (
                 <>
                   <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                  {mode === 'signin' ? 'Signing in...' : 
-                   mode === 'signup' ? 'Creating account...' : 
-                   'Sending email...'}
+                  {mode === 'signin' ? t('auth:buttons.signingIn') : 
+                   mode === 'signup' ? t('auth:buttons.creatingAccount') : 
+                   t('auth:buttons.sendingEmail')}
                 </>
               ) : (
-                mode === 'signin' ? 'Sign In' : 
-                mode === 'signup' ? 'Create Account' : 
-                'Send Reset Email'
+                mode === 'signin' ? t('auth:buttons.signIn') : 
+                mode === 'signup' ? t('auth:buttons.signUp') : 
+                t('auth:buttons.sendResetEmail')
               )}
             </Button>
           </form>
@@ -547,35 +549,35 @@ export const SignInModal: React.FC<SignInModalProps> = ({ isOpen, onClose, onSwi
           <div className="text-center text-sm space-y-2">
             {mode === 'signin' ? (
               <p>
-                New to BelizeVibes?{' '}
+                {t('auth:footer.newToBelizeVibes')}{' '}
                 <button
                   type="button"
                   onClick={() => setMode('signup')}
                   className="text-blue-600 hover:underline font-medium"
                 >
-                  Create an account
+                  {t('auth:buttons.createAccount')}
                 </button>
               </p>
             ) : mode === 'signup' ? (
               <p>
-                Already have an account?{' '}
+                {t('auth:footer.alreadyHaveAccount')}{' '}
                 <button
                   type="button"
                   onClick={() => setMode('signin')}
                   className="text-blue-600 hover:underline font-medium"
                 >
-                  Sign in
+                  {t('auth:footer.signInLink')}
                 </button>
               </p>
             ) : (
               <p>
-                Remember your password?{' '}
+                {t('auth:footer.rememberPassword')}{' '}
                 <button
                   type="button"
                   onClick={() => setMode('signin')}
                   className="text-blue-600 hover:underline font-medium"
                 >
-                  Sign in
+                  {t('auth:footer.signInLink')}
                 </button>
               </p>
             )}

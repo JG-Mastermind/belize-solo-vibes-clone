@@ -9,6 +9,7 @@ import { Separator } from '@/components/ui/separator';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Calendar as CalendarIcon, Users, Clock, CreditCard, Gift, AlertCircle } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 import { format, addDays, isAfter, isBefore } from 'date-fns';
 import { Adventure, BookingFormData, PricingBreakdown } from '@/types/booking';
 import { BookingService } from '@/services/bookingService';
@@ -27,6 +28,7 @@ export const BookingWidget: React.FC<BookingWidgetProps> = ({
   className = ''
 }) => {
   const { user } = useAuth();
+  const { t } = useTranslation(['booking']);
   const [selectedDate, setSelectedDate] = useState<Date | undefined>();
   const [selectedTime, setSelectedTime] = useState<string>('');
   const [participants, setParticipants] = useState<number>(1);
@@ -307,7 +309,7 @@ export const BookingWidget: React.FC<BookingWidgetProps> = ({
       <CardContent className="space-y-6">
         {/* Date Selection */}
         <div className="space-y-2">
-          <Label className="text-sm font-medium">Select Date</Label>
+          <Label className="text-sm font-medium">{t('booking:labels.selectDate')}</Label>
           <Popover>
             <PopoverTrigger asChild>
               <Button
@@ -315,7 +317,7 @@ export const BookingWidget: React.FC<BookingWidgetProps> = ({
                 className="w-full justify-start text-left font-normal"
               >
                 <CalendarIcon className="mr-2 h-4 w-4" />
-                {selectedDate ? format(selectedDate, 'PPP') : 'Pick a date'}
+                {selectedDate ? format(selectedDate, 'PPP') : t('booking:placeholders.pickDate')}
               </Button>
             </PopoverTrigger>
             <PopoverContent className="w-auto p-0" align="start">
@@ -344,10 +346,10 @@ export const BookingWidget: React.FC<BookingWidgetProps> = ({
         {/* Time Selection */}
         {selectedDate && (
           <div className="space-y-2">
-            <Label className="text-sm font-medium">Select Time</Label>
+            <Label className="text-sm font-medium">{t('booking:labels.selectTime')}</Label>
             <Select value={selectedTime} onValueChange={setSelectedTime}>
               <SelectTrigger>
-                <SelectValue placeholder="Choose a time" />
+                <SelectValue placeholder={t('booking:placeholders.chooseTime')} />
               </SelectTrigger>
               <SelectContent>
                 {availableTimes.map((time) => (
@@ -365,7 +367,7 @@ export const BookingWidget: React.FC<BookingWidgetProps> = ({
 
         {/* Participants */}
         <div className="space-y-2">
-          <Label className="text-sm font-medium">Number of Participants</Label>
+          <Label className="text-sm font-medium">{t('booking:labels.numberOfParticipants')}</Label>
           <Select value={participants.toString()} onValueChange={(value) => setParticipants(parseInt(value))}>
             <SelectTrigger>
               <SelectValue />
@@ -392,12 +394,12 @@ export const BookingWidget: React.FC<BookingWidgetProps> = ({
               onClick={() => setShowPromoInput(true)}
             >
               <Gift className="w-4 h-4 mr-2" />
-              Have a promo code?
+              {t('booking:buttons.havePromoCode')}
             </Button>
           ) : (
             <div className="flex space-x-2">
               <Input
-                placeholder="Enter promo code"
+                placeholder={t('booking:placeholders.enterPromoCode')}
                 value={promoCode}
                 onChange={(e) => setPromoCode(e.target.value.toUpperCase())}
                 className="flex-1"
@@ -407,7 +409,7 @@ export const BookingWidget: React.FC<BookingWidgetProps> = ({
                 disabled={isLoading}
                 size="sm"
               >
-                Apply
+                {t('booking:buttons.apply')}
               </Button>
             </div>
           )}
@@ -430,7 +432,7 @@ export const BookingWidget: React.FC<BookingWidgetProps> = ({
         {/* Pricing Breakdown */}
         {pricing && (
           <div className="space-y-3 p-4 bg-gray-50 rounded-lg">
-            <h3 className="font-medium">Pricing Breakdown</h3>
+            <h3 className="font-medium">{t('booking:labels.pricingBreakdown')}</h3>
             
             <div className="space-y-2 text-sm">
               <div className="flex justify-between">
@@ -486,9 +488,9 @@ export const BookingWidget: React.FC<BookingWidgetProps> = ({
           <div className="flex items-start space-x-2">
             <AlertCircle className="w-4 h-4 text-blue-600 mt-0.5 flex-shrink-0" />
             <div className="text-sm text-blue-800">
-              <p className="font-medium">Free cancellation up to 24 hours before</p>
+              <p className="font-medium">{t('booking:messages.freeCancellation')}</p>
               <p className="text-xs text-blue-700 mt-1">
-                Get a full refund if you cancel at least 24 hours in advance.
+                {t('booking:messages.fullRefund')}
               </p>
             </div>
           </div>
@@ -511,7 +513,7 @@ export const BookingWidget: React.FC<BookingWidgetProps> = ({
         </Button>
         
         <div className="text-center text-xs text-gray-500">
-          You won't be charged yet
+          {t('booking:messages.wontBeChargedYet')}
         </div>
       </CardContent>
     </Card>

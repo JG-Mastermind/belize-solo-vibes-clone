@@ -5,6 +5,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { Calendar as CalendarIcon, Clock, Users, AlertCircle } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 import { format, addDays, isAfter, isBefore } from 'date-fns';
 import { Adventure, BookingFormData } from '@/types/booking';
 import { BookingService } from '@/services/bookingService';
@@ -20,6 +21,7 @@ export const BookingStepOne: React.FC<BookingStepOneProps> = ({
   formData,
   onUpdate
 }) => {
+  const { t } = useTranslation(['booking']);
   const [selectedDate, setSelectedDate] = useState<Date | undefined>(
     formData.selectedDate ? new Date(formData.selectedDate) : undefined
   );
@@ -27,9 +29,9 @@ export const BookingStepOne: React.FC<BookingStepOneProps> = ({
   const [isCheckingAvailability, setIsCheckingAvailability] = useState(false);
 
   const timeSlots = [
-    { value: '09:00', label: '9:00 AM', description: 'Morning departure' },
-    { value: '12:00', label: '12:00 PM', description: 'Afternoon departure' },
-    { value: '15:00', label: '3:00 PM', description: 'Late afternoon departure' },
+    { value: '09:00', label: '9:00 AM', description: t('booking:step1.timeSlots.morningDeparture') },
+    { value: '12:00', label: '12:00 PM', description: t('booking:step1.timeSlots.afternoonDeparture') },
+    { value: '15:00', label: '3:00 PM', description: t('booking:step1.timeSlots.lateAfternoonDeparture') },
   ];
 
   useEffect(() => {
@@ -71,15 +73,15 @@ export const BookingStepOne: React.FC<BookingStepOneProps> = ({
     if (!selectedDate) return null;
     
     if (isCheckingAvailability) {
-      return { status: 'loading', message: 'Checking availability...', color: 'bg-primary/10 text-primary' };
+      return { status: 'loading', message: t('booking:step1.availability.checkingAvailability'), color: 'bg-primary/10 text-primary' };
     }
     
     if (availableSpots === 0) {
-      return { status: 'full', message: 'Fully booked', color: 'bg-destructive/10 text-destructive' };
+      return { status: 'full', message: t('booking:step1.availability.fullyBooked'), color: 'bg-destructive/10 text-destructive' };
     } else if (availableSpots <= 3) {
-      return { status: 'limited', message: `Only ${availableSpots} spots left`, color: 'bg-orange-100 text-orange-800 spots-available' };
+      return { status: 'limited', message: t('booking:step1.availability.onlyXSpotsLeft', { count: availableSpots }), color: 'bg-orange-100 text-orange-800 spots-available' };
     } else {
-      return { status: 'available', message: `${availableSpots} spots available`, color: 'bg-primary/10 text-green-500 hover:bg-gray-800' };
+      return { status: 'available', message: t('booking:step1.availability.xSpotsAvailable', { count: availableSpots }), color: 'bg-primary/10 text-green-500 hover:bg-gray-800' };
     }
   };
 
@@ -92,7 +94,7 @@ export const BookingStepOne: React.FC<BookingStepOneProps> = ({
         <CardHeader>
           <CardTitle className="text-lg flex items-center">
             <CalendarIcon className="w-5 h-5 mr-2 text-orange-400" />
-            Select Your Date
+{t('booking:step1.selectDate')}
           </CardTitle>
         </CardHeader>
         <CardContent>
@@ -128,11 +130,11 @@ export const BookingStepOne: React.FC<BookingStepOneProps> = ({
                   
                   {/* Weather Info (Mock) */}
                   <div className="p-4 bg-muted rounded-lg">
-                    <h4 className="font-medium mb-2">Weather Forecast</h4>
+                    <h4 className="font-medium mb-2">{t('booking:step1.weatherForecast')}</h4>
                     <div className="flex items-center space-x-2 text-sm text-green-500">
                       <span>🌤️ 82°F</span>
                       <span>•</span>
-                      <span>Partly cloudy</span>
+                      <span>{t('booking:step1.weather.partlyCloudy')}</span>
                       <span>•</span>
                       <span>10% chance of rain</span>
                     </div>
@@ -141,7 +143,7 @@ export const BookingStepOne: React.FC<BookingStepOneProps> = ({
               ) : (
                 <div className="p-4 bg-muted rounded-lg text-center">
                   <CalendarIcon className="w-12 h-12 mx-auto text-muted-foreground mb-2" />
-                  <p className="text-muted-foreground">Select a date to check availability</p>
+                  <p className="text-muted-foreground">{t('booking:step1.selectDateToCheck')}</p>
                 </div>
               )}
             </div>
@@ -155,7 +157,7 @@ export const BookingStepOne: React.FC<BookingStepOneProps> = ({
           <CardHeader>
             <CardTitle className="text-lg flex items-center">
               <Clock className="w-5 h-5 mr-2 text-orange-400" />
-              Choose Your Time
+              {t('booking:step1.chooseTime')}
             </CardTitle>
           </CardHeader>
           <CardContent>
@@ -173,7 +175,7 @@ export const BookingStepOne: React.FC<BookingStepOneProps> = ({
                   <div className="font-semibold">{slot.label}</div>
                   <div className="text-sm text-muted-foreground">{slot.description}</div>
                   <div className="text-xs text-muted-foreground mt-1">
-                    {adventure.duration_hours} hours
+                    {t('booking:step1.duration.hours', { count: adventure.duration_hours })}
                   </div>
                 </button>
               ))}
@@ -187,7 +189,7 @@ export const BookingStepOne: React.FC<BookingStepOneProps> = ({
         <CardHeader>
           <CardTitle className="text-lg flex items-center">
             <AlertCircle className="w-5 h-5 mr-2 text-orange-400" />
-            Important Information
+            {t('booking:step1.importantInfo')}
           </CardTitle>
         </CardHeader>
         <CardContent>
@@ -195,28 +197,28 @@ export const BookingStepOne: React.FC<BookingStepOneProps> = ({
             <div className="flex items-start space-x-2">
               <div className="w-2 h-2 bg-blue-500 rounded-full mt-2 flex-shrink-0"></div>
               <div>
-                <strong>Booking Window:</strong> Book at least 24 hours in advance, up to {adventure.max_advance_booking_days} days ahead
+                <strong>{t('booking:step1.info.bookingWindow')}</strong> {t('booking:step1.info.bookingWindowDesc', { days: adventure.max_advance_booking_days })}
               </div>
             </div>
             
             <div className="flex items-start space-x-2">
               <div className="w-2 h-2 bg-green-500 rounded-full mt-2 flex-shrink-0"></div>
               <div>
-                <strong>Free Cancellation:</strong> Cancel up to 24 hours before your adventure for a full refund
+                <strong>{t('booking:step1.info.freeCancellation')}</strong> {t('booking:step1.info.freeCancellationDesc')}
               </div>
             </div>
             
             <div className="flex items-start space-x-2">
               <div className="w-2 h-2 bg-orange-500 rounded-full mt-2 flex-shrink-0"></div>
               <div>
-                <strong>Group Size:</strong> Maximum {adventure.max_participants} participants per session
+                <strong>{t('booking:step1.info.groupSize')}</strong> {t('booking:step1.info.groupSizeDesc', { count: adventure.max_participants })}
               </div>
             </div>
             
             <div className="flex items-start space-x-2">
               <div className="w-2 h-2 bg-purple-500 rounded-full mt-2 flex-shrink-0"></div>
               <div>
-                <strong>Meeting Point:</strong> {adventure.meeting_point || 'Details will be provided after booking'}
+                <strong>{t('booking:step1.info.meetingPoint')}</strong> {adventure.meeting_point || t('booking:step1.info.meetingPointFallback')}
               </div>
             </div>
           </div>
@@ -233,10 +235,10 @@ export const BookingStepOne: React.FC<BookingStepOneProps> = ({
               </div>
               <div>
                 <h3 className="font-semibold text-green-800">
-                  Early Bird Special: {adventure.early_bird_discount_percentage}% Off!
+                  {t('booking:step1.earlyBird.title', { percent: adventure.early_bird_discount_percentage })}
                 </h3>
                 <p className="text-sm text-green-700">
-                  Book {adventure.early_bird_days} days in advance and save on your adventure
+                  {t('booking:step1.earlyBird.description', { days: adventure.early_bird_days })}
                 </p>
               </div>
             </div>

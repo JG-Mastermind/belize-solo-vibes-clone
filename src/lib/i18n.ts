@@ -179,6 +179,27 @@ i18n
           },
         },
         booking: {
+          stepIndicator: {
+            stepXOfY: 'Step {{current}} of {{total}}',
+            percentComplete: '{{percent}}% Complete',
+          },
+          steps: {
+            titles: {
+              dateTime: 'Date & Time',
+              groupSize: 'Group Size',
+              guestDetails: 'Guest Details',
+              addOns: 'Add-ons',
+              payment: 'Payment',
+            },
+            descriptions: {
+              dateTime: 'Choose your adventure date',
+              groupSize: 'Select number of participants',
+              guestDetails: 'Your information',
+              addOns: 'Enhance your experience',
+              payment: 'Secure checkout',
+            },
+            stepXOfY: 'Step {{current}} of {{total}}',
+          },
           labels: {
             selectDate: 'Select Date',
             selectTime: 'Select Time',
@@ -400,6 +421,27 @@ i18n
           },
         },
         booking: {
+          stepIndicator: {
+            stepXOfY: 'Étape {{current}} de {{total}}',
+            percentComplete: '{{percent}}% Complété',
+          },
+          steps: {
+            titles: {
+              dateTime: 'Date et Heure',
+              groupSize: 'Taille du Groupe',
+              guestDetails: 'Détails Invités',
+              addOns: 'Extras',
+              payment: 'Paiement',
+            },
+            descriptions: {
+              dateTime: 'Choisissez la date de votre aventure',
+              groupSize: 'Sélectionnez le nombre de participants',
+              guestDetails: 'Vos informations',
+              addOns: 'Améliorez votre expérience',
+              payment: 'Paiement sécurisé',
+            },
+            stepXOfY: 'Étape {{current}} de {{total}}',
+          },
           labels: {
             selectDate: 'Sélectionner Date',
             selectTime: 'Sélectionner Heure',

@@ -11,6 +11,7 @@ import { Label } from '@/components/ui/label';
 import { Calendar as CalendarIcon, Users, Clock, CreditCard, Gift, AlertCircle } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { format, addDays, isAfter, isBefore } from 'date-fns';
+import { getDateFnsLocale } from '@/lib/locale';
 import { Adventure, BookingFormData, PricingBreakdown } from '@/types/booking';
 import { BookingService } from '@/services/bookingService';
 import { useAuth } from '@/components/auth/AuthProvider';
@@ -317,7 +318,7 @@ export const BookingWidget: React.FC<BookingWidgetProps> = ({
                 className="w-full justify-start text-left font-normal"
               >
                 <CalendarIcon className="mr-2 h-4 w-4" />
-                {selectedDate ? format(selectedDate, 'PPP') : t('booking:placeholders.pickDate')}
+                {selectedDate ? format(selectedDate, 'PPP', { locale: getDateFnsLocale() }) : t('booking:placeholders.pickDate')}
               </Button>
             </PopoverTrigger>
             <PopoverContent className="w-auto p-0" align="start">

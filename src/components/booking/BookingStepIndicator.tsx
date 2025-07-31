@@ -1,5 +1,6 @@
 import React from 'react';
 import { CheckCircle, Circle } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 import { BookingStep } from '@/types/booking';
 
 interface BookingStepIndicatorProps {
@@ -7,6 +8,8 @@ interface BookingStepIndicatorProps {
 }
 
 export const BookingStepIndicator: React.FC<BookingStepIndicatorProps> = ({ steps }) => {
+  const { t } = useTranslation(['booking']);
+  
   return (
     <div className="w-full">
       {/* Progress Bar */}
@@ -57,8 +60,8 @@ export const BookingStepIndicator: React.FC<BookingStepIndicatorProps> = ({ step
       {/* Mobile Progress Bar */}
       <div className="sm:hidden mb-4">
         <div className="flex items-center justify-between text-sm text-muted-foreground mb-2">
-          <span>Step {steps.find(s => s.current)?.id || 1} of {steps.length}</span>
-          <span>{Math.round(((steps.filter(s => s.completed).length) / steps.length) * 100)}% Complete</span>
+          <span>{t('booking:stepIndicator.stepXOfY', { current: steps.find(s => s.current)?.id || 1, total: steps.length })}</span>
+          <span>{t('booking:stepIndicator.percentComplete', { percent: Math.round(((steps.filter(s => s.completed).length) / steps.length) * 100) })}</span>
         </div>
         <div className="w-full bg-muted rounded-full h-2">
           <div 

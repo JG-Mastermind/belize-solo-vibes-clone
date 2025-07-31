@@ -14,6 +14,7 @@ import {
 } from 'lucide-react';
 import { Adventure, BookingFormData, PricingBreakdown } from '@/types/booking';
 import { format } from 'date-fns';
+import { getDateFnsLocale } from '@/lib/locale';
 
 interface BookingSummaryProps {
   adventure: Adventure;
@@ -29,7 +30,7 @@ export const BookingSummary: React.FC<BookingSummaryProps> = ({
   const formatDate = (dateString: string) => {
     if (!dateString) return '';
     try {
-      return format(new Date(dateString), 'EEEE, MMMM d, yyyy');
+      return format(new Date(dateString), 'EEEE, MMMM d, yyyy', { locale: getDateFnsLocale() });
     } catch {
       return dateString;
     }

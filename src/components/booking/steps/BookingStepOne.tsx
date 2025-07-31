@@ -7,6 +7,7 @@ import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover
 import { Calendar as CalendarIcon, Clock, Users, AlertCircle } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { format, addDays, isAfter, isBefore } from 'date-fns';
+import { getDateFnsLocale } from '@/lib/locale';
 import { Adventure, BookingFormData } from '@/types/booking';
 import { BookingService } from '@/services/bookingService';
 
@@ -118,7 +119,7 @@ export const BookingStepOne: React.FC<BookingStepOneProps> = ({
                 <div className="space-y-3">
                   <div className="p-4 bg-muted rounded-lg">
                     <h3 className="font-semibold text-foreground mb-2">
-                      {format(selectedDate, 'EEEE, MMMM d, yyyy')}
+                      {format(selectedDate, 'EEEE, MMMM d, yyyy', { locale: getDateFnsLocale() })}
                     </h3>
                     
                     {availabilityStatus && (

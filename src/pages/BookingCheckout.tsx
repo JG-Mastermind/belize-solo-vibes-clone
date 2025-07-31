@@ -6,6 +6,7 @@ import { Progress } from '@/components/ui/progress';
 import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
 import { CheckCircle, Clock, Users, MapPin, ArrowLeft, ArrowRight } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 import { Adventure, BookingFormData, BookingStep, PricingBreakdown } from '@/types/booking';
 import { BookingService } from '@/services/bookingService';
 import { useAuth } from '@/components/auth/AuthProvider';
@@ -23,6 +24,7 @@ const BookingCheckout: React.FC = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const { user } = useAuth();
+  const { t } = useTranslation(['booking']);
   
   const [adventure, setAdventure] = useState<Adventure | null>(null);
   const currentStep = parseInt(new URLSearchParams(location.search).get('step') || '1');
@@ -49,11 +51,11 @@ const BookingCheckout: React.FC = () => {
   const [pricing, setPricing] = useState<PricingBreakdown | null>(null);
 
   const steps: BookingStep[] = [
-    { id: 1, title: 'Date & Time', description: 'Choose your adventure date', completed: false, current: true },
-    { id: 2, title: 'Group Size', description: 'Select number of participants', completed: false, current: false },
-    { id: 3, title: 'Guest Details', description: 'Your information', completed: false, current: false },
-    { id: 4, title: 'Add-ons', description: 'Enhance your experience', completed: false, current: false },
-    { id: 5, title: 'Payment', description: 'Secure checkout', completed: false, current: false },
+    { id: 1, title: t('booking:steps.titles.dateTime'), description: t('booking:steps.descriptions.dateTime'), completed: false, current: true },
+    { id: 2, title: t('booking:steps.titles.groupSize'), description: t('booking:steps.descriptions.groupSize'), completed: false, current: false },
+    { id: 3, title: t('booking:steps.titles.guestDetails'), description: t('booking:steps.descriptions.guestDetails'), completed: false, current: false },
+    { id: 4, title: t('booking:steps.titles.addOns'), description: t('booking:steps.descriptions.addOns'), completed: false, current: false },
+    { id: 5, title: t('booking:steps.titles.payment'), description: t('booking:steps.descriptions.payment'), completed: false, current: false },
   ];
 
   useEffect(() => {
@@ -319,7 +321,7 @@ const BookingCheckout: React.FC = () => {
                   <CardTitle className="flex items-center justify-between">
                     <span>{steps[currentStep - 1].title}</span>
                     <Badge variant="outline">
-                      Step {currentStep} of {steps.length}
+                      {t('booking:steps.stepXOfY', { current: currentStep, total: steps.length })}
                     </Badge>
                   </CardTitle>
                   <p className="text-muted-foreground">{steps[currentStep - 1].description}</p>

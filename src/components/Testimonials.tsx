@@ -10,6 +10,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/components/auth/AuthProvider";
 import { toast } from "sonner";
+import { useTranslation } from "react-i18next";
 
 const initialTestimonials = [
   {
@@ -81,6 +82,7 @@ interface Review {
 
 const Testimonials = () => {
   const { user, getUserAvatar } = useAuth();
+  const { t } = useTranslation(['testimonials']);
   const [testimonials, setTestimonials] = useState<Review[]>(initialTestimonials);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [showReviewForm, setShowReviewForm] = useState(false);
@@ -204,27 +206,27 @@ const Testimonials = () => {
     const errors: {[key: string]: string} = {};
     
     if (!formData.name.trim()) {
-      errors.name = 'Name is required';
+      errors.name = t('testimonials:form.validation.nameRequired');
     }
     
     if (!formData.content.trim()) {
-      errors.content = 'Review content is required';
+      errors.content = t('testimonials:form.validation.contentRequired');
     } else if (formData.content.length < 10) {
-      errors.content = 'Review must be at least 10 characters long';
+      errors.content = t('testimonials:form.validation.contentMinLength');
     }
     
     if (formData.rating === 0) {
-      errors.rating = 'Please select a rating';
+      errors.rating = t('testimonials:form.validation.ratingRequired');
     }
     
     if (selectedImages.length > MAX_IMAGES) {
-      errors.images = `Maximum ${MAX_IMAGES} images allowed`;
+      errors.images = t('testimonials:form.validation.maxImages', { max: MAX_IMAGES });
     }
     
     // Validate file sizes
     const oversizedFiles = selectedImages.filter(file => file.size > MAX_FILE_SIZE);
     if (oversizedFiles.length > 0) {
-      errors.images = 'Some images are too large (max 5MB per image)';
+      errors.images = t('testimonials:form.validation.oversizedFiles');
     }
     
     setFormErrors(errors);
@@ -327,7 +329,7 @@ const Testimonials = () => {
         
       if (error) throw error;
       
-      toast.success('Thank you for your review! It will be published after verification.');
+      toast.success(t('testimonials:form.messages.success'));
       
       // Reset form
       setFormData({ name: '', content: '', rating: 0 });
@@ -336,7 +338,7 @@ const Testimonials = () => {
       
     } catch (error) {
       console.error('Error submitting review:', error);
-      toast.error('Failed to submit review. Please try again.');
+      toast.error(t('testimonials:form.messages.error'));
     } finally {
       setSubmitting(false);
     }
@@ -352,7 +354,7 @@ const Testimonials = () => {
     
     // Validate file count
     if (selectedImages.length + files.length > MAX_IMAGES) {
-      toast.error(`You can only upload up to ${MAX_IMAGES} images`);
+      toast.error(t('testimonials:form.validation.invalidFiles', { max: MAX_IMAGES }));
       return;
     }
     
@@ -362,12 +364,12 @@ const Testimonials = () => {
     
     files.forEach(file => {
       if (!file.type.startsWith('image/')) {
-        invalidFiles.push(`${file.name} is not an image`);
+        invalidFiles.push(t('testimonials:form.validation.notImage', { filename: file.name }));
         return;
       }
       
       if (file.size > MAX_FILE_SIZE) {
-        invalidFiles.push(`${file.name} is too large (max 5MB)`);
+        invalidFiles.push(t('testimonials:form.validation.tooLarge', { filename: file.name }));
         return;
       }
       
@@ -457,7 +459,7 @@ const Testimonials = () => {
       return uploadedUrls;
     } catch (error) {
       console.error('Error uploading images:', error);
-      toast.error('Failed to upload images');
+      toast.error(t('testimonials:form.messages.uploadError'));
       return [];
     } finally {
       setIsUploading(false);
@@ -478,10 +480,10 @@ const Testimonials = () => {
       <div className="container mx-auto px-4">
         <div className="text-center mb-12">
           <h2 className="text-3xl md:text-4xl font-playfair font-bold text-foreground mb-4">
-            What Solo Travelers Say
+            {t('testimonials:header')}
           </h2>
           <p className="text-lg text-muted-foreground max-w-2xl mx-auto mb-6">
-            Don't just take our word for it. Here's what our adventurous solo travelers have to say about their BelizeVibes experiences.
+            {t('testimonials:subtitle')}
           </p>
           
           <Button
@@ -491,7 +493,7 @@ const Testimonials = () => {
             aria-controls="review-form"
           >
             <Plus className="h-4 w-4 mr-2" />
-            {showReviewForm ? "Hide Review Form" : "Write a Review"}
+            {showReviewForm ? t('testimonials:buttons.hideForm') : t('testimonials:buttons.writeReview')}
           </Button>
         </div>
 
@@ -501,19 +503,19 @@ const Testimonials = () => {
             <Card className="bg-card border-green-200 dark:border-green-800 shadow-lg">
               <CardContent className="p-6">
                 <h3 className="text-xl font-playfair font-bold text-foreground mb-4">
-                  Share Your BelizeVibes Experience
+                  {t('testimonials:form.title')}
                 </h3>
                 
                 <form onSubmit={handleSubmitReview} className="space-y-4">
                   <div>
                     <label htmlFor="review-name" className="block text-sm font-medium text-foreground mb-1">
-                      Your Name *
+                      {t('testimonials:form.labels.name')}
                     </label>
                     <Input
                       id="review-name"
                       value={formData.name}
                       onChange={(e) => setFormData(prev => ({ ...prev, name: e.target.value }))}
-                      placeholder="Enter your name"
+                      placeholder={t('testimonials:form.placeholders.name')}
                       className={formErrors.name ? "border-red-500" : ""}
                       aria-describedby={formErrors.name ? "name-error" : undefined}
                     />
@@ -526,7 +528,7 @@ const Testimonials = () => {
 
                   <div>
                     <label htmlFor="review-rating" className="block text-sm font-medium text-foreground mb-2">
-                      Rating *
+                      {t('testimonials:form.labels.rating')}
                     </label>
                     <div className="flex space-x-1" role="radiogroup" aria-labelledby="review-rating">
                       {[1, 2, 3, 4, 5].map((star) => (
@@ -537,7 +539,7 @@ const Testimonials = () => {
                           onMouseEnter={() => setHoverRating(star)}
                           onMouseLeave={() => setHoverRating(0)}
                           className="transition-colors focus:outline-none focus:ring-2 focus:ring-belize-green-500 rounded"
-                          aria-label={`Rate ${star} star${star !== 1 ? 's' : ''}`}
+                          aria-label={t('testimonials:accessibility.rateStar', { star, plural: star !== 1 ? 's' : '' })}
                           role="radio"
                           aria-checked={formData.rating === star}
                         >
@@ -560,13 +562,13 @@ const Testimonials = () => {
 
                   <div>
                     <label htmlFor="review-content" className="block text-sm font-medium text-foreground mb-1">
-                      Your Review *
+                      {t('testimonials:form.labels.review')}
                     </label>
                     <Textarea
                       id="review-content"
                       value={formData.content}
                       onChange={(e) => setFormData(prev => ({ ...prev, content: e.target.value }))}
-                      placeholder="Tell us about your experience with BelizeVibes..."
+                      placeholder={t('testimonials:form.placeholders.review')}
                       rows={4}
                       className={formErrors.content ? "border-red-500" : ""}
                       aria-describedby={formErrors.content ? "content-error" : undefined}
@@ -581,7 +583,7 @@ const Testimonials = () => {
                   {/* Image Upload Section */}
                   <div>
                     <label className="block text-sm font-medium text-foreground mb-2">
-                      Add Photos (Optional) - Up to {MAX_IMAGES} images
+                      {t('testimonials:form.labels.photos', { max: MAX_IMAGES })}
                     </label>
                     
                     {/* File Input */}
@@ -602,11 +604,11 @@ const Testimonials = () => {
                             <Upload className="h-8 w-8 text-muted-foreground" />
                             <span className="text-sm font-medium text-foreground">
                               {selectedImages.length >= MAX_IMAGES 
-                                ? `Maximum ${MAX_IMAGES} images selected` 
-                                : "Click to upload photos or drag and drop"}
+                                ? t('testimonials:form.upload.maxReached', { max: MAX_IMAGES })
+                                : t('testimonials:form.upload.clickToUpload')}
                             </span>
                             <span className="text-xs text-muted-foreground">
-                              PNG, JPG, GIF up to 5MB each
+                              {t('testimonials:form.upload.fileTypes')}
                             </span>
                           </div>
                         </label>
@@ -616,7 +618,7 @@ const Testimonials = () => {
                       {isUploading && (
                         <div className="space-y-2">
                           <div className="flex items-center justify-between text-sm">
-                            <span className="text-muted-foreground">Uploading images...</span>
+                            <span className="text-muted-foreground">{t('testimonials:form.upload.uploading')}</span>
                             <span className="text-muted-foreground">{uploadProgress}%</span>
                           </div>
                           <Progress value={uploadProgress} className="h-2" />
@@ -627,7 +629,7 @@ const Testimonials = () => {
                       {imagePreviews.length > 0 && (
                         <div className="space-y-2">
                           <p className="text-sm font-medium text-foreground">
-                            Selected Images ({imagePreviews.length}/{MAX_IMAGES})
+                            {t('testimonials:form.upload.selectedImages', { count: imagePreviews.length, max: MAX_IMAGES })}
                           </p>
                           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3">
                             {imagePreviews.map((preview, index) => (
@@ -635,7 +637,7 @@ const Testimonials = () => {
                                 <div className="aspect-square rounded-lg overflow-hidden bg-muted">
                                   <img
                                     src={preview}
-                                    alt={`Preview ${index + 1}`}
+                                    alt={t('testimonials:accessibility.previewImage', { index: index + 1 })}
                                     className="w-full h-full object-cover"
                                   />
                                 </div>
@@ -671,15 +673,15 @@ const Testimonials = () => {
                       {isUploading ? (
                         <>
                           <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-                          Uploading Images...
+                          {t('testimonials:form.messages.uploadingImages')}
                         </>
                       ) : submitting ? (
                         <>
                           <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-                          Submitting...
+                          {t('testimonials:form.messages.submitting')}
                         </>
                       ) : (
-                        'Submit Review'
+                        t('testimonials:buttons.submitReview')
                       )}
                     </Button>
                     <Button
@@ -688,7 +690,7 @@ const Testimonials = () => {
                       onClick={() => setShowReviewForm(false)}
                       className="px-6"
                     >
-                      Cancel
+                      {t('testimonials:buttons.cancel')}
                     </Button>
                   </div>
                 </form>
@@ -730,7 +732,7 @@ const Testimonials = () => {
                             <div key={index} className="aspect-square rounded-lg overflow-hidden bg-muted border border-border">
                               <img
                                 src={imageUrl}
-                                alt={`Review photo ${index + 1} by ${testimonials[currentIndex].name}`}
+                                alt={t('testimonials:accessibility.reviewPhoto', { index: index + 1, name: testimonials[currentIndex].name })}
                                 className="w-full h-full object-cover hover:scale-105 transition-transform duration-300 cursor-pointer"
                                 onClick={() => window.open(imageUrl, '_blank')}
                               />
@@ -740,7 +742,10 @@ const Testimonials = () => {
                         {testimonials[currentIndex].images!.length > 1 && (
                           <p className="text-xs text-muted-foreground mt-2 text-center">
                             <ImageIcon className="w-3 h-3 inline mr-1" />
-                            {testimonials[currentIndex].images!.length} photo{testimonials[currentIndex].images!.length > 1 ? 's' : ''} • Click to view full size
+                            {t('testimonials:accessibility.photosCount', { 
+                              count: testimonials[currentIndex].images!.length, 
+                              plural: testimonials[currentIndex].images!.length > 1 ? 's' : '' 
+                            })}
                           </p>
                         )}
                       </div>
@@ -828,7 +833,7 @@ const Testimonials = () => {
               className="border-primary text-primary hover:bg-primary/10"
               disabled={loading}
             >
-              {loading ? 'Loading...' : `See More Reviews (${testimonials.length - visibleCount} more)`}
+              {loading ? t('testimonials:buttons.loading') : t('testimonials:buttons.loadMore', { count: testimonials.length - visibleCount })}
             </Button>
           </div>
         )}
@@ -839,19 +844,19 @@ const Testimonials = () => {
             <div className="text-3xl font-bold text-primary mb-2">
               {(testimonials.reduce((acc, t) => acc + t.rating, 0) / testimonials.length).toFixed(1)}/5
             </div>
-            <div className="text-sm text-muted-foreground">Average Rating</div>
+            <div className="text-sm text-muted-foreground">{t('testimonials:stats.averageRating')}</div>
           </div>
           <div className="text-center">
             <div className="text-3xl font-bold text-primary mb-2">{testimonials.length}</div>
-            <div className="text-sm text-muted-foreground">Total Reviews</div>
+            <div className="text-sm text-muted-foreground">{t('testimonials:stats.totalReviews')}</div>
           </div>
           <div className="text-center">
             <div className="text-3xl font-bold text-primary mb-2">95%</div>
-            <div className="text-sm text-muted-foreground">Solo Travelers</div>
+            <div className="text-sm text-muted-foreground">{t('testimonials:stats.soloTravelers')}</div>
           </div>
           <div className="text-center">
             <div className="text-3xl font-bold text-primary mb-2">100%</div>
-            <div className="text-sm text-muted-foreground">Satisfaction</div>
+            <div className="text-sm text-muted-foreground">{t('testimonials:stats.satisfaction')}</div>
           </div>
         </div>
       </div>

@@ -2,13 +2,16 @@ import React from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Calendar, User, Facebook, Instagram, Mail } from "lucide-react";
+import { useTranslation } from "react-i18next";
 
 const Blog = () => {
+  const { t } = useTranslation(['blog']);
+  
   const blogPosts = [
     {
       id: 1,
-      title: "10 Solo Adventures to Take in Belize",
-      excerpt: "From cave tubing to jungle zip-lining, discover the best solo-friendly adventures that Belize has to offer.",
+      title: t('blog:posts.post1.title'),
+      excerpt: t('blog:posts.post1.excerpt'),
       imgUrl: "https://images.unsplash.com/photo-1482938289607-e9573fc25ebb?w=800&h=400&fit=crop&crop=center",
       author: "Maya Rodriguez",
       date: "December 15, 2024",
@@ -16,8 +19,8 @@ const Blog = () => {
     },
     {
       id: 2,
-      title: "How to Stay Safe While Traveling Alone",
-      excerpt: "Essential safety tips and precautions for solo travelers exploring Belize's beautiful landscapes.",
+      title: t('blog:posts.post2.title'),
+      excerpt: t('blog:posts.post2.excerpt'),
       imgUrl: "https://images.unsplash.com/photo-1472396961693-142e6e269027?w=800&h=400&fit=crop&crop=center",
       author: "Carlos Mendez",
       date: "December 10, 2024",
@@ -25,8 +28,8 @@ const Blog = () => {
     },
     {
       id: 3,
-      title: "A Week in San Ignacio: Budget & Luxury Picks",
-      excerpt: "Whether you're backpacking or splurging, here's how to make the most of San Ignacio's adventure scene.",
+      title: t('blog:posts.post3.title'),
+      excerpt: t('blog:posts.post3.excerpt'),
       imgUrl: "https://images.unsplash.com/photo-1433086966358-54859d0ed716?w=800&h=400&fit=crop&crop=center",
       author: "Sarah Thompson",
       date: "December 5, 2024",
@@ -34,8 +37,8 @@ const Blog = () => {
     },
     {
       id: 4,
-      title: "Wildlife Watching: A Solo Traveler's Guide",
-      excerpt: "Spot jaguars, howler monkeys, and exotic birds on your own terms with these wildlife watching tips.",
+      title: t('blog:posts.post4.title'),
+      excerpt: t('blog:posts.post4.excerpt'),
       imgUrl: "https://images.unsplash.com/photo-1509316975850-ff9c5deb0cd9?w=800&h=400&fit=crop&crop=center",
       author: "Elena Castro",
       date: "November 28, 2024",
@@ -43,8 +46,8 @@ const Blog = () => {
     },
     {
       id: 5,
-      title: "Budget-Friendly Belize: Solo Travel on $50/Day",
-      excerpt: "Discover how to experience Belize's wonders without breaking the bank, from hostels to street food.",
+      title: t('blog:posts.post5.title'),
+      excerpt: t('blog:posts.post5.excerpt'),
       imgUrl: "https://images.unsplash.com/photo-1513836279014-a89f7a76ae86?w=800&h=400&fit=crop&crop=center",
       author: "Mike Johnson",
       date: "November 20, 2024",
@@ -52,8 +55,8 @@ const Blog = () => {
     },
     {
       id: 6,
-      title: "The Best Time to Visit Belize for Solo Travelers",
-      excerpt: "Weather, crowds, and costs - everything you need to know about timing your solo Belize adventure.",
+      title: t('blog:posts.post6.title'),
+      excerpt: t('blog:posts.post6.excerpt'),
       imgUrl: "https://images.unsplash.com/photo-1518495973542-4543c06a5843?w=800&h=400&fit=crop&crop=center",
       author: "Ana Gutierrez",
       date: "November 15, 2024",
@@ -62,8 +65,10 @@ const Blog = () => {
   ];
 
   const popularTopics = [
-    "Wildlife", "Safety", "Budget Travel", "Group Tours", "Jungle Adventures", 
-    "Beach Activities", "Cultural Experiences", "Solo Tips", "Photography"
+    t('blog:topics.wildlife'), t('blog:topics.safety'), t('blog:topics.budgetTravel'), 
+    t('blog:topics.groupTours'), t('blog:topics.jungleAdventures'), 
+    t('blog:topics.beachActivities'), t('blog:topics.culturalExperiences'), 
+    t('blog:topics.soloTips'), t('blog:topics.photography')
   ];
 
   const handleNewsletterSubmit = (e: React.FormEvent<HTMLFormElement>) => {
@@ -87,17 +92,17 @@ const Blog = () => {
         <div className="relative z-10 container mx-auto px-4 text-center text-white">
           <div className="max-w-3xl mx-auto animate-fade-in">
             <h1 className="text-4xl md:text-6xl font-playfair font-bold mb-6 leading-tight">
-              Solo Travel Guide
+              {t('blog:hero.title')}
             </h1>
             <p className="text-lg md:text-xl mb-8 opacity-90">
-              Tips, stories, and inspiration for your Belize journey.
+              {t('blog:hero.subtitle')}
             </p>
             <Button 
               onClick={() => document.getElementById('blog-posts')?.scrollIntoView({ behavior: 'smooth' })}
               size="lg" 
               className="bg-belize-orange-500 hover:bg-belize-orange-600 text-white px-8 py-3 text-lg font-semibold transition-all duration-300 hover:scale-105"
             >
-              Start Reading
+              {t('blog:hero.startReading')}
             </Button>
           </div>
         </div>
@@ -110,7 +115,7 @@ const Blog = () => {
           {/* Blog Posts Grid */}
           <main className="lg:col-span-3" id="blog-posts" aria-labelledby="latest-stories-heading">
             <h2 id="latest-stories-heading" className="text-3xl font-playfair font-bold text-belize-neutral-900 mb-8 text-center lg:text-left">
-              Latest Stories
+              {t('blog:main.latestStories')}
             </h2>
             
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
@@ -151,7 +156,7 @@ const Blog = () => {
                       className="w-full border-belize-green-500 text-belize-green-600 hover:bg-belize-green-500 hover:text-white transition-all duration-300"
                       onClick={() => console.log(`Maps to: /blog/${post.slug}`)}
                     >
-                      Read More
+                      {t('blog:main.readMore')}
                     </Button>
                   </CardContent>
                 </Card>
@@ -164,7 +169,7 @@ const Blog = () => {
             
             <Card className="p-6" aria-labelledby="popular-topics-heading">
               <h3 id="popular-topics-heading" className="text-xl font-playfair font-semibold text-belize-neutral-900 mb-4">
-                Popular Topics
+                {t('blog:sidebar.popularTopics')}
               </h3>
               <div className="flex flex-wrap gap-2">
                 {popularTopics.map((topic, index) => (
@@ -181,19 +186,19 @@ const Blog = () => {
 
             <Card className="p-6" aria-labelledby="follow-us-heading">
               <h3 id="follow-us-heading" className="text-xl font-playfair font-semibold text-belize-neutral-900 mb-4">
-                Follow Us
+                {t('blog:sidebar.followUs')}
               </h3>
               <div className="flex space-x-4">
                 <a 
                   href="#" 
-                  aria-label="Follow us on Facebook"
+                  aria-label={t('blog:socialMedia.facebookLabel')}
                   className="w-10 h-10 bg-belize-green-500 rounded-full flex items-center justify-center hover:bg-belize-green-600 transition-colors text-white"
                 >
                   <Facebook className="h-5 w-5" />
                 </a>
                 <a 
                   href="#" 
-                  aria-label="Follow us on Instagram"
+                  aria-label={t('blog:socialMedia.instagramLabel')}
                   className="w-10 h-10 bg-belize-green-500 rounded-full flex items-center justify-center hover:bg-belize-green-600 transition-colors text-white"
                 >
                   <Instagram className="h-5 w-5" />
@@ -203,17 +208,17 @@ const Blog = () => {
 
             <Card className="p-6" aria-labelledby="newsletter-heading">
               <h3 id="newsletter-heading" className="text-xl font-playfair font-semibold text-belize-neutral-900 mb-4">
-                Stay Updated
+                {t('blog:sidebar.stayUpdated')}
               </h3>
               <p className="text-sm text-belize-neutral-600 mb-4">
-                Get the latest travel tips and adventure stories delivered to your inbox.
+                {t('blog:sidebar.newsletterDescription')}
               </p>
               <form onSubmit={handleNewsletterSubmit} className="space-y-3">
                 <label htmlFor="newsletter-email" className="sr-only">Email address</label>
                 <input
                   id="newsletter-email"
                   type="email"
-                  placeholder="Enter your email"
+                  placeholder={t('blog:sidebar.emailPlaceholder')}
                   required
                   className="w-full px-3 py-2 border border-belize-neutral-200 rounded-lg focus:ring-2 focus:ring-belize-green-500 focus:border-transparent outline-none transition-all duration-300"
                 />
@@ -222,7 +227,7 @@ const Blog = () => {
                   className="w-full bg-belize-orange-500 hover:bg-belize-orange-600 text-white"
                 >
                   <Mail className="h-4 w-4 mr-2" />
-                  Subscribe
+                  {t('blog:sidebar.subscribe')}
                 </Button>
               </form>
             </Card>

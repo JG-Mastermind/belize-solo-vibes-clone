@@ -240,6 +240,66 @@ i18n
             previewImage: 'Preview {{index}}',
           },
         },
+        blog: {
+          hero: {
+            title: 'Solo Travel Guide',
+            subtitle: 'Tips, stories, and inspiration for your Belize journey.',
+            startReading: 'Start Reading',
+          },
+          main: {
+            latestStories: 'Latest Stories',
+            readMore: 'Read More',
+          },
+          sidebar: {
+            popularTopics: 'Popular Topics',
+            followUs: 'Follow Us',
+            stayUpdated: 'Stay Updated',
+            newsletterDescription: 'Get the latest travel tips and adventure stories delivered to your inbox.',
+            emailPlaceholder: 'Enter your email',
+            subscribe: 'Subscribe',
+          },
+          topics: {
+            wildlife: 'Wildlife',
+            safety: 'Safety',
+            budgetTravel: 'Budget Travel',
+            groupTours: 'Group Tours',
+            jungleAdventures: 'Jungle Adventures',
+            beachActivities: 'Beach Activities',
+            culturalExperiences: 'Cultural Experiences',
+            soloTips: 'Solo Tips',
+            photography: 'Photography',
+          },
+          posts: {
+            post1: {
+              title: '10 Solo Adventures to Take in Belize',
+              excerpt: 'From cave tubing to jungle zip-lining, discover the best solo-friendly adventures that Belize has to offer.',
+            },
+            post2: {
+              title: 'How to Stay Safe While Traveling Alone',
+              excerpt: 'Essential safety tips and precautions for solo travelers exploring Belize\'s beautiful landscapes.',
+            },
+            post3: {
+              title: 'A Week in San Ignacio: Budget & Luxury Picks',
+              excerpt: 'Whether you\'re backpacking or splurging, here\'s how to make the most of San Ignacio\'s adventure scene.',
+            },
+            post4: {
+              title: 'Wildlife Watching: A Solo Traveler\'s Guide',
+              excerpt: 'Spot jaguars, howler monkeys, and exotic birds on your own terms with these wildlife watching tips.',
+            },
+            post5: {
+              title: 'Budget-Friendly Belize: Solo Travel on $50/Day',
+              excerpt: 'Discover how to experience Belize\'s wonders without breaking the bank, from hostels to street food.',
+            },
+            post6: {
+              title: 'The Best Time to Visit Belize for Solo Travelers',
+              excerpt: 'Weather, crowds, and costs - everything you need to know about timing your solo Belize adventure.',
+            },
+          },
+          socialMedia: {
+            facebookLabel: 'Follow us on Facebook',
+            instagramLabel: 'Follow us on Instagram',
+          },
+        },
         home: {
           hero: {
             title: 'Your Adventure Awaits',
@@ -387,6 +447,97 @@ i18n
             title: 'Want to Join Us?',
             content: 'We\'re always looking for passionate, certified guides who share our vision of sustainable, authentic travel experiences.',
             email: 'careers@belizevibes.com',
+          },
+        },
+        adventureDetail: {
+          loading: 'Loading...',
+          notFound: {
+            title: 'Adventure Not Found',
+            returnHome: 'Return Home',
+          },
+          hero: {
+            upTo: 'Up to',
+          },
+          overview: {
+            title: 'Overview',
+            reviews: 'reviews',
+            highlights: 'Highlights',
+            whatsIncluded: 'What\'s Included',
+            whatToBring: 'What to Bring',
+            notSuitableFor: 'Not Suitable For',
+          },
+          tabs: {
+            reviews: 'Reviews',
+            itinerary: 'Itinerary',
+            faqs: 'FAQs',
+          },
+          reviews: {
+            noReviews: 'No reviews yet. Be the first to share your experience!',
+            verified: 'Verified',
+          },
+          placeholders: {
+            itinerary: 'Detailed itinerary coming soon...',
+            faqs: 'FAQs coming soon...',
+          },
+          pricing: {
+            from: 'From',
+            person: '/person',
+            bookNow: 'Book Now',
+            freeCancellation: 'Free cancellation up to 24 hours before',
+          },
+          quickDetails: {
+            duration: 'Duration',
+            groupSize: 'Group Size',
+            difficulty: 'Difficulty',
+            hours: 'hours',
+          },
+          safetyTrust: {
+            title: 'Safety & Trust',
+            licensedInsured: 'Licensed & Insured',
+            safetyEquipment: 'Safety Equipment Provided',
+            support24: '24/7 Support',
+            satisfactionGuarantee: '100% Satisfaction Guarantee',
+          },
+          toast: {
+            signInWishlist: 'Please sign in to save to wishlist',
+            addedToWishlist: 'Added to wishlist',
+            removedFromWishlist: 'Removed from wishlist',
+            linkCopied: 'Link copied to clipboard',
+            failedToLoad: 'Failed to load adventure details',
+          },
+          difficulties: {
+            easy: 'Easy',
+            moderate: 'Moderate',
+            challenging: 'Challenging',
+            extreme: 'Extreme',
+          },
+          socialProof: {
+            title: 'Social Proof',
+            recentBookings: 'Recent bookings',
+            peopleViewing: 'People viewing',
+            availability: 'Availability',
+            thisWeek: 'this week',
+            today: 'today',
+            onlyXSpotsLeft: 'Only {{count}} spots left!',
+            popularChoice: 'Popular Choice - {{count}}+ bookings',
+            earlyBird: 'Early Bird: {{percent}}% off',
+            lastBooked: 'Last booked: {{time}}',
+            recentBookingsTitle: 'Recent Bookings',
+            satisfactionRate: 'Satisfaction Rate',
+            repeatCustomers: 'Repeat Customers',
+            timeAgo: {
+              justNow: 'Just now',
+              hoursAgo: '{{hours}}h ago',
+              yesterday: 'Yesterday',
+              daysAgo: '{{days}}d ago',
+            },
+            mockTimes: {
+              hoursAgo2: '2 hours ago',
+              hoursAgo5: '5 hours ago',
+              dayAgo1: '1 day ago',
+              daysAgo2: '2 days ago',
+              daysAgo3: '3 days ago',
+            },
           },
         },
         booking: {
@@ -965,6 +1116,66 @@ i18n
             previewImage: 'Aperçu {{index}}',
           },
         },
+        blog: {
+          hero: {
+            title: 'Guide de Voyage Solo',
+            subtitle: 'Conseils, histoires et inspiration pour votre voyage au Belize.',
+            startReading: 'Commencer à Lire',
+          },
+          main: {
+            latestStories: 'Dernières Histoires',
+            readMore: 'Lire Plus',
+          },
+          sidebar: {
+            popularTopics: 'Sujets Populaires',
+            followUs: 'Suivez-Nous',
+            stayUpdated: 'Restez Informé',
+            newsletterDescription: 'Recevez les derniers conseils de voyage et histoires d\'aventure directement dans votre boîte de réception.',
+            emailPlaceholder: 'Entrez votre email',
+            subscribe: 'S\'Abonner',
+          },
+          topics: {
+            wildlife: 'Faune',
+            safety: 'Sécurité',
+            budgetTravel: 'Voyage Économique',
+            groupTours: 'Tours de Groupe',
+            jungleAdventures: 'Aventures Jungle',
+            beachActivities: 'Activités Plage',
+            culturalExperiences: 'Expériences Culturelles',
+            soloTips: 'Conseils Solo',
+            photography: 'Photographie',
+          },
+          posts: {
+            post1: {
+              title: '10 Aventures Solo à Faire au Belize',
+              excerpt: 'Du tubing en grotte à la tyrolienne en jungle, découvrez les meilleures aventures solo-friendly que le Belize a à offrir.',
+            },
+            post2: {
+              title: 'Comment Rester en Sécurité en Voyageant Seul',
+              excerpt: 'Conseils de sécurité essentiels et précautions pour les voyageurs solo explorant les magnifiques paysages du Belize.',
+            },
+            post3: {
+              title: 'Une Semaine à San Ignacio: Choix Budget et Luxe',
+              excerpt: 'Que vous voyagiez en sac à dos ou que vous vous fassiez plaisir, voici comment tirer le meilleur parti de la scène d\'aventure de San Ignacio.',
+            },
+            post4: {
+              title: 'Observation de la Faune: Guide du Voyageur Solo',
+              excerpt: 'Observez jaguars, singes hurleurs et oiseaux exotiques à votre rythme avec ces conseils d\'observation de la faune.',
+            },
+            post5: {
+              title: 'Belize Économique: Voyage Solo à 50$/Jour',
+              excerpt: 'Découvrez comment vivre les merveilles du Belize sans vous ruiner, des auberges à la street food.',
+            },
+            post6: {
+              title: 'Le Meilleur Moment pour Visiter le Belize pour les Voyageurs Solo',
+              excerpt: 'Météo, foules et coûts - tout ce que vous devez savoir sur le timing de votre aventure solo au Belize.',
+            },
+          },
+          socialMedia: {
+            facebookLabel: 'Suivez-nous sur Facebook',
+            instagramLabel: 'Suivez-nous sur Instagram',
+          },
+        },
         home: {
           hero: {
             title: 'Votre Aventure Vous Attend',
@@ -1112,6 +1323,97 @@ i18n
             title: 'Vous Voulez Nous Rejoindre?',
             content: 'Nous recherchons toujours des guides passionnés et certifiés qui partagent notre vision d\'expériences de voyage durables et authentiques.',
             email: 'careers@belizevibes.com',
+          },
+        },
+        adventureDetail: {
+          loading: 'Chargement...',
+          notFound: {
+            title: 'Aventure Introuvable',
+            returnHome: 'Retour Accueil',
+          },
+          hero: {
+            upTo: 'Jusqu\'à',
+          },
+          overview: {
+            title: 'Aperçu',
+            reviews: 'avis',
+            highlights: 'Points Forts',
+            whatsIncluded: 'Ce Qui Est Inclus',
+            whatToBring: 'Quoi Apporter',
+            notSuitableFor: 'Ne Convient Pas Pour',
+          },
+          tabs: {
+            reviews: 'Avis',
+            itinerary: 'Itinéraire',
+            faqs: 'FAQ',
+          },
+          reviews: {
+            noReviews: 'Aucun avis pour le moment. Soyez le premier à partager votre expérience!',
+            verified: 'Vérifié',
+          },
+          placeholders: {
+            itinerary: 'Itinéraire détaillé bientôt disponible...',
+            faqs: 'FAQ bientôt disponibles...',
+          },
+          pricing: {
+            from: 'À partir de',
+            person: '/personne',
+            bookNow: 'Réserver',
+            freeCancellation: 'Annulation gratuite jusqu\'à 24 heures avant',
+          },
+          quickDetails: {
+            duration: 'Durée',
+            groupSize: 'Taille du Groupe',
+            difficulty: 'Difficulté',
+            hours: 'heures',
+          },
+          safetyTrust: {
+            title: 'Sécurité et Confiance',
+            licensedInsured: 'Licencié et Assuré',
+            safetyEquipment: 'Équipement de Sécurité Fourni',
+            support24: 'Support 24/7',
+            satisfactionGuarantee: 'Garantie Satisfaction 100%',
+          },
+          toast: {
+            signInWishlist: 'Veuillez vous connecter pour ajouter aux favoris',
+            addedToWishlist: 'Ajouté aux favoris',
+            removedFromWishlist: 'Retiré des favoris',
+            linkCopied: 'Lien copié dans le presse-papier',
+            failedToLoad: 'Échec du chargement des détails de l\'aventure',
+          },
+          difficulties: {
+            easy: 'Facile',
+            moderate: 'Modéré',
+            challenging: 'Difficile',
+            extreme: 'Extrême',
+          },
+          socialProof: {
+            title: 'Preuve Sociale',
+            recentBookings: 'Réservations récentes',
+            peopleViewing: 'Personnes qui regardent',
+            availability: 'Disponibilité',
+            thisWeek: 'cette semaine',
+            today: 'aujourd\'hui',
+            onlyXSpotsLeft: 'Seulement {{count}} places restantes!',
+            popularChoice: 'Choix Populaire - {{count}}+ réservations',
+            earlyBird: 'Lève-tôt: {{percent}}% réduc.',
+            lastBooked: 'Dernière réservation: {{time}}',
+            recentBookingsTitle: 'Réservations Récentes',
+            satisfactionRate: 'Taux de Satisfaction',
+            repeatCustomers: 'Clients Fidèles',
+            timeAgo: {
+              justNow: 'À l\'instant',
+              hoursAgo: 'Il y a {{hours}}h',
+              yesterday: 'Hier',
+              daysAgo: 'Il y a {{days}}j',
+            },
+            mockTimes: {
+              hoursAgo2: 'Il y a 2 heures',
+              hoursAgo5: 'Il y a 5 heures',
+              dayAgo1: 'Il y a 1 jour',
+              daysAgo2: 'Il y a 2 jours',
+              daysAgo3: 'Il y a 3 jours',
+            },
           },
         },
         booking: {

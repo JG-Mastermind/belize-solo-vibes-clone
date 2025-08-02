@@ -28,6 +28,7 @@ import { BookingService } from '@/services/bookingService';
 import { Adventure, Review } from '@/types/booking';
 import { useAuth } from '@/components/auth/AuthProvider';
 import { toast } from 'sonner';
+import { useTranslation } from 'react-i18next';
 import { SocialProof } from '@/components/booking/SocialProof';
 import { BookingWidget } from '@/components/booking/BookingWidget';
 import { ImageGallery } from '@/components/booking/ImageGallery';
@@ -36,6 +37,7 @@ const AdventureDetail: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const { user } = useAuth();
+  const { t } = useTranslation(['adventureDetail']);
   
   const [adventure, setAdventure] = useState<Adventure | null>(null);
   const [reviews, setReviews] = useState<Review[]>([]);
@@ -65,7 +67,7 @@ const AdventureDetail: React.FC = () => {
       setReviews(reviewsData);
     } catch (error) {
       console.error('Error loading adventure:', error);
-      toast.error('Failed to load adventure details');
+      toast.error(t('adventureDetail:toast.failedToLoad'));
     } finally {
       setLoading(false);
     }
@@ -86,12 +88,12 @@ const AdventureDetail: React.FC = () => {
 
   const handleWishlist = () => {
     if (!user) {
-      toast.error('Please sign in to save to wishlist');
+      toast.error(t('adventureDetail:toast.signInWishlist'));
       return;
     }
     
     setIsWishlisted(!isWishlisted);
-    toast.success(isWishlisted ? 'Removed from wishlist' : 'Added to wishlist');
+    toast.success(isWishlisted ? t('adventureDetail:toast.removedFromWishlist') : t('adventureDetail:toast.addedToWishlist'));
   };
 
   const handleShare = async () => {
@@ -107,7 +109,7 @@ const AdventureDetail: React.FC = () => {
       }
     } else {
       navigator.clipboard.writeText(window.location.href);
-      toast.success('Link copied to clipboard');
+      toast.success(t('adventureDetail:toast.linkCopied'));
     }
   };
 
@@ -119,6 +121,10 @@ const AdventureDetail: React.FC = () => {
       case 'extreme': return 'bg-red-100 text-red-800';
       default: return 'bg-muted text-muted-foreground';
     }
+  };
+
+  const translateDifficulty = (difficulty: string) => {
+    return t(`adventureDetail:difficulties.${difficulty}`) || difficulty;
   };
 
   if (loading) {
@@ -133,8 +139,8 @@ const AdventureDetail: React.FC = () => {
     return (
       <div className="min-h-screen flex items-center justify-center bg-background">
         <div className="text-center">
-          <h1 className="text-2xl font-bold mb-4 text-foreground">Adventure Not Found</h1>
-          <Button onClick={() => navigate('/')}>Return Home</Button>
+          <h1 className="text-2xl font-bold mb-4 text-foreground">{t('adventureDetail:notFound.title')}</h1>
+          <Button onClick={() => navigate('/')}>{t('adventureDetail:notFound.returnHome')}</Button>
         </div>
       </div>
     );
@@ -163,7 +169,7 @@ const AdventureDetail: React.FC = () => {
           <div className="container mx-auto">
             <div className="flex items-center space-x-2 mb-4">
               <Badge className={getDifficultyColor(adventure.difficulty_level)}>
-                {adventure.difficulty_level}
+                {translateDifficulty(adventure.difficulty_level)}
               </Badge>
               <Badge variant="secondary" className="bg-white/20 text-white">
                 <Clock className="w-4 h-4 mr-1" />
@@ -171,7 +177,7 @@ const AdventureDetail: React.FC = () => {
               </Badge>
               <Badge variant="secondary" className="bg-white/20 text-white">
                 <Users className="w-4 h-4 mr-1" />
-                Up to {adventure.max_participants}
+                {t('adventureDetail:hero.upTo')} {adventure.max_participants}
               </Badge>
             </div>
             
@@ -213,11 +219,11 @@ const AdventureDetail: React.FC = () => {
             <Card className="dark:bg-card">
               <CardHeader>
                 <div className="flex items-center justify-between">
-                  <CardTitle className="text-2xl">Overview</CardTitle>
+                  <CardTitle className="text-2xl">{t('adventureDetail:overview.title')}</CardTitle>
                   <div className="flex items-center space-x-2">
                     <Star className="w-5 h-5 text-yellow-500 fill-current" />
                     <span className="font-semibold">{adventure.average_rating}</span>
-                    <span className="text-muted-foreground">({adventure.total_reviews} reviews)</span>
+                    <span className="text-muted-foreground">({adventure.total_reviews} {t('adventureDetail:overview.reviews')})</span>
                   </div>
                 </div>
               </CardHeader>
@@ -227,7 +233,7 @@ const AdventureDetail: React.FC = () => {
                 {/* Highlights */}
                 {adventure.highlights && adventure.highlights.length > 0 && (
                   <div className="mb-6">
-                    <h3 className="text-lg font-semibold mb-3 text-foreground">Highlights</h3>
+                    <h3 className="text-lg font-semibold mb-3 text-foreground">{t('adventureDetail:overview.highlights')}</h3>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                       {adventure.highlights.map((highlight, index) => (
                         <div key={index} className="flex items-center space-x-2">
@@ -242,7 +248,7 @@ const AdventureDetail: React.FC = () => {
                 {/* What's Included */}
                 {adventure.includes && adventure.includes.length > 0 && (
                   <div className="mb-6">
-                    <h3 className="text-lg font-semibold mb-3 text-foreground">What's Included</h3>
+                    <h3 className="text-lg font-semibold mb-3 text-foreground">{t('adventureDetail:overview.whatsIncluded')}</h3>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                       {adventure.includes.map((item, index) => (
                         <div key={index} className="flex items-center space-x-2">
@@ -257,7 +263,7 @@ const AdventureDetail: React.FC = () => {
                 {/* What to Bring */}
                 {adventure.what_to_bring && adventure.what_to_bring.length > 0 && (
                   <div className="mb-6">
-                    <h3 className="text-lg font-semibold mb-3 text-foreground">What to Bring</h3>
+                    <h3 className="text-lg font-semibold mb-3 text-foreground">{t('adventureDetail:overview.whatToBring')}</h3>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                       {adventure.what_to_bring.map((item, index) => (
                         <div key={index} className="flex items-center space-x-2">
@@ -272,7 +278,7 @@ const AdventureDetail: React.FC = () => {
                 {/* Not Suitable For */}
                 {adventure.not_suitable_for && adventure.not_suitable_for.length > 0 && (
                   <div>
-                    <h3 className="text-lg font-semibold mb-3 text-foreground">Not Suitable For</h3>
+                    <h3 className="text-lg font-semibold mb-3 text-foreground">{t('adventureDetail:overview.notSuitableFor')}</h3>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                       {adventure.not_suitable_for.map((item, index) => (
                         <div key={index} className="flex items-center space-x-2">
@@ -289,21 +295,21 @@ const AdventureDetail: React.FC = () => {
             {/* Tabs */}
             <Tabs defaultValue="reviews" className="w-full">
               <TabsList className="grid w-full grid-cols-3">
-                <TabsTrigger value="reviews">Reviews</TabsTrigger>
-                <TabsTrigger value="itinerary">Itinerary</TabsTrigger>
-                <TabsTrigger value="faqs">FAQs</TabsTrigger>
+                <TabsTrigger value="reviews">{t('adventureDetail:tabs.reviews')}</TabsTrigger>
+                <TabsTrigger value="itinerary">{t('adventureDetail:tabs.itinerary')}</TabsTrigger>
+                <TabsTrigger value="faqs">{t('adventureDetail:tabs.faqs')}</TabsTrigger>
               </TabsList>
               
               <TabsContent value="reviews" className="space-y-4">
                 <Card className="dark:bg-card">
                   <CardHeader>
-                    <CardTitle>Reviews ({reviews.length})</CardTitle>
+                    <CardTitle>{t('adventureDetail:tabs.reviews')} ({reviews.length})</CardTitle>
                   </CardHeader>
                   <CardContent>
                     {reviews.length === 0 ? (
                       <div className="text-center py-8">
                         <MessageCircle className="w-12 h-12 mx-auto text-muted-foreground mb-4" />
-                        <p className="text-muted-foreground">No reviews yet. Be the first to share your experience!</p>
+                        <p className="text-muted-foreground">{t('adventureDetail:reviews.noReviews')}</p>
                       </div>
                     ) : (
                       <div className="space-y-6">
@@ -334,7 +340,7 @@ const AdventureDetail: React.FC = () => {
                                   </span>
                                   {review.is_verified && (
                                     <Badge variant="secondary" className="text-xs">
-                                      Verified
+                                      {t('adventureDetail:reviews.verified')}
                                     </Badge>
                                   )}
                                 </div>
@@ -357,10 +363,10 @@ const AdventureDetail: React.FC = () => {
               <TabsContent value="itinerary">
                 <Card className="dark:bg-card">
                   <CardHeader>
-                    <CardTitle>Itinerary</CardTitle>
+                    <CardTitle>{t('adventureDetail:tabs.itinerary')}</CardTitle>
                   </CardHeader>
                   <CardContent>
-                    <p className="text-muted-foreground">Detailed itinerary coming soon...</p>
+                    <p className="text-muted-foreground">{t('adventureDetail:placeholders.itinerary')}</p>
                   </CardContent>
                 </Card>
               </TabsContent>
@@ -368,10 +374,10 @@ const AdventureDetail: React.FC = () => {
               <TabsContent value="faqs">
                 <Card className="dark:bg-card">
                   <CardHeader>
-                    <CardTitle>Frequently Asked Questions</CardTitle>
+                    <CardTitle>{t('adventureDetail:tabs.faqs')}</CardTitle>
                   </CardHeader>
                   <CardContent>
-                    <p className="text-muted-foreground">FAQs coming soon...</p>
+                    <p className="text-muted-foreground">{t('adventureDetail:placeholders.faqs')}</p>
                   </CardContent>
                 </Card>
               </TabsContent>
@@ -384,8 +390,8 @@ const AdventureDetail: React.FC = () => {
             <Card className="sticky top-4 dark:bg-card">
               <CardHeader>
                 <CardTitle className="text-2xl">
-                  From ${adventure.base_price}
-                  <span className="text-lg font-normal text-muted-foreground">/person</span>
+                  {t('adventureDetail:pricing.from')} ${adventure.base_price}
+                  <span className="text-lg font-normal text-muted-foreground">{t('adventureDetail:pricing.person')}</span>
                 </CardTitle>
               </CardHeader>
               <CardContent className="space-y-4">
@@ -394,11 +400,11 @@ const AdventureDetail: React.FC = () => {
                   className="w-full bg-blue-600 hover:bg-blue-700 text-white"
                   size="lg"
                 >
-                  Book Now
+                  {t('adventureDetail:pricing.bookNow')}
                 </Button>
                 
                 <div className="text-center text-sm text-muted-foreground">
-                  Free cancellation up to 24 hours before
+                  {t('adventureDetail:pricing.freeCancellation')}
                 </div>
                 
                 <Separator />
@@ -406,17 +412,17 @@ const AdventureDetail: React.FC = () => {
                 {/* Quick Details */}
                 <div className="space-y-3">
                   <div className="flex items-center justify-between">
-                    <span className="text-sm text-muted-foreground">Duration</span>
-                    <span className="text-sm font-medium text-foreground">{adventure.duration_hours} hours</span>
+                    <span className="text-sm text-muted-foreground">{t('adventureDetail:quickDetails.duration')}</span>
+                    <span className="text-sm font-medium text-foreground">{adventure.duration_hours} {t('adventureDetail:quickDetails.hours')}</span>
                   </div>
                   <div className="flex items-center justify-between">
-                    <span className="text-sm text-muted-foreground">Group Size</span>
-                    <span className="text-sm font-medium text-foreground">Up to {adventure.max_participants}</span>
+                    <span className="text-sm text-muted-foreground">{t('adventureDetail:quickDetails.groupSize')}</span>
+                    <span className="text-sm font-medium text-foreground">{t('adventureDetail:hero.upTo')} {adventure.max_participants}</span>
                   </div>
                   <div className="flex items-center justify-between">
-                    <span className="text-sm text-muted-foreground">Difficulty</span>
+                    <span className="text-sm text-muted-foreground">{t('adventureDetail:quickDetails.difficulty')}</span>
                     <Badge className={getDifficultyColor(adventure.difficulty_level)}>
-                      {adventure.difficulty_level}
+                      {translateDifficulty(adventure.difficulty_level)}
                     </Badge>
                   </div>
                 </div>
@@ -431,25 +437,25 @@ const AdventureDetail: React.FC = () => {
               <CardHeader>
                 <CardTitle className="text-lg flex items-center">
                   <Shield className="w-5 h-5 mr-2" />
-                  Safety & Trust
+                  {t('adventureDetail:safetyTrust.title')}
                 </CardTitle>
               </CardHeader>
               <CardContent className="space-y-3">
                 <div className="flex items-center space-x-2">
                   <CheckCircle className="w-4 h-4 text-green-500" />
-                  <span className="text-sm">Licensed & Insured</span>
+                  <span className="text-sm">{t('adventureDetail:safetyTrust.licensedInsured')}</span>
                 </div>
                 <div className="flex items-center space-x-2">
                   <CheckCircle className="w-4 h-4 text-green-500" />
-                  <span className="text-sm">Safety Equipment Provided</span>
+                  <span className="text-sm">{t('adventureDetail:safetyTrust.safetyEquipment')}</span>
                 </div>
                 <div className="flex items-center space-x-2">
                   <CheckCircle className="w-4 h-4 text-green-500" />
-                  <span className="text-sm">24/7 Support</span>
+                  <span className="text-sm">{t('adventureDetail:safetyTrust.support24')}</span>
                 </div>
                 <div className="flex items-center space-x-2">
                   <CheckCircle className="w-4 h-4 text-green-500" />
-                  <span className="text-sm">100% Satisfaction Guarantee</span>
+                  <span className="text-sm">{t('adventureDetail:safetyTrust.satisfactionGuarantee')}</span>
                 </div>
               </CardContent>
             </Card>

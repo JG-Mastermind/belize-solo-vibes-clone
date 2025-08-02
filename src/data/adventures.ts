@@ -26,8 +26,8 @@ export const adventures: Adventure[] = [
     rating: 4.8,
     reviews: 89,
     location: "Ambergris Caye",
-    description: "Discover vibrant coral reefs and tropical marine life in Belize's premier marine reserve.",
-    highlights: ["Hol Chan Marine Reserve", "Shark Ray Alley", "Colorful coral gardens", "All gear provided"],
+    description: "Découvrez des récifs coralliens vibrants et la vie marine tropicale dans la réserve marine principale du Belize.",
+    highlights: ["Réserve Marine Hol Chan", "Shark Ray Alley", "Jardins de coraux colorés", "Tout l'équipement fourni"],
     steps: ["Select Date", "Your Info", "Payment", "Confirmation"]
   },
   {

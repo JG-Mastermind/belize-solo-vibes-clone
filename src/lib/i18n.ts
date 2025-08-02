@@ -52,12 +52,6 @@ i18n
           loadingTours: 'Loading Tours...',
           featuredAdventure: 'Featured Adventure:',
         },
-        adventureCards: {
-          title: 'Choose Your Adventure',
-          subtitle: 'From ancient Maya ruins to pristine coral reefs, discover the best of Belize with our carefully curated adventures designed for solo travelers and small groups.',
-          highlights: 'Highlights:',
-          viewAllAdventures: 'View All Adventures',
-        },
         footer: {
           company: {
             description: 'Your trusted partner for unforgettable Belize adventures. Specializing in solo-friendly, sustainable travel experiences that connect you with nature and culture.',
@@ -298,6 +292,64 @@ i18n
           socialMedia: {
             facebookLabel: 'Follow us on Facebook',
             instagramLabel: 'Follow us on Instagram',
+          },
+        },
+        adventureCards: {
+          title: 'Featured Adventures',
+          subtitle: 'Discover unique experiences designed for solo travelers and small groups',
+          highlights: 'Highlights',
+          viewAllAdventures: 'View All Adventures',
+          adventures: {
+            1: {
+              title: 'Cave Tubing & Jungle Trek',
+              description: 'Float through ancient underground cave systems and explore pristine jungle trails.',
+              highlights: ['Ancient Maya caves', 'Jungle wildlife spotting', 'Professional guide', 'Equipment included'],
+            },
+            2: {
+              title: 'Snorkeling at Hol Chan',
+              description: 'Discover vibrant coral reefs and tropical marine life in Belize\'s premier marine reserve.',
+              highlights: ['Hol Chan Marine Reserve', 'Shark Ray Alley', 'Colorful coral gardens', 'All gear provided'],
+            },
+            3: {
+              title: 'Caracol Maya Ruins Adventure',
+              description: 'Explore Belize\'s largest Maya archaeological site hidden deep in the jungle.',
+              highlights: ['Ancient Maya temples', 'Jungle canopy views', 'Historical insights', 'Lunch included'],
+            },
+            4: {
+              title: 'Blue Hole Diving Experience',
+              description: 'Dive into the world-famous Blue Hole, a UNESCO World Heritage site.',
+              highlights: ['UNESCO World Heritage', 'Unique geological formation', 'Expert dive guides', 'Certificate required'],
+            },
+            5: {
+              title: 'Jungle Zip-lining & Waterfall',
+              description: 'Soar through the jungle canopy and cool off in natural swimming holes.',
+              highlights: ['Canopy zip-lining', 'Natural waterfalls', 'Swimming opportunities', 'Safety certified'],
+            },
+            6: {
+              title: 'Manatee Watching & Beach Day',
+              description: 'Gentle manatee encounters followed by relaxation on pristine beaches.',
+              highlights: ['Manatee sanctuary visit', 'Pristine beaches', 'Beach lunch', 'Conservation focus'],
+            },
+            7: {
+              title: 'Sunrise Fishing & Island Hopping',
+              description: 'Start your day with sunrise fishing followed by snorkeling and exploring pristine cayes around Ambergris.',
+              highlights: ['Early morning departure for best fishing', 'Snorkeling gear included', 'Fresh ceviche lunch on the boat'],
+            },
+            8: {
+              title: 'Mountain Biking & Beach Day',
+              description: 'Cycle through Garifuna villages and jungle trails, ending with relaxation on pristine Caribbean beaches.',
+              highlights: ['Cultural village interactions', 'Mountain bike through jungle trails', 'Traditional Garifuna lunch included'],
+            },
+            9: {
+              title: 'Night Jungle Safari',
+              description: 'Experience the jungle come alive at night with guided tours through jaguar preserve territory.',
+              highlights: ['Nocturnal wildlife spotting', 'Professional night vision equipment', 'Jaguar preserve exploration'],
+            },
+            10: {
+              title: 'Cultural Village Tour & Chocolate Making',
+              description: 'Visit authentic Maya villages and learn traditional chocolate-making techniques from cacao bean to bar.',
+              highlights: ['Authentic Maya village experience', 'Traditional chocolate making workshop', 'Cultural exchange with local families'],
+            },
           },
         },
         home: {
@@ -928,12 +980,6 @@ i18n
           loadingTours: 'Chargement des Tours...',
           featuredAdventure: 'Aventure Vedette:',
         },
-        adventureCards: {
-          title: 'Choisissez Votre Aventure',
-          subtitle: 'Des ruines mayas anciennes aux récifs coralliens pristines, découvrez le meilleur du Belize avec nos aventures soigneusement sélectionnées pour les voyageurs solo et petits groupes.',
-          highlights: 'Points Forts:',
-          viewAllAdventures: 'Voir Toutes les Aventures',
-        },
         footer: {
           company: {
             description: 'Votre partenaire de confiance pour des aventures inoubliables au Belize. Spécialisés dans des expériences de voyage durables et accueillantes pour les voyageurs solo qui vous connectent à la nature et à la culture.',
@@ -1174,6 +1220,64 @@ i18n
           socialMedia: {
             facebookLabel: 'Suivez-nous sur Facebook',
             instagramLabel: 'Suivez-nous sur Instagram',
+          },
+        },
+        adventureCards: {
+          title: 'Aventures Vedettes',
+          subtitle: 'Découvrez des expériences uniques conçues pour les voyageurs solo et les petits groupes',
+          highlights: 'Points Forts',
+          viewAllAdventures: 'Voir Toutes les Aventures',
+          adventures: {
+            1: {
+              title: 'Tubing en Grotte et Randonnée Jungle',
+              description: 'Flottez à travers les systèmes de grottes souterraines anciennes et explorez les sentiers de jungle pristine.',
+              highlights: ['Grottes Mayas anciennes', 'Observation de la faune jungle', 'Guide professionnel', 'Équipement inclus'],
+            },
+            2: {
+              title: 'Plongée avec Tuba à Hol Chan',
+              description: 'Découvrez des récifs coralliens vibrants et la vie marine tropicale dans la réserve marine principale du Belize.',
+              highlights: ['Réserve Marine Hol Chan', 'Shark Ray Alley', 'Jardins de coraux colorés', 'Tout l\'équipement fourni'],
+            },
+            3: {
+              title: 'Aventure Ruines Mayas Caracol',
+              description: 'Explorez le plus grand site archéologique Maya du Belize caché au fond de la jungle.',
+              highlights: ['Temples Mayas anciens', 'Vues de la canopée jungle', 'Perspectives historiques', 'Déjeuner inclus'],
+            },
+            4: {
+              title: 'Expérience Plongée Blue Hole',
+              description: 'Plongez dans le célèbre Blue Hole, un site du patrimoine mondial de l\'UNESCO.',
+              highlights: ['Patrimoine Mondial UNESCO', 'Formation géologique unique', 'Guides de plongée experts', 'Certificat requis'],
+            },
+            5: {
+              title: 'Tyrolienne Jungle et Cascade',
+              description: 'Planez à travers la canopée jungle et rafraîchissez-vous dans des piscines naturelles.',
+              highlights: ['Tyrolienne canopée', 'Cascades naturelles', 'Opportunités de baignade', 'Certifié sécurité'],
+            },
+            6: {
+              title: 'Observation Lamantins et Journée Plage',
+              description: 'Rencontres douces avec les lamantins suivies de détente sur des plages pristines.',
+              highlights: ['Visite sanctuaire lamantins', 'Plages pristines', 'Déjeuner plage', 'Focus conservation'],
+            },
+            7: {
+              title: 'Pêche Lever de Soleil et Saut d\'Îles',
+              description: 'Commencez votre journée avec la pêche au lever du soleil suivie de plongée avec tuba et exploration des cayes pristines autour d\'Ambergris.',
+              highlights: ['Départ matinal pour meilleure pêche', 'Équipement plongée inclus', 'Déjeuner ceviche frais sur bateau'],
+            },
+            8: {
+              title: 'VTT et Journée Plage',
+              description: 'Pédalez à travers les villages Garifuna et les sentiers jungle, terminant par la détente sur les plages Caraïbes pristines.',
+              highlights: ['Interactions villages culturels', 'VTT à travers sentiers jungle', 'Déjeuner Garifuna traditionnel inclus'],
+            },
+            9: {
+              title: 'Safari Jungle Nocturne',
+              description: 'Vivez la jungle s\'animer la nuit avec des visites guidées à travers le territoire de la réserve de jaguars.',
+              highlights: ['Observation faune nocturne', 'Équipement vision nocturne professionnel', 'Exploration réserve jaguars'],
+            },
+            10: {
+              title: 'Visite Village Culturel et Fabrication Chocolat',
+              description: 'Visitez des villages Mayas authentiques et apprenez les techniques traditionnelles de fabrication du chocolat de la fève à la barre.',
+              highlights: ['Expérience village Maya authentique', 'Atelier fabrication chocolat traditionnel', 'Échange culturel avec familles locales'],
+            },
           },
         },
         home: {

@@ -37,7 +37,28 @@ const AdventureDetail: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const { user } = useAuth();
-  const { t } = useTranslation(['adventureDetail']);
+  const { t } = useTranslation(['adventureDetail', 'adventureCards']);
+  
+  // Helper function to get translated adventure content - same as AdventureCards
+  const getAdventureContent = (adventure: any) => {
+    const translatedContent = t(`adventureCards:adventures.${adventure.id}`, { returnObjects: true });
+    
+    // If translation exists, use it; otherwise fallback to original content
+    if (translatedContent && typeof translatedContent === 'object') {
+      return {
+        title: translatedContent.title || adventure.title,
+        description: translatedContent.description || adventure.description,
+        highlights: translatedContent.highlights || adventure.highlights,
+      };
+    }
+    
+    // Fallback to original content
+    return {
+      title: adventure.title,
+      description: adventure.description,
+      highlights: adventure.highlights,
+    };
+  };
   
   const [adventure, setAdventure] = useState<Adventure | null>(null);
   const [reviews, setReviews] = useState<Review[]>([]);
@@ -181,7 +202,7 @@ const AdventureDetail: React.FC = () => {
               </Badge>
             </div>
             
-            <h1 className="text-4xl lg:text-6xl font-bold mb-2">{adventure.title}</h1>
+            <h1 className="text-4xl lg:text-6xl font-bold mb-2">{getAdventureContent(adventure).title}</h1>
             <p className="text-xl flex items-center">
               <MapPin className="w-5 h-5 mr-2" />
               {adventure.location}
@@ -228,14 +249,14 @@ const AdventureDetail: React.FC = () => {
                 </div>
               </CardHeader>
               <CardContent>
-                <p className="text-foreground mb-6">{adventure.description}</p>
+                <p className="text-foreground mb-6">{getAdventureContent(adventure).description}</p>
                 
                 {/* Highlights */}
                 {adventure.highlights && adventure.highlights.length > 0 && (
                   <div className="mb-6">
                     <h3 className="text-lg font-semibold mb-3 text-foreground">{t('adventureDetail:overview.highlights')}</h3>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                      {adventure.highlights.map((highlight, index) => (
+                      {getAdventureContent(adventure).highlights.map((highlight, index) => (
                         <div key={index} className="flex items-center space-x-2">
                           <CheckCircle className="w-5 h-5 text-green-500 flex-shrink-0" />
                           <span className="text-sm">{highlight}</span>

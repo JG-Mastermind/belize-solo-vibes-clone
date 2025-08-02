@@ -85,5 +85,61 @@ export const adventures: Adventure[] = [
     description: "Gentle manatee encounters followed by relaxation on pristine beaches.",
     highlights: ["Manatee sanctuary visit", "Pristine beaches", "Beach lunch", "Conservation focus"],
     steps: ["Select Date", "Your Info", "Payment", "Confirmation"]
+  },
+  {
+    id: 7,
+    title: "Sunrise Fishing & Island Hopping",
+    image: "https://images.unsplash.com/photo-1544551763-46a013bb70d5?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
+    price: "$149",
+    duration: "6 Hours",
+    groupSize: "Max 6",
+    rating: 4.7,
+    reviews: 203,
+    location: "Ambergris Caye, Belize",
+    description: "Start your day with sunrise fishing followed by snorkeling and exploring pristine cayes around Ambergris.",
+    highlights: ["Early morning departure for best fishing", "Snorkeling gear included", "Fresh ceviche lunch on the boat"],
+    steps: ["Select Date", "Your Info", "Payment", "Confirmation"]
+  },
+  {
+    id: 8,
+    title: "Mountain Biking & Beach Day",
+    image: "https://images.unsplash.com/photo-1558618047-3c8c76ca7d13?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
+    price: "$125",
+    duration: "7 Hours",
+    groupSize: "Max 8",
+    rating: 4.5,
+    reviews: 78,
+    location: "Hopkins, Belize",
+    description: "Cycle through Garifuna villages and jungle trails, ending with relaxation on pristine Caribbean beaches.",
+    highlights: ["Cultural village interactions", "Mountain bike through jungle trails", "Traditional Garifuna lunch included"],
+    steps: ["Select Date", "Your Info", "Payment", "Confirmation"]
+  },
+  {
+    id: 9,
+    title: "Night Jungle Safari",
+    image: "https://images.unsplash.com/photo-1516426122078-c23e76319801?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
+    price: "$95",
+    duration: "4 Hours",
+    groupSize: "Max 8",
+    rating: 4.7,
+    reviews: 89,
+    location: "Cockscomb Basin, Belize",
+    description: "Experience the jungle come alive at night with guided tours through jaguar preserve territory.",
+    highlights: ["Nocturnal wildlife spotting", "Professional night vision equipment", "Jaguar preserve exploration"],
+    steps: ["Select Date", "Your Info", "Payment", "Confirmation"]
+  },
+  {
+    id: 10,
+    title: "Cultural Village Tour & Chocolate Making",
+    image: "https://images.unsplash.com/photo-1571091718767-18b5b1457add?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
+    price: "$110",
+    duration: "5 Hours",
+    groupSize: "Max 10",
+    rating: 4.6,
+    reviews: 102,
+    location: "Toledo District, Belize",
+    description: "Visit authentic Maya villages and learn traditional chocolate-making techniques from cacao bean to bar.",
+    highlights: ["Authentic Maya village experience", "Traditional chocolate making workshop", "Cultural exchange with local families"],
+    steps: ["Select Date", "Your Info", "Payment", "Confirmation"]
   }
 ];

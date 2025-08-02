@@ -549,6 +549,15 @@ i18n
               `,
             },
           },
+          components: {
+            tableOfContents: 'Table of Contents',
+            relatedPosts: 'Related Posts',
+            relatedPostsComingSoon: 'Related posts coming soon...',
+            stayUpdated: 'Stay Updated',
+            stayUpdatedDescription: 'Get the latest travel tips and Belize guides delivered to your inbox.',
+            enterEmail: 'Enter your email',
+            subscribe: 'Subscribe',
+          },
           socialMedia: {
             facebookLabel: 'Follow us on Facebook',
             instagramLabel: 'Follow us on Instagram',
@@ -1736,6 +1745,15 @@ i18n
                 <p>Chercheurs aventure et voyageurs expérimentés pourraient préférer visites saison humide (septembre-novembre) pour expériences authentiques, paysages dramatiques et foules minimales. Peu importe timing, voyageurs solo bénéficient de la taille compacte du Belize et chaleur toute l'année - toute saison offre expériences incroyables pour ceux préparés aux conditions locales.</p>
               `,
             },
+          },
+          components: {
+            tableOfContents: 'Table des Matières',
+            relatedPosts: 'Articles Connexes',
+            relatedPostsComingSoon: 'Articles connexes à venir...',
+            stayUpdated: 'Restez Informé',
+            stayUpdatedDescription: 'Recevez les derniers conseils de voyage et guides du Belize dans votre boîte de réception.',
+            enterEmail: 'Entrez votre email',
+            subscribe: 'S\'abonner',
           },
           socialMedia: {
             facebookLabel: 'Suivez-nous sur Facebook',

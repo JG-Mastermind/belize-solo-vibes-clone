@@ -50,6 +50,7 @@ const BlogPost: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [showScrollTop, setShowScrollTop] = useState(false);
   const [readingProgress, setReadingProgress] = useState(0);
+  const [tableOfContents, setTableOfContents] = useState<Array<{id: string, title: string}>>([]);
   const [isLiked, setIsLiked] = useState(false);
 
   // Blog post data mapping
@@ -164,11 +165,29 @@ const BlogPost: React.FC = () => {
     }
   };
 
+  // Function to extract table of contents from blog post content
+  const extractTableOfContents = (content: string) => {
+    const headerRegex = /<h2[^>]*id="([^"]*)"[^>]*>(.*?)<\/h2>/g;
+    const toc: Array<{id: string, title: string}> = [];
+    let match;
+    
+    while ((match = headerRegex.exec(content)) !== null) {
+      const id = match[1];
+      const title = match[2].replace(/<[^>]*>/g, ''); // Remove any HTML tags from title
+      toc.push({ id, title });
+    }
+    
+    return toc;
+  };
+
   useEffect(() => {
     if (slug) {
       const post = blogPostMap[slug];
       if (post) {
         setBlogPost(post);
+        // Extract table of contents from content
+        const toc = extractTableOfContents(post.content);
+        setTableOfContents(toc);
         // Simulate loading time
         setTimeout(() => setLoading(false), 500);
       } else {
@@ -472,14 +491,19 @@ const BlogPost: React.FC = () => {
                 {/* Table of Contents - Placeholder */}
                 <Card>
                   <CardHeader>
-                    <CardTitle className="text-lg">Table of Contents</CardTitle>
+                    <CardTitle className="text-lg">{t('blog:components.tableOfContents')}</CardTitle>
                   </CardHeader>
                   <CardContent>
                     <nav className="space-y-2">
-                      <a href="#introduction" className="block text-sm text-blue-600 hover:underline">Introduction</a>
-                      <a href="#section1" className="block text-sm text-blue-600 hover:underline">Getting Started</a>
-                      <a href="#section2" className="block text-sm text-blue-600 hover:underline">Best Practices</a>
-                      <a href="#conclusion" className="block text-sm text-blue-600 hover:underline">Conclusion</a>
+                      {tableOfContents.map((item, index) => (
+                        <a 
+                          key={index}
+                          href={`#${item.id}`} 
+                          className="block text-sm text-blue-600 hover:underline"
+                        >
+                          {item.title}
+                        </a>
+                      ))}
                     </nav>
                   </CardContent>
                 </Card>
@@ -487,12 +511,12 @@ const BlogPost: React.FC = () => {
                 {/* Related Posts */}
                 <Card>
                   <CardHeader>
-                    <CardTitle className="text-lg">Related Posts</CardTitle>
+                    <CardTitle className="text-lg">{t('blog:components.relatedPosts')}</CardTitle>
                   </CardHeader>
                   <CardContent className="space-y-4">
                     {/* We'll populate this with actual related posts */}
                     <div className="text-sm text-gray-600">
-                      Related posts coming soon...
+                      {t('blog:components.relatedPostsComingSoon')}
                     </div>
                   </CardContent>
                 </Card>
@@ -500,19 +524,19 @@ const BlogPost: React.FC = () => {
                 {/* Newsletter Signup */}
                 <Card>
                   <CardHeader>
-                    <CardTitle className="text-lg">Stay Updated</CardTitle>
+                    <CardTitle className="text-lg">{t('blog:components.stayUpdated')}</CardTitle>
                   </CardHeader>
                   <CardContent>
                     <p className="text-sm text-gray-600 mb-4">
-                      Get the latest travel tips and Belize guides delivered to your inbox.
+                      {t('blog:components.stayUpdatedDescription')}
                     </p>
                     <div className="space-y-3">
                       <input
                         type="email"
-                        placeholder="Enter your email"
+                        placeholder={t('blog:components.enterEmail')}
                         className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500"
                       />
-                      <Button className="w-full">Subscribe</Button>
+                      <Button className="w-full">{t('blog:components.subscribe')}</Button>
                     </div>
                   </CardContent>
                 </Card>

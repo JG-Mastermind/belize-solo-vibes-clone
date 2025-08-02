@@ -39,9 +39,11 @@ const AdventureDetail: React.FC = () => {
   const { user } = useAuth();
   const { t } = useTranslation(['adventureDetail', 'adventureCards']);
   
-  // Helper function to get translated adventure content - same as AdventureCards
+  // Helper function to get translated adventure content - handles local-X IDs
   const getAdventureContent = (adventure: any) => {
-    const translatedContent = t(`adventureCards:adventures.${adventure.id}`, { returnObjects: true });
+    // Extract numeric ID from "local-X" format or use as-is
+    const translationId = adventure.id?.toString().replace('local-', '') || adventure.id;
+    const translatedContent = t(`adventureCards:adventures.${translationId}`, { returnObjects: true });
     
     // If translation exists, use it; otherwise fallback to original content
     if (translatedContent && typeof translatedContent === 'object') {

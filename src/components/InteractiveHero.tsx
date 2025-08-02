@@ -1,8 +1,11 @@
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Search } from "lucide-react";
+import { useTranslation } from "react-i18next";
 
 const InteractiveHero = () => {
+  const { t } = useTranslation(['home']);
+  
   return (
     <section className="relative w-full h-screen overflow-hidden">
       {/* STATIC BACKGROUND - WORKS PERFECTLY */}
@@ -20,17 +23,17 @@ const InteractiveHero = () => {
       <div className="relative z-10 flex items-center justify-center h-full text-white">
         <div className="container mx-auto px-4 text-center">
           <h1 className="text-4xl md:text-6xl font-playfair font-bold mb-4">
-            Your Adventure Awaits
+            {t('home:hero.title')}
           </h1>
           <p className="text-lg md:text-xl max-w-2xl mx-auto mb-8">
-            What's your vibe? Search for an adventure or choose a popular experience.
+            {t('home:hero.subtitle')}
           </p>
 
           <div className="max-w-xl mx-auto mb-6">
             <div className="relative">
               <Input
                 type="search"
-                placeholder="E.g., 'cave tubing', 'jungle ruins'"
+                placeholder={t('home:hero.searchPlaceholder')}
                 className="w-full h-14 pl-6 pr-16 rounded-full text-lg text-black"
               />
               <Button
@@ -45,13 +48,13 @@ const InteractiveHero = () => {
 
           <div className="flex flex-wrap items-center justify-center gap-4">
             <Button variant="outline" className="bg-white/20 border-white backdrop-blur-sm hover:bg-white/30">
-              Cave Tubing
+              {t('home:hero.caveTubing')}
             </Button>
             <Button variant="outline" className="bg-white/20 border-white backdrop-blur-sm hover:bg-white/30">
-              Maya Ruins
+              {t('home:hero.mayaRuins')}
             </Button>
             <Button variant="outline" className="bg-white/20 border-white backdrop-blur-sm hover:bg-white/30">
-              Snorkeling
+              {t('home:hero.snorkeling')}
             </Button>
           </div>
         </div>

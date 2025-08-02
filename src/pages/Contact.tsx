@@ -5,8 +5,11 @@ import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent } from "@/components/ui/card";
 import { MapPin, Phone, Mail, Clock } from "lucide-react";
+import { useTranslation } from "react-i18next";
 
 const Contact = () => {
+  const { t } = useTranslation(['contact']);
+  
   const [formData, setFormData] = useState({
     fullName: '',
     email: '',
@@ -61,11 +64,11 @@ const Contact = () => {
         <div className="relative z-10 container mx-auto px-4 text-center text-white">
           <div className="max-w-3xl mx-auto animate-fade-in">
             <h1 className="text-4xl md:text-6xl font-playfair font-bold mb-6 leading-tight">
-              Let's Connect
+              {t('contact:hero.title')}
             </h1>
             
             <p className="text-lg md:text-xl mb-8 max-w-2xl mx-auto opacity-90">
-              Questions about your Belize adventure? We're here to help with booking inquiries, safety concerns, and everything in between.
+              {t('contact:hero.subtitle')}
             </p>
 
             <Button 
@@ -73,7 +76,7 @@ const Contact = () => {
               size="lg" 
               className="bg-orange-500 hover:bg-orange-600 text-white px-8 py-3 text-lg font-semibold transition-all duration-300 hover:scale-105"
             >
-              Get In Touch
+              {t('contact:hero.buttonText')}
             </Button>
           </div>
         </div>
@@ -87,11 +90,10 @@ const Contact = () => {
             <div className="space-y-8">
               <div>
                 <h2 id="reach-us-heading" className="text-3xl font-playfair font-bold text-foreground mb-6">
-                  How to Reach Us
+                  {t('contact:info.title')}
                 </h2>
                 <p className="text-muted-foreground mb-8">
-                  We're based in beautiful Belize and ready to help plan your perfect adventure. 
-                  Our local expertise ensures you get the most authentic experience possible.
+                  {t('contact:info.subtitle')}
                 </p>
               </div>
 
@@ -103,10 +105,10 @@ const Contact = () => {
                         <MapPin className="h-6 w-6 text-green-600" />
                       </div>
                       <div>
-                        <h3 className="font-semibold text-foreground mb-1">Belize Office</h3>
+                        <h3 className="font-semibold text-foreground mb-1">{t('contact:info.belizeOffice')}</h3>
                         <p className="text-muted-foreground">
-                          San Pedro, Ambergris Caye<br />
-                          Belize, Central America
+                          {t('contact:info.address1')}<br />
+                          {t('contact:info.address2')}
                         </p>
                       </div>
                     </div>
@@ -120,10 +122,10 @@ const Contact = () => {
                         <Phone className="h-6 w-6 text-blue-600" />
                       </div>
                       <div>
-                        <h3 className="font-semibold text-foreground mb-1">Phone</h3>
+                        <h3 className="font-semibold text-foreground mb-1">{t('contact:info.phone')}</h3>
                         <p className="text-muted-foreground">
-                          Toll-Free: +1-800-XXX-XXXX<br />
-                          Belize Local: +501-XXX-XXXX
+                          {t('contact:info.tollFree')}<br />
+                          {t('contact:info.belizeLocal')}
                         </p>
                       </div>
                     </div>
@@ -137,10 +139,10 @@ const Contact = () => {
                         <Mail className="h-6 w-6 text-orange-600" />
                       </div>
                       <div>
-                        <h3 className="font-semibold text-foreground mb-1">Email</h3>
+                        <h3 className="font-semibold text-foreground mb-1">{t('contact:info.email')}</h3>
                         <p className="text-muted-foreground">
-                          hello@belizevibes.com<br />
-                          booking@belizevibes.com
+                          {t('contact:info.emailGeneral')}<br />
+                          {t('contact:info.emailBooking')}
                         </p>
                       </div>
                     </div>
@@ -154,11 +156,11 @@ const Contact = () => {
                         <Clock className="h-6 w-6 text-green-600" />
                       </div>
                       <div>
-                        <h3 className="font-semibold text-foreground mb-1">Office Hours</h3>
+                        <h3 className="font-semibold text-foreground mb-1">{t('contact:info.officeHours')}</h3>
                         <p className="text-muted-foreground">
-                          Monday - Friday: 8:00 AM - 6:00 PM (Belize Time)<br />
-                          Saturday: 9:00 AM - 4:00 PM<br />
-                          Sunday: Closed
+                          {t('contact:info.hoursWeekday')}<br />
+                          {t('contact:info.hoursSaturday')}<br />
+                          {t('contact:info.hoursSunday')}
                         </p>
                       </div>
                     </div>
@@ -172,8 +174,8 @@ const Contact = () => {
               <div className="bg-muted rounded-lg h-96 lg:h-full min-h-[400px] flex items-center justify-center">
                 <div className="text-center text-muted-foreground">
                   <MapPin className="h-12 w-12 mx-auto mb-4 text-primary" />
-                  <p className="text-lg font-semibold mb-2">Interactive Map</p>
-                  <p className="text-sm">Google Maps integration coming soon</p>
+                  <p className="text-lg font-semibold mb-2">{t('contact:map.title')}</p>
+                  <p className="text-sm">{t('contact:map.subtitle')}</p>
                 </div>
               </div>
             </div>
@@ -187,10 +189,10 @@ const Contact = () => {
           <div className="max-w-2xl mx-auto">
             <div className="text-center mb-12">
               <h2 id="form-heading" className="text-3xl font-playfair font-bold text-foreground mb-4">
-                Send Us a Message
+                {t('contact:form.title')}
               </h2>
               <p className="text-muted-foreground">
-                Whether you're planning your first Belize adventure or have specific questions about safety and solo travel, we're here to help.
+                {t('contact:form.subtitle')}
               </p>
             </div>
 
@@ -201,7 +203,7 @@ const Contact = () => {
                     <span className="text-white text-sm">✓</span>
                   </div>
                   <p className="text-green-800 dark:text-green-200 font-semibold">
-                    Thank you! Your message has been sent successfully. We'll get back to you within 24 hours.
+                    {t('contact:form.successMessage')}
                   </p>
                 </div>
               </div>
@@ -211,7 +213,7 @@ const Contact = () => {
               <form onSubmit={handleSubmit} className="space-y-6">
                 <div className="space-y-2">
                   <Label htmlFor="fullName" className="text-foreground font-semibold">
-                    Full Name *
+                    {t('contact:form.fullName')}
                   </Label>
                   <Input
                     id="fullName"
@@ -220,13 +222,13 @@ const Contact = () => {
                     onChange={handleInputChange}
                     required
                     className="w-full p-3 rounded-lg border border-border focus:ring-2 focus:ring-primary focus:border-transparent"
-                    placeholder="Enter your full name"
+                    placeholder={t('contact:form.fullNamePlaceholder')}
                   />
                 </div>
 
                 <div className="space-y-2">
                   <Label htmlFor="email" className="text-foreground font-semibold">
-                    Email Address *
+                    {t('contact:form.emailAddress')}
                   </Label>
                   <Input
                     type="email"
@@ -236,13 +238,13 @@ const Contact = () => {
                     onChange={handleInputChange}
                     required
                     className="w-full p-3 rounded-lg border border-border focus:ring-2 focus:ring-primary focus:border-transparent"
-                    placeholder="your.email@example.com"
+                    placeholder={t('contact:form.emailPlaceholder')}
                   />
                 </div>
 
                 <div className="space-y-2">
                   <Label htmlFor="subject" className="text-foreground font-semibold">
-                    Subject
+                    {t('contact:form.subject')}
                   </Label>
                   <select
                     id="subject"
@@ -251,16 +253,16 @@ const Contact = () => {
                     onChange={handleInputChange}
                     className="w-full p-3 rounded-lg border border-border focus:ring-2 focus:ring-primary focus:border-transparent bg-background"
                   >
-                    <option value="General">General Inquiry</option>
-                    <option value="Booking">Booking Question</option>
-                    <option value="Press">Press & Media</option>
-                    <option value="Safety">Safety Concerns</option>
+                    <option value="General">{t('contact:subjects.general')}</option>
+                    <option value="Booking">{t('contact:subjects.booking')}</option>
+                    <option value="Press">{t('contact:subjects.press')}</option>
+                    <option value="Safety">{t('contact:subjects.safety')}</option>
                   </select>
                 </div>
 
                 <div className="space-y-2">
                   <Label htmlFor="message" className="text-foreground font-semibold">
-                    Message *
+                    {t('contact:form.message')}
                   </Label>
                   <Textarea
                     id="message"
@@ -270,7 +272,7 @@ const Contact = () => {
                     required
                     rows={6}
                     className="w-full p-3 rounded-lg border border-border focus:ring-2 focus:ring-primary focus:border-transparent resize-vertical"
-                    placeholder="Tell us about your Belize adventure plans, any questions you have, or how we can help..."
+                    placeholder={t('contact:form.messagePlaceholder')}
                   />
                 </div>
 
@@ -279,7 +281,7 @@ const Contact = () => {
                   disabled={isSubmitting}
                   className="w-full bg-orange-500 hover:bg-orange-600 text-white font-semibold py-3 px-6 rounded-lg transition-all duration-300 hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100"
                 >
-                  {isSubmitting ? 'Sending Message...' : 'Send Message'}
+                  {isSubmitting ? t('contact:form.sendingMessage') : t('contact:form.sendMessage')}
                 </Button>
               </form>
             </Card>

@@ -240,6 +240,155 @@ i18n
             previewImage: 'Preview {{index}}',
           },
         },
+        home: {
+          hero: {
+            title: 'Your Adventure Awaits',
+            subtitle: 'What\'s your vibe? Search for an adventure or choose a popular experience.',
+            searchPlaceholder: 'E.g., \'cave tubing\', \'jungle ruins\'',
+            caveTubing: 'Cave Tubing',
+            mayaRuins: 'Maya Ruins',
+            snorkeling: 'Snorkeling',
+          },
+        },
+        contact: {
+          hero: {
+            title: 'Let\'s Connect',
+            subtitle: 'Questions about your Belize adventure? We\'re here to help with booking inquiries, safety concerns, and everything in between.',
+            buttonText: 'Get In Touch',
+          },
+          info: {
+            title: 'How to Reach Us',
+            subtitle: 'We\'re based in beautiful Belize and ready to help plan your perfect adventure. Our local expertise ensures you get the most authentic experience possible.',
+            belizeOffice: 'Belize Office',
+            phone: 'Phone',
+            email: 'Email',
+            officeHours: 'Office Hours',
+            address1: 'San Pedro, Ambergris Caye',
+            address2: 'Belize, Central America',
+            tollFree: 'Toll-Free: +1-800-XXX-XXXX',
+            belizeLocal: 'Belize Local: +501-XXX-XXXX',
+            emailGeneral: 'hello@belizevibes.com',
+            emailBooking: 'booking@belizevibes.com',
+            hoursWeekday: 'Monday - Friday: 8:00 AM - 6:00 PM (Belize Time)',
+            hoursSaturday: 'Saturday: 9:00 AM - 4:00 PM',
+            hoursSunday: 'Sunday: Closed',
+          },
+          map: {
+            title: 'Interactive Map',
+            subtitle: 'Google Maps integration coming soon',
+          },
+          form: {
+            title: 'Send Us a Message',
+            subtitle: 'Whether you\'re planning your first Belize adventure or have specific questions about safety and solo travel, we\'re here to help.',
+            fullName: 'Full Name *',
+            emailAddress: 'Email Address *',
+            subject: 'Subject',
+            message: 'Message *',
+            fullNamePlaceholder: 'Enter your full name',
+            emailPlaceholder: 'your.email@example.com',
+            messagePlaceholder: 'Tell us about your Belize adventure plans, any questions you have, or how we can help...',
+            sendMessage: 'Send Message',
+            sendingMessage: 'Sending Message...',
+            successMessage: 'Thank you! Your message has been sent successfully. We\'ll get back to you within 24 hours.',
+          },
+          subjects: {
+            general: 'General Inquiry',
+            booking: 'Booking Question',
+            press: 'Press & Media',
+            safety: 'Safety Concerns',
+          },
+        },
+        safety: {
+          hero: {
+            title: 'Your Safety, Our Priority',
+            subtitle: 'Everything you need to know to travel confidently in Belize.',
+          },
+          topics: {
+            travelInsurance: {
+              title: 'Travel Insurance',
+              content: 'We strongly recommend comprehensive travel insurance covering medical emergencies, trip cancellation, and adventure activities. Many standard policies exclude cave tubing and diving—ensure your policy covers all planned activities.',
+            },
+            emergencyNumbers: {
+              title: 'Local Emergency Numbers',
+              content: 'Police: 911 or 90 • Fire/Ambulance: 911 • Tourist Police: 227-2222 • Our 24/7 Emergency Line: +501-XXX-XXXX. Save these numbers in your phone and keep a physical copy in your wallet.',
+            },
+            groupSupport: {
+              title: 'Group Support for Solo Travelers',
+              content: 'Never feel alone on your adventure. Our small group sizes (max 8 people) ensure personalized attention. Each group has certified guides with wilderness first aid training and satellite communication devices.',
+            },
+            localCustoms: {
+              title: 'Respecting Local Customs',
+              content: 'Belize is welcoming and diverse. Dress modestly when visiting villages or religious sites. Learn basic Creole greetings. Tip guides and service staff appropriately. Ask permission before photographing people.',
+            },
+            weatherAlerts: {
+              title: 'Weather Alerts',
+              content: 'Hurricane season runs June-November. Dry season (December-May) is ideal for most activities. We monitor weather constantly and will reschedule or modify trips for safety. Flash floods can occur during rainy season.',
+            },
+            healthWater: {
+              title: 'Health and Water Safety',
+              content: 'Tap water is generally safe in tourist areas, but bottled water is recommended. Bring insect repellent for jungle excursions. No special vaccinations required, but consult your doctor. Sunscreen is essential year-round.',
+            },
+          },
+          sidebar: {
+            emergencyContacts: 'Emergency Contacts',
+            travelResources: 'Travel Resources',
+            currentWeather: 'Current Weather: Clear',
+            perfectConditions: 'Perfect conditions for adventures',
+            belizeGovAlerts: 'Belize Government Travel Alerts',
+            usStateDept: 'US State Department - Belize',
+            weatherConditions: 'Current Weather Conditions',
+          },
+          contacts: {
+            policeEmergency: 'Police Emergency',
+            fireAmbulance: 'Fire/Ambulance',
+            touristPolice: 'Tourist Police',
+            belizeVibes24: 'BelizeVibes 24/7',
+            usEmbassy: 'US Embassy Belize',
+            karlHeusner: 'Karl Heusner Memorial Hospital',
+          },
+          cta: {
+            title: 'Still Have Questions?',
+            content: 'Our team is available 24/7 during your trip and happy to answer any safety concerns before you book.',
+            button: 'Contact Us Anytime',
+          },
+        },
+        about: {
+          hero: {
+            title: 'Our Story',
+            subtitle: 'Meet the people behind Belize\'s boldest solo travel adventures.',
+          },
+          story: {
+            title: 'Locally Owned. Globally Inspired.',
+            content: 'BelizeVibes was founded by Dimitre Sleeuw and a group of young, certified, and passionate Belizeans. Our goal is to empower solo travelers to experience Belize authentically, safely, and sustainably. With deep roots in our culture and training in eco-tourism and hospitality, we offer more than just trips—we create meaningful connections.',
+          },
+          values: {
+            authenticity: {
+              title: 'Authenticity',
+              description: 'Real Belizean experiences crafted by locals who know every hidden gem.',
+            },
+            safety: {
+              title: 'Safety',
+              description: 'Certified guides and comprehensive safety protocols for worry-free adventures.',
+            },
+            localExpertise: {
+              title: 'Local Expertise',
+              description: 'Born and raised in Belize, our team shares insider knowledge and cultural insights.',
+            },
+            sustainableTravel: {
+              title: 'Sustainable Travel',
+              description: 'Eco-certified practices that protect Belize\'s natural beauty for future generations.',
+            },
+          },
+          team: {
+            title: 'Meet Our Team',
+            subtitle: 'Passionate locals dedicated to showing you the real Belize',
+          },
+          cta: {
+            title: 'Want to Join Us?',
+            content: 'We\'re always looking for passionate, certified guides who share our vision of sustainable, authentic travel experiences.',
+            email: 'careers@belizevibes.com',
+          },
+        },
         booking: {
           stepIndicator: {
             stepXOfY: 'Step {{current}} of {{total}}',
@@ -814,6 +963,155 @@ i18n
             reviewPhoto: 'Photo d\'avis {{index}} par {{name}}',
             photosCount: '{{count}} photo{{plural}} • Cliquez pour voir en taille réelle',
             previewImage: 'Aperçu {{index}}',
+          },
+        },
+        home: {
+          hero: {
+            title: 'Votre Aventure Vous Attend',
+            subtitle: 'Quelle est votre ambiance? Recherchez une aventure ou choisissez une expérience populaire.',
+            searchPlaceholder: 'Ex: \'tubing en grotte\', \'ruines mayas\'',
+            caveTubing: 'Tubing en Grotte',
+            mayaRuins: 'Ruines Mayas',
+            snorkeling: 'Plongée avec Tuba',
+          },
+        },
+        contact: {
+          hero: {
+            title: 'Connectons-Nous',
+            subtitle: 'Des questions sur votre aventure au Belize? Nous sommes là pour vous aider avec les demandes de réservation, les préoccupations de sécurité et tout le reste.',
+            buttonText: 'Entrer en Contact',
+          },
+          info: {
+            title: 'Comment Nous Joindre',
+            subtitle: 'Nous sommes basés dans le magnifique Belize et prêts à vous aider à planifier votre aventure parfaite. Notre expertise locale vous garantit l\'expérience la plus authentique possible.',
+            belizeOffice: 'Bureau Belize',
+            phone: 'Téléphone',
+            email: 'Email',
+            officeHours: 'Heures de Bureau',
+            address1: 'San Pedro, Ambergris Caye',
+            address2: 'Belize, Amérique Centrale',
+            tollFree: 'Sans Frais: +1-800-XXX-XXXX',
+            belizeLocal: 'Local Belize: +501-XXX-XXXX',
+            emailGeneral: 'hello@belizevibes.com',
+            emailBooking: 'booking@belizevibes.com',
+            hoursWeekday: 'Lundi - Vendredi: 8h00 - 18h00 (Heure Belize)',
+            hoursSaturday: 'Samedi: 9h00 - 16h00',
+            hoursSunday: 'Dimanche: Fermé',
+          },
+          map: {
+            title: 'Carte Interactive',
+            subtitle: 'Intégration Google Maps bientôt disponible',
+          },
+          form: {
+            title: 'Envoyez-nous un Message',
+            subtitle: 'Que vous planifiez votre première aventure au Belize ou ayez des questions spécifiques sur la sécurité et les voyages solo, nous sommes là pour vous aider.',
+            fullName: 'Nom Complet *',
+            emailAddress: 'Adresse Email *',
+            subject: 'Sujet',
+            message: 'Message *',
+            fullNamePlaceholder: 'Entrez votre nom complet',
+            emailPlaceholder: 'votre.email@exemple.com',
+            messagePlaceholder: 'Parlez-nous de vos plans d\'aventure au Belize, toutes questions que vous avez, ou comment nous pouvons vous aider...',
+            sendMessage: 'Envoyer le Message',
+            sendingMessage: 'Envoi du Message...',
+            successMessage: 'Merci! Votre message a été envoyé avec succès. Nous vous répondrons dans les 24 heures.',
+          },
+          subjects: {
+            general: 'Demande Générale',
+            booking: 'Question de Réservation',
+            press: 'Presse et Médias',
+            safety: 'Préoccupations de Sécurité',
+          },
+        },
+        safety: {
+          hero: {
+            title: 'Votre Sécurité, Notre Priorité',
+            subtitle: 'Tout ce que vous devez savoir pour voyager en toute confiance au Belize.',
+          },
+          topics: {
+            travelInsurance: {
+              title: 'Assurance Voyage',
+              content: 'Nous recommandons fortement une assurance voyage complète couvrant les urgences médicales, l\'annulation de voyage et les activités d\'aventure. Beaucoup de polices standard excluent le tubing en grotte et la plongée—assurez-vous que votre police couvre toutes les activités prévues.',
+            },
+            emergencyNumbers: {
+              title: 'Numéros d\'Urgence Locaux',
+              content: 'Police: 911 ou 90 • Incendie/Ambulance: 911 • Police Touristique: 227-2222 • Notre Ligne d\'Urgence 24/7: +501-XXX-XXXX. Enregistrez ces numéros dans votre téléphone et gardez une copie physique dans votre portefeuille.',
+            },
+            groupSupport: {
+              title: 'Support de Groupe pour Voyageurs Solo',
+              content: 'Ne vous sentez jamais seul dans votre aventure. Nos petites tailles de groupe (max 8 personnes) assurent une attention personnalisée. Chaque groupe a des guides certifiés avec formation de premiers secours en nature et dispositifs de communication satellite.',
+            },
+            localCustoms: {
+              title: 'Respecter les Coutumes Locales',
+              content: 'Le Belize est accueillant et diversifié. Habillez-vous modestement lors de visites de villages ou sites religieux. Apprenez les salutations créoles de base. Donnez des pourboires appropriés aux guides et personnel de service. Demandez la permission avant de photographier les gens.',
+            },
+            weatherAlerts: {
+              title: 'Alertes Météo',
+              content: 'La saison des ouragans s\'étend de juin à novembre. La saison sèche (décembre-mai) est idéale pour la plupart des activités. Nous surveillons constamment la météo et reprogrammerons ou modifierons les voyages pour la sécurité. Des inondations soudaines peuvent survenir pendant la saison des pluies.',
+            },
+            healthWater: {
+              title: 'Santé et Sécurité de l\'Eau',
+              content: 'L\'eau du robinet est généralement sûre dans les zones touristiques, mais l\'eau embouteillée est recommandée. Apportez un répulsif à insectes pour les excursions en jungle. Aucune vaccination spéciale requise, mais consultez votre médecin. La crème solaire est essentielle toute l\'année.',
+            },
+          },
+          sidebar: {
+            emergencyContacts: 'Contacts d\'Urgence',
+            travelResources: 'Ressources de Voyage',
+            currentWeather: 'Météo Actuelle: Dégagé',
+            perfectConditions: 'Conditions parfaites pour les aventures',
+            belizeGovAlerts: 'Alertes de Voyage Gouvernement Belize',
+            usStateDept: 'Département d\'État US - Belize',
+            weatherConditions: 'Conditions Météo Actuelles',
+          },
+          contacts: {
+            policeEmergency: 'Urgence Police',
+            fireAmbulance: 'Incendie/Ambulance',
+            touristPolice: 'Police Touristique',
+            belizeVibes24: 'BelizeVibes 24/7',
+            usEmbassy: 'Ambassade US Belize',
+            karlHeusner: 'Hôpital Mémorial Karl Heusner',
+          },
+          cta: {
+            title: 'Avez-vous Encore des Questions?',
+            content: 'Notre équipe est disponible 24/7 pendant votre voyage et heureuse de répondre à toute préoccupation de sécurité avant votre réservation.',
+            button: 'Contactez-nous à Tout Moment',
+          },
+        },
+        about: {
+          hero: {
+            title: 'Notre Histoire',
+            subtitle: 'Rencontrez les personnes derrière les aventures solo les plus audacieuses du Belize.',
+          },
+          story: {
+            title: 'Propriété Locale. Inspiration Mondiale.',
+            content: 'BelizeVibes a été fondé par Dimitre Sleeuw et un groupe de jeunes Béliziens certifiés et passionnés. Notre objectif est de permettre aux voyageurs solo de découvrir le Belize de manière authentique, sûre et durable. Avec des racines profondes dans notre culture et une formation en éco-tourisme et hospitalité, nous offrons plus que de simples voyages—nous créons des connexions significatives.',
+          },
+          values: {
+            authenticity: {
+              title: 'Authenticité',
+              description: 'Expériences béliziennes authentiques créées par des locaux qui connaissent chaque joyau caché.',
+            },
+            safety: {
+              title: 'Sécurité',
+              description: 'Guides certifiés et protocoles de sécurité complets pour des aventures sans souci.',
+            },
+            localExpertise: {
+              title: 'Expertise Locale',
+              description: 'Nés et élevés au Belize, notre équipe partage des connaissances privilégiées et des aperçus culturels.',
+            },
+            sustainableTravel: {
+              title: 'Voyage Durable',
+              description: 'Pratiques éco-certifiées qui protègent la beauté naturelle du Belize pour les générations futures.',
+            },
+          },
+          team: {
+            title: 'Rencontrez Notre Équipe',
+            subtitle: 'Locaux passionnés dédiés à vous montrer le vrai Belize',
+          },
+          cta: {
+            title: 'Vous Voulez Nous Rejoindre?',
+            content: 'Nous recherchons toujours des guides passionnés et certifiés qui partagent notre vision d\'expériences de voyage durables et authentiques.',
+            email: 'careers@belizevibes.com',
           },
         },
         booking: {

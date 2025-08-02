@@ -1,28 +1,31 @@
 import React from "react";
 import { Users, Shield, Leaf, MapPin, Mail } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { useTranslation } from "react-i18next";
 
 const About = () => {
+  const { t } = useTranslation(['about']);
+  
   const valuePillars = [
     {
       icon: <MapPin className="h-8 w-8 text-primary" />,
-      title: "Authenticity",
-      description: "Real Belizean experiences crafted by locals who know every hidden gem."
+      title: t('about:values.authenticity.title'),
+      description: t('about:values.authenticity.description')
     },
     {
       icon: <Shield className="h-8 w-8 text-blue-500" />,
-      title: "Safety",
-      description: "Certified guides and comprehensive safety protocols for worry-free adventures."
+      title: t('about:values.safety.title'),
+      description: t('about:values.safety.description')
     },
     {
       icon: <Users className="h-8 w-8 text-orange-500" />,
-      title: "Local Expertise",
-      description: "Born and raised in Belize, our team shares insider knowledge and cultural insights."
+      title: t('about:values.localExpertise.title'),
+      description: t('about:values.localExpertise.description')
     },
     {
       icon: <Leaf className="h-8 w-8 text-green-600" />,
-      title: "Sustainable Travel",
-      description: "Eco-certified practices that protect Belize's natural beauty for future generations."
+      title: t('about:values.sustainableTravel.title'),
+      description: t('about:values.sustainableTravel.description')
     }
   ];
 
@@ -52,10 +55,10 @@ const About = () => {
         
         <div className="relative z-10 container mx-auto px-4 text-center text-white">
           <h1 className="text-4xl md:text-6xl font-playfair font-bold mb-4">
-            Our Story
+            {t('about:hero.title')}
           </h1>
           <p className="text-lg md:text-xl max-w-2xl mx-auto opacity-90">
-            Meet the people behind Belize's boldest solo travel adventures.
+            {t('about:hero.subtitle')}
           </p>
         </div>
       </section>
@@ -65,10 +68,10 @@ const About = () => {
         <div className="container mx-auto px-4">
           <div className="max-w-4xl mx-auto text-center">
             <h2 id="story-heading" className="text-3xl md:text-4xl font-playfair font-bold text-foreground mb-8">
-              Locally Owned. Globally Inspired.
+              {t('about:story.title')}
             </h2>
             <p className="text-lg text-muted-foreground leading-relaxed">
-              BelizeVibes was founded by Dimitre Sleeuw and a group of young, certified, and passionate Belizeans. Our goal is to empower solo travelers to experience Belize authentically, safely, and sustainably. With deep roots in our culture and training in eco-tourism and hospitality, we offer more than just trips—we create meaningful connections.
+              {t('about:story.content')}
             </p>
           </div>
         </div>
@@ -100,10 +103,10 @@ const About = () => {
         <div className="container mx-auto px-4">
           <div className="text-center mb-12">
             <h2 id="team-heading" className="text-3xl md:text-4xl font-playfair font-bold text-foreground mb-4">
-              Meet Our Team
+              {t('about:team.title')}
             </h2>
             <p className="text-lg text-muted-foreground">
-              Passionate locals dedicated to showing you the real Belize
+              {t('about:team.subtitle')}
             </p>
           </div>
           
@@ -133,15 +136,15 @@ const About = () => {
       <section className="py-16 bg-green-50 dark:bg-green-950/20" aria-labelledby="cta-heading">
         <div className="container mx-auto px-4 text-center">
           <h2 id="cta-heading" className="text-3xl font-playfair font-bold text-foreground mb-4">
-            Want to Join Us?
+            {t('about:cta.title')}
           </h2>
           <p className="text-lg text-muted-foreground mb-8 max-w-2xl mx-auto">
-            We're always looking for passionate, certified guides who share our vision of sustainable, authentic travel experiences.
+            {t('about:cta.content')}
           </p>
-          <a href="mailto:careers@belizevibes.com">
+          <a href={`mailto:${t('about:cta.email')}`}>
             <Button className="bg-primary hover:bg-primary/90 text-primary-foreground px-8 py-3 text-lg">
               <Mail className="h-5 w-5 mr-2" />
-              careers@belizevibes.com
+              {t('about:cta.email')}
             </Button>
           </a>
         </div>

@@ -44,7 +44,7 @@ interface BlogPostData {
 const BlogPost: React.FC = () => {
   const { slug } = useParams<{ slug: string }>();
   const navigate = useNavigate();
-  const { t, i18n } = useTranslation(['blog', 'common']);
+  const { t, i18n } = useTranslation(['blog', 'common', 'navigation']);
   
   const [blogPost, setBlogPost] = useState<BlogPostData | null>(null);
   const [loading, setLoading] = useState(true);
@@ -107,6 +107,60 @@ const BlogPost: React.FC = () => {
       views: 1156,
       likes: 94,
       comments: 31
+    },
+    'wildlife-watching-solo': {
+      id: 4,
+      title: t('blog:posts.post4.title'),
+      content: t('blog:posts.post4.fullContent'),
+      excerpt: t('blog:posts.post4.excerpt'),
+      author: 'Elena Castro',
+      publishDate: '2024-11-28',
+      lastModified: '2024-11-28',
+      readingTime: '7 min read',
+      category: 'Wildlife',
+      tags: ['Wildlife', 'Solo Travel', 'Nature', 'Photography'],
+      featuredImage: 'https://images.unsplash.com/photo-1509316975850-ff9c5deb0cd9?w=1200&h=600&fit=crop&crop=center',
+      metaDescription: t('blog:posts.post4.metaDescription'),
+      keywords: ['belize wildlife', 'wildlife watching', 'solo wildlife tours', 'belize animals'],
+      views: 892,
+      likes: 67,
+      comments: 15
+    },
+    'budget-belize-solo-travel': {
+      id: 5,
+      title: t('blog:posts.post5.title'),
+      content: t('blog:posts.post5.fullContent'),
+      excerpt: t('blog:posts.post5.excerpt'),
+      author: 'Mike Johnson',
+      publishDate: '2024-11-20',
+      lastModified: '2024-11-20',
+      readingTime: '9 min read',
+      category: 'Budget Travel',
+      tags: ['Budget Travel', 'Solo Travel', 'Money Saving', 'Backpacking'],
+      featuredImage: 'https://images.unsplash.com/photo-1513836279014-a89f7a76ae86?w=1200&h=600&fit=crop&crop=center',
+      metaDescription: t('blog:posts.post5.metaDescription'),
+      keywords: ['budget belize travel', 'cheap belize travel', 'belize backpacking', 'budget solo travel'],
+      views: 1543,
+      likes: 128,
+      comments: 42
+    },
+    'best-time-visit-belize': {
+      id: 6,
+      title: t('blog:posts.post6.title'),
+      content: t('blog:posts.post6.fullContent'),
+      excerpt: t('blog:posts.post6.excerpt'),
+      author: 'Ana Gutierrez',
+      publishDate: '2024-11-15',
+      lastModified: '2024-11-15',
+      readingTime: '6 min read',
+      category: 'Travel Planning',
+      tags: ['Travel Planning', 'Weather', 'Seasons', 'Travel Tips'],
+      featuredImage: 'https://images.unsplash.com/photo-1518495973542-4543c06a5843?w=1200&h=600&fit=crop&crop=center',
+      metaDescription: t('blog:posts.post6.metaDescription'),
+      keywords: ['best time visit belize', 'belize weather', 'belize seasons', 'when to visit belize'],
+      views: 756,
+      likes: 54,
+      comments: 12
     }
   };
 
@@ -264,9 +318,9 @@ const BlogPost: React.FC = () => {
         <div className="bg-white dark:bg-gray-800 border-b">
           <div className="container mx-auto px-4 py-4">
             <nav className="flex items-center space-x-2 text-sm">
-              <Link to="/" className="text-blue-600 hover:underline">{t('common:navigation.home')}</Link>
+              <Link to="/" className="text-blue-600 hover:underline">{t('navigation:home')}</Link>
               <ChevronRight className="w-4 h-4 text-gray-400" />
-              <Link to="/blog" className="text-blue-600 hover:underline">{t('common:navigation.blog')}</Link>
+              <Link to="/blog" className="text-blue-600 hover:underline">{t('navigation:blog')}</Link>
               <ChevronRight className="w-4 h-4 text-gray-400" />
               <span className="text-gray-600 dark:text-gray-300 truncate">{blogPost.title}</span>
             </nav>

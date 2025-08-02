@@ -180,6 +180,28 @@ const BlogPost: React.FC = () => {
     return toc;
   };
 
+  // Function to translate a tag
+  const translateTag = (tag: string) => {
+    const translatedTag = t(`blog:tags.${tag}`, { defaultValue: tag });
+    return translatedTag;
+  };
+
+  // Function to translate reading time
+  const translateReadingTime = (readingTime: string) => {
+    const match = readingTime.match(/(\d+)\s*min\s*read/);
+    if (match) {
+      const minutes = match[1];
+      return `${minutes} ${t('blog:components.minRead')}`;
+    }
+    return readingTime;
+  };
+
+  // Function to translate category
+  const translateCategory = (category: string) => {
+    const translatedCategory = t(`blog:categories.${category}`, { defaultValue: category });
+    return translatedCategory;
+  };
+
   useEffect(() => {
     if (slug) {
       const post = blogPostMap[slug];
@@ -358,7 +380,7 @@ const BlogPost: React.FC = () => {
           <div className="absolute bottom-0 left-0 right-0 p-6 lg:p-12">
             <div className="container mx-auto">
               <div className="max-w-4xl">
-                <Badge className="mb-4 bg-blue-600 text-white">{blogPost.category}</Badge>
+                <Badge className="mb-4 bg-blue-600 text-white">{translateCategory(blogPost.category)}</Badge>
                 <h1 className="text-3xl lg:text-5xl font-bold text-white mb-4 leading-tight">
                   {blogPost.title}
                 </h1>
@@ -378,11 +400,11 @@ const BlogPost: React.FC = () => {
                   </div>
                   <div className="flex items-center gap-2">
                     <Clock className="w-4 h-4" />
-                    <span>{blogPost.readingTime}</span>
+                    <span>{translateReadingTime(blogPost.readingTime)}</span>
                   </div>
                   <div className="flex items-center gap-2">
                     <Eye className="w-4 h-4" />
-                    <span>{blogPost.views.toLocaleString()} views</span>
+                    <span>{blogPost.views.toLocaleString()} {t('blog:components.views')}</span>
                   </div>
                 </div>
               </div>
@@ -402,7 +424,7 @@ const BlogPost: React.FC = () => {
                 <div className="flex flex-wrap gap-2 mb-8">
                   {blogPost.tags.map((tag, index) => (
                     <Badge key={index} variant="secondary" className="text-sm">
-                      {tag}
+                      {translateTag(tag)}
                     </Badge>
                   ))}
                 </div>

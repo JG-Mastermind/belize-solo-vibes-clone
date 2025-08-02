@@ -3,9 +3,11 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Calendar, User, Facebook, Instagram, Mail } from "lucide-react";
 import { useTranslation } from "react-i18next";
+import { useNavigate } from "react-router-dom";
 
 const Blog = () => {
   const { t } = useTranslation(['blog']);
+  const navigate = useNavigate();
   
   const blogPosts = [
     {
@@ -154,7 +156,7 @@ const Blog = () => {
                     <Button 
                       variant="outline" 
                       className="w-full border-belize-green-500 text-belize-green-600 hover:bg-belize-green-500 hover:text-white transition-all duration-300"
-                      onClick={() => console.log(`Maps to: /blog/${post.slug}`)}
+                      onClick={() => navigate(`/blog/${post.slug}`)}
                     >
                       {t('blog:main.readMore')}
                     </Button>

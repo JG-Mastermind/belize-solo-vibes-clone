@@ -5,12 +5,14 @@ import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route, Outlet } from "react-router-dom";
+import { HelmetProvider } from 'react-helmet-async';
 import { AuthProvider } from "./components/auth/AuthProvider";
 import { AdventureCreationProvider } from "./contexts/AdventureCreationContext";
 import LandingPage from "./pages/LandingPage";
 import AdventuresPage from "./pages/AdventuresPage";
 import Contact from "./pages/Contact";
 import Blog from "./pages/Blog";
+import BlogPost from "./pages/BlogPost";
 import About from "./pages/About";
 import Safety from "./pages/Safety";
 import Booking from "./pages/Booking";
@@ -43,9 +45,10 @@ const AppLayout = () => (
 
 const App = () => (
   <QueryClientProvider client={queryClient}>
-    <TooltipProvider>
-      <AuthProvider>
-        <AdventureCreationProvider>
+    <HelmetProvider>
+      <TooltipProvider>
+        <AuthProvider>
+          <AdventureCreationProvider>
           <Toaster />
           <Sonner />
           <BrowserRouter>
@@ -56,6 +59,7 @@ const App = () => (
               <Route path="adventures" element={<AdventuresPage />} />
               <Route path="contact" element={<Contact />} />
               <Route path="blog" element={<Blog />} />
+              <Route path="blog/:slug" element={<BlogPost />} />
               <Route path="about" element={<About />} />
               <Route path="safety" element={<Safety />} />
               <Route path="tours/:id" element={<AdventureDetail />} />
@@ -83,6 +87,7 @@ const App = () => (
         </AdventureCreationProvider>
       </AuthProvider>
     </TooltipProvider>
+    </HelmetProvider>
   </QueryClientProvider>
 );
 

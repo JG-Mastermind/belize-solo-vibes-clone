@@ -1,7 +1,7 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Calendar, User, Facebook, Instagram, Mail, CheckCircle, AlertCircle } from "lucide-react";
+import { Calendar, User, Facebook, Instagram, Mail, CheckCircle, AlertCircle, ArrowUp } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
 
@@ -14,6 +14,22 @@ const Blog = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitStatus, setSubmitStatus] = useState<'idle' | 'success' | 'error'>('idle');
   const [statusMessage, setStatusMessage] = useState('');
+  
+  // Scroll to top functionality
+  const [showScrollTop, setShowScrollTop] = useState(false);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      setShowScrollTop(window.scrollY > 300);
+    };
+
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
+  const scrollToTop = () => {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
   
   const blogPosts = [
     {
@@ -69,6 +85,69 @@ const Blog = () => {
       author: "Ana Gutierrez",
       date: "November 15, 2024",
       slug: "best-time-visit-belize"
+    },
+    {
+      id: 7,
+      title: "Belize Barrier Reef: Marine Wildlife Guide for Solo Divers",
+      excerpt: "Discover the incredible marine wildlife of Belize's Barrier Reef through the eyes of an experienced solo diver. From gentle nurse sharks to majestic manatees, this comprehensive guide covers the best dive sites, operators, and practical tips for exploring the world's second-largest reef system independently.",
+      imgUrl: "https://images.unsplash.com/photo-1544551763-46a013bb70d5?w=800&h=400&fit=crop&crop=center",
+      author: "Maya Rodriguez",
+      date: "January 8, 2025",
+      slug: "belize-barrier-reef-marine-wildlife-guide"
+    },
+    {
+      id: 8,
+      title: "Spotting Jaguars & Howler Monkeys: Cockscomb Basin Solo Guide",
+      excerpt: "Explore the world's first jaguar preserve through the eyes of an experienced solo wildlife tracker. This comprehensive guide covers the best trails, timing, and techniques for encountering Belize's apex predator and noisiest mammals in their pristine rainforest sanctuary.",
+      imgUrl: "https://images.unsplash.com/photo-1516642898597-9c0c8c8e8b8b?w=800&h=400&fit=crop&crop=center",
+      author: "Maya Rodriguez",
+      date: "January 7, 2025",
+      slug: "spotting-jaguars-howler-monkeys-cockscomb-basin-solo-guide"
+    },
+    {
+      id: 9,
+      title: "Solo Female Travel Safety in Belize: Real Experiences & Tips",
+      excerpt: "Eight years of solo female travel across Belize revealed that preparation trumps paranoia. This unvarnished guide covers the real safety considerations, cultural awareness, and practical strategies for women exploring Belize independently with confidence.",
+      imgUrl: "https://images.unsplash.com/photo-1469474968028-56623f02e42e?w=800&h=400&fit=crop&crop=center",
+      author: "Maya Rodriguez", 
+      date: "January 6, 2025",
+      slug: "solo-female-travel-safety-belize-real-experiences-tips"
+    },
+    {
+      id: 10,
+      title: "Navigating Belize City Safely: A Solo Traveler's Street-Smart Guide",
+      excerpt: "Belize City gets unfairly demonized by outdated guidebooks. This street-smart navigation guide reveals how to safely explore the cultural heart of Belize, from transportation hubs to authentic local experiences, without falling victim to common tourist fears.",
+      imgUrl: "https://images.unsplash.com/photo-1449824913935-59a10b8d2000?w=800&h=400&fit=crop&crop=center",
+      author: "Maya Rodriguez",
+      date: "January 5, 2025", 
+      slug: "navigating-belize-city-safely-solo-traveler-street-smart-guide"
+    },
+    {
+      id: 11,
+      title: "Belize on $30/Day: Ultimate Backpacker's Survival Guide",
+      excerpt: "When stranded in expensive Belize with $210 for seven days, I discovered that extreme budget travel reveals the country's authentic heart. This survival guide shows exactly how to stretch every dollar while eating well, sleeping safely, and experiencing real Belizean culture.",
+      imgUrl: "https://images.unsplash.com/photo-1553062407-98eeb64c6a62?w=800&h=400&fit=crop&crop=center",
+      author: "Maya Rodriguez",
+      date: "January 4, 2025",
+      slug: "belize-30-dollars-day-ultimate-backpacker-survival-guide"
+    },
+    {
+      id: 12,
+      title: "Capturing Belize's Blue Hole: Photography Tips for Solo Travelers",
+      excerpt: "After photographing the Blue Hole from air, surface, and 130 feet underwater, I've learned this natural wonder rewards technical knowledge over expensive equipment. This comprehensive guide covers aerial flights, surface techniques, and underwater challenges for solo photographers.",
+      imgUrl: "https://images.unsplash.com/photo-1559827260-dc66d52bef19?w=800&h=400&fit=crop&crop=center",
+      author: "Maya Rodriguez",
+      date: "January 3, 2025",
+      slug: "capturing-belize-blue-hole-photography-tips-solo-travelers"
+    },
+    {
+      id: 13,
+      title: "Instagram-Worthy Spots in Belize: Hidden Photography Gems",
+      excerpt: "Beyond the over-tagged tourist spots lie Belize's truly hidden photography gems. This insider guide reveals secret waterfalls, pristine Maya ruins, and untouched natural wonders that will make your followers stop scrolling and start planning their own adventures.",
+      imgUrl: "https://images.unsplash.com/photo-1516026672322-bc52d61a55d5?w=800&h=400&fit=crop&crop=center",
+      author: "Maya Rodriguez",
+      date: "January 2, 2025",
+      slug: "instagram-worthy-spots-belize-hidden-photography-gems"
     }
   ];
 
@@ -156,7 +235,7 @@ const Blog = () => {
           
           {/* Blog Posts Grid */}
           <main className="lg:col-span-3" id="blog-posts" aria-labelledby="latest-stories-heading">
-            <h2 id="latest-stories-heading" className="text-3xl font-playfair font-bold text-belize-neutral-900 mb-8 text-center lg:text-left">
+            <h2 id="latest-stories-heading" className="text-3xl font-playfair font-bold text-belize-neutral-900 dark:text-foreground mb-8 text-center lg:text-left">
               {t('blog:main.latestStories')}
             </h2>
             
@@ -207,7 +286,8 @@ const Blog = () => {
           </main>
 
           {/* Sidebar */}
-          <aside className="hidden lg:block lg:col-span-1 space-y-8 mt-16 lg:mt-0">
+          <aside className="hidden lg:block lg:col-span-1 space-y-8">
+            <div className="sticky top-24 space-y-8 mt-16">
             
             <Card className="p-6" aria-labelledby="popular-topics-heading">
               <h3 id="popular-topics-heading" className="text-xl font-playfair font-semibold text-belize-green-600 dark:text-belize-green-500 mb-4">
@@ -302,9 +382,21 @@ const Blog = () => {
                 )}
               </form>
             </Card>
+            </div>
           </aside>
         </div>
       </div>
+      
+      {/* Scroll to Top Button */}
+      {showScrollTop && (
+        <button
+          onClick={scrollToTop}
+          className="fixed bottom-8 right-8 bg-belize-orange-500 hover:bg-belize-orange-600 text-white p-3 rounded-full shadow-lg transition-all duration-300 z-50"
+          aria-label="Scroll to top"
+        >
+          <ArrowUp className="h-5 w-5" />
+        </button>
+      )}
     </React.Fragment>
   );
 };

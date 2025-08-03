@@ -1,13 +1,19 @@
-import React from "react";
+import React, { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Calendar, User, Facebook, Instagram, Mail } from "lucide-react";
+import { Calendar, User, Facebook, Instagram, Mail, CheckCircle, AlertCircle } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
 
 const Blog = () => {
   const { t } = useTranslation(['blog']);
   const navigate = useNavigate();
+  
+  // Newsletter subscription state
+  const [email, setEmail] = useState('');
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [submitStatus, setSubmitStatus] = useState<'idle' | 'success' | 'error'>('idle');
+  const [statusMessage, setStatusMessage] = useState('');
   
   const blogPosts = [
     {
@@ -59,7 +65,7 @@ const Blog = () => {
       id: 6,
       title: t('blog:posts.post6.title'),
       excerpt: t('blog:posts.post6.excerpt'),
-      imgUrl: "https://images.unsplash.com/photo-1518495973542-4543c06a5843?w=800&h=400&fit=crop&crop=center",
+      imgUrl: "https://images.unsplash.com/photo-1544620347-c4fd4a3d5957?w=800&h=400&fit=crop&crop=center",
       author: "Ana Gutierrez",
       date: "November 15, 2024",
       slug: "best-time-visit-belize"
@@ -73,10 +79,44 @@ const Blog = () => {
     t('blog:topics.soloTips'), t('blog:topics.photography')
   ];
 
-  const handleNewsletterSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  const handleNewsletterSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    // Future implementation: handle form submission
-    console.log('Newsletter form submitted');
+    
+    if (!email || !email.includes('@')) {
+      setSubmitStatus('error');
+      setStatusMessage(t('blog:sidebar.invalidEmail', { defaultValue: 'Please enter a valid email address' }));
+      return;
+    }
+    
+    setIsSubmitting(true);
+    setSubmitStatus('idle');
+    setStatusMessage('');
+    
+    try {
+      // Simulate API call - Replace with your actual newsletter service
+      await new Promise(resolve => setTimeout(resolve, 1500));
+      
+      // Simulate success (replace with actual API logic)
+      const success = Math.random() > 0.1; // 90% success rate for demo
+      
+      if (success) {
+        setSubmitStatus('success');
+        setStatusMessage(t('blog:sidebar.subscriptionSuccess', { defaultValue: 'Successfully subscribed! Welcome to our newsletter.' }));
+        setEmail(''); // Clear form
+      } else {
+        throw new Error('Subscription failed');
+      }
+    } catch (error) {
+      setSubmitStatus('error');
+      setStatusMessage(t('blog:sidebar.subscriptionError', { defaultValue: 'Something went wrong. Please try again.' }));
+    } finally {
+      setIsSubmitting(false);
+      // Clear status message after 5 seconds
+      setTimeout(() => {
+        setSubmitStatus('idle');
+        setStatusMessage('');
+      }, 5000);
+    }
   };
 
   return (
@@ -133,7 +173,7 @@ const Blog = () => {
                   </div>
                   
                   <CardHeader className="pb-3">
-                    <CardTitle className="text-xl font-playfair text-belize-neutral-900 group-hover:text-belize-green-600 transition-colors duration-300 line-clamp-2">
+                    <CardTitle className="text-xl font-playfair text-belize-neutral-900 dark:text-foreground group-hover:text-belize-green-600 dark:group-hover:text-belize-green-500 transition-colors duration-300 line-clamp-2 mb-3">
                       {post.title}
                     </CardTitle>
                     <CardDescription className="text-belize-neutral-600 line-clamp-2">
@@ -170,7 +210,7 @@ const Blog = () => {
           <aside className="hidden lg:block lg:col-span-1 space-y-8 mt-16 lg:mt-0">
             
             <Card className="p-6" aria-labelledby="popular-topics-heading">
-              <h3 id="popular-topics-heading" className="text-xl font-playfair font-semibold text-belize-neutral-900 mb-4">
+              <h3 id="popular-topics-heading" className="text-xl font-playfair font-semibold text-belize-green-600 dark:text-belize-green-500 mb-4">
                 {t('blog:sidebar.popularTopics')}
               </h3>
               <div className="flex flex-wrap gap-2">
@@ -187,7 +227,7 @@ const Blog = () => {
             </Card>
 
             <Card className="p-6" aria-labelledby="follow-us-heading">
-              <h3 id="follow-us-heading" className="text-xl font-playfair font-semibold text-belize-neutral-900 mb-4">
+              <h3 id="follow-us-heading" className="text-xl font-playfair font-semibold text-belize-green-600 dark:text-belize-green-500 mb-4">
                 {t('blog:sidebar.followUs')}
               </h3>
               <div className="flex space-x-4">
@@ -209,7 +249,7 @@ const Blog = () => {
             </Card>
 
             <Card className="p-6" aria-labelledby="newsletter-heading">
-              <h3 id="newsletter-heading" className="text-xl font-playfair font-semibold text-belize-neutral-900 mb-4">
+              <h3 id="newsletter-heading" className="text-xl font-playfair font-semibold text-belize-green-600 dark:text-belize-green-500 mb-4">
                 {t('blog:sidebar.stayUpdated')}
               </h3>
               <p className="text-sm text-belize-neutral-600 mb-4">
@@ -220,17 +260,46 @@ const Blog = () => {
                 <input
                   id="newsletter-email"
                   type="email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
                   placeholder={t('blog:sidebar.emailPlaceholder')}
                   required
-                  className="w-full px-3 py-2 border border-belize-neutral-200 rounded-lg focus:ring-2 focus:ring-belize-green-500 focus:border-transparent outline-none transition-all duration-300"
+                  disabled={isSubmitting}
+                  className="w-full px-3 py-2 border border-belize-neutral-200 rounded-lg focus:ring-2 focus:ring-belize-green-500 focus:border-transparent outline-none transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
                 />
                 <Button 
                   type="submit"
-                  className="w-full bg-belize-orange-500 hover:bg-belize-orange-600 text-white"
+                  disabled={isSubmitting}
+                  className="w-full bg-belize-orange-500 hover:bg-belize-orange-600 text-white disabled:opacity-50 disabled:cursor-not-allowed"
                 >
-                  <Mail className="h-4 w-4 mr-2" />
-                  {t('blog:sidebar.subscribe')}
+                  {isSubmitting ? (
+                    <>
+                      <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
+                      {t('blog:sidebar.subscribing', { defaultValue: 'Subscribing...' })}
+                    </>
+                  ) : (
+                    <>
+                      <Mail className="h-4 w-4 mr-2" />
+                      {t('blog:sidebar.subscribe')}
+                    </>
+                  )}
                 </Button>
+                
+                {/* Status Message */}
+                {submitStatus !== 'idle' && statusMessage && (
+                  <div className={`flex items-center gap-2 text-sm p-3 rounded-lg ${
+                    submitStatus === 'success' 
+                      ? 'bg-green-50 text-green-700 border border-green-200' 
+                      : 'bg-red-50 text-red-700 border border-red-200'
+                  }`}>
+                    {submitStatus === 'success' ? (
+                      <CheckCircle className="h-4 w-4 flex-shrink-0" />
+                    ) : (
+                      <AlertCircle className="h-4 w-4 flex-shrink-0" />
+                    )}
+                    <span>{statusMessage}</span>
+                  </div>
+                )}
               </form>
             </Card>
           </aside>

@@ -350,7 +350,7 @@ const BlogPost: React.FC = () => {
       
       {/* Reading Progress Bar */}
       <div 
-        className="fixed top-0 left-0 h-1 bg-blue-600 z-50 transition-all duration-300"
+        className="fixed top-0 left-0 h-1 bg-belize-green-500 z-50 transition-all duration-300"
         style={{ width: `${readingProgress}%` }}
       />
 
@@ -359,9 +359,9 @@ const BlogPost: React.FC = () => {
         <div className="bg-white dark:bg-gray-800 border-b">
           <div className="container mx-auto px-4 py-4">
             <nav className="flex items-center space-x-2 text-sm">
-              <Link to="/" className="text-blue-600 hover:underline">{t('navigation:home')}</Link>
+              <Link to="/" className="text-belize-green-600 dark:text-belize-green-500 hover:underline">{t('navigation:home')}</Link>
               <ChevronRight className="w-4 h-4 text-gray-400" />
-              <Link to="/blog" className="text-blue-600 hover:underline">{t('navigation:blog')}</Link>
+              <Link to="/blog" className="text-belize-green-600 dark:text-belize-green-500 hover:underline">{t('navigation:blog')}</Link>
               <ChevronRight className="w-4 h-4 text-gray-400" />
               <span className="text-gray-600 dark:text-gray-300 truncate">{blogPost.title}</span>
             </nav>
@@ -380,7 +380,7 @@ const BlogPost: React.FC = () => {
           <div className="absolute bottom-0 left-0 right-0 p-6 lg:p-12">
             <div className="container mx-auto">
               <div className="max-w-4xl">
-                <Badge className="mb-4 bg-blue-600 text-white">{translateCategory(blogPost.category)}</Badge>
+                <Badge className="mb-4 bg-belize-green-600 text-white">{translateCategory(blogPost.category)}</Badge>
                 <h1 className="text-3xl lg:text-5xl font-bold text-white mb-4 leading-tight">
                   {blogPost.title}
                 </h1>
@@ -423,9 +423,13 @@ const BlogPost: React.FC = () => {
                 {/* Article Tags */}
                 <div className="flex flex-wrap gap-2 mb-8">
                   {blogPost.tags.map((tag, index) => (
-                    <Badge key={index} variant="secondary" className="text-sm">
+                    <button
+                      key={index}
+                      className="px-3 py-1 text-sm bg-belize-green-100 text-belize-green-700 rounded-full hover:bg-belize-green-500 hover:text-white transition-colors duration-300"
+                      onClick={() => console.log(`Filter by tag: ${tag}`)}
+                    >
                       {translateTag(tag)}
-                    </Badge>
+                    </button>
                   ))}
                 </div>
 
@@ -489,7 +493,7 @@ const BlogPost: React.FC = () => {
                 {/* Author Bio */}
                 <div className="bg-gray-50 dark:bg-gray-700 rounded-lg p-6">
                   <div className="flex items-center gap-4 mb-4">
-                    <div className="w-16 h-16 bg-blue-600 rounded-full flex items-center justify-center">
+                    <div className="w-16 h-16 bg-belize-green-500 rounded-full flex items-center justify-center">
                       <User className="w-8 h-8 text-white" />
                     </div>
                     <div>
@@ -513,7 +517,7 @@ const BlogPost: React.FC = () => {
                 {/* Table of Contents - Placeholder */}
                 <Card>
                   <CardHeader>
-                    <CardTitle className="text-lg">{t('blog:components.tableOfContents')}</CardTitle>
+                    <CardTitle className="text-xl font-playfair font-semibold text-belize-green-600 dark:text-belize-green-500 mb-4">{t('blog:components.tableOfContents')}</CardTitle>
                   </CardHeader>
                   <CardContent>
                     <nav className="space-y-2">
@@ -521,7 +525,7 @@ const BlogPost: React.FC = () => {
                         <a 
                           key={index}
                           href={`#${item.id}`} 
-                          className="block text-sm text-blue-600 hover:underline"
+                          className="block text-sm text-belize-orange-500 hover:text-belize-orange-600 hover:underline transition-colors duration-300"
                         >
                           {item.title}
                         </a>
@@ -533,7 +537,7 @@ const BlogPost: React.FC = () => {
                 {/* Related Posts */}
                 <Card>
                   <CardHeader>
-                    <CardTitle className="text-lg">{t('blog:components.relatedPosts')}</CardTitle>
+                    <CardTitle className="text-xl font-playfair font-semibold text-belize-green-600 dark:text-belize-green-500 mb-4">{t('blog:components.relatedPosts')}</CardTitle>
                   </CardHeader>
                   <CardContent className="space-y-4">
                     {/* We'll populate this with actual related posts */}
@@ -546,19 +550,19 @@ const BlogPost: React.FC = () => {
                 {/* Newsletter Signup */}
                 <Card>
                   <CardHeader>
-                    <CardTitle className="text-lg">{t('blog:components.stayUpdated')}</CardTitle>
+                    <CardTitle className="text-xl font-playfair font-semibold text-belize-green-600 dark:text-belize-green-500 mb-4">{t('blog:components.stayUpdated')}</CardTitle>
                   </CardHeader>
                   <CardContent>
-                    <p className="text-sm text-gray-600 mb-4">
+                    <p className="text-sm text-belize-neutral-600 mb-4">
                       {t('blog:components.stayUpdatedDescription')}
                     </p>
                     <div className="space-y-3">
                       <input
                         type="email"
                         placeholder={t('blog:components.enterEmail')}
-                        className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500"
+                        className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-belize-green-500"
                       />
-                      <Button className="w-full">{t('blog:components.subscribe')}</Button>
+                      <Button className="w-full bg-belize-orange-500 hover:bg-belize-orange-600 text-white">{t('blog:components.subscribe')}</Button>
                     </div>
                   </CardContent>
                 </Card>

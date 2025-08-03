@@ -31,6 +31,6 @@ At session start, Claude should automatically load:
 ---
 
 ## ✅ Session Start
-Claude now initialized. Proceed with diagnostic scan, task summary, and await `✅ GO` from CTO (ChatGPT).
+Claude now initialized. Proceed with diagnostic scan, task summary, and await `✅ GO` from CTO JG a cool human.
 
 Happy coding. 🌴

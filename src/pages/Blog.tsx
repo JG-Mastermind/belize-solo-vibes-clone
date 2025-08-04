@@ -85,7 +85,8 @@ const Blog = () => {
 
   // Helper function to get translated content
   const getTranslatedContent = (post: BlogPost) => {
-    const isFrench = currentLanguage === 'fr-CA';
+    const isFrench = currentLanguage?.startsWith('fr') || currentLanguage === 'fr-CA' || currentLanguage === 'francais';
+    console.log('Language Debug:', { currentLanguage, isFrench, hasTitle_fr: !!post.title_fr });
     return {
       title: (isFrench && post.title_fr) ? post.title_fr : post.title,
       excerpt: (isFrench && post.excerpt_fr) ? post.excerpt_fr : post.excerpt

@@ -31,6 +31,7 @@ import GuideDashboard from "./pages/dashboard/GuideDashboard";
 import TravelerDashboard from "./pages/dashboard/TravelerDashboard";
 import CreateAdventure from "./pages/dashboard/CreateAdventure";
 import CreatePost from "./pages/dashboard/CreatePost";
+import EditPost from "./pages/dashboard/EditPost";
 
 const queryClient = new QueryClient();
 
@@ -83,6 +84,7 @@ const App = () => (
             </Route>
             
             <Route path="/admin/posts/new" element={<CreatePost />} />
+            <Route path="/admin/posts/edit/:id" element={<EditPost />} />
             
             <Route path="*" element={<NotFound />} />
           </Routes>

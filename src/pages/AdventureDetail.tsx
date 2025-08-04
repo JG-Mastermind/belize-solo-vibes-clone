@@ -39,13 +39,43 @@ const AdventureDetail: React.FC = () => {
   const { user } = useAuth();
   const { t } = useTranslation(['adventureDetail', 'adventureCards']);
   
-  // Helper function to get translated adventure content - handles local-X IDs
+  // Map database adventure titles to i18n keys (same as AdventureCards)
+  const getTitleBasedTranslationKey = (title: string) => {
+    const titleMap: Record<string, number> = {
+      'Cave Tubing & Jungle Trek': 1,
+      'Snorkeling at Hol Chan Marine Reserve': 2,
+      'Caracol Maya Ruins Adventure': 3,
+      'Blue Hole Diving Experience': 4,
+      'Jungle Zip-lining & Waterfall Tour': 5,
+      'Manatee Watching & Beach Day': 6,
+      'Sunrise Fishing & Island Hopping': 7,
+      'Night Jungle Safari': 8,
+      'Cultural Village Tour & Chocolate Making': 9
+    };
+    return titleMap[title] || null;
+  };
+
+  // Helper function to get translated adventure content
   const getAdventureContent = (adventure: any) => {
-    // Extract numeric ID from "local-X" format or use as-is
+    // Try title-based mapping for database adventures first
+    const translationKey = getTitleBasedTranslationKey(adventure.title);
+    
+    if (translationKey) {
+      const translatedContent = t(`adventureCards:adventures.${translationKey}`, { returnObjects: true });
+      
+      if (translatedContent && typeof translatedContent === 'object') {
+        return {
+          title: translatedContent.title || adventure.title,
+          description: translatedContent.description || adventure.description,
+          highlights: translatedContent.highlights || adventure.highlights,
+        };
+      }
+    }
+    
+    // Fallback for old local-X IDs (legacy support)
     const translationId = adventure.id?.toString().replace('local-', '') || adventure.id;
     const translatedContent = t(`adventureCards:adventures.${translationId}`, { returnObjects: true });
     
-    // If translation exists, use it; otherwise fallback to original content
     if (translatedContent && typeof translatedContent === 'object') {
       return {
         title: translatedContent.title || adventure.title,
@@ -54,7 +84,7 @@ const AdventureDetail: React.FC = () => {
       };
     }
     
-    // Fallback to original content
+    // Final fallback to original content
     return {
       title: adventure.title,
       description: adventure.description,

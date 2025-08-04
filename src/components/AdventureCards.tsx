@@ -3,32 +3,79 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Star, Clock, Users, MapPin } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
-import { adventures } from "@/data/adventures";
+import { useEffect, useState } from "react";
+import { supabase } from "@/integrations/supabase/client";
 
-// Now using adventures from data file - single source of truth!
+// Now using Supabase database - single source of truth!
 
 const AdventureCards = () => {
   const navigate = useNavigate();
   const { t } = useTranslation(['adventureCards', 'common']);
+  const [tours, setTours] = useState<any[]>([]);
+
+  useEffect(() => {
+    async function fetchTours() {
+      try {
+        const { data, error } = await supabase
+          .from('tours')
+          .select('*')
+          .eq('is_active', true)
+          .order('created_at', { ascending: true });
+
+        if (error) {
+          console.error('Error fetching tours:', error);
+          return;
+        }
+
+        if (data) {
+          setTours(data);
+        }
+      } catch (error) {
+        console.error('Unexpected error fetching tours:', error);
+      }
+    }
+
+    fetchTours();
+  }, []);
+
+  // Map database adventure titles to i18n keys
+  const getTitleBasedTranslationKey = (title: string) => {
+    const titleMap: Record<string, number> = {
+      'Cave Tubing & Jungle Trek': 1,
+      'Snorkeling at Hol Chan Marine Reserve': 2,
+      'Caracol Maya Ruins Adventure': 3,
+      'Blue Hole Diving Experience': 4,
+      'Jungle Zip-lining & Waterfall Tour': 5,
+      'Manatee Watching & Beach Day': 6,
+      'Sunrise Fishing & Island Hopping': 7,
+      'Night Jungle Safari': 8,
+      'Cultural Village Tour & Chocolate Making': 9
+    };
+    return titleMap[title] || null;
+  };
 
   // Helper function to get translated adventure content
   const getAdventureContent = (adventure: any) => {
-    const translatedContent = t(`adventureCards:adventures.${adventure.id}`, { returnObjects: true });
+    // Try to get translation using title-based mapping
+    const translationKey = getTitleBasedTranslationKey(adventure.title);
     
-    // If translation exists, use it; otherwise fallback to original content
-    if (translatedContent && typeof translatedContent === 'object') {
-      return {
-        title: translatedContent.title || adventure.title,
-        description: translatedContent.description || adventure.description,
-        highlights: translatedContent.highlights || adventure.highlights,
-      };
+    if (translationKey) {
+      const translatedContent = t(`adventureCards:adventures.${translationKey}`, { returnObjects: true });
+      
+      if (translatedContent && typeof translatedContent === 'object') {
+        return {
+          title: translatedContent.title || adventure.title,
+          description: translatedContent.description || adventure.description,
+          highlights: translatedContent.highlights || adventure.highlights,
+        };
+      }
     }
     
     // Fallback to original content
     return {
       title: adventure.title,
       description: adventure.description,
-      highlights: adventure.highlights,
+      highlights: adventure.highlights || [],
     };
   };
 
@@ -45,7 +92,18 @@ const AdventureCards = () => {
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {adventures.map((adventure, index) => {
+          {tours.map((tour, index) => {
+            const adventure = {
+              id: tour.id,
+              title: tour.title,
+              description: tour.description,
+              price: `$${tour.price_per_person}`,
+              duration: `${tour.duration_hours} hours`,
+              groupSize: `Max ${tour.max_participants}`,
+              location: tour.location_name,
+              image: tour.images?.[0] || '',
+              highlights: []
+            };
             const content = getAdventureContent(adventure);
             return (
             <Card key={adventure.id} className="adventure-card animate-fade-in bg-card rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105 overflow-hidden group" style={{ animationDelay: `${index * 0.1}s` }}>
@@ -110,7 +168,7 @@ const AdventureCards = () => {
                     {t('common:bookNow')}
                   </Button>
                   <Button 
-                    onClick={() => navigate(`/adventure/${adventure.id}`)}
+                    onClick={() => navigate(`/tours/${tour.id}`)}
                     variant="outline" 
                     className="flex-1 border-orange-600 text-orange-600 hover:bg-orange-50 transition-colors duration-300"
                   >

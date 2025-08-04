@@ -9,7 +9,6 @@ import {
   Promotion,
   Review
 } from '@/types/booking';
-import { adventures } from '@/data/adventures';
 import { addDays, format, isAfter, isBefore, parseISO } from 'date-fns';
 
 export class BookingService {
@@ -68,55 +67,8 @@ export class BookingService {
         };
       }
       
-      // Fallback to local adventures data for numeric IDs
-      const numericId = parseInt(id);
-      if (!isNaN(numericId)) {
-        const localAdventure = adventures.find(adv => adv.id === numericId);
-        if (localAdventure) {
-          return {
-            id: `local-${localAdventure.id}`,
-            guide_id: '',
-            title: localAdventure.title,
-            description: localAdventure.description,
-            location: localAdventure.location,
-            duration_hours: localAdventure.duration === 'Full Day' ? 8 : 4,
-            difficulty_level: 'moderate',
-            max_participants: parseInt(localAdventure.groupSize.split('-')[1]) || 12,
-            base_price: parseFloat(localAdventure.price.replace('$', '')),
-            group_discount_percentage: 0,
-            early_bird_discount_percentage: 0,
-            early_bird_days: 7,
-            min_advance_booking_hours: 24,
-            max_advance_booking_days: 365,
-            cancellation_policy: 'moderate',
-            meeting_point: '',
-            what_to_bring: [],
-            not_suitable_for: [],
-            includes: localAdventure.highlights || [],
-            requirements: [],
-            featured_image_url: localAdventure.image,
-            image_urls: [localAdventure.image],
-            gallery_images: [localAdventure.image],
-            video_url: '',
-            highlights: localAdventure.highlights || [],
-            itinerary: {},
-            add_ons: {},
-            faqs: {},
-            available_days: [1,2,3,4,5,6,7],
-            daily_capacity: parseInt(localAdventure.groupSize.split('-')[1]) || 8,
-            seasonal_pricing: {},
-            booking_count: 0,
-            average_rating: localAdventure.rating || 0,
-            total_reviews: localAdventure.reviews || 0,
-            last_booked_at: '',
-            is_active: true,
-            created_at: new Date().toISOString(),
-            updated_at: new Date().toISOString()
-          };
-        }
-      }
-      
-      console.error('Adventure not found in any data source:', id);
+      // No adventure found in database
+      console.error('Adventure not found in database:', id);
       return null;
     } catch (error) {
       console.error('Error fetching adventure:', error);

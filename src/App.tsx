@@ -32,6 +32,9 @@ import TravelerDashboard from "./pages/dashboard/TravelerDashboard";
 import CreateAdventure from "./pages/dashboard/CreateAdventure";
 import CreatePost from "./pages/dashboard/CreatePost";
 import EditPost from "./pages/dashboard/EditPost";
+import AdminAdventures from "./pages/admin/AdminAdventures";
+import AdminCreateAdventure from "./pages/admin/AdminCreateAdventure";
+import AdminEditAdventure from "./pages/admin/AdminEditAdventure";
 
 const queryClient = new QueryClient();
 
@@ -81,6 +84,12 @@ const App = () => (
               <Route path="guide" element={<GuideDashboard />} />
               <Route path="traveler" element={<TravelerDashboard />} />
               <Route path="create-adventure" element={<CreateAdventure />} />
+            </Route>
+            
+            <Route path="/admin" element={<DashboardLayout />}>
+              <Route path="adventures" element={<AdminAdventures />} />
+              <Route path="adventures/new" element={<AdminCreateAdventure />} />
+              <Route path="adventures/edit/:id" element={<AdminEditAdventure />} />
             </Route>
             
             <Route path="/admin/posts/new" element={<CreatePost />} />

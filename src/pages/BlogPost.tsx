@@ -146,8 +146,7 @@ const BlogPost: React.FC = () => {
 
   // Helper function to get translated content
   const getTranslatedContent = (post: BlogPostData) => {
-    const isFrench = currentLanguage?.startsWith('fr') || currentLanguage === 'fr-CA' || currentLanguage === 'francais';
-    console.log('BlogPost Language Debug:', { currentLanguage, isFrench, hasTitle_fr: !!post.title_fr });
+    const isFrench = currentLanguage === 'fr-CA';
     return {
       title: (isFrench && post.title_fr) ? post.title_fr : post.title,
       content: (isFrench && post.content_fr) ? post.content_fr : post.content,

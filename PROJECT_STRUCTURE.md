@@ -1,5 +1,7 @@
 # 🏗️ BelizeVibes Project Structure & Dependencies
 
+*Last Updated: August 4, 2025 - Synchronized with PROJECT_UPDATE.md*
+
 ## 📋 Table of Contents
 - [Project Overview](#project-overview)
 - [Package Dependencies](#package-dependencies)
@@ -8,6 +10,7 @@
 - [Components Structure](#components-structure)
 - [Database & Integrations](#database--integrations)
 - [Build Configuration](#build-configuration)
+- [Security & Configuration Status](#security--configuration-status)
 
 ---
 
@@ -19,6 +22,7 @@
 **Backend:** Supabase (PostgreSQL + Auth + Storage)  
 **Payment:** Stripe Integration  
 **Styling:** Tailwind CSS  
+**Status:** ⚠️ Functional with critical security issues requiring immediate attention  
 
 ---
 
@@ -57,6 +61,16 @@
 #### **Charts & Data Visualization**
 - `recharts: ^2.12.7` - React charting library
 
+#### **Internationalization (i18n)**
+- `i18next: ^25.3.2` - Core internationalization framework
+- `react-i18next: ^15.6.1` - React integration for i18next
+- `i18next-browser-languagedetector: ^8.2.0` - Language detection
+
+#### **Rich Text & Content**
+- `@tiptap/react: ^3.0.9` - Rich text editor
+- `@tiptap/starter-kit: ^3.0.9` - Tiptap starter components
+- `@tiptap/extension-image: ^3.0.9` - Image extension for Tiptap
+
 #### **Utilities**
 - `date-fns: ^3.6.0` - Date manipulation
 - `sonner: ^1.5.0` - Toast notifications
@@ -66,6 +80,7 @@
 - `react-day-picker: ^8.10.1` - Date picker
 - `react-resizable-panels: ^2.1.3` - Resizable panels
 - `vaul: ^0.9.3` - Drawer component
+- `react-helmet-async: ^2.0.5` - Document head management
 
 ### 🛠️ Development Dependencies
 
@@ -106,7 +121,8 @@
 ```
 ├── package.json                    # Project dependencies & scripts
 ├── package-lock.json              # Lock file for dependencies
-├── tsconfig.json                   # TypeScript configuration
+├── bun.lockb                       # Bun lock file (alternative package manager)
+├── tsconfig.json                   # TypeScript configuration (⚠️ strict mode disabled)
 ├── tsconfig.app.json              # App-specific TypeScript config
 ├── tsconfig.node.json             # Node-specific TypeScript config
 ├── vite.config.ts                 # Vite build configuration
@@ -115,9 +131,18 @@
 ├── eslint.config.mjs              # ESLint configuration
 ├── components.json                # shadcn/ui configuration
 ├── README.md                      # Project documentation
+├── PROJECT_UPDATE.md              # 🆕 Comprehensive project status report
+├── PROJECT_STRUCTURE.md           # This file - project structure docs
+├── CLAUDE.md                      # Database lessons learned & guidelines
 ├── AUTHENTICATION_SETUP.md        # Auth setup guide
 ├── OAUTH_SETUP.md                 # OAuth setup guide
-└── setup-review-photos-bucket.md  # Storage setup guide
+├── setup-review-photos-bucket.md  # Storage setup guide
+├── database-fixes/                # Database migration history
+│   ├── archive/                   # Archived database scripts
+│   └── completed/                 # Completed database fixes
+└── scripts/                       # Utility scripts
+    ├── seedTours.ts              # Tour seeding script
+    └── verifyTours.ts            # Tour verification script
 ```
 
 ### 📱 Source Code (`src/`)
@@ -125,19 +150,32 @@
 src/
 ├── main.tsx                       # Application entry point
 ├── App.tsx                        # Main application component
-├── index.css                      # Global styles
+├── index.css                      # Global styles & Tailwind imports
 ├── vite-env.d.ts                 # Vite environment types
-├── server.ts                      # Development server
-├── components/                    # Reusable components
-├── pages/                         # Route components
-├── hooks/                         # Custom React hooks
-├── contexts/                      # React contexts
+├── server.ts                      # Express server (unused in Vite setup)
+├── components/                    # 50+ reusable components
+│   ├── ui/                       # 46 shadcn/ui components
+│   ├── auth/                     # Authentication components
+│   ├── booking/                  # Booking flow components
+│   ├── dashboard/                # Dashboard & admin components
+│   └── admin/                    # Admin-specific components
+├── pages/                         # Route components (18 total)
+│   ├── dashboard/                # Protected dashboard pages
+│   ├── admin/                    # Admin-only pages
+│   ├── auth/                     # Authentication pages
+│   └── booking/                  # Booking-related pages
+├── hooks/                         # Custom React hooks (7 hooks)
+├── contexts/                      # React contexts (Adventure creation)
 ├── lib/                          # Utility libraries
-├── services/                     # API services
+│   ├── ai/                       # AI integration (OpenAI)
+│   ├── i18n.ts                   # ⚠️ Large i18n config file (44k+ tokens)
+│   └── supabase.ts               # ⚠️ Contains hardcoded credentials
+├── services/                     # API services (3 services)
 ├── types/                        # TypeScript type definitions
-├── data/                         # Static data
+├── data/                         # Static data & schemas
 ├── utils/                        # Utility functions
 └── integrations/                 # Third-party integrations
+    └── supabase/                 # Supabase client & types
 ```
 
 ---
@@ -176,9 +214,17 @@ src/
 
 ### 📍 `src/integrations/supabase/client.ts`
 **Purpose:** Supabase client configuration  
+**⚠️ SECURITY ISSUE:** Contains hardcoded credentials that should be in environment variables  
 **Dependencies:**
 - `@supabase/supabase-js` - Supabase client library
 - `./types` - Database type definitions
+
+### 📍 `src/services/translationService.ts`
+**Purpose:** AI-powered translation service using OpenAI  
+**Dependencies:**
+- OpenAI API integration
+- Language detection utilities
+- Supports English/French (Canadian) translation
 
 ---
 
@@ -187,13 +233,13 @@ src/
 ### 🔐 Authentication (`src/components/auth/`)
 ```
 auth/
-├── AuthProvider.tsx              # Auth context provider
-├── SignInModal.tsx               # Login/signup modal
-├── SignUpModal.tsx               # Signup modal (legacy)
-├── RoleSelection.tsx             # Role selection modal
-├── PasswordStrengthIndicator.tsx # Password validation
+├── AuthProvider.tsx              # Auth context provider with Supabase
+├── SignInModal.tsx               # Login/signup modal with role support
+├── SignUpModal.tsx               # Signup modal (legacy - may be unused)
+├── RoleSelection.tsx             # Role selection (admin/guide/traveler)
+├── PasswordStrengthIndicator.tsx # Password validation UI
 └── utils/
-    └── passwordStrength.ts       # Password strength utility
+    └── passwordStrength.ts       # Password strength utility functions
 ```
 
 ### 📅 Booking System (`src/components/booking/`)
@@ -233,6 +279,25 @@ dashboard/
 - `table.tsx`, `card.tsx`, `tabs.tsx` - Layout components
 - `select.tsx`, `checkbox.tsx`, `calendar.tsx` - Input components
 - `ImageUploader.tsx` - Custom file upload component
+- `translation-button.tsx` - 🆕 Custom translation UI component
+
+### 🏠 Layout Components (`src/components/`)
+```
+components/
+├── Header.tsx                    # Main navigation with i18n support
+├── Footer.tsx                    # Site footer with bilingual content
+├── Hero.tsx                      # Landing page hero section
+├── InteractiveHero.tsx           # Enhanced hero with dynamic content
+├── AdventureCards.tsx            # Adventure listing components
+├── Testimonials.tsx              # Customer reviews display
+├── MobileMenu.tsx                # Mobile navigation
+├── BottomNav.tsx                 # Mobile bottom navigation
+├── ScrollToTop.tsx               # Scroll to top utility
+├── UserProfile.tsx               # User profile management
+├── ReviewForm.tsx                # Review submission form
+├── StripeProvider.tsx            # Stripe payment context
+└── StripePaymentForm.tsx         # Stripe payment components
+```
 
 ---
 
@@ -241,25 +306,33 @@ dashboard/
 ### 🏠 Public Pages (`src/pages/`)
 ```
 pages/
-├── Index.tsx                     # Homepage
-├── About.tsx                     # About page
-├── Contact.tsx                   # Contact page
-├── Blog.tsx                      # Blog listing
-├── Safety.tsx                    # Safety information
-├── AdventureDetail.tsx           # Adventure details
+├── LandingPage.tsx               # Homepage with hero & features
+├── About.tsx                     # About page (⚠️ needs French translation)
+├── Contact.tsx                   # Contact page with i18n support
+├── Blog.tsx                      # Blog listing with bilingual support
+├── BlogPost.tsx                  # Individual blog post view
+├── Safety.tsx                    # Safety information (⚠️ needs French)
+├── AdventuresPage.tsx            # Adventure listing page
+├── AdventureDetail.tsx           # Adventure details with booking
 ├── Booking.tsx                   # Booking page
-├── BookingCheckout.tsx           # Checkout process
+├── BookingCheckout.tsx           # Checkout process with Stripe
 ├── Confirmation.tsx              # Booking confirmation
 ├── NotFound.tsx                  # 404 page
 ├── auth/
-│   └── callback.tsx              # OAuth callback
+│   └── callback.tsx              # OAuth callback handler
 ├── booking/
-│   └── success.tsx               # Payment success
-└── dashboard/
-    ├── AdminDashboard.tsx        # Admin dashboard
-    ├── GuideDashboard.tsx        # Guide dashboard
-    ├── TravelerDashboard.tsx     # Traveler dashboard
-    └── CreateAdventure.tsx       # Adventure creation form
+│   └── success.tsx               # Payment success page
+├── admin/                        # Admin-only pages
+│   ├── AdminAdventures.tsx       # Adventure management
+│   ├── AdminCreateAdventure.tsx  # Adventure creation
+│   └── AdminEditAdventure.tsx    # Adventure editing
+└── dashboard/                    # Protected dashboard pages
+    ├── AdminDashboard.tsx        # Admin analytics & management
+    ├── GuideDashboard.tsx        # Guide-specific dashboard
+    ├── TravelerDashboard.tsx     # User booking history
+    ├── CreateAdventure.tsx       # Adventure creation form
+    ├── CreatePost.tsx            # Blog post creation
+    └── EditPost.tsx              # Blog post editing
 ```
 
 ---
@@ -273,7 +346,8 @@ hooks/
 ├── useCreatePaymentIntent.ts     # Payment intent creation
 ├── useDashboardAnalytics.ts      # Dashboard data fetching
 ├── useStripePayment.ts           # Stripe payment processing
-├── use-mobile.tsx                # Mobile detection
+├── useTranslation.ts             # 🆕 Custom translation hook
+├── use-mobile.tsx                # Mobile detection utility
 └── use-toast.ts                  # Toast notifications
 ```
 
@@ -281,16 +355,21 @@ hooks/
 ```
 services/
 ├── bookingService.ts             # Booking API operations
-└── paymentService.ts             # Payment processing
+├── paymentService.ts             # Payment processing (⚠️ has security issues)
+└── translationService.ts         # 🆕 AI-powered translation service
 ```
 
 ### 📚 Libraries (`src/lib/`)
 ```
 lib/
-├── utils.ts                      # General utilities
+├── utils.ts                      # General utilities (cn, etc.)
 ├── stripe.ts                     # Stripe configuration
+├── supabase.ts                   # ⚠️ Contains hardcoded credentials
 ├── storage.ts                    # Supabase Storage utilities
-└── ai/
+├── i18n.ts                       # 🆰 Large internationalization config
+├── locale.ts                     # Locale utilities
+├── navigation.ts                 # Navigation utilities
+└── ai/                          # AI integration modules
     ├── index.ts                  # AI module exports
     ├── generateDescription.ts    # AI description generation
     └── generateImage.ts          # AI image generation
@@ -303,26 +382,38 @@ lib/
 ### 🐘 Supabase Setup (`supabase/`)
 ```
 supabase/
-├── migrations/                   # Database migrations
+├── migrations/                   # Database migrations (12 files)
 │   ├── 20250110_booking_system_integration.sql
+│   ├── 20250709173035-02cb4878-fd46-44ad-84ac-f22505fa2151.sql
 │   ├── 20250710000000-booking-system-schema.sql
+│   ├── 20250710165559-9f8b3bfe-593e-4667-9882-c822e21cc6d2.sql
 │   ├── 20250711000000-comprehensive-belizevibes-schema.sql
 │   ├── 20250712000000-simple-testimonials-table.sql
-│   ├── 20250715_admin_dashboard_analytics.sql
-│   └── 20250715_test_accounts.sql
-└── functions/                    # Edge Functions
+│   ├── 20250712000001-add-images-to-testimonials.sql
+│   ├── 20250715_test_accounts.sql
+│   ├── 20250718_120000_fix_review_trends_function.sql
+│   ├── 20250719_140000_create_tours_table.sql
+│   ├── 20250720_allow_anon_tours_insert.sql
+│   ├── 20250721_remove_anon_tours_insert.sql
+│   ├── 20250804000000_add_french_translations_to_blog.sql
+│   └── _skip_20250715_admin_dashboard_analytics.sql (skipped)
+└── functions/                    # Edge Functions (3 active)
     ├── create-payment-intent/
+    │   └── index.ts              # Stripe payment intent creation
     ├── create-payment/
+    │   └── index.ts              # Payment processing
     ├── stripe-webhook/
-    └── get_booking_analytics.sql
+    │   └── index.ts              # Stripe webhook handler
+    └── get_booking_analytics.sql # Analytics function
 ```
 
 ### 🔌 Integrations (`src/integrations/`)
 ```
 integrations/
 └── supabase/
-    ├── client.ts                 # Supabase client configuration
-    └── types.ts                  # Auto-generated database types
+    ├── client.ts                 # ⚠️ Supabase client with hardcoded keys
+    ├── client.ts.backup          # Backup file (should be removed)
+    └── types.ts                  # Auto-generated database types (extensive)
 ```
 
 ---
@@ -396,21 +487,63 @@ Stripe API
 
 ---
 
-## 📈 Project Statistics
+## 🔒 Security & Configuration Status
 
-- **Total Files:** 150+ TypeScript/React files
-- **Components:** 80+ reusable components
-- **Pages:** 15+ route components
-- **Hooks:** 10+ custom hooks
-- **Services:** 2 main service modules
-- **Database Tables:** 8+ tables with relationships
-- **Supabase Functions:** 4 edge functions
-- **Dependencies:** 50+ production packages
-- **Dev Dependencies:** 20+ development tools
+### 🚨 Critical Security Issues
+- **Hardcoded Supabase Keys** in `src/integrations/supabase/client.ts`
+- **TypeScript Strict Mode Disabled** - `strictNullChecks: false`
+- **Stripe Secrets in Frontend** - `paymentService.ts` contains server-side keys
+- **OpenAI API Key Exposure Risk** - Client-side access patterns
+
+### ⚠️ Configuration Concerns
+- **Missing Testing Infrastructure** - No Jest, Vitest, or Testing Library
+- **No CI/CD Pipeline** - Missing GitHub Actions or similar
+- **Environment Variables** - Mixed usage of `process.env` vs `import.meta.env`
+- **Bundle Analysis** - No build size monitoring or optimization
+
+### ✅ Security Strengths
+- Supabase RLS policies implemented
+- Role-based access control in dashboards
+- Input validation with Zod schemas
+- HTTPS-only Stripe integration
 
 ---
 
-**Last Updated:** July 15, 2025  
+## 📈 Project Statistics
+
+- **Total Files:** 180+ TypeScript/React files
+- **Components:** 90+ reusable components (46 UI, 44+ custom)
+- **Pages:** 18 route components (12 public, 6 dashboard)
+- **Hooks:** 7 custom hooks
+- **Services:** 3 main service modules
+- **Database Tables:** 10+ tables with relationships
+- **Supabase Functions:** 3 active edge functions
+- **Dependencies:** 77 production packages
+- **Dev Dependencies:** 20+ development tools
+- **Migrations:** 12 database migration files
+- **Lines of Code:** Estimated 15,000+ lines
+
+---
+
+## 🎯 Quick Reference Commands
+
+```bash
+# Development
+npm run dev              # Start development server
+npm run build            # Production build
+npm run preview          # Preview build
+npm run lint             # Run ESLint
+
+# Database
+npx supabase db reset    # Reset database
+npx supabase db push     # Push migrations
+npx supabase gen types   # Generate TypeScript types
+```
+
+---
+
+**Last Updated:** August 4, 2025 *(Synchronized with PROJECT_UPDATE.md)*  
 **Version:** 0.0.0  
 **Build Tool:** Vite 5.4.1  
 **Node Version:** 18+  
+**Status:** ⚠️ Functional with critical security issues requiring immediate attention  

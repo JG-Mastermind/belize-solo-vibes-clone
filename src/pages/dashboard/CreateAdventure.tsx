@@ -49,6 +49,12 @@ const adventureFormSchema = z.object({
   what_to_bring: z.string().optional(),
   meeting_point: z.string().optional(),
   featured_image_url: z.string().optional(),
+  // Rich content fields
+  highlights: z.string().optional(),
+  itinerary: z.string().optional(),
+  faqs: z.string().optional(),
+  video_url: z.string().url().optional().or(z.literal('')),
+  gallery_images: z.string().optional(),
 });
 
 type AdventureFormData = z.infer<typeof adventureFormSchema>;
@@ -74,6 +80,12 @@ const CreateAdventurePage: React.FC = () => {
       what_to_bring: "",
       meeting_point: "",
       featured_image_url: "",
+      // Rich content defaults
+      highlights: "",
+      itinerary: "",
+      faqs: "",
+      video_url: "",
+      gallery_images: "",
     },
   });
 
@@ -124,6 +136,14 @@ const CreateAdventurePage: React.FC = () => {
         is_active: true,
         includes: values.includes ? [values.includes] : [],
         requirements: values.requirements ? [values.requirements] : [],
+        what_to_bring: values.what_to_bring ? [values.what_to_bring] : [],
+        meeting_point: values.meeting_point || '',
+        // Rich content fields
+        highlights: values.highlights ? values.highlights.split(',').map(h => h.trim()) : [],
+        itinerary: values.itinerary || '',
+        faqs: values.faqs || '',
+        video_url: values.video_url || '',
+        gallery_images: values.gallery_images ? values.gallery_images.split('\n').map(url => url.trim()).filter(url => url.length > 0) : [],
       };
 
       // Insert into Supabase adventures table
@@ -475,6 +495,115 @@ const CreateAdventurePage: React.FC = () => {
                               </FormControl>
                               <FormDescription>
                                 Any requirements or restrictions for participants
+                              </FormDescription>
+                              <FormMessage />
+                            </FormItem>
+                          )}
+                        />
+
+                        {/* Rich Content Fields */}
+                        <FormField
+                          control={form.control}
+                          name="highlights"
+                          render={({ field }) => (
+                            <FormItem>
+                              <FormLabel>Adventure Highlights</FormLabel>
+                              <FormControl>
+                                <Textarea
+                                  placeholder="e.g., Ancient Maya ceremonial chambers, Underground river swimming, Wildlife spotting..."
+                                  className="resize-y"
+                                  rows={3}
+                                  {...field}
+                                />
+                              </FormControl>
+                              <FormDescription>
+                                Key highlights that make this adventure special (separate with commas)
+                              </FormDescription>
+                              <FormMessage />
+                            </FormItem>
+                          )}
+                        />
+
+                        <FormField
+                          control={form.control}
+                          name="itinerary"
+                          render={({ field }) => (
+                            <FormItem>
+                              <FormLabel>Detailed Itinerary</FormLabel>
+                              <FormControl>
+                                <Textarea
+                                  placeholder="9:00 AM - Pickup from meeting point&#10;10:00 AM - Safety briefing and equipment check&#10;10:30 AM - Begin cave exploration..."
+                                  className="resize-y"
+                                  rows={6}
+                                  {...field}
+                                />
+                              </FormControl>
+                              <FormDescription>
+                                Step-by-step schedule of the adventure (use new lines for each time slot)
+                              </FormDescription>
+                              <FormMessage />
+                            </FormItem>
+                          )}
+                        />
+
+                        <FormField
+                          control={form.control}
+                          name="faqs"
+                          render={({ field }) => (
+                            <FormItem>
+                              <FormLabel>Frequently Asked Questions</FormLabel>
+                              <FormControl>
+                                <Textarea
+                                  placeholder="Q: What should I wear?&#10;A: Comfortable clothes that can get wet, water shoes recommended&#10;&#10;Q: Is it safe for beginners?&#10;A: Yes, our certified guides ensure safety for all skill levels..."
+                                  className="resize-y"
+                                  rows={6}
+                                  {...field}
+                                />
+                              </FormControl>
+                              <FormDescription>
+                                Common questions and answers (format: Q: question? A: answer)
+                              </FormDescription>
+                              <FormMessage />
+                            </FormItem>
+                          )}
+                        />
+
+                        <FormField
+                          control={form.control}
+                          name="video_url"
+                          render={({ field }) => (
+                            <FormItem>
+                              <FormLabel>Video URL (Optional)</FormLabel>
+                              <FormControl>
+                                <Input
+                                  placeholder="https://youtube.com/watch?v=..."
+                                  {...field}
+                                />
+                              </FormControl>
+                              <FormDescription>
+                                YouTube or Vimeo URL showcasing the adventure
+                              </FormDescription>
+                              <FormMessage />
+                            </FormItem>
+                          )}
+                        />
+
+                        <FormField
+                          control={form.control}
+                          name="gallery_images"
+                          render={({ field }) => (
+                            <FormItem>
+                              <FormLabel>Additional Image URLs (Optional)</FormLabel>
+                              <FormControl>
+                                <Textarea
+                                  placeholder="https://example.com/image1.jpg&#10;https://example.com/image2.jpg&#10;https://example.com/image3.jpg"
+                                  className="resize-y"
+                                  rows={3}
+                                  {...field}
+                                />
+                              </FormControl>
+                              <FormDescription>
+                                Additional images for the gallery (one URL per line)
                               </FormDescription>
                               <FormMessage />
                             </FormItem>

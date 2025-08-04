@@ -9,7 +9,9 @@ import { supabase } from "@/integrations/supabase/client";
 interface BlogPost {
   id: string;
   title: string;
+  title_fr?: string;
   excerpt: string;
+  excerpt_fr?: string;
   slug: string;
   featured_image_url: string | null;
   author: string;
@@ -18,8 +20,9 @@ interface BlogPost {
 }
 
 const Blog = () => {
-  const { t } = useTranslation(['blog']);
+  const { t, i18n } = useTranslation(['blog']);
   const navigate = useNavigate();
+  const currentLanguage = i18n.language;
   
   // Blog posts state
   const [blogPosts, setBlogPosts] = useState<BlogPost[]>([]);
@@ -43,7 +46,7 @@ const Blog = () => {
     try {
       const { data, error } = await supabase
         .from('posts')
-        .select('id, title, excerpt, slug, featured_image_url, author, published_at, reading_time')
+        .select('id, title, title_fr, excerpt, excerpt_fr, slug, featured_image_url, author, published_at, reading_time')
         .eq('status', 'published')
         .order('published_at', { ascending: false });
 
@@ -72,11 +75,21 @@ const Blog = () => {
   };
 
   const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString('en-US', {
+    const locale = currentLanguage === 'fr-CA' ? 'fr-CA' : 'en-US';
+    return new Date(dateString).toLocaleDateString(locale, {
       year: 'numeric',
       month: 'long',
       day: 'numeric'
     });
+  };
+
+  // Helper function to get translated content
+  const getTranslatedContent = (post: BlogPost) => {
+    const isFrench = currentLanguage === 'fr-CA';
+    return {
+      title: (isFrench && post.title_fr) ? post.title_fr : post.title,
+      excerpt: (isFrench && post.excerpt_fr) ? post.excerpt_fr : post.excerpt
+    };
   };
 
   const popularTopics = [
@@ -127,7 +140,7 @@ const Blog = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-green-50">
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-green-50 dark:bg-gradient-to-br dark:from-blue-950/20 dark:via-background dark:to-blue-950/10">
       {/* Hero Section */}
       <section className="relative py-20 px-4 text-center bg-gradient-to-r from-blue-600 via-blue-700 to-green-600 text-white">
         <div className="absolute inset-0 bg-black opacity-30"></div>
@@ -138,17 +151,24 @@ const Blog = () => {
           <p className="text-xl md:text-2xl mb-8 max-w-3xl mx-auto opacity-90">
             {t('blog:hero.subtitle', { defaultValue: 'Authentic experiences, practical tips, and inspiring adventures from fellow solo travelers exploring the heart of Central America.' })}
           </p>
+          <Button 
+            onClick={() => document.getElementById('blog-posts')?.scrollIntoView({ behavior: 'smooth' })}
+            size="lg" 
+            className="bg-belize-orange-500 hover:bg-belize-orange-600 text-white px-8 py-3 text-lg font-semibold transition-all duration-300 hover:scale-105"
+          >
+            {t('blog:hero.startReading', { defaultValue: 'Start Reading' })}
+          </Button>
         </div>
       </section>
 
       {/* Main Content */}
-      <div className="container mx-auto px-4 py-12">
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+      <div className="container mx-auto px-4 py-16">
+        <div className="lg:grid lg:grid-cols-4 lg:gap-12">
           
           {/* Blog Posts Grid */}
-          <main className="lg:col-span-2">
-            <h2 className="text-3xl font-bold mb-8 text-gray-800">
-              {t('blog:latestPosts', { defaultValue: 'Latest Posts' })}
+          <main className="lg:col-span-3" id="blog-posts" aria-labelledby="latest-stories-heading">
+            <h2 id="latest-stories-heading" className="text-3xl font-playfair font-bold text-belize-neutral-900 dark:text-foreground mb-8 text-center lg:text-left">
+              {t('blog:latestPosts', { defaultValue: 'Latest Stories' })}
             </h2>
             
             {loading ? (
@@ -172,25 +192,27 @@ const Blog = () => {
               </div>
             ) : blogPosts.length === 0 ? (
               <div className="text-center py-12">
-                <h3 className="text-xl text-gray-600 mb-4">
+                <h3 className="text-xl text-muted-foreground mb-4">
                   {t('blog:noPosts', { defaultValue: 'No blog posts available yet.' })}
                 </h3>
-                <p className="text-gray-500">
+                <p className="text-muted-foreground">
                   {t('blog:noPostsSubtext', { defaultValue: 'Check back soon for inspiring solo travel stories from Belize!' })}
                 </p>
               </div>
             ) : (
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                {blogPosts.map((post) => (
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                {blogPosts.map((post) => {
+                  const translatedContent = getTranslatedContent(post);
+                  return (
                   <Card 
                     key={post.id} 
-                    className="hover:shadow-lg transition-all duration-300 cursor-pointer group"
+                    className="overflow-hidden transition-all duration-300 hover:shadow-2xl hover:scale-[1.02] cursor-pointer group h-full min-h-[480px] flex flex-col bg-card dark:bg-card"
                     onClick={() => navigate(`/blog/${post.slug}`)}
                   >
                     <div className="relative overflow-hidden rounded-t-lg">
                       <img 
                         src={post.featured_image_url || 'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=800&h=400&fit=crop&crop=center'} 
-                        alt={post.title}
+                        alt={translatedContent.title}
                         className="w-full h-48 object-cover group-hover:scale-105 transition-transform duration-300"
                         onError={(e) => {
                           const target = e.target as HTMLImageElement;
@@ -200,10 +222,10 @@ const Blog = () => {
                     </div>
                     
                     <CardHeader>
-                      <CardTitle className="text-lg group-hover:text-blue-600 transition-colors">
-                        {post.title}
+                      <CardTitle className="text-lg group-hover:text-belize-green-600 dark:group-hover:text-belize-green-400 transition-colors text-foreground">
+                        {translatedContent.title}
                       </CardTitle>
-                      <div className="flex items-center text-sm text-gray-500 space-x-4">
+                      <div className="flex items-center text-sm text-muted-foreground space-x-4">
                         <div className="flex items-center space-x-1">
                           <User className="h-4 w-4" />
                           <span>{post.author}</span>
@@ -215,35 +237,37 @@ const Blog = () => {
                       </div>
                     </CardHeader>
                     
-                    <CardContent>
-                      <CardDescription className="text-gray-600 leading-relaxed">
-                        {post.excerpt}
+                    <CardContent className="flex-1 flex flex-col justify-between">
+                      <CardDescription className="text-muted-foreground leading-relaxed flex-1">
+                        {translatedContent.excerpt}
                       </CardDescription>
                       {post.reading_time && (
-                        <div className="mt-4 text-sm text-blue-600 font-medium">
+                        <div className="mt-4 text-sm text-belize-green-600 font-medium">
                           {post.reading_time}
                         </div>
                       )}
                     </CardContent>
                   </Card>
-                ))}
+                  );
+                })}
               </div>
             )}
           </main>
 
           {/* Sidebar */}
-          <aside className="space-y-8">
+          <aside className="hidden lg:block lg:col-span-1 space-y-8">
+            <div className="sticky top-24 space-y-8 mt-16">
             
             {/* Newsletter Subscription */}
-            <Card className="bg-gradient-to-br from-blue-50 to-green-50 border-2 border-blue-100">
+            <Card className="p-6 bg-card dark:bg-card" aria-labelledby="newsletter-heading">
               <CardHeader>
-                <CardTitle className="flex items-center space-x-2 text-blue-800">
-                  <Mail className="h-5 w-5" />
-                  <span>{t('blog:sidebar.newsletter', { defaultValue: 'Stay Connected' })}</span>
+                <CardTitle id="newsletter-heading" className="text-xl font-playfair font-semibold text-belize-green-600 dark:text-belize-green-500 mb-4">
+                  <Mail className="h-5 w-5 inline mr-2" />
+                  {t('blog:sidebar.newsletter', { defaultValue: 'Stay Connected' })}
                 </CardTitle>
               </CardHeader>
               <CardContent>
-                <p className="text-gray-600 mb-4">
+                <p className="text-muted-foreground mb-4">
                   {t('blog:sidebar.newsletterDescription', { defaultValue: 'Get the latest solo travel tips and stories delivered to your inbox.' })}
                 </p>
                 
@@ -254,22 +278,34 @@ const Blog = () => {
                       value={email}
                       onChange={(e) => setEmail(e.target.value)}
                       placeholder={t('blog:sidebar.emailPlaceholder', { defaultValue: 'Enter your email' })}
-                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                      className="w-full px-4 py-2 border border-input rounded-lg focus:ring-2 focus:ring-ring focus:border-transparent bg-background text-foreground"
                       disabled={isSubmitting}
                     />
                   </div>
                   
                   <Button 
                     type="submit" 
-                    className="w-full bg-blue-600 hover:bg-blue-700"
+                    className="w-full bg-belize-orange-500 hover:bg-belize-orange-600 text-white disabled:opacity-50 disabled:cursor-not-allowed"
                     disabled={isSubmitting}
                   >
-                    {isSubmitting ? t('blog:sidebar.subscribing', { defaultValue: 'Subscribing...' }) : t('blog:sidebar.subscribe', { defaultValue: 'Subscribe' })}
+                    {isSubmitting ? (
+                      <>
+                        <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
+                        {t('blog:sidebar.subscribing', { defaultValue: 'Subscribing...' })}
+                      </>
+                    ) : (
+                      <>
+                        <Mail className="h-4 w-4 mr-2" />
+                        {t('blog:sidebar.subscribe', { defaultValue: 'Subscribe' })}
+                      </>
+                    )}
                   </Button>
                   
                   {statusMessage && (
-                    <div className={`flex items-center space-x-2 text-sm ${
-                      submitStatus === 'success' ? 'text-green-600' : 'text-red-600'
+                    <div className={`flex items-center gap-2 text-sm p-3 rounded-lg ${
+                      submitStatus === 'success' 
+                        ? 'bg-green-50 text-green-700 border border-green-200' 
+                        : 'bg-red-50 text-red-700 border border-red-200'
                     }`}>
                       {submitStatus === 'success' ? 
                         <CheckCircle className="h-4 w-4" /> : 
@@ -283,59 +319,54 @@ const Blog = () => {
             </Card>
 
             {/* Popular Topics */}
-            <Card>
-              <CardHeader>
-                <CardTitle className="text-gray-800">
-                  {t('blog:sidebar.popularTopics', { defaultValue: 'Popular Topics' })}
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="flex flex-wrap gap-2">
-                  {popularTopics.map((topic, index) => (
-                    <span 
-                      key={index}
-                      className="px-3 py-1 bg-blue-100 text-blue-800 rounded-full text-sm hover:bg-blue-200 cursor-pointer transition-colors"
-                    >
-                      {topic}
-                    </span>
-                  ))}
-                </div>
-              </CardContent>
+            <Card className="p-6 bg-card dark:bg-card" aria-labelledby="popular-topics-heading">
+              <h3 id="popular-topics-heading" className="text-xl font-playfair font-semibold text-belize-green-600 dark:text-belize-green-500 mb-4">
+                {t('blog:sidebar.popularTopics', { defaultValue: 'Popular Topics' })}
+              </h3>
+              <div className="flex flex-wrap gap-2">
+                {popularTopics.map((topic, index) => (
+                  <button
+                    key={index}
+                    className="px-3 py-1 text-sm bg-belize-green-100 text-belize-green-700 rounded-full hover:bg-belize-green-500 hover:text-white transition-colors duration-300"
+                    onClick={() => console.log(`Filter by: ${topic}`)}
+                  >
+                    {topic}
+                  </button>
+                ))}
+              </div>
             </Card>
 
             {/* Social Links */}
-            <Card>
-              <CardHeader>
-                <CardTitle className="text-gray-800">
-                  {t('blog:sidebar.followUs', { defaultValue: 'Follow Us' })}
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="flex space-x-4">
-                  <Button variant="outline" size="sm" className="flex items-center space-x-2">
-                    <Facebook className="h-4 w-4" />
-                    <span>Facebook</span>
-                  </Button>
-                  <Button variant="outline" size="sm" className="flex items-center space-x-2">
-                    <Instagram className="h-4 w-4" />  
-                    <span>Instagram</span>
-                  </Button>
-                </div>
-              </CardContent>
+            <Card className="p-6 bg-card dark:bg-card" aria-labelledby="follow-us-heading">
+              <h3 id="follow-us-heading" className="text-xl font-playfair font-semibold text-belize-green-600 dark:text-belize-green-500 mb-4">
+                {t('blog:sidebar.followUs', { defaultValue: 'Follow Us' })}
+              </h3>
+              <div className="flex space-x-4">
+                <Button variant="outline" size="sm" className="flex items-center space-x-2 hover:bg-belize-green-500 hover:text-white transition-colors duration-300">
+                  <Facebook className="h-4 w-4" />
+                  <span>Facebook</span>
+                </Button>
+                <Button variant="outline" size="sm" className="flex items-center space-x-2 hover:bg-belize-green-500 hover:text-white transition-colors duration-300">
+                  <Instagram className="h-4 w-4" />  
+                  <span>Instagram</span>
+                </Button>
+              </div>
             </Card>
+            
+            </div>
           </aside>
         </div>
       </div>
 
       {/* Scroll to Top Button */}
       {showScrollTop && (
-        <Button
+        <button
           onClick={scrollToTop}
-          className="fixed bottom-8 right-8 rounded-full w-12 h-12 bg-blue-600 hover:bg-blue-700 shadow-lg z-50"
-          size="sm"
+          className="fixed bottom-8 right-8 bg-belize-orange-500 hover:bg-belize-orange-600 text-white p-3 rounded-full shadow-lg transition-all duration-300 z-50"
+          aria-label="Scroll to top"
         >
           <ArrowUp className="h-5 w-5" />
-        </Button>
+        </button>
       )}
     </div>
   );

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useParams, useNavigate, Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { Helmet } from 'react-helmet-async';
 import { Button } from '@/components/ui/button';
@@ -14,6 +14,7 @@ import {
   Facebook, 
   Twitter, 
   ChevronLeft,
+  ChevronRight,
   ArrowUp,
   Eye,
   Heart,
@@ -24,18 +25,23 @@ import { supabase } from '@/integrations/supabase/client';
 interface BlogPostData {
   id: string;
   title: string;
+  title_fr?: string;
   content: string;
+  content_fr?: string;
   excerpt: string;
+  excerpt_fr?: string;
   author: string;
   published_at: string;
   updated_at: string;
   reading_time: string | null;
   category: {
     name: string;
+    name_fr?: string;
   } | null;
   post_tags: Array<{
     tags: {
       name: string;
+      name_fr?: string;
     };
   }>;
   featured_image_url: string | null;
@@ -48,7 +54,8 @@ interface BlogPostData {
 const BlogPost: React.FC = () => {
   const { slug } = useParams<{ slug: string }>();
   const navigate = useNavigate();
-  const { t } = useTranslation(['blog', 'common']);
+  const { t, i18n } = useTranslation(['blog', 'common']);
+  const currentLanguage = i18n.language;
   
   const [blogPost, setBlogPost] = useState<BlogPostData | null>(null);
   const [loading, setLoading] = useState(true);
@@ -69,9 +76,9 @@ const BlogPost: React.FC = () => {
         .from('posts')
         .select(`
           *,
-          category:categories(name),
+          category:categories(name, name_fr),
           post_tags(
-            tags(name)
+            tags(name, name_fr)
           )
         `)
         .eq('slug', postSlug)
@@ -137,6 +144,21 @@ const BlogPost: React.FC = () => {
     // In a real app, you'd update the database here
   };
 
+  // Helper function to get translated content
+  const getTranslatedContent = (post: BlogPostData) => {
+    const isFrench = currentLanguage === 'fr-CA';
+    return {
+      title: (isFrench && post.title_fr) ? post.title_fr : post.title,
+      content: (isFrench && post.content_fr) ? post.content_fr : post.content,
+      excerpt: (isFrench && post.excerpt_fr) ? post.excerpt_fr : post.excerpt,
+      categoryName: post.category ? 
+        ((isFrench && post.category.name_fr) ? post.category.name_fr : post.category.name) : null,
+      tags: post.post_tags.map(postTag => 
+        (isFrench && postTag.tags.name_fr) ? postTag.tags.name_fr : postTag.tags.name
+      )
+    };
+  };
+
   if (loading) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-green-50">
@@ -179,27 +201,48 @@ const BlogPost: React.FC = () => {
     );
   }
 
+  const translatedContent = blogPost ? getTranslatedContent(blogPost) : null;
+
   return (
     <>
       <Helmet>
-        <title>{blogPost.title} - BelizeVibes</title>
-        <meta name="description" content={blogPost.excerpt} />
-        <meta property="og:title" content={blogPost.title} />
-        <meta property="og:description" content={blogPost.excerpt} />
+        <title>{translatedContent?.title || blogPost?.title} - BelizeVibes</title>
+        <meta name="description" content={translatedContent?.excerpt || blogPost?.excerpt} />
+        <meta property="og:title" content={translatedContent?.title || blogPost?.title} />
+        <meta property="og:description" content={translatedContent?.excerpt || blogPost?.excerpt} />
         <meta property="og:image" content={blogPost.featured_image_url || ''} />
         <meta property="og:type" content="article" />
         <meta name="twitter:card" content="summary_large_image" />
-        <meta name="twitter:title" content={blogPost.title} />
-        <meta name="twitter:description" content={blogPost.excerpt} />
+        <meta name="twitter:title" content={translatedContent?.title || blogPost?.title} />
+        <meta name="twitter:description" content={translatedContent?.excerpt || blogPost?.excerpt} />
         <meta name="twitter:image" content={blogPost.featured_image_url || ''} />
       </Helmet>
 
-      <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-green-50">
+      <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-green-50 dark:bg-gradient-to-br dark:from-blue-950/20 dark:via-background dark:to-blue-950/10">
         {/* Reading Progress Bar */}
         <div 
           className="fixed top-0 left-0 h-1 bg-blue-600 z-50 transition-all duration-150"
           style={{ width: `${readingProgress}%` }}
         />
+
+        {/* Breadcrumbs */}
+        <div className="bg-white dark:bg-card border-b">
+          <div className="container mx-auto px-4 py-4">
+            <nav className="flex items-center space-x-2 text-sm">
+              <Link to="/" className="text-belize-green-600 dark:text-belize-green-400 hover:underline">
+                {t('navigation:home', { defaultValue: 'Home' })}
+              </Link>
+              <ChevronRight className="w-4 h-4 text-muted-foreground" />
+              <Link to="/blog" className="text-belize-green-600 dark:text-belize-green-400 hover:underline">
+                {t('navigation:blog', { defaultValue: 'Blog' })}
+              </Link>
+              <ChevronRight className="w-4 h-4 text-muted-foreground" />
+              <span className="text-muted-foreground truncate">
+                {translatedContent?.title || blogPost.title}
+              </span>
+            </nav>
+          </div>
+        </div>
 
         {/* Hero Section */}
         <section className="relative py-20 px-4">
@@ -207,7 +250,7 @@ const BlogPost: React.FC = () => {
             <div className="absolute inset-0 z-0">
               <img 
                 src={blogPost.featured_image_url} 
-                alt={blogPost.title}
+                alt={translatedContent?.title || blogPost.title}
                 className="w-full h-full object-cover"
               />
               <div className="absolute inset-0 bg-black opacity-60"></div>
@@ -219,14 +262,14 @@ const BlogPost: React.FC = () => {
               <Button 
                 onClick={() => navigate('/blog')}
                 variant="ghost"
-                className="mb-8 text-white hover:bg-white hover:bg-opacity-20"
+                className="mb-8 text-white hover:bg-white hover:bg-opacity-20 transition-all duration-300"
               >
                 <ChevronLeft className="h-4 w-4 mr-2" />
                 {t('blog:backToBlog', { defaultValue: 'Back to Blog' })}
               </Button>
               
-              <h1 className="text-4xl md:text-6xl font-bold mb-6 leading-tight">
-                {blogPost.title}
+              <h1 className="text-4xl md:text-6xl font-playfair font-bold mb-6 leading-tight">
+                {translatedContent?.title || blogPost.title}
               </h1>
               
               <div className="flex items-center justify-center space-x-6 text-lg opacity-90">
@@ -261,17 +304,21 @@ const BlogPost: React.FC = () => {
                     {/* Article Meta */}
                     <div className="flex flex-wrap items-center gap-4 mb-8 pb-6 border-b">
                       {blogPost.category && (
-                        <Badge variant="secondary" className="bg-blue-100 text-blue-800">
-                          {blogPost.category.name}
+                        <Badge variant="secondary" className="bg-belize-green-100 text-belize-green-800">
+                          {translatedContent?.categoryName || blogPost.category.name}
                         </Badge>
                       )}
                       
                       <div className="flex flex-wrap gap-2">
-                        {blogPost.post_tags?.map((tagRelation, index) => (
-                          <Badge key={index} variant="outline">
-                            {tagRelation.tags.name}
-                          </Badge>
-                        ))}
+                        {blogPost.post_tags?.map((tagRelation, index) => {
+                          const isFrench = currentLanguage === 'fr-CA';
+                          const tagName = (isFrench && tagRelation.tags.name_fr) ? tagRelation.tags.name_fr : tagRelation.tags.name;
+                          return (
+                            <Badge key={index} variant="outline">
+                              {tagName}
+                            </Badge>
+                          );
+                        })}
                       </div>
                       
                       <div className="flex items-center space-x-4 text-sm text-gray-500 ml-auto">
@@ -293,7 +340,7 @@ const BlogPost: React.FC = () => {
                     {/* Article Body */}
                     <div 
                       className="prose prose-lg max-w-none leading-relaxed"
-                      dangerouslySetInnerHTML={{ __html: blogPost.content }}
+                      dangerouslySetInnerHTML={{ __html: translatedContent?.content || blogPost.content }}
                     />
 
                     <Separator className="my-8" />
@@ -305,7 +352,9 @@ const BlogPost: React.FC = () => {
                           onClick={handleLike}
                           variant={isLiked ? "default" : "outline"}
                           size="sm"
-                          className="flex items-center space-x-2"
+                          className={`flex items-center space-x-2 transition-all duration-300 ${
+                            isLiked ? 'bg-belize-orange-500 hover:bg-belize-orange-600' : 'hover:bg-belize-green-100'
+                          }`}
                         >
                           <Heart className={`h-4 w-4 ${isLiked ? 'fill-current' : ''}`} />
                           <span>{isLiked ? 'Liked' : 'Like'}</span>
@@ -318,6 +367,7 @@ const BlogPost: React.FC = () => {
                           onClick={() => handleShare('facebook')}
                           variant="outline"
                           size="sm"
+                          className="hover:bg-belize-green-100 transition-colors duration-300"
                         >
                           <Facebook className="h-4 w-4" />
                         </Button>
@@ -325,6 +375,7 @@ const BlogPost: React.FC = () => {
                           onClick={() => handleShare('twitter')}
                           variant="outline"
                           size="sm"
+                          className="hover:bg-belize-green-100 transition-colors duration-300"
                         >
                           <Twitter className="h-4 w-4" />
                         </Button>
@@ -332,6 +383,7 @@ const BlogPost: React.FC = () => {
                           onClick={() => handleShare('copy')}
                           variant="outline"
                           size="sm"
+                          className="hover:bg-belize-green-100 transition-colors duration-300"
                         >
                           <Share2 className="h-4 w-4" />
                         </Button>
@@ -343,44 +395,40 @@ const BlogPost: React.FC = () => {
 
               {/* Sidebar */}
               <aside className="lg:col-span-1">
-                <div className="sticky top-8 space-y-6">
+                <div className="sticky top-24 space-y-6">
                   
                   {/* Author Info */}
-                  <Card>
-                    <CardHeader>
-                      <CardTitle className="text-lg">About the Author</CardTitle>
-                    </CardHeader>
-                    <CardContent>
-                      <div className="flex items-center space-x-3 mb-3">
-                        <div className="w-12 h-12 bg-blue-600 rounded-full flex items-center justify-center text-white font-bold">
-                          {blogPost.author.charAt(0)}
-                        </div>
-                        <div>
-                          <h4 className="font-semibold">{blogPost.author}</h4>
-                          <p className="text-sm text-gray-500">Travel Writer</p>
-                        </div>
+                  <Card className="p-6">
+                    <h3 className="text-xl font-playfair font-semibold text-belize-green-600 dark:text-belize-green-500 mb-4">About the Author</h3>
+                    <div className="flex items-center space-x-3 mb-3">
+                      <div className="w-12 h-12 bg-belize-green-600 rounded-full flex items-center justify-center text-white font-bold">
+                        {blogPost.author.charAt(0)}
                       </div>
-                      <p className="text-sm text-gray-600">
-                        Experienced solo traveler sharing authentic adventures and practical tips from Belize.
-                      </p>
-                    </CardContent>
+                      <div>
+                        <h4 className="font-semibold">{blogPost.author}</h4>
+                        <p className="text-sm text-gray-500">Travel Writer</p>
+                      </div>
+                    </div>
+                    <p className="text-sm text-gray-600">
+                      Experienced solo traveler sharing authentic adventures and practical tips from Belize.
+                    </p>
                   </Card>
 
                   {/* Related Topics */}
                   {blogPost.post_tags && blogPost.post_tags.length > 0 && (
-                    <Card>
-                      <CardHeader>
-                        <CardTitle className="text-lg">Related Topics</CardTitle>
-                      </CardHeader>
-                      <CardContent>
-                        <div className="flex flex-wrap gap-2">
-                          {blogPost.post_tags.map((tagRelation, index) => (
-                            <Badge key={index} variant="outline" className="cursor-pointer hover:bg-gray-100">
-                              {tagRelation.tags.name}
-                            </Badge>
-                          ))}
-                        </div>
-                      </CardContent>
+                    <Card className="p-6">
+                      <h3 className="text-xl font-playfair font-semibold text-belize-green-600 dark:text-belize-green-500 mb-4">Related Topics</h3>
+                      <div className="flex flex-wrap gap-2">
+                        {blogPost.post_tags.map((tagRelation, index) => (
+                          <Badge 
+                            key={index} 
+                            variant="outline" 
+                            className="cursor-pointer hover:bg-belize-green-100 hover:text-belize-green-700 transition-colors duration-300"
+                          >
+                            {tagRelation.tags.name}
+                          </Badge>
+                        ))}
+                      </div>
                     </Card>
                   )}
                 </div>
@@ -391,13 +439,13 @@ const BlogPost: React.FC = () => {
 
         {/* Scroll to Top Button */}
         {showScrollTop && (
-          <Button
+          <button
             onClick={scrollToTop}
-            className="fixed bottom-8 right-8 rounded-full w-12 h-12 bg-blue-600 hover:bg-blue-700 shadow-lg z-50"
-            size="sm"
+            className="fixed bottom-8 right-8 bg-belize-orange-500 hover:bg-belize-orange-600 text-white p-3 rounded-full shadow-lg transition-all duration-300 z-50"
+            aria-label="Scroll to top"
           >
             <ArrowUp className="h-5 w-5" />
-          </Button>
+          </button>
         )}
       </div>
     </>

@@ -26,3 +26,10 @@ dist-ssr
 # Environment variables
 # This line is critical and prevents your secret keys from being uploaded.
 .env
+
+# Database scripts and backups
+database-fixes/
+*.sql
+
+# Supabase
+supabase/.temp/

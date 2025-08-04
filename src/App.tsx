@@ -30,6 +30,7 @@ import AdminDashboard from "./pages/dashboard/AdminDashboard";
 import GuideDashboard from "./pages/dashboard/GuideDashboard";
 import TravelerDashboard from "./pages/dashboard/TravelerDashboard";
 import CreateAdventure from "./pages/dashboard/CreateAdventure";
+import CreatePost from "./pages/dashboard/CreatePost";
 
 const queryClient = new QueryClient();
 
@@ -80,6 +81,8 @@ const App = () => (
               <Route path="traveler" element={<TravelerDashboard />} />
               <Route path="create-adventure" element={<CreateAdventure />} />
             </Route>
+            
+            <Route path="/admin/posts/new" element={<CreatePost />} />
             
             <Route path="*" element={<NotFound />} />
           </Routes>

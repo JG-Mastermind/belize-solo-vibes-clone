@@ -4,7 +4,7 @@ import { Star, Clock, Users, MapPin } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { useEffect, useState } from "react";
-import { supabase } from "@/integrations/supabase/client";
+import { supabase } from "@/lib/supabase";
 
 // Now using Supabase database - single source of truth!
 
@@ -12,31 +12,60 @@ const AdventureCards = () => {
   const navigate = useNavigate();
   const { t } = useTranslation(['adventureCards', 'common']);
   const [tours, setTours] = useState<any[]>([]);
+  const [loading, setLoading] = useState(false);
+  const [hasMore, setHasMore] = useState(true);
+  const [currentPage, setCurrentPage] = useState(0);
+  const TOURS_PER_PAGE = 9;
 
+  // Load initial batch of tours
   useEffect(() => {
-    async function fetchTours() {
-      try {
-        const { data, error } = await supabase
-          .from('tours')
-          .select('*')
-          .eq('is_active', true)
-          .order('created_at', { ascending: true });
-
-        if (error) {
-          console.error('Error fetching tours:', error);
-          return;
-        }
-
-        if (data) {
-          setTours(data);
-        }
-      } catch (error) {
-        console.error('Unexpected error fetching tours:', error);
-      }
-    }
-
-    fetchTours();
+    loadTours(0, true);
   }, []);
+
+  async function loadTours(page: number, isInitialLoad: boolean = false) {
+    if (loading && !isInitialLoad) return;
+    
+    setLoading(true);
+    
+    try {
+      const from = page * TOURS_PER_PAGE;
+      const to = from + TOURS_PER_PAGE - 1;
+      
+      const { data, error, count } = await supabase
+        .from('tours')
+        .select('*', { count: 'exact' })
+        .eq('is_active', true)
+        .order('created_at', { ascending: true })
+        .range(from, to);
+
+      if (error) {
+        console.error('Error fetching tours:', error);
+        return;
+      }
+
+      if (data) {
+        if (isInitialLoad || page === 0) {
+          setTours(data);
+        } else {
+          setTours(prev => [...prev, ...data]);
+        }
+        
+        // Check if there are more tours to load
+        const totalLoaded = (page + 1) * TOURS_PER_PAGE;
+        setHasMore(count ? totalLoaded < count : false);
+      }
+    } catch (error) {
+      console.error('Unexpected error fetching tours:', error);
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  const handleLoadMore = () => {
+    const nextPage = currentPage + 1;
+    setCurrentPage(nextPage);
+    loadTours(nextPage);
+  };
 
   // Map database adventure titles to i18n keys
   const getTitleBasedTranslationKey = (title: string) => {
@@ -181,11 +210,26 @@ const AdventureCards = () => {
           })}
         </div>
 
-        <div className="text-center mt-12">
-          <Button size="lg" variant="outline">
-            {t('adventureCards:viewAllAdventures')}
-          </Button>
-        </div>
+        {hasMore && (
+          <div className="text-center mt-12">
+            <Button 
+              size="lg" 
+              variant="outline"
+              onClick={handleLoadMore}
+              disabled={loading}
+              className="min-w-[200px]"
+            >
+              {loading ? (
+                <>
+                  <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-orange-600 mr-2"></div>
+                  Loading...
+                </>
+              ) : (
+                t('adventureCards:viewAllAdventures')
+              )}
+            </Button>
+          </div>
+        )}
       </div>
     </section>
   );

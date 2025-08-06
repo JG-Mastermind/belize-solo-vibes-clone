@@ -815,6 +815,13 @@ i18n
             whatToBring: 'What to Bring',
             notSuitableFor: 'Not Suitable For',
           },
+          guide: {
+            title: 'Your Tour Guide',
+            defaultBio: 'Professional and experienced tour guide specializing in Belize adventures.',
+            whatsapp: 'WhatsApp',
+            yearsExp: 'years experience',
+            noGuide: 'Guide information will be available soon.',
+          },
           tabs: {
             reviews: 'Reviews',
             itinerary: 'Itinerary',
@@ -2039,6 +2046,13 @@ i18n
             whatsIncluded: 'Ce Qui Est Inclus',
             whatToBring: 'Quoi Apporter',
             notSuitableFor: 'Ne Convient Pas Pour',
+          },
+          guide: {
+            title: 'Votre Guide',
+            defaultBio: 'Guide professionnel et expérimenté spécialisé dans les aventures au Belize.',
+            whatsapp: 'WhatsApp',
+            yearsExp: 'années d\'expérience',
+            noGuide: 'Les informations du guide seront bientôt disponibles.',
           },
           tabs: {
             reviews: 'Avis',

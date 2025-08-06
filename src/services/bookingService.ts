@@ -1,4 +1,4 @@
-import { supabase } from '@/integrations/supabase/client';
+import { supabase } from '@/lib/supabase';
 import { 
   Adventure, 
   AdventureAvailability, 
@@ -15,7 +15,7 @@ export class BookingService {
   // Adventure Methods
   static async getAdventure(id: string): Promise<Adventure | null> {
     try {
-      // First try to fetch from Supabase tours table
+      // Fetch tour data first
       const { data: adventureData, error: adventureError } = await supabase
         .from('tours')
         .select('*')
@@ -24,10 +24,24 @@ export class BookingService {
         .single();
       
       if (!adventureError && adventureData) {
+        // Fetch guide/provider data separately
+        let providerData = null;
+        if (adventureData.provider_id) {
+          const { data: userData, error: userError } = await supabase
+            .from('users')
+            .select('id, first_name, last_name, email, whatsapp_number, profile_image_url, user_type')
+            .eq('id', adventureData.provider_id)
+            .single();
+          
+          if (!userError && userData) {
+            providerData = userData;
+          }
+        }
         // Transform tours table data to Adventure format for booking types
         return {
           id: adventureData.id,
           guide_id: adventureData.provider_id || '',
+          guide: providerData || null,
           title: adventureData.title,
           description: adventureData.description || '',
           location: adventureData.location_name || '',

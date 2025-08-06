@@ -27,6 +27,22 @@ import {
 import { BookingService } from '@/services/bookingService';
 import { Adventure, Review } from '@/types/booking';
 import { useAuth } from '@/components/auth/AuthProvider';
+
+// Extended Adventure interface with guide information
+interface AdventureWithGuide extends Adventure {
+  guide?: {
+    id: string;
+    first_name: string;
+    last_name: string;
+    email: string;
+    whatsapp_number?: string;
+    profile_image_url?: string;
+    user_type: string;
+    bio?: string;
+    rating?: number;
+    experience_years?: number;
+  } | null;
+}
 import { toast } from 'sonner';
 import { useTranslation } from 'react-i18next';
 import { SocialProof } from '@/components/booking/SocialProof';
@@ -92,7 +108,7 @@ const AdventureDetail: React.FC = () => {
     };
   };
   
-  const [adventure, setAdventure] = useState<Adventure | null>(null);
+  const [adventure, setAdventure] = useState<AdventureWithGuide | null>(null);
   const [reviews, setReviews] = useState<Review[]>([]);
   const [loading, setLoading] = useState(true);
   const [selectedImageIndex, setSelectedImageIndex] = useState(0);
@@ -340,6 +356,55 @@ const AdventureDetail: React.FC = () => {
                         </div>
                       ))}
                     </div>
+                  </div>
+                )}
+              </CardContent>
+            </Card>
+
+            {/* Tour Guide */}
+            <Card className="dark:bg-card">
+              <CardHeader>
+                <CardTitle className="text-2xl">{t('adventureDetail:guide.title')}</CardTitle>
+              </CardHeader>
+              <CardContent>
+                {adventure.guide ? (
+                  <div className="flex items-start space-x-4">
+                    <div className="flex-shrink-0">
+                      <img 
+                        src={adventure.guide.profile_image_url || '/public/images/guides/default-guide.webp'}
+                        alt={`${adventure.guide.first_name} ${adventure.guide.last_name}`}
+                        className="w-16 h-16 rounded-full object-cover"
+                      />
+                    </div>
+                    <div className="flex-1">
+                      <h3 className="text-xl font-semibold text-foreground mb-2">
+                        {adventure.guide.first_name} {adventure.guide.last_name}
+                      </h3>
+                      <p className="text-muted-foreground mb-3">
+                        {adventure.guide.bio || t('adventureDetail:guide.defaultBio')}
+                      </p>
+                      <div className="flex items-center space-x-4">
+                        {adventure.guide.whatsapp_number && (
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={() => window.open(`https://wa.me/${adventure.guide.whatsapp_number.replace(/\D/g, '')}`, '_blank')}
+                            className="flex items-center space-x-2"
+                          >
+                            <MessageCircle className="w-4 h-4" />
+                            <span>{t('adventureDetail:guide.whatsapp')}</span>
+                          </Button>
+                        )}
+                        <div className="flex items-center text-sm text-muted-foreground">
+                          <Star className="w-4 h-4 text-yellow-500 fill-current mr-1" />
+                          <span>{adventure.guide.rating || '4.8'} • {adventure.guide.experience_years || '5+'} {t('adventureDetail:guide.yearsExp')}</span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                ) : (
+                  <div className="text-center py-4 text-muted-foreground">
+                    {t('adventureDetail:guide.noGuide')}
                   </div>
                 )}
               </CardContent>

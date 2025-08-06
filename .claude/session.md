@@ -49,5 +49,19 @@ Bilingual Blog System - Complete Implementation
 
   Tech Stack: React + TypeScript + i18next + React Helmet + Vite
   Status: Production deployed to main branch, fully functional
-  
-Happy coding. 🌴
+
+## GUIDE PROFILE INTEGRATION - ENTERPRISE IMPLEMENTATION
+
+### TASK SUMMARY
+Implement enterprise-grade guide profile integration into BelizeVibes AdventureDetails page leveraging existing Supabase `guides` table, React Query caching, and shadcn/ui components for 5-7 day MVP delivery.
+
+### KEY TECHNICAL DECISIONS
+- **Database**: Extend existing `guides` table (NOT users table) with `profile_image_url`, `bio_i18n` JSONB, `whatsapp_number`, `is_featured` fields
+- **Integration Point**: Insert GuideProfileCard component in AdventureDetail.tsx at line ~347 after Overview Card using existing Card/CardHeader structure
+- **Service Layer**: Extend existing BookingService.ts (662 lines) with `getGuideProfile()` and `useGuideProfile()` React Query hooks for 1-hour caching
+- **Component Architecture**: Create single GuideProfileCard.tsx using existing Avatar, Badge, Button components with lazy image loading and WhatsApp integration
+
+### IMPLEMENTATION PATH
+Database migration (15min) → BookingService extension (45min) → GuideProfileCard component (2-3hrs) → AdventureDetail integration (30min) → i18n additions (15min) with zero new dependencies and 90% existing architecture reuse.
+
+ Happy coding. 🌴

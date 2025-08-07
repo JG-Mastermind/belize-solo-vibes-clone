@@ -19,46 +19,32 @@ import {
   Filter
 } from 'lucide-react';
 import { Input } from '@/components/ui/input';
-
-interface Adventure {
-  id: string;
-  title: string;
-  description: string;
-  location: string;
-  price_per_person: number;
-  duration_hours: number;
-  max_participants: number;
-  difficulty_level: string;
-  is_active: boolean;
-  guide_id: string;
-  created_at: string;
-  image_urls: string[];
-}
+import { Tour } from '@/types/tours';
 
 const AdminAdventures: React.FC = () => {
   const navigate = useNavigate();
-  const [adventures, setAdventures] = useState<Adventure[]>([]);
+  const [tours, setTours] = useState<Tour[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
   const [filterStatus, setFilterStatus] = useState<'all' | 'active' | 'inactive'>('all');
 
   useEffect(() => {
-    fetchAdventures();
+    fetchTours();
   }, []);
 
-  const fetchAdventures = async () => {
+  const fetchTours = async () => {
     try {
       setLoading(true);
       const { data, error } = await supabase
-        .from('adventures')
+        .from('tours')
         .select('*')
         .order('created_at', { ascending: false });
 
       if (error) throw error;
-      setAdventures(data || []);
+      setTours(data || []);
     } catch (error) {
-      console.error('Error fetching adventures:', error);
-      toast.error('Failed to load adventures');
+      console.error('Error fetching tours:', error);
+      toast.error('Failed to load tours');
     } finally {
       setLoading(false);
     }
@@ -71,44 +57,44 @@ const AdminAdventures: React.FC = () => {
 
     try {
       const { error } = await supabase
-        .from('adventures')
+        .from('tours')
         .delete()
         .eq('id', id);
 
       if (error) throw error;
       
-      toast.success('Adventure deleted successfully');
-      fetchAdventures(); // Refresh list
+      toast.success('Tour deleted successfully');
+      fetchTours(); // Refresh list
     } catch (error) {
-      console.error('Error deleting adventure:', error);
-      toast.error('Failed to delete adventure');
+      console.error('Error deleting tour:', error);
+      toast.error('Failed to delete tour');
     }
   };
 
   const toggleStatus = async (id: string, currentStatus: boolean) => {
     try {
       const { error } = await supabase
-        .from('adventures')
+        .from('tours')
         .update({ is_active: !currentStatus })
         .eq('id', id);
 
       if (error) throw error;
       
-      toast.success(`Adventure ${!currentStatus ? 'activated' : 'deactivated'}`);
-      fetchAdventures(); // Refresh list
+      toast.success(`Tour ${!currentStatus ? 'activated' : 'deactivated'}`);
+      fetchTours(); // Refresh list
     } catch (error) {
-      console.error('Error updating adventure status:', error);
-      toast.error('Failed to update adventure status');
+      console.error('Error updating tour status:', error);
+      toast.error('Failed to update tour status');
     }
   };
 
-  const filteredAdventures = adventures.filter(adventure => {
-    const matchesSearch = adventure.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         adventure.location.toLowerCase().includes(searchTerm.toLowerCase());
+  const filteredTours = tours.filter(tour => {
+    const matchesSearch = tour.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                         tour.location_name.toLowerCase().includes(searchTerm.toLowerCase());
     
     const matchesFilter = filterStatus === 'all' || 
-                         (filterStatus === 'active' && adventure.is_active) ||
-                         (filterStatus === 'inactive' && !adventure.is_active);
+                         (filterStatus === 'active' && tour.is_active) ||
+                         (filterStatus === 'inactive' && !tour.is_active);
     
     return matchesSearch && matchesFilter;
   });
@@ -117,7 +103,7 @@ const AdminAdventures: React.FC = () => {
     return (
       <div className="flex items-center justify-center h-64">
         <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
-        <span className="ml-2">Loading adventures...</span>
+        <span className="ml-2">Loading tours...</span>
       </div>
     );
   }
@@ -125,17 +111,17 @@ const AdminAdventures: React.FC = () => {
   return (
     <>
       <Helmet>
-        <title>Manage Adventures - Admin Dashboard</title>
-        <meta name="description" content="Manage all adventure listings" />
+        <title>Manage Tours - Admin Dashboard</title>
+        <meta name="description" content="Manage all tour listings" />
       </Helmet>
 
       <div className="space-y-6">
         {/* Header */}
         <div className="flex justify-between items-center">
           <div>
-            <h1 className="text-3xl font-bold">Manage Adventures</h1>
+            <h1 className="text-3xl font-bold">Manage Tours</h1>
             <p className="text-muted-foreground">
-              Complete control over all adventure listings
+              Complete control over all tour listings
             </p>
           </div>
           <Button 
@@ -143,7 +129,7 @@ const AdminAdventures: React.FC = () => {
             className="bg-green-600 hover:bg-green-700"
           >
             <Plus className="w-4 h-4 mr-2" />
-            Create Adventure
+            Create Tour
           </Button>
         </div>
 
@@ -155,7 +141,7 @@ const AdminAdventures: React.FC = () => {
                 <div className="relative">
                   <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
                   <Input
-                    placeholder="Search adventures by title or location..."
+                    placeholder="Search tours by title or location..."
                     value={searchTerm}
                     onChange={(e) => setSearchTerm(e.target.value)}
                     className="pl-10"
@@ -168,55 +154,55 @@ const AdminAdventures: React.FC = () => {
                   size="sm"
                   onClick={() => setFilterStatus('all')}
                 >
-                  All ({adventures.length})
+                  All ({tours.length})
                 </Button>
                 <Button
                   variant={filterStatus === 'active' ? 'default' : 'outline'}
                   size="sm"
                   onClick={() => setFilterStatus('active')}
                 >
-                  Active ({adventures.filter(a => a.is_active).length})
+                  Active ({tours.filter(t => t.is_active).length})
                 </Button>
                 <Button
                   variant={filterStatus === 'inactive' ? 'default' : 'outline'}
                   size="sm"
                   onClick={() => setFilterStatus('inactive')}
                 >
-                  Inactive ({adventures.filter(a => !a.is_active).length})
+                  Inactive ({tours.filter(t => !t.is_active).length})
                 </Button>
               </div>
             </div>
           </CardContent>
         </Card>
 
-        {/* Adventures Grid */}
-        {filteredAdventures.length === 0 ? (
+        {/* Tours Grid */}
+        {filteredTours.length === 0 ? (
           <Card>
             <CardContent className="py-12 text-center">
-              <p className="text-muted-foreground">No adventures found matching your criteria.</p>
+              <p className="text-muted-foreground">No tours found matching your criteria.</p>
             </CardContent>
           </Card>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {filteredAdventures.map((adventure) => (
-              <Card key={adventure.id} className="hover:shadow-lg transition-shadow">
+            {filteredTours.map((tour) => (
+              <Card key={tour.id} className="hover:shadow-lg transition-shadow">
                 <CardHeader className="pb-3">
                   <div className="flex justify-between items-start">
                     <CardTitle className="text-sm font-medium line-clamp-2">
-                      {adventure.title}
+                      {tour.title}
                     </CardTitle>
-                    <Badge variant={adventure.is_active ? 'default' : 'secondary'}>
-                      {adventure.is_active ? 'Active' : 'Inactive'}
+                    <Badge variant={tour.is_active ? 'default' : 'secondary'}>
+                      {tour.is_active ? 'Active' : 'Inactive'}
                     </Badge>
                   </div>
                 </CardHeader>
                 <CardContent>
-                  {/* Adventure Image */}
-                  {adventure.image_urls && adventure.image_urls.length > 0 && (
+                  {/* Tour Image */}
+                  {tour.images && tour.images.length > 0 && (
                     <div className="aspect-video bg-gray-200 rounded-md mb-3 overflow-hidden">
                       <img 
-                        src={adventure.image_urls[0]} 
-                        alt={adventure.title}
+                        src={tour.images[0]} 
+                        alt={tour.title}
                         className="w-full h-full object-cover"
                         onError={(e) => {
                           e.currentTarget.style.display = 'none';
@@ -225,23 +211,23 @@ const AdminAdventures: React.FC = () => {
                     </div>
                   )}
 
-                  {/* Adventure Info */}
+                  {/* Tour Info */}
                   <div className="space-y-2 text-sm">
                     <div className="flex items-center text-gray-600">
                       <MapPin className="w-4 h-4 mr-1" />
-                      {adventure.location}
+                      {tour.location_name}
                     </div>
                     <div className="flex items-center text-gray-600">
                       <DollarSign className="w-4 h-4 mr-1" />
-                      ${adventure.price_per_person}/person
+                      ${tour.price_per_person}/person
                     </div>
                     <div className="flex items-center text-gray-600">
                       <Clock className="w-4 h-4 mr-1" />
-                      {adventure.duration_hours} hours
+                      {tour.duration_hours} hours
                     </div>
                     <div className="flex items-center text-gray-600">
                       <Users className="w-4 h-4 mr-1" />
-                      Max {adventure.max_participants}
+                      Max {tour.max_participants}
                     </div>
                   </div>
 
@@ -251,7 +237,7 @@ const AdminAdventures: React.FC = () => {
                       size="sm"
                       variant="outline"
                       className="flex-1"
-                      onClick={() => navigate(`/admin/adventures/edit/${adventure.id}`)}
+                      onClick={() => navigate(`/admin/adventures/edit/${tour.id}`)}
                     >
                       <Edit className="w-3 h-3 mr-1" />
                       Edit
@@ -259,15 +245,15 @@ const AdminAdventures: React.FC = () => {
                     <Button
                       size="sm"
                       variant="outline"
-                      onClick={() => toggleStatus(adventure.id, adventure.is_active)}
+                      onClick={() => toggleStatus(tour.id, tour.is_active)}
                     >
                       <Eye className="w-3 h-3 mr-1" />
-                      {adventure.is_active ? 'Hide' : 'Show'}
+                      {tour.is_active ? 'Hide' : 'Show'}
                     </Button>
                     <Button
                       size="sm"
                       variant="destructive"
-                      onClick={() => handleDelete(adventure.id, adventure.title)}
+                      onClick={() => handleDelete(tour.id, tour.title)}
                     >
                       <Trash2 className="w-3 h-3" />
                     </Button>

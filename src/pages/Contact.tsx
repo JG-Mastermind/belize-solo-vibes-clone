@@ -6,6 +6,7 @@ import { Label } from "@/components/ui/label";
 import { Card, CardContent } from "@/components/ui/card";
 import { MapPin, Phone, Mail, Clock } from "lucide-react";
 import { useTranslation } from "react-i18next";
+import { GlobalMeta } from "@/components/SEO/GlobalMeta";
 
 const Contact = () => {
   const { t } = useTranslation(['contact']);
@@ -51,6 +52,13 @@ const Contact = () => {
 
   return (
     <>
+      <GlobalMeta 
+        title="Contact Us"
+        description="Get in touch with BelizeVibes for authentic Belize adventure tours. Contact our expert local guides for personalized travel experiences."
+        path="/contact"
+        keywords="contact BelizeVibes, Belize tours contact, adventure travel inquiry, local guides contact"
+      />
+      
       {/* Hero Section */}
       <section className="relative min-h-[60vh] flex items-center justify-center overflow-hidden">
         <div 

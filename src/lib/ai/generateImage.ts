@@ -50,7 +50,7 @@ export async function generateAdventureImage(prompt: string): Promise<string> {
     
     // Upload to Supabase Storage
     const { error: uploadError } = await supabase.storage
-      .from('adventures')
+      .from('tours')
       .upload(filePath, blob, {
         contentType: 'image/jpeg',
         cacheControl: '3600',
@@ -64,7 +64,7 @@ export async function generateAdventureImage(prompt: string): Promise<string> {
     
     // Get the public URL for the uploaded file
     const { data: { publicUrl } } = supabase.storage
-      .from('adventures')
+      .from('tours')
       .getPublicUrl(filePath);
     
     return publicUrl;

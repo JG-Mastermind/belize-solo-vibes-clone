@@ -13,13 +13,17 @@ import { addDays, format, isAfter, isBefore, parseISO } from 'date-fns';
 
 export class BookingService {
   // Adventure Methods
-  static async getAdventure(id: string): Promise<Adventure | null> {
+  static async getAdventure(identifier: string): Promise<Adventure | null> {
     try {
+      // Determine if identifier is a slug or UUID
+      const isUUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(identifier);
+      const field = isUUID ? 'id' : 'slug';
+      
       // Fetch tour data first
       const { data: adventureData, error: adventureError } = await supabase
         .from('tours')
         .select('*')
-        .eq('id', id)
+        .eq(field, identifier)
         .eq('is_active', true)
         .single();
       
@@ -43,7 +47,11 @@ export class BookingService {
           guide_id: adventureData.provider_id || '',
           guide: providerData || null,
           title: adventureData.title,
+          slug: adventureData.slug,
           description: adventureData.description || '',
+          seo_title: adventureData.seo_title,
+          meta_description: adventureData.meta_description,
+          featured_image_alt: adventureData.featured_image_alt,
           location: adventureData.location_name || '',
           duration_hours: adventureData.duration_hours || 8,
           difficulty_level: 'moderate' as any,

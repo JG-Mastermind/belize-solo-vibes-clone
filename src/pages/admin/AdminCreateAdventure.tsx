@@ -139,7 +139,7 @@ const AdminCreateAdventure: React.FC = () => {
       };
 
       const { data, error } = await supabase
-        .from('adventures')
+        .from('tours')
         .insert([adventureData])
         .select()
         .single();

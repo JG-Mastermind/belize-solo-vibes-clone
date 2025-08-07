@@ -197,7 +197,7 @@ const AdventureCards = () => {
                     {t('common:bookNow')}
                   </Button>
                   <Button 
-                    onClick={() => navigate(`/tours/${tour.id}`)}
+                    onClick={() => navigate(`/tours/${tour.slug || tour.id}`)}
                     variant="outline" 
                     className="flex-1 border-orange-600 text-orange-600 hover:bg-orange-50 transition-colors duration-300"
                   >

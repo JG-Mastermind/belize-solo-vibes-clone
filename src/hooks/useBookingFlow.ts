@@ -30,7 +30,7 @@ export const useBookingFlow = () => {
       // Check if the adventure exists in the database first
       let adventurePrice = null;
       const { data: dbAdventure } = await supabase
-        .from('adventures')
+        .from('tours')
         .select('price_per_person')
         .eq('id', bookingData.adventureId)
         .single();

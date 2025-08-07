@@ -2,6 +2,7 @@ import React from "react";
 import { Shield, Phone, Heart, Droplets, Cloud, Users, AlertTriangle, MapPin } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useTranslation } from "react-i18next";
+import { GlobalMeta } from "@/components/SEO/GlobalMeta";
 
 const Safety = () => {
   const { t } = useTranslation(['safety']);
@@ -49,8 +50,16 @@ const Safety = () => {
   ];
 
   return (
-    <div className="min-h-screen bg-background text-foreground">
-      {/* Hero Section */}
+    <>
+      <GlobalMeta 
+        title="Safety Guidelines"
+        description="Essential safety information for Belize adventures. Learn about travel safety, health precautions, and emergency procedures for your adventure tours."
+        path="/safety"
+        keywords="Belize safety, adventure tour safety, travel safety guidelines, Belize health information, travel insurance"
+      />
+      
+      <div className="min-h-screen bg-background text-foreground">
+        {/* Hero Section */}
       <section className="relative min-h-[60vh] flex items-center justify-center overflow-hidden">
         <div 
           className="absolute inset-0 bg-cover bg-center bg-no-repeat"
@@ -173,6 +182,7 @@ const Safety = () => {
         </div>
       </section>
     </div>
+    </>
   );
 };
 

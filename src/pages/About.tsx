@@ -2,6 +2,7 @@ import React from "react";
 import { Users, Shield, Leaf, MapPin, Mail } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useTranslation } from "react-i18next";
+import { GlobalMeta } from "@/components/SEO/GlobalMeta";
 
 const About = () => {
   const { t } = useTranslation(['about']);
@@ -43,6 +44,13 @@ const About = () => {
 
   return (
     <React.Fragment>
+      <GlobalMeta 
+        title="About BelizeVibes"
+        description="Learn about BelizeVibes - authentic Belize adventure tours with expert local guides. Discover our commitment to sustainable tourism and authentic experiences."
+        path="/about"
+        keywords="about BelizeVibes, Belize tour company, local guides, sustainable tourism, authentic adventures"
+      />
+      
       {/* Hero Section */}
       <section className="relative min-h-[60vh] flex items-center justify-center overflow-hidden">
         <div 

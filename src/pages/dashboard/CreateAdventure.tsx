@@ -148,7 +148,7 @@ const CreateAdventurePage: React.FC = () => {
 
       // Insert into Supabase adventures table
       const { data, error } = await supabase
-        .from('adventures')
+        .from('tours')
         .insert([adventureData])
         .select()
         .single();

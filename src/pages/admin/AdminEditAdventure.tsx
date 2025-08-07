@@ -91,7 +91,7 @@ const AdminEditAdventure: React.FC = () => {
     try {
       setFetchLoading(true);
       const { data, error } = await supabase
-        .from('adventures')
+        .from('tours')
         .select('*')
         .eq('id', id)
         .single();
@@ -187,7 +187,7 @@ const AdminEditAdventure: React.FC = () => {
       };
 
       const { error } = await supabase
-        .from('adventures')
+        .from('tours')
         .update(updatedData)
         .eq('id', id);
 
@@ -210,7 +210,7 @@ const AdminEditAdventure: React.FC = () => {
 
     try {
       const { error } = await supabase
-        .from('adventures')
+        .from('tours')
         .delete()
         .eq('id', id);
 

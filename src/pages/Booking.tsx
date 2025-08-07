@@ -73,7 +73,7 @@ const Booking = () => {
       if (!isUUID) return null;
       
       const { data, error } = await supabase
-        .from('adventures')
+        .from('tours')
         .select('*')
         .eq('id', id)
         .eq('is_active', true)

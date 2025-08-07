@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
+import { Helmet } from 'react-helmet-async';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -50,7 +51,7 @@ import { BookingWidget } from '@/components/booking/BookingWidget';
 import { ImageGallery } from '@/components/booking/ImageGallery';
 
 const AdventureDetail: React.FC = () => {
-  const { id } = useParams<{ id: string }>();
+  const { id, slug } = useParams<{ id?: string; slug?: string }>();
   const navigate = useNavigate();
   const { user } = useAuth();
   const { t } = useTranslation(['adventureDetail', 'adventureCards']);
@@ -116,21 +117,28 @@ const AdventureDetail: React.FC = () => {
   const [isWishlisted, setIsWishlisted] = useState(false);
 
   useEffect(() => {
-    if (id) {
+    const identifier = slug || id;
+    if (identifier) {
       loadAdventureDetails();
       trackView();
     }
-  }, [id]);
+  }, [id, slug]);
 
   const loadAdventureDetails = async () => {
-    if (!id) return;
+    const identifier = slug || id;
+    if (!identifier) return;
     
     setLoading(true);
     try {
-      const [adventureData, reviewsData] = await Promise.all([
-        BookingService.getAdventure(id),
-        BookingService.getAdventureReviews(id)
-      ]);
+      const adventureData = await BookingService.getAdventure(identifier);
+      
+      // If accessed via ID but tour has a slug, redirect to slug URL for SEO
+      if (adventureData && id && !slug && adventureData.slug) {
+        navigate(`/tours/${adventureData.slug}`, { replace: true });
+        return;
+      }
+      
+      const reviewsData = await BookingService.getAdventureReviews(adventureData?.id || identifier);
       
       setAdventure(adventureData);
       setReviews(reviewsData);
@@ -143,15 +151,16 @@ const AdventureDetail: React.FC = () => {
   };
 
   const trackView = async () => {
-    if (id) {
-      await BookingService.trackBookingView(id);
+    const identifier = slug || id;
+    if (identifier && adventure?.id) {
+      await BookingService.trackBookingView(adventure.id);
     }
   };
 
   const handleBookNow = () => {
-    if (id) {
-      BookingService.trackBookingStart(id);
-      navigate(`/booking/${id}`);
+    if (adventure?.id) {
+      BookingService.trackBookingStart(adventure.id);
+      navigate(`/booking/${adventure.id}`);
     }
   };
 
@@ -221,7 +230,78 @@ const AdventureDetail: React.FC = () => {
   ].filter(Boolean);
 
   return (
-    <div className="min-h-screen bg-blue-50 dark:bg-blue-950/20">
+    <>
+      <Helmet>
+        <title>{adventure.seo_title || adventure.title} - BelizeVibes</title>
+        <meta name="description" content={adventure.meta_description || adventure.description?.substring(0, 160) || `Experience ${adventure.title} in ${adventure.location}. Expert guided tour with BelizeVibes.`} />
+        
+        {/* Open Graph / Facebook */}
+        <meta property="og:type" content="website" />
+        <meta property="og:title" content={adventure.seo_title || adventure.title} />
+        <meta property="og:description" content={adventure.meta_description || adventure.description?.substring(0, 160) || `Experience ${adventure.title} in ${adventure.location}.`} />
+        <meta property="og:image" content={adventure.images?.[0] || '/images/belize-default.jpg'} />
+        <meta property="og:url" content={`https://belizevibes.com/tours/${adventure.slug || adventure.id}`} />
+        
+        {/* Twitter */}
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:site" content="@belizevibes" />
+        <meta name="twitter:title" content={adventure.seo_title || adventure.title} />
+        <meta name="twitter:description" content={adventure.meta_description || adventure.description?.substring(0, 160) || `Experience ${adventure.title} in ${adventure.location}.`} />
+        <meta name="twitter:image" content={adventure.images?.[0] || '/images/belize-default.jpg'} />
+        
+        {/* Canonical URL */}
+        <link rel="canonical" href={`https://belizevibes.com/tours/${adventure.slug || adventure.id}`} />
+        
+        {/* Additional SEO */}
+        <meta name="keywords" content={`${adventure.title}, Belize tours, ${adventure.location}, adventure travel, solo travel, guided tours`} />
+        <meta name="author" content="BelizeVibes" />
+        
+        {/* Image Alt for SEO (if available) */}
+        {adventure.featured_image_alt && (
+          <meta name="image:alt" content={adventure.featured_image_alt} />
+        )}
+        
+        {/* Schema.org JSON-LD for Rich Snippets */}
+        <script 
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify({
+              "@context": "https://schema.org",
+              "@type": "Product",
+              "name": adventure.seo_title || adventure.title,
+              "description": adventure.meta_description || adventure.description?.substring(0, 200) || `Experience ${adventure.title} in ${adventure.location}`,
+              "image": adventure.images?.[0] || adventure.featured_image_url || '/images/belize-default.jpg',
+              "brand": {
+                "@type": "Organization", 
+                "name": "BelizeVibes",
+                "url": "https://belizevibes.com"
+              },
+              "offers": {
+                "@type": "Offer",
+                "price": adventure.base_price || 0,
+                "priceCurrency": "USD",
+                "availability": "https://schema.org/InStock",
+                "url": `https://belizevibes.com/tours/${adventure.slug || adventure.id}`,
+                "validFrom": new Date().toISOString().split('T')[0]
+              },
+              ...(adventure.average_rating > 0 && adventure.total_reviews > 0 ? {
+                "aggregateRating": {
+                  "@type": "AggregateRating",
+                  "ratingValue": adventure.average_rating,
+                  "reviewCount": adventure.total_reviews
+                }
+              } : {}),
+              "provider": {
+                "@type": "Organization",
+                "name": "BelizeVibes",
+                "url": "https://belizevibes.com"
+              }
+            })
+          }}
+        />
+      </Helmet>
+      
+      <div className="min-h-screen bg-blue-50 dark:bg-blue-950/20">
       {/* Hero Section */}
       <div className="relative h-96 lg:h-[600px] overflow-hidden">
         <ImageGallery 
@@ -581,6 +661,7 @@ const AdventureDetail: React.FC = () => {
         </div>
       </div>
     </div>
+    </>
   );
 };
 

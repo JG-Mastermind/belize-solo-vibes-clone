@@ -3,6 +3,7 @@ import Hero from "@/components/Hero";
 import AdventureCards from "@/components/AdventureCards";
 import Testimonials from "@/components/Testimonials";
 import { supabase } from '@/lib/supabase';
+import { GlobalMeta } from "@/components/SEO/GlobalMeta";
 
 // Tour type matching Supabase schema
 type Tour = {
@@ -51,11 +52,20 @@ const Index = () => {
   }, []);
 
   return (
-    <div className="min-h-screen bg-background text-foreground">
-      <Hero featuredTour={featuredTour} />
-      <AdventureCards tours={tours} />
-      <Testimonials />
-    </div>
+    <>
+      <GlobalMeta 
+        title="Belize Adventures & Tours"
+        description="Explore authentic Belize adventure tours and experiences. Cave tubing, snorkeling, Maya ruins, jungle treks, and more with expert local guides."
+        path="/adventures"
+        keywords="Belize adventures, Belize tours, cave tubing, snorkeling, Maya ruins, jungle tours, adventure travel"
+      />
+      
+      <div className="min-h-screen bg-background text-foreground">
+        <Hero featuredTour={featuredTour} />
+        <AdventureCards tours={tours} />
+        <Testimonials />
+      </div>
+    </>
   );
 };
 

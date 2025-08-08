@@ -17,15 +17,29 @@ export class BookingService {
     try {
       // Determine if identifier is a slug or UUID
       const isUUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(identifier);
-      const field = isUUID ? 'id' : 'slug';
       
-      // Fetch tour data first
-      const { data: adventureData, error: adventureError } = await supabase
-        .from('tours')
-        .select('*')
-        .eq(field, identifier)
-        .eq('is_active', true)
-        .single();
+      // Fetch tour data first - handle both English and French slugs
+      let adventureData, adventureError;
+      if (isUUID) {
+        const result = await supabase
+          .from('tours')
+          .select('*')
+          .eq('id', identifier)
+          .eq('is_active', true)
+          .single();
+        adventureData = result.data;
+        adventureError = result.error;
+      } else {
+        // Try English slug first, then French slug
+        const result = await supabase
+          .from('tours')
+          .select('*')
+          .or(`slug.eq.${identifier},slug_fr.eq.${identifier}`)
+          .eq('is_active', true)
+          .single();
+        adventureData = result.data;
+        adventureError = result.error;
+      }
       
       if (!adventureError && adventureData) {
         // Fetch guide/provider data separately
@@ -47,14 +61,16 @@ export class BookingService {
           guide_id: adventureData.provider_id || '',
           guide: providerData || null,
           title: adventureData.title,
+          title_fr: adventureData.title_fr,
           slug: adventureData.slug,
           description: adventureData.description || '',
+          description_fr: adventureData.description_fr,
           seo_title: adventureData.seo_title,
           meta_description: adventureData.meta_description,
           featured_image_alt: adventureData.featured_image_alt,
           location: adventureData.location_name || '',
           duration_hours: adventureData.duration_hours || 8,
-          difficulty_level: 'moderate' as any,
+          difficulty_level: adventureData.difficulty_level || 'moderate' as any,
           max_participants: adventureData.max_participants || 12,
           base_price: adventureData.price_per_person || 0,
           group_discount_percentage: 0,
@@ -64,15 +80,15 @@ export class BookingService {
           max_advance_booking_days: 365,
           cancellation_policy: 'moderate' as any,
           meeting_point: '',
-          what_to_bring: [],
-          not_suitable_for: [],
-          includes: [],
+          what_to_bring: adventureData.what_to_bring || [],
+          not_suitable_for: adventureData.not_suitable_for || [],
+          includes: adventureData.includes || [],
           requirements: [],
-          featured_image_url: adventureData.images?.[0] || '',
+          featured_image_url: adventureData.featured_image_url || adventureData.images?.[0] || '',
           image_urls: adventureData.images || [],
-          gallery_images: adventureData.images || [],
+          gallery_images: adventureData.gallery_images || adventureData.images || [],
           video_url: '',
-          highlights: [],
+          highlights: adventureData.highlights || [],
           itinerary: {},
           add_ons: {},
           faqs: {},
@@ -80,8 +96,8 @@ export class BookingService {
           daily_capacity: adventureData.max_participants || 8,
           seasonal_pricing: {},
           booking_count: 0,
-          average_rating: 0,
-          total_reviews: 0,
+          average_rating: adventureData.average_rating || 0,
+          total_reviews: adventureData.total_reviews || 0,
           last_booked_at: '',
           is_active: adventureData.is_active !== false,
           created_at: adventureData.created_at || new Date().toISOString(),

@@ -54,7 +54,7 @@ const AdventureDetail: React.FC = () => {
   const { id, slug } = useParams<{ id?: string; slug?: string }>();
   const navigate = useNavigate();
   const { user } = useAuth();
-  const { t } = useTranslation(['adventureDetail', 'adventureCards']);
+  const { t, i18n } = useTranslation(['adventureDetail', 'adventureCards']);
   
   // Map database adventure titles to i18n keys (same as AdventureCards)
   const getTitleBasedTranslationKey = (title: string) => {
@@ -101,10 +101,11 @@ const AdventureDetail: React.FC = () => {
       };
     }
     
-    // Final fallback to original content
+    // Final fallback to original content - check for French content if in French context
+    const isFrench = i18n.language === 'fr' || i18n.language === 'fr-CA';
     return {
-      title: adventure.title,
-      description: adventure.description,
+      title: (isFrench && adventure.title_fr) ? adventure.title_fr : adventure.title,
+      description: (isFrench && adventure.description_fr) ? adventure.description_fr : adventure.description,
       highlights: adventure.highlights,
     };
   };
@@ -333,7 +334,14 @@ const AdventureDetail: React.FC = () => {
             <h1 className="text-4xl lg:text-6xl font-bold mb-2">{getAdventureContent(adventure).title}</h1>
             <p className="text-xl flex items-center">
               <MapPin className="w-5 h-5 mr-2" />
-              {adventure.location}
+              <a 
+                href={`https://www.google.com/maps/search/${encodeURIComponent(adventure.location + ', Belize')}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-orange-400 hover:text-orange-300 transition-colors underline"
+              >
+                {adventure.location}
+              </a>
             </p>
           </div>
         </div>

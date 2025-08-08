@@ -52,6 +52,21 @@ export const generateSitemap = async (): Promise<string> => {
         changefreq: 'monthly'
       },
       { 
+        loc: 'https://belizevibes.com/fr-ca/securite', 
+        priority: '0.6',
+        changefreq: 'monthly'
+      },
+      { 
+        loc: 'https://belizevibes.com/fr-ca/a-propos', 
+        priority: '0.7',
+        changefreq: 'monthly'
+      },
+      { 
+        loc: 'https://belizevibes.com/fr-ca/contact', 
+        priority: '0.7',
+        changefreq: 'monthly'
+      },
+      { 
         loc: 'https://belizevibes.com/blog', 
         priority: '0.8',
         changefreq: 'weekly'

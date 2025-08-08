@@ -2,10 +2,16 @@ import React from "react";
 import { Users, Shield, Leaf, MapPin, Mail } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useTranslation } from "react-i18next";
+import { useLocation } from "react-router-dom";
 import { GlobalMeta } from "@/components/SEO/GlobalMeta";
 
 const About = () => {
   const { t } = useTranslation(['about']);
+  const location = useLocation();
+  
+  const isFrench = location.pathname.startsWith('/fr-ca');
+  const currentPath = isFrench ? '/fr-ca/a-propos' : '/about';
+  const currentLang = isFrench ? 'fr-ca' : 'en';
   
   const valuePillars = [
     {
@@ -47,7 +53,8 @@ const About = () => {
       <GlobalMeta 
         title="About BelizeVibes"
         description="Learn about BelizeVibes - authentic Belize adventure tours with expert local guides. Discover our commitment to sustainable tourism and authentic experiences."
-        path="/about"
+        path={currentPath}
+        lang={currentLang}
         keywords="about BelizeVibes, Belize tour company, local guides, sustainable tourism, authentic adventures"
       />
       

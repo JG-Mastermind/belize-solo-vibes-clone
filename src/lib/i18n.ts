@@ -10,13 +10,16 @@ i18n
     fallbackLng: 'en',
     supportedLngs: ['en', 'fr-CA'],
     
+    // Configure path-based language detection
+    detection: {
+      order: ['path', 'localStorage', 'navigator'],
+      lookupFromPathIndex: 0,
+      lookupFromSubdomainIndex: 0,
+      caches: ['localStorage'],
+    },
+    
     interpolation: {
       escapeValue: false,
-    },
-
-    detection: {
-      order: ['localStorage', 'navigator'],
-      caches: ['localStorage'],
     },
 
     resources: {

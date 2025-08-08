@@ -36,8 +36,27 @@ const Header = () => {
   const handleLanguageChange = (newLanguage: string) => {
     console.log('handleLanguageChange called with:', newLanguage);
     console.log('Current i18n language:', i18n.language);
+    
+    // URL mappings for language switching
+    const urlMappings = {
+      '/safety': '/fr-ca/securite',
+      '/fr-ca/securite': '/safety',
+      '/about': '/fr-ca/a-propos', 
+      '/fr-ca/a-propos': '/about',
+      '/contact': '/fr-ca/contact',
+      '/fr-ca/contact': '/contact'
+    };
+    
+    const currentPath = location.pathname;
+    const targetPath = urlMappings[currentPath as keyof typeof urlMappings];
+    
     i18n.changeLanguage(newLanguage).then(() => {
       console.log('Language changed to:', i18n.language);
+      
+      // Navigate to appropriate URL if mapping exists
+      if (targetPath) {
+        navigate(targetPath);
+      }
     });
   };
 

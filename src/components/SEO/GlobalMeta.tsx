@@ -24,6 +24,32 @@ export const GlobalMeta: React.FC<GlobalMetaProps> = ({
   const fullImageUrl = image.startsWith('http') ? image : `https://belizevibes.com${image}`;
   const canonicalUrl = `https://belizevibes.com${path}`;
 
+  // Generate hreflang URLs for static pages
+  const getAlternateUrls = () => {
+    const urlMappings = {
+      '/safety': '/fr-ca/securite',
+      '/fr-ca/securite': '/safety',
+      '/about': '/fr-ca/a-propos', 
+      '/fr-ca/a-propos': '/about',
+      '/contact': '/fr-ca/contact',
+      '/fr-ca/contact': '/contact'
+    };
+    
+    const alternatePath = urlMappings[path as keyof typeof urlMappings];
+    if (!alternatePath) return null;
+    
+    const isCurrentlyFrench = path.startsWith('/fr-ca');
+    return {
+      current: { lang: isCurrentlyFrench ? 'fr-ca' : 'en', url: canonicalUrl },
+      alternate: { 
+        lang: isCurrentlyFrench ? 'en' : 'fr-ca', 
+        url: `https://belizevibes.com${alternatePath}` 
+      }
+    };
+  };
+
+  const alternateUrls = getAlternateUrls();
+
   return (
     <Helmet>
       {/* Basic Meta */}
@@ -34,6 +60,15 @@ export const GlobalMeta: React.FC<GlobalMetaProps> = ({
       
       {/* Canonical URL */}
       <link rel="canonical" href={canonicalUrl} />
+      
+      {/* Hreflang Tags */}
+      {alternateUrls && (
+        <>
+          <link rel="alternate" hrefLang={alternateUrls.current.lang} href={alternateUrls.current.url} />
+          <link rel="alternate" hrefLang={alternateUrls.alternate.lang} href={alternateUrls.alternate.url} />
+          <link rel="alternate" hrefLang="x-default" href={alternateUrls.current.lang === 'en' ? alternateUrls.current.url : alternateUrls.alternate.url} />
+        </>
+      )}
       
       {/* Language */}
       <html lang={lang} />

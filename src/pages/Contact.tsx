@@ -6,10 +6,16 @@ import { Label } from "@/components/ui/label";
 import { Card, CardContent } from "@/components/ui/card";
 import { MapPin, Phone, Mail, Clock } from "lucide-react";
 import { useTranslation } from "react-i18next";
+import { useLocation } from "react-router-dom";
 import { GlobalMeta } from "@/components/SEO/GlobalMeta";
 
 const Contact = () => {
   const { t } = useTranslation(['contact']);
+  const location = useLocation();
+  
+  const isFrench = location.pathname.startsWith('/fr-ca');
+  const currentPath = isFrench ? '/fr-ca/contact' : '/contact';
+  const currentLang = isFrench ? 'fr-ca' : 'en';
   
   const [formData, setFormData] = useState({
     fullName: '',
@@ -55,7 +61,8 @@ const Contact = () => {
       <GlobalMeta 
         title="Contact Us"
         description="Get in touch with BelizeVibes for authentic Belize adventure tours. Contact our expert local guides for personalized travel experiences."
-        path="/contact"
+        path={currentPath}
+        lang={currentLang}
         keywords="contact BelizeVibes, Belize tours contact, adventure travel inquiry, local guides contact"
       />
       

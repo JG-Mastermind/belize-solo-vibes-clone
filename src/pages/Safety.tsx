@@ -2,10 +2,16 @@ import React from "react";
 import { Shield, Phone, Heart, Droplets, Cloud, Users, AlertTriangle, MapPin } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useTranslation } from "react-i18next";
+import { useLocation } from "react-router-dom";
 import { GlobalMeta } from "@/components/SEO/GlobalMeta";
 
 const Safety = () => {
   const { t } = useTranslation(['safety']);
+  const location = useLocation();
+  
+  const isFrench = location.pathname.startsWith('/fr-ca');
+  const currentPath = isFrench ? '/fr-ca/securite' : '/safety';
+  const currentLang = isFrench ? 'fr-ca' : 'en';
   
   const safetyTopics = [
     {
@@ -54,7 +60,8 @@ const Safety = () => {
       <GlobalMeta 
         title="Safety Guidelines"
         description="Essential safety information for Belize adventures. Learn about travel safety, health precautions, and emergency procedures for your adventure tours."
-        path="/safety"
+        path={currentPath}
+        lang={currentLang}
         keywords="Belize safety, adventure tour safety, travel safety guidelines, Belize health information, travel insurance"
       />
       

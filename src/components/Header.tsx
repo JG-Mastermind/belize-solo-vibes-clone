@@ -60,6 +60,19 @@ const Header = () => {
     });
   };
 
+  // Dynamic path generation based on current language
+  const getLocalizedPath = (englishPath: string): string => {
+    const pathMappings = {
+      '/about': '/fr-ca/a-propos',
+      '/safety': '/fr-ca/securite', 
+      '/contact': '/fr-ca/contact'
+    };
+    
+    return i18n.language === 'fr-CA' 
+      ? pathMappings[englishPath as keyof typeof pathMappings] || englishPath
+      : englishPath;
+  };
+
   const handleReviewsClick = (e: React.MouseEvent) => {
     e.preventDefault();
     if (location.pathname === '/adventures') {
@@ -82,8 +95,10 @@ const Header = () => {
   
   const navLinkClass = ({ isActive }: { isActive: boolean }) =>
     cn(
-      "text-sm font-medium transition-colors",
-      isActive ? "text-primary" : "text-muted-foreground hover:text-foreground"
+      "text-sm font-medium transition-all duration-200 rounded-md px-3 py-2",
+      isActive 
+        ? "text-primary bg-primary/10" 
+        : "text-muted-foreground hover:text-foreground hover:bg-accent md:hover:bg-gray-100 dark:md:hover:bg-gray-800"
     );
 
   return (
@@ -102,18 +117,27 @@ const Header = () => {
           <nav className="hidden md:flex items-center space-x-6">
             <NavLink to="/" className={navLinkClass} end>{t('navigation:home')}</NavLink>
             <NavLink to="/adventures" className={navLinkClass}>{t('navigation:adventures')}</NavLink>
-            <button onClick={handleReviewsClick} className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors">{t('navigation:reviews')}</button>
-            <NavLink to="/about" className={navLinkClass}>{t('navigation:about')}</NavLink>
+            <button onClick={handleReviewsClick} className="text-sm font-medium transition-all duration-200 rounded-md px-3 py-2 text-muted-foreground hover:text-foreground hover:bg-accent md:hover:bg-gray-100 dark:md:hover:bg-gray-800">{t('navigation:reviews')}</button>
+            <NavLink to={getLocalizedPath('/about')} className={navLinkClass}>{t('navigation:about')}</NavLink>
             <NavLink to="/blog" className={navLinkClass}>{t('navigation:blog')}</NavLink>
-            <NavLink to="/safety" className={navLinkClass}>{t('navigation:safety')}</NavLink>
-            <NavLink to="/contact" className={navLinkClass}>{t('navigation:contact')}</NavLink>
+            <NavLink to={getLocalizedPath('/safety')} className={navLinkClass}>{t('navigation:safety')}</NavLink>
+            <NavLink to={getLocalizedPath('/contact')} className={navLinkClass}>{t('navigation:contact')}</NavLink>
           </nav>
 
           <div className="flex items-center space-x-2 md:space-x-3">
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <Button variant="ghost" size="icon" className={cn("text-foreground", scrolled ? "hover:bg-accent" : "hover:bg-foreground/10")}>
-                  <Globe className="h-5 w-5" />
+                <Button 
+                  variant="ghost" 
+                  className={cn(
+                    "text-foreground transition-all duration-200 px-3 h-10 flex items-center space-x-2",
+                    scrolled ? "hover:bg-accent" : "hover:bg-foreground/10"
+                  )}
+                >
+                  <Globe className="h-4 w-4" />
+                  <span className="text-sm font-medium">
+                    {i18n.language === 'fr-CA' ? 'FR' : 'EN'}
+                  </span>
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end">

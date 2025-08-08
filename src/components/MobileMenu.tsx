@@ -13,16 +13,31 @@ import { Menu, Instagram, Youtube, Twitter, Facebook } from 'lucide-react';
 import { useAuth } from './auth/AuthProvider';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
+import { useTranslation } from 'react-i18next';
 import { publicNavigationItems, socialLinks } from '@/lib/navigation';
 
 const MobileMenu = () => {
   const { user, signOut, getUserRole } = useAuth();
   const location = useLocation();
+  const { i18n } = useTranslation();
   const [isOpen, setIsOpen] = useState(false);
   const triggerRef = useRef<HTMLButtonElement>(null);
   const firstLinkRef = useRef<HTMLAnchorElement>(null);
   
   const currentPath = location.pathname;
+
+  // Dynamic path generation based on current language
+  const getLocalizedPath = (englishPath: string): string => {
+    const pathMappings = {
+      '/about': '/fr-ca/a-propos',
+      '/safety': '/fr-ca/securite', 
+      '/contact': '/fr-ca/contact'
+    };
+    
+    return i18n.language === 'fr-CA' 
+      ? pathMappings[englishPath as keyof typeof pathMappings] || englishPath
+      : englishPath;
+  };
 
   const isActive = (path: string) => {
     if (path === '/') return currentPath === '/';
@@ -117,12 +132,12 @@ const MobileMenu = () => {
               <Link
                 key={item.path}
                 ref={index === 0 ? firstLinkRef : null}
-                to={item.path}
+                to={getLocalizedPath(item.path)}
                 onClick={handleLinkClick}
-                className={`block text-2xl font-medium transition-colors ${
+                className={`block text-2xl font-medium transition-all duration-200 rounded-lg px-4 py-3 ${
                   isActive(item.path)
-                    ? 'text-primary'
-                    : 'text-foreground hover:text-primary'
+                    ? 'text-primary bg-primary/10'
+                    : 'text-foreground hover:text-primary hover:bg-accent'
                 }`}
               >
                 {item.name}

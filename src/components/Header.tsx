@@ -39,6 +39,8 @@ const Header = () => {
     
     // URL mappings for language switching
     const urlMappings = {
+      '/adventures': '/fr-ca/aventures',
+      '/fr-ca/aventures': '/adventures',
       '/safety': '/fr-ca/securite',
       '/fr-ca/securite': '/safety',
       '/about': '/fr-ca/a-propos', 
@@ -63,6 +65,7 @@ const Header = () => {
   // Dynamic path generation based on current language
   const getLocalizedPath = (englishPath: string): string => {
     const pathMappings = {
+      '/adventures': '/fr-ca/aventures',
       '/about': '/fr-ca/a-propos',
       '/safety': '/fr-ca/securite', 
       '/contact': '/fr-ca/contact'
@@ -75,15 +78,19 @@ const Header = () => {
 
   const handleReviewsClick = (e: React.MouseEvent) => {
     e.preventDefault();
-    if (location.pathname === '/adventures') {
+    const currentPath = location.pathname;
+    const isOnAdventuresPage = currentPath === '/adventures' || currentPath === '/fr-ca/aventures';
+    
+    if (isOnAdventuresPage) {
       // Already on adventures page, just scroll to testimonials
       const element = document.getElementById('testimonials');
       if (element) {
         element.scrollIntoView({ behavior: 'smooth' });
       }
     } else {
-      // Navigate to adventures page first, then scroll
-      navigate('/adventures');
+      // Navigate to appropriate adventures page based on current language, then scroll
+      const targetAdventuresPage = getLocalizedPath('/adventures');
+      navigate(targetAdventuresPage);
       setTimeout(() => {
         const element = document.getElementById('testimonials');
         if (element) {
@@ -116,7 +123,7 @@ const Header = () => {
           
           <nav className="hidden md:flex items-center space-x-6">
             <NavLink to="/" className={navLinkClass} end>{t('navigation:home')}</NavLink>
-            <NavLink to="/adventures" className={navLinkClass}>{t('navigation:adventures')}</NavLink>
+            <NavLink to={getLocalizedPath('/adventures')} className={navLinkClass}>{t('navigation:adventures')}</NavLink>
             <button onClick={handleReviewsClick} className="text-sm font-medium transition-all duration-200 rounded-md px-3 py-2 text-muted-foreground hover:text-foreground hover:bg-accent md:hover:bg-gray-100 dark:md:hover:bg-gray-800">{t('navigation:reviews')}</button>
             <NavLink to={getLocalizedPath('/about')} className={navLinkClass}>{t('navigation:about')}</NavLink>
             <NavLink to="/blog" className={navLinkClass}>{t('navigation:blog')}</NavLink>

@@ -29,6 +29,7 @@ const MobileMenu = () => {
   // Dynamic path generation based on current language
   const getLocalizedPath = (englishPath: string): string => {
     const pathMappings = {
+      '/adventures': '/fr-ca/aventures',
       '/about': '/fr-ca/a-propos',
       '/safety': '/fr-ca/securite', 
       '/contact': '/fr-ca/contact'

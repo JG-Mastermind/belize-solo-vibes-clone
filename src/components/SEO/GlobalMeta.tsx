@@ -27,6 +27,8 @@ export const GlobalMeta: React.FC<GlobalMetaProps> = ({
   // Generate hreflang URLs for static pages
   const getAlternateUrls = () => {
     const urlMappings = {
+      '/adventures': '/fr-ca/aventures',
+      '/fr-ca/aventures': '/adventures',
       '/safety': '/fr-ca/securite',
       '/fr-ca/securite': '/safety',
       '/about': '/fr-ca/a-propos', 

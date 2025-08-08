@@ -95,8 +95,16 @@ const Header = () => {
         const element = document.getElementById('testimonials');
         if (element) {
           element.scrollIntoView({ behavior: 'smooth' });
+        } else {
+          // Fallback - try again after more time if element not found
+          setTimeout(() => {
+            const retryElement = document.getElementById('testimonials');
+            if (retryElement) {
+              retryElement.scrollIntoView({ behavior: 'smooth' });
+            }
+          }, 200);
         }
-      }, 100);
+      }, 750);
     }
   };
   

@@ -596,7 +596,7 @@ const AdventureDetail: React.FC = () => {
             <Card className="sticky top-4 dark:bg-card">
               <CardHeader>
                 <CardTitle className="text-2xl">
-                  {t('adventureDetail:pricing.from')} ${adventure.base_price}
+                  {t('adventureDetail:pricing.from')} <span className="font-mono">${adventure.base_price}</span>
                   <span className="text-lg font-normal text-muted-foreground">{t('adventureDetail:pricing.person')}</span>
                 </CardTitle>
               </CardHeader>

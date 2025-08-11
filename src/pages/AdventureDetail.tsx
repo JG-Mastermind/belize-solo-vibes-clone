@@ -52,11 +52,11 @@ import { ImageGallery } from '@/components/booking/ImageGallery';
 import { convertFrenchSlugToEnglish } from '@/utils/frenchSlugs';
 
 const AdventureDetail: React.FC = () => {
-  const { id, slug } = useParams<{ id?: string; slug?: string }>();
+  const { id, slug, frenchSlug } = useParams<{ id?: string; slug?: string; frenchSlug?: string }>();
   const navigate = useNavigate();
   
-  // Convert French slug to English slug for data fetching
-  const englishSlug = slug ? convertFrenchSlugToEnglish(slug) : slug;
+  // Convert French slug to English slug for data fetching, with fallback for legacy URLs
+  const englishSlug = frenchSlug ? convertFrenchSlugToEnglish(frenchSlug) : (slug ? convertFrenchSlugToEnglish(slug) : slug);
   const { user } = useAuth();
   const { t, i18n } = useTranslation(['adventureDetail', 'adventureCards']);
   

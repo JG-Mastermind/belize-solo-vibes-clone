@@ -52,7 +52,7 @@ interface BlogPostData {
 }
 
 const BlogPost: React.FC = () => {
-  const { slug } = useParams<{ slug: string }>();
+  const { slug, frenchSlug } = useParams<{ slug?: string; frenchSlug?: string }>();
   const navigate = useNavigate();
   const { t, i18n } = useTranslation(['blog', 'common']);
   const currentLanguage = i18n.language;
@@ -80,10 +80,11 @@ const BlogPost: React.FC = () => {
 
   // Fetch blog post from Supabase
   useEffect(() => {
-    if (slug) {
-      fetchBlogPost(slug);
+    const searchSlug = frenchSlug || slug;
+    if (searchSlug) {
+      fetchBlogPost(searchSlug);
     }
-  }, [slug]);
+  }, [slug, frenchSlug]);
 
   const fetchBlogPost = async (postSlug: string) => {
     try {
@@ -102,9 +103,11 @@ const BlogPost: React.FC = () => {
       if (allError) throw allError;
       
       // Find post by English slug or French slug
-      const matchingPost = allPosts?.find(post => 
-        post.slug === postSlug || 
-        (post.title_fr && createFrenchSlug(post.title_fr) === postSlug)
+      // If we have frenchSlug param, search by French slug, otherwise search by English slug
+      const matchingPost = allPosts?.find((post: any) => 
+        frenchSlug 
+          ? (post.title_fr && createFrenchSlug(post.title_fr) === postSlug)
+          : post.slug === postSlug
       );
       
       if (!matchingPost) {

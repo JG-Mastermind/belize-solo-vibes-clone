@@ -66,14 +66,14 @@ const App = () => (
               <Route path="blog" element={<Blog />} />
               <Route path="blog/:slug" element={<BlogPost />} />
               <Route path="fr-ca/blog" element={<Blog />} />
-              <Route path="fr-ca/blog/:slug" element={<BlogPost />} />
+              <Route path="fr-ca/blog/:frenchSlug" element={<BlogPost />} />
               <Route path="about" element={<About />} />
               <Route path="safety" element={<Safety />} />
               <Route path="fr-ca/securite" element={<Safety />} />
               <Route path="fr-ca/a-propos" element={<About />} />
               <Route path="fr-ca/contact" element={<Contact />} />
               <Route path="fr-ca/aventures" element={<AdventuresPage />} />
-              <Route path="fr-ca/tours/:slug" element={<AdventureDetail />} />
+              <Route path="fr-ca/tours/:frenchSlug" element={<AdventureDetail />} />
               <Route path="tours/:slug" element={<AdventureDetail />} />
               <Route path="tours/:id" element={<AdventureDetail />} />
               <Route path="booking" element={<Booking />} />

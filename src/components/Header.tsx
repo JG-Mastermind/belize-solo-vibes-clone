@@ -126,8 +126,11 @@ const Header = () => {
     )}>
       <div className="container mx-auto px-4 py-3">
         <div className="flex items-center justify-between">
-          <Link to="/" className="text-xl md:text-2xl font-bold transition-colors hover:opacity-80 text-foreground">
-            BelizeVibes
+          <Link to="/" className="flex items-center space-x-2 transition-colors hover:opacity-80">
+            <div className="w-10 h-10 bg-gradient-to-br from-green-500 to-blue-500 rounded-full flex items-center justify-center">
+              <span className="text-white font-bold text-lg">BV</span>
+            </div>
+            <span className="font-playfair font-bold text-xl text-foreground">BelizeVibes</span>
           </Link>
           
           <nav className="hidden md:flex items-center space-x-6">

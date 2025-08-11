@@ -42,7 +42,7 @@ i18n
         hero: {
           title_part1: 'Discover Your Ultimate',
           title_part2: 'Belize Adventure',
-          subtitle: 'Join solo-friendly adventures through pristine jungles, ancient caves, and crystal-clear waters. Expert guides, sustainable travel, unforgettable memories.',
+          subtitle: 'Gateway to the Ultimate Belize Experience',
           rating: '4.9/5 Rating',
           reviews: '500+ Reviews',
           soloFriendly: 'Solo Friendly',
@@ -1292,7 +1292,7 @@ i18n
         hero: {
           title_part1: 'Découvrez Votre Ultime',
           title_part2: 'Aventure au Belize',
-          subtitle: 'Rejoignez des aventures solo-friendly à travers des jungles pristines, des grottes anciennes et des eaux cristallines. Guides experts, voyage durable, souvenirs inoubliables.',
+          subtitle: 'Passerelle vers l\'Expérience Ultime du Belize',
           rating: 'Note 4.9/5',
           reviews: '500+ Avis',
           soloFriendly: 'Solo-Friendly',

@@ -1,5 +1,6 @@
 
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 import { StatsCard } from '@/components/dashboard/StatsCard';
 import { BookingsTable } from '@/components/dashboard/BookingsTable';
 import {
@@ -10,12 +11,13 @@ import {
 } from 'lucide-react';
 
 const TravelerDashboard = () => {
+  const { t } = useTranslation(['dashboard']);
   return (
     <div className="space-y-6">
       <div>
-        <h2 className="text-3xl font-bold tracking-tight">My Dashboard</h2>
+        <h2 className="text-3xl font-bold tracking-tight">{t('dashboard:travelerTitle')}</h2>
         <p className="text-muted-foreground">
-          Track your adventures and bookings
+          {t('dashboard:subtitle')}
         </p>
       </div>
 

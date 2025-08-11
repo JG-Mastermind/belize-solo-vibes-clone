@@ -1,6 +1,7 @@
 
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import { StatsCard } from '@/components/dashboard/StatsCard';
 import { BookingsTable } from '@/components/dashboard/BookingsTable';
 import { RevenueChart, BookingsChart } from '@/components/dashboard/DashboardCharts';
@@ -18,6 +19,7 @@ import {
 const AdminDashboard = () => {
   const { user } = useAuth();
   const navigate = useNavigate();
+  const { t } = useTranslation(['dashboard']);
   const { setPrefilledData } = useAdventureCreation();
   
   const handleAIGenerated = (data: { image: string; description: string; title?: string }) => {
@@ -36,9 +38,9 @@ const AdminDashboard = () => {
   return (
     <div className="space-y-6">
       <div>
-        <h2 className="text-3xl font-bold tracking-tight">Admin Dashboard</h2>
+        <h2 className="text-3xl font-bold tracking-tight">{t('dashboard:adminTitle')}</h2>
         <p className="text-muted-foreground">
-          Platform overview and management tools
+          {t('dashboard:subtitle')}
         </p>
       </div>
 

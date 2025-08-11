@@ -1,6 +1,7 @@
 
 import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import {
   Sidebar,
   SidebarContent,
@@ -44,10 +45,27 @@ const iconMap = {
 export const DashboardSidebar = () => {
   const location = useLocation();
   const { getUserRole } = useAuth();
+  const { t } = useTranslation(['dashboard']);
   const currentPath = location.pathname;
   const userRole = getUserRole();
 
   const isActive = (path: string) => currentPath === path;
+
+  // Get translated navigation name
+  const getNavName = (path: string) => {
+    const pathMap: Record<string, string> = {
+      '/dashboard': t('dashboard:navigation.overview'),
+      '/dashboard/bookings': t('dashboard:navigation.bookings'),
+      '/dashboard/calendar': t('dashboard:navigation.calendar'),
+      '/dashboard/adventures': t('dashboard:navigation.adventures'),
+      '/dashboard/create-adventure': t('dashboard:navigation.createAdventure'),
+      '/dashboard/messages': t('dashboard:navigation.messages'),
+      '/dashboard/payouts': t('dashboard:navigation.payouts'),
+      '/dashboard/users': t('dashboard:navigation.users'),
+      '/dashboard/alerts': t('dashboard:navigation.alerts'),
+    };
+    return pathMap[path] || path;
+  };
 
   // Filter navigation items based on user role
   const mainNavItems = filterNavigationByRole(dashboardNavigationItems, userRole);
@@ -73,7 +91,7 @@ export const DashboardSidebar = () => {
                     <SidebarMenuButton asChild isActive={isActive(item.path)}>
                       <Link to={item.path} className="sidebar-nav-item">
                         {IconComponent && <IconComponent className="h-4 w-4" />}
-                        <span>{item.name}</span>
+                        <span>{getNavName(item.path)}</span>
                       </Link>
                     </SidebarMenuButton>
                   </SidebarMenuItem>
@@ -95,7 +113,7 @@ export const DashboardSidebar = () => {
                       <SidebarMenuButton asChild isActive={isActive(item.path)}>
                         <Link to={item.path} className="sidebar-nav-item">
                           {IconComponent && <IconComponent className="h-4 w-4" />}
-                          <span>{item.name}</span>
+                          <span>{getNavName(item.path)}</span>
                         </Link>
                       </SidebarMenuButton>
                     </SidebarMenuItem>

@@ -1253,6 +1253,24 @@ i18n
               redirectMessage: 'You will be redirected to our secure payment processor',
             },
           },
+        },
+        dashboard: {
+          title: 'Dashboard',
+          adminTitle: 'Admin Dashboard',
+          guideTitle: 'Guide Dashboard', 
+          travelerTitle: 'Traveler Dashboard',
+          subtitle: 'Platform overview and management tools',
+          navigation: {
+            overview: 'Overview',
+            bookings: 'Bookings',
+            calendar: 'Calendar',
+            adventures: 'Adventures',
+            createAdventure: 'Create Adventure',
+            messages: 'Messages',
+            payouts: 'Payouts',
+            users: 'User Management',
+            alerts: 'Safety Alerts',
+          },
         }
       },
       'fr-CA': {
@@ -2484,6 +2502,24 @@ i18n
             messages: {
               redirectMessage: 'Vous serez redirigé vers notre processeur de paiement sécurisé',
             },
+          },
+        },
+        dashboard: {
+          title: 'Tableau de Bord',
+          adminTitle: 'Tableau de Bord Admin',
+          guideTitle: 'Tableau de Bord Guide',
+          travelerTitle: 'Tableau de Bord Voyageur',
+          subtitle: 'Aperçu de la plateforme et outils de gestion',
+          navigation: {
+            overview: 'Aperçu',
+            bookings: 'Réservations',
+            calendar: 'Calendrier',
+            adventures: 'Aventures',
+            createAdventure: 'Créer une Aventure',
+            messages: 'Messages',
+            payouts: 'Paiements',
+            users: 'Gestion des Utilisateurs',
+            alerts: 'Alertes de Sécurité',
           },
         }
       }

@@ -5,12 +5,13 @@ import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { useEffect, useState } from "react";
 import { supabase } from "@/lib/supabase";
+import { convertEnglishSlugToFrench } from "@/utils/frenchSlugs";
 
 // Now using Supabase database - single source of truth!
 
 const AdventureCards = () => {
   const navigate = useNavigate();
-  const { t } = useTranslation(['adventureCards', 'common']);
+  const { t, i18n } = useTranslation(['adventureCards', 'common']);
   const [tours, setTours] = useState<any[]>([]);
   const [loading, setLoading] = useState(false);
   const [hasMore, setHasMore] = useState(true);
@@ -197,7 +198,13 @@ const AdventureCards = () => {
                     {t('common:bookNow')}
                   </Button>
                   <Button 
-                    onClick={() => navigate(`/tours/${tour.slug || tour.id}`)}
+                    onClick={() => {
+                      const slug = tour.slug || tour.id;
+                      const url = i18n.language === 'fr-CA' 
+                        ? `/fr-ca/tours/${convertEnglishSlugToFrench(slug)}`
+                        : `/tours/${slug}`;
+                      navigate(url);
+                    }}
                     variant="outline" 
                     className="flex-1 border-orange-600 text-orange-600 hover:bg-orange-50 transition-colors duration-300"
                   >

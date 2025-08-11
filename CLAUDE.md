@@ -137,30 +137,65 @@ LESSON LEARNED: Need to implement proper route-based language context
 - **Validation**: Build tests after each change, TypeScript checks
 - **Consistency**: Applied same pattern to both desktop and mobile components
 
-## Next Phase: Dynamic SEO for French Tours
+## ✅ COMPLETED: French URL Slug Implementation (August 2025)
 
-### Current State
-- ✅ Static pages working: /fr-ca/securite, /fr-ca/a-propos, /fr-ca/contact
-- ✅ Navigation fixed: Header menu respects language context
-- ✅ SEO foundation: hreflang tags, sitemap includes French URLs
+### Successfully Implemented French Dynamic URLs
+- ✅ **French tour URLs working**: `/fr-ca/tours/aventure-pine-ridge-big-rock-falls-caracol`
+- ✅ **French blog URLs working**: `/fr-ca/blog` and `/fr-ca/blog/:slug`
+- ✅ **Bidirectional slug conversion**: English ↔ French slug mapping
+- ✅ **Route consistency**: All French routes follow `/fr-ca/` pattern
+- ✅ **Content integration**: French URLs display French content via i18n system
 
-### Phase 3 Requirements: Dynamic Pages (/fr-ca/tours/:frenchSlug)
-**Critical Database Work Needed:**
-- Add slug_fr column to tours table via migration
-- Populate French slugs (e.g., aventure-pine-ridge-big-rock-falls-caracol)
-- Create src/utils/frenchSlugs.ts with convertFrenchSlugToEnglish function
-- Update AdventureDetail.tsx to handle French slug routing
+### Surgical Implementation Process (SUCCESSFUL PATTERN)
+**Step 1: Add French Routes**
+```typescript
+// App.tsx - Add French dynamic routes alongside existing static routes
+<Route path="fr-ca/tours/:slug" element={<AdventureDetail />} />
+<Route path="fr-ca/blog" element={<Blog />} />
+<Route path="fr-ca/blog/:slug" element={<BlogPost />} />
+```
 
-### Database Migration Approach
-- Follow exact Database Lessons Learned above
-- Test migration on single record first
-- Use exact tour IDs from production data
-- NO comments in SQL migration files
-- Verify each French slug is unique before batch update
+**Step 2: Create Slug Conversion Utilities**
+```typescript
+// src/utils/frenchSlugs.ts - Bidirectional slug mapping
+export const convertFrenchSlugToEnglish = (frenchSlug: string): string => { ... }
+export const convertEnglishSlugToFrench = (englishSlug: string): string => { ... }
+```
 
-### Validation Requirements
-- /fr-ca/tours/aventure-pine-ridge-big-rock-falls-caracol must load correct tour
-- French content must render with proper SEO metadata
-- English fallback must work if French slug missing
-- No impact to existing /tours/:slug English routes
-- All routes must maintain URL-path consistency with content language
+**Step 3: Update Data Fetching (AdventureDetail.tsx)**
+```typescript
+// Convert French slug to English for data fetching only
+const englishSlug = slug ? convertFrenchSlugToEnglish(slug) : slug;
+// Use englishSlug for all database operations
+```
+
+**Step 4: Update Link Generation (AdventureCards.tsx)**
+```typescript
+// Generate French URLs when in French mode
+const url = i18n.language === 'fr-CA' 
+  ? `/fr-ca/tours/${convertEnglishSlugToFrench(slug)}`
+  : `/tours/${slug}`;
+```
+
+### Critical Success Factors
+1. **Route Path Consistency**: Ensure link generation matches route definitions exactly
+2. **Singular vs Plural**: `/fr-ca/tours/` (plural) not `/fr-ca/tour/` (singular)
+3. **Don't Touch Content Translation**: Use existing i18n system, only handle URL slugs
+4. **Bidirectional Mapping**: Both English→French and French→English conversion needed
+5. **Language Detection**: Use `i18n.language === 'fr-CA'` for French mode detection
+
+### Common Pitfalls Avoided
+- ❌ **Route Mismatch**: AdventureCards generating `/fr-ca/tours/` but route expecting `/fr-ca/tour/`
+- ❌ **Over-engineering**: Touching content translation when only URL slugs needed changes
+- ❌ **One-way Conversion**: Only having French→English without English→French for link generation
+- ❌ **Missing Blog Routes**: Forgetting to add `/fr-ca/blog` routes alongside tour routes
+
+### Implementation Validation
+```bash
+# Test URLs that now work correctly:
+curl http://localhost:5176/fr-ca/tours/aventure-pine-ridge-big-rock-falls-caracol  # ✅ 200
+curl http://localhost:5176/fr-ca/blog                                               # ✅ 200
+curl http://localhost:5176/tours/pine-ridge-adventure-big-rock-falls-and-caracol   # ✅ 200
+```
+
+**Result**: French users see French URLs, English users see English URLs, same content system serves both via i18n.

@@ -24,6 +24,21 @@ const Blog = () => {
   const navigate = useNavigate();
   const currentLanguage = i18n.language;
   
+  // Convert French title to slug
+  const createFrenchSlug = (frenchTitle: string): string => {
+    return frenchTitle
+      .toLowerCase()
+      .replace(/[àáâãäå]/g, 'a')
+      .replace(/[èéêë]/g, 'e')
+      .replace(/[ìíîï]/g, 'i')
+      .replace(/[òóôõö]/g, 'o')
+      .replace(/[ùúûü]/g, 'u')
+      .replace(/[ç]/g, 'c')
+      .replace(/[ñ]/g, 'n')
+      .replace(/[^a-z0-9]+/g, '-')
+      .replace(/^-+|-+$/g, '');
+  };
+  
   // Blog posts state
   const [blogPosts, setBlogPosts] = useState<BlogPost[]>([]);
   const [loading, setLoading] = useState(true);
@@ -207,7 +222,12 @@ const Blog = () => {
                   <Card 
                     key={post.id} 
                     className="overflow-hidden transition-all duration-300 hover:shadow-2xl hover:scale-[1.02] cursor-pointer group h-full min-h-[480px] flex flex-col bg-card dark:bg-card"
-                    onClick={() => navigate(`/blog/${post.slug}`)}
+                    onClick={() => {
+                      const url = i18n.language === 'fr-CA' 
+                        ? `/fr-ca/blog/${post.title_fr ? createFrenchSlug(post.title_fr) : post.slug}`
+                        : `/blog/${post.slug}`;
+                      navigate(url);
+                    }}
                   >
                     <div className="relative overflow-hidden rounded-t-lg">
                       <img 

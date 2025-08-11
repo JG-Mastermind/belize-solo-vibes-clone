@@ -57,6 +57,21 @@ const BlogPost: React.FC = () => {
   const { t, i18n } = useTranslation(['blog', 'common']);
   const currentLanguage = i18n.language;
   
+  // Convert French title to slug (same function as Blog.tsx)
+  const createFrenchSlug = (frenchTitle: string): string => {
+    return frenchTitle
+      .toLowerCase()
+      .replace(/[àáâãäå]/g, 'a')
+      .replace(/[èéêë]/g, 'e')
+      .replace(/[ìíîï]/g, 'i')
+      .replace(/[òóôõö]/g, 'o')
+      .replace(/[ùúûü]/g, 'u')
+      .replace(/[ç]/g, 'c')
+      .replace(/[ñ]/g, 'n')
+      .replace(/[^a-z0-9]+/g, '-')
+      .replace(/^-+|-+$/g, '');
+  };
+  
   const [blogPost, setBlogPost] = useState<BlogPostData | null>(null);
   const [loading, setLoading] = useState(true);
   const [showScrollTop, setShowScrollTop] = useState(false);
@@ -72,7 +87,8 @@ const BlogPost: React.FC = () => {
 
   const fetchBlogPost = async (postSlug: string) => {
     try {
-      const { data, error } = await supabase
+      // First, get all published posts to find match by French slug if needed
+      const { data: allPosts, error: allError } = await supabase
         .from('posts')
         .select(`
           *,
@@ -81,12 +97,21 @@ const BlogPost: React.FC = () => {
             tags(name, name_fr)
           )
         `)
-        .eq('slug', postSlug)
-        .eq('status', 'published')
-        .single();
-
-      if (error) throw error;
-      setBlogPost(data);
+        .eq('status', 'published');
+        
+      if (allError) throw allError;
+      
+      // Find post by English slug or French slug
+      const matchingPost = allPosts?.find(post => 
+        post.slug === postSlug || 
+        (post.title_fr && createFrenchSlug(post.title_fr) === postSlug)
+      );
+      
+      if (!matchingPost) {
+        throw new Error('Post not found');
+      }
+      
+      setBlogPost(matchingPost);
     } catch (error) {
       console.error('Error fetching blog post:', error);
       setBlogPost(null);

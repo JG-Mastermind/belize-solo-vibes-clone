@@ -67,6 +67,7 @@ const Header = () => {
     const pathMappings = {
       '/adventures': '/fr-ca/aventures',
       '/about': '/fr-ca/a-propos',
+      '/blog': '/fr-ca/blog',
       '/safety': '/fr-ca/securite', 
       '/contact': '/fr-ca/contact'
     };
@@ -134,7 +135,7 @@ const Header = () => {
             <NavLink to={getLocalizedPath('/adventures')} className={navLinkClass}>{t('navigation:adventures')}</NavLink>
             <button onClick={handleReviewsClick} className="text-sm font-medium transition-all duration-200 rounded-md px-3 py-2 text-muted-foreground hover:text-foreground hover:bg-accent md:hover:bg-gray-100 dark:md:hover:bg-gray-800">{t('navigation:reviews')}</button>
             <NavLink to={getLocalizedPath('/about')} className={navLinkClass}>{t('navigation:about')}</NavLink>
-            <NavLink to="/blog" className={navLinkClass}>{t('navigation:blog')}</NavLink>
+            <NavLink to={getLocalizedPath('/blog')} className={navLinkClass}>{t('navigation:blog')}</NavLink>
             <NavLink to={getLocalizedPath('/safety')} className={navLinkClass}>{t('navigation:safety')}</NavLink>
             <NavLink to={getLocalizedPath('/contact')} className={navLinkClass}>{t('navigation:contact')}</NavLink>
           </nav>

@@ -49,10 +49,14 @@ import { useTranslation } from 'react-i18next';
 import { SocialProof } from '@/components/booking/SocialProof';
 import { BookingWidget } from '@/components/booking/BookingWidget';
 import { ImageGallery } from '@/components/booking/ImageGallery';
+import { convertFrenchSlugToEnglish } from '@/utils/frenchSlugs';
 
 const AdventureDetail: React.FC = () => {
   const { id, slug } = useParams<{ id?: string; slug?: string }>();
   const navigate = useNavigate();
+  
+  // Convert French slug to English slug for data fetching
+  const englishSlug = slug ? convertFrenchSlugToEnglish(slug) : slug;
   const { user } = useAuth();
   const { t, i18n } = useTranslation(['adventureDetail', 'adventureCards']);
   
@@ -73,7 +77,7 @@ const AdventureDetail: React.FC = () => {
   };
 
   // Helper function to get translated adventure content
-  const getAdventureContent = (adventure: any) => {
+  const getAdventureContent = (adventure: AdventureWithGuide) => {
     // Try title-based mapping for database adventures first
     const translationKey = getTitleBasedTranslationKey(adventure.title);
     
@@ -118,15 +122,15 @@ const AdventureDetail: React.FC = () => {
   const [isWishlisted, setIsWishlisted] = useState(false);
 
   useEffect(() => {
-    const identifier = slug || id;
+    const identifier = englishSlug || id;
     if (identifier) {
       loadAdventureDetails();
       trackView();
     }
-  }, [id, slug]);
+  }, [id, englishSlug]);
 
   const loadAdventureDetails = async () => {
-    const identifier = slug || id;
+    const identifier = englishSlug || id;
     if (!identifier) return;
     
     setLoading(true);
@@ -152,7 +156,7 @@ const AdventureDetail: React.FC = () => {
   };
 
   const trackView = async () => {
-    const identifier = slug || id;
+    const identifier = englishSlug || id;
     if (identifier && adventure?.id) {
       await BookingService.trackBookingView(adventure.id);
     }

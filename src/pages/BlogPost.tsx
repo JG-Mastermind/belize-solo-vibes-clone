@@ -322,13 +322,13 @@ const BlogPost: React.FC = () => {
 
         {/* Article Content */}
         <div className="container mx-auto px-4 py-12">
-          <div className="max-w-4xl mx-auto">
-            <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
+          <div className="max-w-7xl mx-auto">
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-12">
               
               {/* Main Content */}
-              <article className="lg:col-span-3">
+              <article className="lg:col-span-2">
                 <Card className="shadow-lg">
-                  <CardContent className="p-8">
+                  <CardContent className="p-10">
                     {/* Article Meta */}
                     <div className="flex flex-wrap items-center gap-4 mb-8 pb-6 border-b">
                       {blogPost.category && (
@@ -367,7 +367,7 @@ const BlogPost: React.FC = () => {
 
                     {/* Article Body */}
                     <div 
-                      className="prose prose-lg max-w-none leading-relaxed"
+                      className="prose prose-xl max-w-none leading-relaxed text-lg"
                       dangerouslySetInnerHTML={{ __html: translatedContent?.content || blogPost.content }}
                     />
 

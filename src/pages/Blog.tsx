@@ -355,7 +355,7 @@ const Blog = () => {
                 {popularTopics.map((topic, index) => (
                   <button
                     key={index}
-                    className="px-3 py-1 text-sm bg-belize-green-100 text-belize-green-700 rounded-full hover:bg-belize-green-500 hover:text-white transition-colors duration-300"
+                    className="px-3 py-1 text-sm bg-belize-green-600 text-gray-100 rounded-full hover:bg-belize-green-100 hover:text-belize-green-700 transition-colors duration-300"
                     onClick={() => console.log(`Filter by: ${topic}`)}
                   >
                     {topic}

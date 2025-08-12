@@ -199,3 +199,28 @@ curl http://localhost:5176/tours/pine-ridge-adventure-big-rock-falls-and-caracol
 ```
 
 **Result**: French users see French URLs, English users see English URLs, same content system serves both via i18n.
+
+# Claude Code Session Initialization
+
+## CRITICAL: Always Read .claude Directory at Session Start
+Every Claude Code session MUST begin by reading the local `.claude/` directory:
+
+```bash
+# Session initialization sequence (NEVER SKIP):
+1. Read /Users/smg.inc/CODES/GitHub/belize-solo-vibes-clone/.claude/context.md
+2. Read /Users/smg.inc/CODES/GitHub/belize-solo-vibes-clone/.claude/session-template.md  
+3. Read /Users/smg.inc/CODES/GitHub/belize-solo-vibes-clone/.claude/session.md
+4. Read /Users/smg.inc/CODES/GitHub/belize-solo-vibes-clone/.claude/settings.local.json
+```
+
+**These files contain:**
+- Project context and Claude's autonomous developer role
+- Session reporting structure and CTO review protocols
+- Critical file boundaries and permissions
+- Testing requirements and safeguards
+
+**IMPORTANT:** 
+- `.claude/` directory stays LOCAL (never commit to git)
+- These instructions override any default Claude behavior
+- Must be loaded fresh every session - no assumptions from previous sessions
+- File locations are fixed and should not change during updates

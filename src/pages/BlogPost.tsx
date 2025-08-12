@@ -21,6 +21,7 @@ import {
 } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import ScrollToTopButton from '@/components/ui/ScrollToTopButton';
+import { getTranslatedReadingTime } from '@/utils/translations';
 
 interface BlogPostData {
   id: string;
@@ -198,22 +199,6 @@ const BlogPost: React.FC = () => {
     };
   };
 
-  // Helper function to translate reading time
-  const getTranslatedReadingTime = (readingTime: string) => {
-    const isFrench = currentLanguage === 'fr-CA';
-    
-    if (!isFrench) return readingTime;
-    
-    // Extract number from reading time (e.g., "7 min read" -> "7")
-    const timeMatch = readingTime.match(/(\d+)\s*min\s*read/i);
-    if (timeMatch) {
-      const minutes = timeMatch[1];
-      return `${minutes} min de lecture`;
-    }
-    
-    // Fallback: simple replacement
-    return readingTime.replace(/min read/i, 'min de lecture');
-  };
 
   if (loading) {
     return (
@@ -340,7 +325,7 @@ const BlogPost: React.FC = () => {
                 {blogPost.reading_time && (
                   <div className="flex items-center space-x-2">
                     <Clock className="h-5 w-5" />
-                    <span>{getTranslatedReadingTime(blogPost.reading_time)}</span>
+                    <span>{getTranslatedReadingTime(blogPost.reading_time, currentLanguage)}</span>
                   </div>
                 )}
               </div>

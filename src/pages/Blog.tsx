@@ -7,6 +7,7 @@ import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { GlobalMeta } from "@/components/SEO/GlobalMeta";
+import { getTranslatedReadingTime } from '@/utils/translations';
 
 interface BlogPost {
   id: string;
@@ -260,7 +261,7 @@ const Blog = () => {
                       </CardDescription>
                       {post.reading_time && (
                         <div className="mt-4 text-sm text-belize-green-600 font-medium">
-                          {post.reading_time}
+                          {getTranslatedReadingTime(post.reading_time, currentLanguage)}
                         </div>
                       )}
                     </CardContent>

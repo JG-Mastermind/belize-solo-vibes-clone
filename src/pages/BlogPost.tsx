@@ -15,12 +15,12 @@ import {
   Twitter, 
   ChevronLeft,
   ChevronRight,
-  ArrowUp,
   Eye,
   Heart,
   MessageCircle
 } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
+import ScrollToTopButton from '@/components/ui/ScrollToTopButton';
 
 interface BlogPostData {
   id: string;
@@ -74,7 +74,6 @@ const BlogPost: React.FC = () => {
   
   const [blogPost, setBlogPost] = useState<BlogPostData | null>(null);
   const [loading, setLoading] = useState(true);
-  const [showScrollTop, setShowScrollTop] = useState(false);
   const [readingProgress, setReadingProgress] = useState(0);
   const [isLiked, setIsLiked] = useState(false);
 
@@ -131,16 +130,12 @@ const BlogPost: React.FC = () => {
       const scrollPercent = docHeight > 0 ? (scrollTop / docHeight) * 100 : 0;
       
       setReadingProgress(scrollPercent);
-      setShowScrollTop(scrollTop > 300);
     };
 
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
-  const scrollToTop = () => {
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-  };
 
   const formatDate = (dateString: string) => {
     const locale = currentLanguage === 'fr-CA' ? 'fr-CA' : 'en-US';
@@ -502,15 +497,7 @@ const BlogPost: React.FC = () => {
         </div>
 
         {/* Scroll to Top Button */}
-        {showScrollTop && (
-          <button
-            onClick={scrollToTop}
-            className="fixed bottom-8 right-8 bg-belize-orange-600 dark:bg-belize-orange-700 hover:bg-belize-orange-700 dark:hover:bg-belize-orange-800 text-white p-3 rounded-full shadow-lg transition-all duration-300 z-50"
-            aria-label="Scroll to top"
-          >
-            <ArrowUp className="h-5 w-5" />
-          </button>
-        )}
+        <ScrollToTopButton />
       </div>
     </>
   );

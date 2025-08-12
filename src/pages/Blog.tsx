@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Calendar, User, Facebook, Instagram, Mail, CheckCircle, AlertCircle, ArrowUp } from "lucide-react";
+import { Calendar, User, Facebook, Instagram, Mail, CheckCircle, AlertCircle } from "lucide-react";
+import ScrollToTopButton from '@/components/ui/ScrollToTopButton';
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
@@ -51,7 +52,6 @@ const Blog = () => {
   const [statusMessage, setStatusMessage] = useState('');
   
   // Scroll to top functionality
-  const [showScrollTop, setShowScrollTop] = useState(false);
 
   // Fetch blog posts from Supabase
   useEffect(() => {
@@ -77,18 +77,7 @@ const Blog = () => {
     }
   };
 
-  useEffect(() => {
-    const handleScroll = () => {
-      setShowScrollTop(window.scrollY > 300);
-    };
 
-    window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
-
-  const scrollToTop = () => {
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-  };
 
   const formatDate = (dateString: string) => {
     const locale = currentLanguage === 'fr-CA' ? 'fr-CA' : 'en-US';
@@ -387,15 +376,7 @@ const Blog = () => {
       </div>
 
       {/* Scroll to Top Button */}
-      {showScrollTop && (
-        <button
-          onClick={scrollToTop}
-          className="fixed bottom-8 right-8 bg-belize-orange-500 hover:bg-belize-orange-600 text-white p-3 rounded-full shadow-lg transition-all duration-300 z-50"
-          aria-label="Scroll to top"
-        >
-          <ArrowUp className="h-5 w-5" />
-        </button>
-      )}
+      <ScrollToTopButton />
     </div>
     </>
   );

@@ -58,7 +58,7 @@ const Safety = () => {
   return (
     <>
       <GlobalMeta 
-        title="Safety Guidelines"
+        title={t('safety:meta.title')}
         description="Essential safety information for Belize adventures. Learn about travel safety, health precautions, and emergency procedures for your adventure tours."
         path={currentPath}
         lang={currentLang}

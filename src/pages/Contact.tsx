@@ -59,7 +59,7 @@ const Contact = () => {
   return (
     <>
       <GlobalMeta 
-        title="Contact Us"
+        title={t('contact:meta.title')}
         description="Get in touch with BelizeVibes for authentic Belize adventure tours. Contact our expert local guides for personalized travel experiences."
         path={currentPath}
         lang={currentLang}

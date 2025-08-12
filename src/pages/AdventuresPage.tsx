@@ -4,6 +4,7 @@ import AdventureCards from "@/components/AdventureCards";
 import Testimonials from "@/components/Testimonials";
 import { supabase } from '@/lib/supabase';
 import { GlobalMeta } from "@/components/SEO/GlobalMeta";
+import { useTranslation } from 'react-i18next';
 
 // Tour type matching Supabase schema
 type Tour = {
@@ -22,6 +23,7 @@ type Tour = {
 };
 
 const Index = () => {
+  const { t } = useTranslation(['adventures']);
   const [featuredTour, setFeaturedTour] = useState<Tour | null>(null);
   const [tours, setTours] = useState<Tour[]>([]);
 
@@ -54,7 +56,7 @@ const Index = () => {
   return (
     <>
       <GlobalMeta 
-        title="Belize Adventures & Tours"
+        title={t('adventures:meta.title')}
         description="Explore authentic Belize adventure tours and experiences. Cave tubing, snorkeling, Maya ruins, jungle treks, and more with expert local guides."
         path="/adventures"
         keywords="Belize adventures, Belize tours, cave tubing, snorkeling, Maya ruins, jungle tours, adventure travel"

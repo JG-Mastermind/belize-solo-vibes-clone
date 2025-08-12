@@ -1,12 +1,14 @@
 import { Helmet } from 'react-helmet-async';
 import InteractiveHero from "@/components/InteractiveHero";
+import { useTranslation } from 'react-i18next';
 
 const Index = () => {
+  const { t } = useTranslation(['home']);
 
   return (
     <>
       <Helmet>
-        <title>BelizeVibes - Authentic Belize Adventures & Solo Travel Experiences</title>
+        <title>{t('home:meta.title')}</title>
         <meta name="description" content="Discover authentic Belize adventures with expert local guides. Cave tubing, snorkeling, Maya ruins, and eco-tours. Perfect for solo travelers and small groups." />
         
         {/* Open Graph / Facebook */}

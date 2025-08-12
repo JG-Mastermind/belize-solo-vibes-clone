@@ -5,6 +5,7 @@ import { Calendar, User, Facebook, Instagram, Mail, CheckCircle, AlertCircle, Ar
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
+import { GlobalMeta } from "@/components/SEO/GlobalMeta";
 
 interface BlogPost {
   id: string;
@@ -155,7 +156,14 @@ const Blog = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-green-50 dark:bg-gradient-to-br dark:from-blue-950/20 dark:via-background dark:to-blue-950/10">
+    <>
+      <GlobalMeta 
+        title={t('blog:meta.title')}
+        description="Discover Belize solo travel stories, tips and adventures"
+        path="/blog"
+        keywords="Belize blog, solo travel stories, adventure tips"
+      />
+      <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-green-50 dark:bg-gradient-to-br dark:from-blue-950/20 dark:via-background dark:to-blue-950/10">
       {/* Hero Section */}
       <section className="relative py-20 px-4 text-center bg-gradient-to-r from-blue-600 via-blue-700 to-green-600 text-white">
         <div className="absolute inset-0 bg-black opacity-30"></div>
@@ -389,6 +397,7 @@ const Blog = () => {
         </button>
       )}
     </div>
+    </>
   );
 };
 

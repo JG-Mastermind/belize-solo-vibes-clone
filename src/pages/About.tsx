@@ -51,7 +51,7 @@ const About = () => {
   return (
     <React.Fragment>
       <GlobalMeta 
-        title="About BelizeVibes"
+        title={t('about:meta.title')}
         description="Learn about BelizeVibes - authentic Belize adventure tours with expert local guides. Discover our commitment to sustainable tourism and authentic experiences."
         path={currentPath}
         lang={currentLang}

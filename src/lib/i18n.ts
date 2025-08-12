@@ -238,16 +238,21 @@ i18n
           },
         },
         blog: {
+          meta: {
+            title: 'Blog'
+          },
           hero: {
             title: 'Solo Travel Guide',
             subtitle: 'Tips, stories, and inspiration for your Belize journey.',
             startReading: 'Start Reading',
           },
+          latestPosts: 'Latest Stories',
           main: {
             latestStories: 'Latest Stories',
             readMore: 'Read More',
           },
           sidebar: {
+            newsletter: 'Stay Connected',
             popularTopics: 'Popular Topics',
             followUs: 'Follow Us',
             stayUpdated: 'Stay Updated',
@@ -1488,22 +1493,27 @@ i18n
           },
         },
         blog: {
+          meta: {
+            title: 'Blog'
+          },
           hero: {
             title: 'Guide de Voyage Solo',
             subtitle: 'Conseils, histoires et inspiration pour votre voyage au Belize.',
             startReading: 'Commencer à Lire',
           },
+          latestPosts: 'Dernières Histoires',
           main: {
             latestStories: 'Dernières Histoires',
             readMore: 'Lire Plus',
           },
           sidebar: {
+            newsletter: 'Restez Connecté',
             popularTopics: 'Sujets Populaires',
             followUs: 'Suivez-Nous',
             stayUpdated: 'Restez Informé',
             newsletterDescription: 'Recevez les derniers conseils de voyage et histoires d\'aventure directement dans votre boîte de réception.',
             emailPlaceholder: 'Entrez votre email',
-            subscribe: 'S\'Abonner',
+            subscribe: 'S\'abonner',
           },
           topics: {
             wildlife: 'Faune',

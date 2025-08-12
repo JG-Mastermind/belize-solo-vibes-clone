@@ -8,6 +8,7 @@ import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { GlobalMeta } from "@/components/SEO/GlobalMeta";
 import { getTranslatedReadingTime } from '@/utils/translations';
+import { trackListingInteraction } from '@/utils/blogAnalytics';
 
 interface BlogPost {
   id: string;
@@ -221,6 +222,9 @@ const Blog = () => {
                     key={post.id} 
                     className="overflow-hidden transition-all duration-300 hover:shadow-2xl hover:scale-[1.02] cursor-pointer group h-full min-h-[480px] flex flex-col bg-card dark:bg-card"
                     onClick={() => {
+                      // Track blog listing click
+                      trackListingInteraction(post.slug, 'click');
+                      
                       const url = i18n.language === 'fr-CA' 
                         ? `/fr-ca/blog/${post.title_fr ? createFrenchSlug(post.title_fr) : post.slug}`
                         : `/blog/${post.slug}`;
@@ -235,6 +239,10 @@ const Blog = () => {
                         onError={(e) => {
                           const target = e.target as HTMLImageElement;
                           target.src = 'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=800&h=400&fit=crop&crop=center';
+                        }}
+                        onLoad={() => {
+                          // Track blog listing impression
+                          trackListingInteraction(post.slug, 'impression');
                         }}
                       />
                     </div>

@@ -22,6 +22,7 @@ import {
 import { supabase } from '@/integrations/supabase/client';
 import ScrollToTopButton from '@/components/ui/ScrollToTopButton';
 import { getTranslatedReadingTime } from '@/utils/translations';
+import { initScrollTracking } from '@/utils/blogAnalytics';
 
 interface BlogPostData {
   id: string;
@@ -77,6 +78,15 @@ const BlogPost: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [readingProgress, setReadingProgress] = useState(0);
   const [isLiked, setIsLiked] = useState(false);
+
+  // Initialize analytics tracking when blog post loads
+  useEffect(() => {
+    if (blogPost?.slug) {
+      const cleanup = initScrollTracking(blogPost.slug);
+      return cleanup;
+    }
+  }, [blogPost?.slug]);
+
 
   // Fetch blog post from Supabase
   useEffect(() => {
@@ -480,6 +490,7 @@ const BlogPost: React.FC = () => {
             </div>
           </div>
         </div>
+
 
         {/* Scroll to Top Button */}
         <ScrollToTopButton />

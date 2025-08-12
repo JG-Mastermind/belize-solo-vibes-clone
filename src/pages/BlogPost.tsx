@@ -282,7 +282,7 @@ const BlogPost: React.FC = () => {
       <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-green-50 dark:bg-gradient-to-br dark:from-blue-950/20 dark:via-background dark:to-blue-950/10">
         {/* Reading Progress Bar */}
         <div 
-          className="fixed top-0 left-0 h-1 bg-blue-600 z-50 transition-all duration-150"
+          className="fixed top-0 left-0 h-1 bg-belize-orange-600 dark:bg-belize-orange-700 z-50 transition-all duration-150"
           style={{ width: `${readingProgress}%` }}
         />
 
@@ -365,7 +365,7 @@ const BlogPost: React.FC = () => {
                     {/* Article Meta */}
                     <div className="flex flex-wrap items-center gap-4 mb-8 pb-6 border-b">
                       {blogPost.category && (
-                        <Badge variant="secondary" className="bg-belize-green-100 text-belize-green-800">
+                        <Badge className="bg-belize-orange-600 dark:bg-belize-orange-700 text-white hover:bg-belize-orange-700 dark:hover:bg-belize-orange-800 transition-colors duration-300">
                           {translatedContent?.categoryName || blogPost.category.name}
                         </Badge>
                       )}
@@ -375,7 +375,7 @@ const BlogPost: React.FC = () => {
                           const isFrench = currentLanguage === 'fr-CA';
                           const tagName = (isFrench && tagRelation.tags.name_fr) ? tagRelation.tags.name_fr : tagRelation.tags.name;
                           return (
-                            <Badge key={index} variant="outline">
+                            <Badge key={index} className="bg-belize-orange-600 dark:bg-belize-orange-700 text-white hover:bg-belize-orange-700 dark:hover:bg-belize-orange-800 transition-colors duration-300">
                               {tagName}
                             </Badge>
                           );
@@ -414,7 +414,7 @@ const BlogPost: React.FC = () => {
                           variant={isLiked ? "default" : "outline"}
                           size="sm"
                           className={`flex items-center space-x-2 transition-all duration-300 ${
-                            isLiked ? 'bg-belize-orange-500 hover:bg-belize-orange-600' : 'hover:bg-belize-green-100'
+                            isLiked ? 'bg-belize-orange-500 hover:bg-belize-orange-600 dark:bg-belize-orange-600 dark:hover:bg-belize-orange-700' : 'hover:bg-belize-orange-100 dark:hover:bg-belize-orange-900/20'
                           }`}
                         >
                           <Heart className={`h-4 w-4 ${isLiked ? 'fill-current' : ''}`} />
@@ -464,7 +464,7 @@ const BlogPost: React.FC = () => {
                       {t('blog:author.aboutAuthor', { defaultValue: 'About the Author' })}
                     </h3>
                     <div className="flex items-center space-x-3 mb-3">
-                      <div className="w-12 h-12 bg-belize-green-600 rounded-full flex items-center justify-center text-white font-bold">
+                      <div className="w-12 h-12 bg-belize-orange-600 dark:bg-belize-orange-700 rounded-full flex items-center justify-center text-white font-bold">
                         {getTranslatedAuthorInfo(blogPost.author).name.charAt(0)}
                       </div>
                       <div>
@@ -486,9 +486,8 @@ const BlogPost: React.FC = () => {
                       <div className="flex flex-wrap gap-2">
                         {blogPost.post_tags.map((tagRelation, index) => (
                           <Badge 
-                            key={index} 
-                            variant="outline" 
-                            className="cursor-pointer hover:bg-belize-green-100 hover:text-belize-green-700 transition-colors duration-300"
+                            key={index}
+                            className="bg-belize-orange-600 dark:bg-belize-orange-700 text-white hover:bg-belize-orange-700 dark:hover:bg-belize-orange-800 cursor-pointer transition-colors duration-300"
                           >
                             {tagRelation.tags.name}
                           </Badge>
@@ -506,7 +505,7 @@ const BlogPost: React.FC = () => {
         {showScrollTop && (
           <button
             onClick={scrollToTop}
-            className="fixed bottom-8 right-8 bg-belize-orange-500 hover:bg-belize-orange-600 text-white p-3 rounded-full shadow-lg transition-all duration-300 z-50"
+            className="fixed bottom-8 right-8 bg-belize-orange-600 dark:bg-belize-orange-700 hover:bg-belize-orange-700 dark:hover:bg-belize-orange-800 text-white p-3 rounded-full shadow-lg transition-all duration-300 z-50"
             aria-label="Scroll to top"
           >
             <ArrowUp className="h-5 w-5" />

@@ -34,7 +34,9 @@ export const GlobalMeta: React.FC<GlobalMetaProps> = ({
       '/about': '/fr-ca/a-propos', 
       '/fr-ca/a-propos': '/about',
       '/contact': '/fr-ca/contact',
-      '/fr-ca/contact': '/contact'
+      '/fr-ca/contact': '/contact',
+      '/blog': '/fr-ca/blog',
+      '/fr-ca/blog': '/blog'
     };
     
     const alternatePath = urlMappings[path as keyof typeof urlMappings];

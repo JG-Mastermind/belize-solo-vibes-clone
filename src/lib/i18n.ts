@@ -239,14 +239,14 @@ i18n
         },
         blog: {
           meta: {
-            title: 'Blog'
+            title: 'Belize Travel Tips & Guide'
           },
           hero: {
-            title: 'Solo Travel Guide',
+            title: 'Belize Travel Tips & Guide',
             subtitle: 'Tips, stories, and inspiration for your Belize journey.',
             startReading: 'Start Reading',
           },
-          latestPosts: 'Latest Stories',
+          latestPosts: 'Latest Tips & Stories',
           main: {
             latestStories: 'Latest Stories',
             readMore: 'Read More',
@@ -1494,14 +1494,14 @@ i18n
         },
         blog: {
           meta: {
-            title: 'Blog'
+            title: 'Guide et Astuces Belize'
           },
           hero: {
-            title: 'Guide de Voyage Solo',
+            title: 'Guide et Astuces Belize',
             subtitle: 'Conseils, histoires et inspiration pour votre voyage au Belize.',
             startReading: 'Commencer à Lire',
           },
-          latestPosts: 'Dernières Histoires',
+          latestPosts: 'Derniers Conseils & Histoires',
           main: {
             latestStories: 'Dernières Histoires',
             readMore: 'Lire Plus',

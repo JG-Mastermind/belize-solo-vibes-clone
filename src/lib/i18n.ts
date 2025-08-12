@@ -568,6 +568,11 @@ i18n
             minRead: 'min read',
             views: 'views',
           },
+          author: {
+            aboutAuthor: 'About the Author',
+            authorBio: 'Experienced solo traveler sharing authentic adventures and practical tips from Belize.',
+            relatedTopics: 'Related Topics',
+          },
           tags: {
             'Solo Travel': 'Solo Travel',
             'Adventure': 'Adventure',
@@ -1822,6 +1827,11 @@ i18n
             subscribe: 'S\'abonner',
             minRead: 'min de lecture',
             views: 'vues',
+          },
+          author: {
+            aboutAuthor: 'À propos de l\'auteur',
+            authorBio: 'Voyageur solo expérimenté partageant des aventures authentiques et des conseils pratiques du Belize.',
+            relatedTopics: 'Sujets Connexes',
           },
           tags: {
             'Solo Travel': 'Voyage Solo',

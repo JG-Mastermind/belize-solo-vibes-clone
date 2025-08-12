@@ -143,7 +143,8 @@ const BlogPost: React.FC = () => {
   };
 
   const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString('en-US', {
+    const locale = currentLanguage === 'fr-CA' ? 'fr-CA' : 'en-US';
+    return new Date(dateString).toLocaleDateString(locale, {
       year: 'numeric',
       month: 'long',
       day: 'numeric'
@@ -185,6 +186,38 @@ const BlogPost: React.FC = () => {
         (isFrench && postTag.tags.name_fr) ? postTag.tags.name_fr : postTag.tags.name
       )
     };
+  };
+
+  // Helper function to get translated author info
+  const getTranslatedAuthorInfo = (author: string) => {
+    const isFrench = currentLanguage === 'fr-CA';
+    
+    // Author name translations
+    const authorTranslations: Record<string, string> = {
+      'James Thompson': isFrench ? 'James Thompson' : 'James Thompson', // Keep same for now
+    };
+    
+    return {
+      name: authorTranslations[author] || author,
+      profession: isFrench ? 'Écrivain de voyage' : 'Travel Writer'
+    };
+  };
+
+  // Helper function to translate reading time
+  const getTranslatedReadingTime = (readingTime: string) => {
+    const isFrench = currentLanguage === 'fr-CA';
+    
+    if (!isFrench) return readingTime;
+    
+    // Extract number from reading time (e.g., "7 min read" -> "7")
+    const timeMatch = readingTime.match(/(\d+)\s*min\s*read/i);
+    if (timeMatch) {
+      const minutes = timeMatch[1];
+      return `${minutes} min de lecture`;
+    }
+    
+    // Fallback: simple replacement
+    return readingTime.replace(/min read/i, 'min de lecture');
   };
 
   if (loading) {
@@ -303,7 +336,7 @@ const BlogPost: React.FC = () => {
               <div className="flex items-center justify-center space-x-6 text-lg opacity-90">
                 <div className="flex items-center space-x-2">
                   <User className="h-5 w-5" />
-                  <span>{blogPost.author}</span>
+                  <span>{getTranslatedAuthorInfo(blogPost.author).name}</span>
                 </div>
                 <div className="flex items-center space-x-2">
                   <Calendar className="h-5 w-5" />
@@ -312,7 +345,7 @@ const BlogPost: React.FC = () => {
                 {blogPost.reading_time && (
                   <div className="flex items-center space-x-2">
                     <Clock className="h-5 w-5" />
-                    <span>{blogPost.reading_time}</span>
+                    <span>{getTranslatedReadingTime(blogPost.reading_time)}</span>
                   </div>
                 )}
               </div>
@@ -322,11 +355,11 @@ const BlogPost: React.FC = () => {
 
         {/* Article Content */}
         <div className="container mx-auto px-4 py-12">
-          <div className="max-w-7xl mx-auto">
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-12">
+          <div className="max-w-[1400px] mx-auto">
+            <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
               
               {/* Main Content */}
-              <article className="lg:col-span-2">
+              <article className="lg:col-span-3">
                 <Card className="shadow-lg">
                   <CardContent className="p-10">
                     {/* Article Meta */}
@@ -427,25 +460,29 @@ const BlogPost: React.FC = () => {
                   
                   {/* Author Info */}
                   <Card className="p-6">
-                    <h3 className="text-xl font-playfair font-semibold text-belize-green-600 dark:text-belize-green-500 mb-4">About the Author</h3>
+                    <h3 className="text-xl font-playfair font-semibold text-belize-green-600 dark:text-belize-green-500 mb-4">
+                      {t('blog:author.aboutAuthor', { defaultValue: 'About the Author' })}
+                    </h3>
                     <div className="flex items-center space-x-3 mb-3">
                       <div className="w-12 h-12 bg-belize-green-600 rounded-full flex items-center justify-center text-white font-bold">
-                        {blogPost.author.charAt(0)}
+                        {getTranslatedAuthorInfo(blogPost.author).name.charAt(0)}
                       </div>
                       <div>
-                        <h4 className="font-semibold">{blogPost.author}</h4>
-                        <p className="text-sm text-gray-500">Travel Writer</p>
+                        <h4 className="font-semibold">{getTranslatedAuthorInfo(blogPost.author).name}</h4>
+                        <p className="text-sm text-gray-500">{getTranslatedAuthorInfo(blogPost.author).profession}</p>
                       </div>
                     </div>
                     <p className="text-sm text-gray-600">
-                      Experienced solo traveler sharing authentic adventures and practical tips from Belize.
+                      {t('blog:author.authorBio', { defaultValue: 'Experienced solo traveler sharing authentic adventures and practical tips from Belize.' })}
                     </p>
                   </Card>
 
                   {/* Related Topics */}
                   {blogPost.post_tags && blogPost.post_tags.length > 0 && (
                     <Card className="p-6">
-                      <h3 className="text-xl font-playfair font-semibold text-belize-green-600 dark:text-belize-green-500 mb-4">Related Topics</h3>
+                      <h3 className="text-xl font-playfair font-semibold text-belize-green-600 dark:text-belize-green-500 mb-4">
+                        {t('blog:author.relatedTopics', { defaultValue: 'Related Topics' })}
+                      </h3>
                       <div className="flex flex-wrap gap-2">
                         {blogPost.post_tags.map((tagRelation, index) => (
                           <Badge 

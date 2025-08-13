@@ -10,11 +10,15 @@ import { useLocation } from "react-router-dom";
 import { GlobalMeta } from "@/components/SEO/GlobalMeta";
 
 const Contact = () => {
-  const { t } = useTranslation(['contact']);
+  const { t, i18n } = useTranslation(['contact']);
   const location = useLocation();
-  
   const isFrench = location.pathname.startsWith('/fr-ca');
   const currentPath = isFrench ? '/fr-ca/contact' : '/contact';
+
+  if (!i18n.isInitialized || !i18n.hasResourceBundle(i18n.language, 'contact')) {
+    return null;
+  }
+
   const currentLang = isFrench ? 'fr-ca' : 'en';
   
   const [formData, setFormData] = useState({
@@ -58,7 +62,8 @@ const Contact = () => {
 
   return (
     <>
-      <GlobalMeta 
+      <GlobalMeta
+        key={currentPath}
         title={t('contact:meta.title')}
         description="Get in touch with BelizeVibes for authentic Belize adventure tours. Contact our expert local guides for personalized travel experiences."
         path={currentPath}

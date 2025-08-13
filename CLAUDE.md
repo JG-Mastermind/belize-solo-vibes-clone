@@ -248,6 +248,65 @@ curl http://localhost:5176/tours/pine-ridge-adventure-big-rock-falls-and-caracol
 
 **Result**: French users see French URLs, English users see English URLs, same content system serves both via i18n.
 
+## ✅ CRITICAL DEBUG: Meta Title "meta.title /" Issue Resolution (August 2025)
+
+### Bug Symptom
+- Browser tabs showing literal "meta.title /" instead of proper page titles
+- AdventuresPage component calling `t('adventures:meta.title')` but translation key missing
+- Similar issue could affect any page using `namespace:meta.title` pattern
+
+### Root Cause Analysis
+**Missing i18n Namespace Structure**: The component referenced `adventures:meta.title` but no `adventures` namespace existed in `src/lib/i18n.ts`
+
+### Systematic Debugging Process (SUCCESSFUL PATTERN)
+1. **Verify Component Usage**: Confirmed AdventuresPage.tsx line 59 uses `t('adventures:meta.title')`
+2. **Search i18n Structure**: Used grep to find existing `meta.title` patterns in other namespaces
+3. **Identify Missing Namespace**: Found `contact`, `safety`, `about`, `blog` all have `meta: { title: ... }` but `adventures` missing
+4. **Locate Insertion Point**: Found correct placement after `adventureCards` section, before `home` section
+5. **Add Both Languages**: Added English and French versions with proper titles
+
+### Surgical Fix Applied
+```typescript
+// Added to src/lib/i18n.ts after adventureCards section:
+
+// English section (around line 665):
+adventures: {
+  meta: {
+    title: 'Adventures - BelizeVibes'
+  },
+},
+
+// French section (around line 1939):  
+adventures: {
+  meta: {
+    title: 'Aventures - BelizeVibes'
+  },
+},
+```
+
+### Prevention Commands
+```bash
+# Search for missing translation keys when browser shows "meta.title /"
+grep -n "t('.*:meta\.title')" src/pages/*.tsx
+grep -n "meta: {" src/lib/i18n.ts
+grep -n -A 3 -B 3 "adventures:" src/lib/i18n.ts
+
+# Verify namespace exists for component
+# If component uses t('namespace:key'), ensure src/lib/i18n.ts has matching structure
+```
+
+### Key Lessons
+- **Don't assume namespaces exist** - Always verify in i18n.ts when adding new pages
+- **Check both languages** - English AND French sections need matching structure  
+- **Follow existing patterns** - Use same `meta: { title: ... }` structure as other pages
+- **Build test immediately** - Run `npm run build` after i18n changes
+- **Literal key display = missing translation** - When browser shows "namespace:key" literally, the key is missing
+
+### Files Modified
+- ✅ `src/lib/i18n.ts`: Added `adventures` namespace with `meta.title` for EN/FR
+- ✅ Build successful, dev server tested on port 5175
+- ✅ Browser tab now shows "Adventures - BelizeVibes" instead of "meta.title /"
+
 ## 🔒 CRITICAL SECURITY: Admin Portal Implementation (August 2025)
 
 **See also Database Lessons Learned** — these security rules apply to all schema changes and role assignments.

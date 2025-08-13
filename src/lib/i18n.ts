@@ -662,6 +662,11 @@ i18n
             },
           },
         },
+        adventures: {
+          meta: {
+            title: 'Adventures - BelizeVibes'
+          },
+        },
         home: {
           hero: {
             title: 'Your Adventure Awaits',
@@ -673,6 +678,9 @@ i18n
           },
         },
         contact: {
+          meta: {
+            title: 'Contact Us - BelizeVibes'
+          },
           hero: {
             title: 'Let\'s Connect',
             subtitle: 'Questions about your Belize adventure? We\'re here to help with booking inquiries, safety concerns, and everything in between.',
@@ -721,6 +729,9 @@ i18n
           },
         },
         safety: {
+          meta: {
+            title: 'Safety Information - BelizeVibes'
+          },
           hero: {
             title: 'Your Safety, Our Priority',
             subtitle: 'Everything you need to know to travel confidently in Belize.',
@@ -775,6 +786,9 @@ i18n
           },
         },
         about: {
+          meta: {
+            title: 'About Us - BelizeVibes'
+          },
           hero: {
             title: 'Our Story',
             subtitle: 'Meet the people behind Belize\'s boldest solo travel adventures.',
@@ -1922,6 +1936,11 @@ i18n
             },
           },
         },
+        adventures: {
+          meta: {
+            title: 'Aventures - BelizeVibes'
+          },
+        },
         home: {
           hero: {
             title: 'Votre Aventure Vous Attend',
@@ -1933,6 +1952,9 @@ i18n
           },
         },
         contact: {
+          meta: {
+            title: 'Nous Contacter - BelizeVibes'
+          },
           hero: {
             title: 'Connectons-Nous',
             subtitle: 'Des questions sur votre aventure au Belize? Nous sommes là pour vous aider avec les demandes de réservation, les préoccupations de sécurité et tout le reste.',
@@ -1981,6 +2003,9 @@ i18n
           },
         },
         safety: {
+          meta: {
+            title: 'Informations de Sécurité - BelizeVibes'
+          },
           hero: {
             title: 'Votre Sécurité, Notre Priorité',
             subtitle: 'Tout ce que vous devez savoir pour voyager en toute confiance au Belize.',
@@ -2035,6 +2060,9 @@ i18n
           },
         },
         about: {
+          meta: {
+            title: 'À Propos de Nous - BelizeVibes'
+          },
           hero: {
             title: 'Notre Histoire',
             subtitle: 'Rencontrez les personnes derrière les aventures solo les plus audacieuses du Belize.',

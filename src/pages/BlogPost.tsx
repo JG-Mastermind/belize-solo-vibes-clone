@@ -23,6 +23,7 @@ import { supabase } from '@/integrations/supabase/client';
 import ScrollToTopButton from '@/components/ui/ScrollToTopButton';
 import { getTranslatedReadingTime } from '@/utils/translations';
 import { initScrollTracking } from '@/utils/blogAnalytics';
+import { getBlogPostImageUrl, handleImageError, getImageAltText } from '@/utils/blogImageUtils';
 
 interface BlogPostData {
   id: string;
@@ -47,6 +48,8 @@ interface BlogPostData {
     };
   }>;
   featured_image_url: string | null;
+  ai_generated_image_url: string | null;
+  image_source: 'unsplash' | 'ai_generated' | 'uploaded';
   views: number;
   likes: number;
   comments: number;
@@ -261,12 +264,12 @@ const BlogPost: React.FC = () => {
         <meta name="description" content={translatedContent?.excerpt || blogPost?.excerpt} />
         <meta property="og:title" content={translatedContent?.title || blogPost?.title} />
         <meta property="og:description" content={translatedContent?.excerpt || blogPost?.excerpt} />
-        <meta property="og:image" content={blogPost.featured_image_url || ''} />
+        <meta property="og:image" content={getBlogPostImageUrl(blogPost)} />
         <meta property="og:type" content="article" />
         <meta name="twitter:card" content="summary_large_image" />
         <meta name="twitter:title" content={translatedContent?.title || blogPost?.title} />
         <meta name="twitter:description" content={translatedContent?.excerpt || blogPost?.excerpt} />
-        <meta name="twitter:image" content={blogPost.featured_image_url || ''} />
+        <meta name="twitter:image" content={getBlogPostImageUrl(blogPost)} />
       </Helmet>
 
       <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-green-50 dark:bg-gradient-to-br dark:from-blue-950/20 dark:via-background dark:to-blue-950/10">
@@ -297,14 +300,20 @@ const BlogPost: React.FC = () => {
 
         {/* Hero Section */}
         <section className="relative py-20 px-4">
-          {blogPost.featured_image_url && (
+          {(getBlogPostImageUrl(blogPost) && getBlogPostImageUrl(blogPost) !== 'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=800&h=400&fit=crop&crop=center') && (
             <div className="absolute inset-0 z-0">
               <img 
-                src={blogPost.featured_image_url} 
-                alt={translatedContent?.title || blogPost.title}
+                src={getBlogPostImageUrl(blogPost)} 
+                alt={getImageAltText(blogPost, translatedContent?.title || blogPost.title)}
                 className="w-full h-full object-cover"
+                onError={(e) => handleImageError(e, blogPost)}
               />
               <div className="absolute inset-0 bg-black opacity-60"></div>
+              {blogPost.image_source === 'ai_generated' && blogPost.ai_generated_image_url && (
+                <div className="absolute top-4 right-4 bg-black/70 text-white text-sm px-3 py-2 rounded-full flex items-center gap-2">
+                  ✨ AI Generated Image
+                </div>
+              )}
             </div>
           )}
           

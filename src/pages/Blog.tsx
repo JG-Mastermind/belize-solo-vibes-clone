@@ -9,6 +9,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { GlobalMeta } from "@/components/SEO/GlobalMeta";
 import { getTranslatedReadingTime } from '@/utils/translations';
 import { trackListingInteraction } from '@/utils/blogAnalytics';
+import { getBlogPostImageUrl, handleImageError, getImageAltText } from '@/utils/blogImageUtils';
 
 interface BlogPost {
   id: string;
@@ -18,6 +19,8 @@ interface BlogPost {
   excerpt_fr?: string;
   slug: string;
   featured_image_url: string | null;
+  ai_generated_image_url: string | null;
+  image_source: 'unsplash' | 'ai_generated' | 'uploaded';
   author: string;
   published_at: string;
   reading_time: string | null;
@@ -64,7 +67,7 @@ const Blog = () => {
     try {
       const { data, error } = await supabase
         .from('posts')
-        .select('id, title, title_fr, excerpt, excerpt_fr, slug, featured_image_url, author, published_at, reading_time')
+        .select('id, title, title_fr, excerpt, excerpt_fr, slug, featured_image_url, ai_generated_image_url, image_source, author, published_at, reading_time')
         .eq('status', 'published')
         .order('published_at', { ascending: false });
 
@@ -233,18 +236,20 @@ const Blog = () => {
                   >
                     <div className="relative overflow-hidden rounded-t-lg">
                       <img 
-                        src={post.featured_image_url || 'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=800&h=400&fit=crop&crop=center'} 
-                        alt={translatedContent.title}
+                        src={getBlogPostImageUrl(post)} 
+                        alt={getImageAltText(post, translatedContent.title)}
                         className="w-full h-48 object-cover group-hover:scale-105 transition-transform duration-300"
-                        onError={(e) => {
-                          const target = e.target as HTMLImageElement;
-                          target.src = 'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=800&h=400&fit=crop&crop=center';
-                        }}
+                        onError={(e) => handleImageError(e, post)}
                         onLoad={() => {
                           // Track blog listing impression
                           trackListingInteraction(post.slug, 'impression');
                         }}
                       />
+                      {post.image_source === 'ai_generated' && post.ai_generated_image_url && (
+                        <div className="absolute top-2 right-2 bg-black/70 text-white text-xs px-2 py-1 rounded-full flex items-center gap-1">
+                          ✨ AI
+                        </div>
+                      )}
                     </div>
                     
                     <CardHeader>

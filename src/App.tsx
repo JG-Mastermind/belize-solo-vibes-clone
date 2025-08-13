@@ -35,6 +35,7 @@ import EditPost from "./pages/dashboard/EditPost";
 import AdminAdventures from "./pages/admin/AdminAdventures";
 import AdminCreateAdventure from "./pages/admin/AdminCreateAdventure";
 import AdminEditAdventure from "./pages/admin/AdminEditAdventure";
+import TestAI from "./pages/TestAI";
 
 const queryClient = new QueryClient();
 
@@ -80,6 +81,7 @@ const App = () => (
               <Route path="booking/:id" element={<BookingCheckout />} />
               <Route path="booking/success" element={<SuccessPage />} />
               <Route path="confirmation" element={<Confirmation />} />
+              <Route path="test-ai" element={<TestAI />} />
               <Route path="auth/callback" element={<AuthCallback />} />
               <Route path="*" element={<NotFound />} />
             </Route>

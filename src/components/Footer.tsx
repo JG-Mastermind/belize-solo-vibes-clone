@@ -2,6 +2,7 @@
 import { MapPin, Phone, Mail, Facebook, Instagram, Twitter } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { Link, useNavigate, useLocation } from "react-router-dom";
+import { PopularAdventuresSection } from "./PopularAdventuresSection";
 
 const Footer = () => {
   const { t, i18n } = useTranslation(['footer', 'common']);
@@ -86,17 +87,7 @@ const Footer = () => {
           </div>
 
           {/* Popular Adventures */}
-          <div className="space-y-4">
-            <h3 className="font-playfair font-semibold text-lg">{t('footer:sections.popularAdventures')}</h3>
-            <ul className="space-y-2 text-sm">
-              <li><Link to={getLocalizedPath('/adventures')} className="text-slate-300 hover:text-green-400 transition-colors">{t('footer:adventures.caveTubing')}</Link></li>
-              <li><Link to={getLocalizedPath('/adventures')} className="text-slate-300 hover:text-green-400 transition-colors">{t('footer:adventures.blueHoleDiving')}</Link></li>
-              <li><Link to={getLocalizedPath('/adventures')} className="text-slate-300 hover:text-green-400 transition-colors">{t('footer:adventures.mayaRuinsTours')}</Link></li>
-              <li><Link to={getLocalizedPath('/adventures')} className="text-slate-300 hover:text-green-400 transition-colors">{t('footer:adventures.snorkelingTours')}</Link></li>
-              <li><Link to={getLocalizedPath('/adventures')} className="text-slate-300 hover:text-green-400 transition-colors">{t('footer:adventures.jungleZiplining')}</Link></li>
-              <li><Link to={getLocalizedPath('/adventures')} className="text-slate-300 hover:text-green-400 transition-colors">{t('footer:adventures.wildlifeWatching')}</Link></li>
-            </ul>
-          </div>
+          <PopularAdventuresSection />
 
           {/* Contact Info */}
           <div className="space-y-4">

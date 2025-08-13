@@ -37,18 +37,21 @@ export const PopularAdventuresSection: React.FC = () => {
   };
 
   const getTourUrl = (tour: PopularTour['tour']) => {
-    // Create slug from title for URL
-    const slug = tour.title
+    // Create English slug from title for URL
+    const englishSlug = tour.title
       .toLowerCase()
       .replace(/[^a-z0-9\s-]/g, '')
       .replace(/\s+/g, '-')
       .replace(/-+/g, '-')
       .trim();
 
-    const baseUrl = i18n.language === 'fr-CA' ? '/fr-ca/tours' : '/tours';
-    const finalSlug = i18n.language === 'fr-CA' ? convertEnglishSlugToFrench(slug) : slug;
+    // Use existing translation protocol: English base, let i18n system handle French paths
+    if (i18n.language === 'fr-CA') {
+      const frenchSlug = convertEnglishSlugToFrench(englishSlug);
+      return `/fr-ca/tours/${frenchSlug}`;
+    }
     
-    return `${baseUrl}/${finalSlug}`;
+    return `/tours/${englishSlug}`;
   };
 
   if (loading) {
@@ -85,14 +88,14 @@ export const PopularAdventuresSection: React.FC = () => {
             </li>
           ))
         ) : (
-          // Fallback to real tour links using actual tour IDs
+          // Fallback using English slugs, let translation system handle French paths and text
           <>
-            <li><Link to="/tours/d64bf45d-254a-422f-97fb-7fa42f3f05e7" className="text-slate-300 hover:text-green-400 transition-colors">Cave Tubing & Jungle Trek</Link></li>
-            <li><Link to="/tours/74995372-350c-4e6f-b812-30de5af8fc44" className="text-slate-300 hover:text-green-400 transition-colors">Snorkeling at Hol Chan Marine Reserve</Link></li>
-            <li><Link to="/tours/f900d2c6-a691-4fd7-9914-52bcc0982cbc" className="text-slate-300 hover:text-green-400 transition-colors">Jungle Zip-lining & Waterfall Tour</Link></li>
-            <li><Link to="/tours/781ebb5d-5b7d-40b5-bdf5-561fcdb5e9db" className="text-slate-300 hover:text-green-400 transition-colors">Manatee Watching & Beach Day</Link></li>
-            <li><Link to="/tours/467fbd12-3869-40ff-a951-d2420ffb7ab5" className="text-slate-300 hover:text-green-400 transition-colors">Sunrise Fishing & Island Hopping</Link></li>
-            <li><Link to="/tours/7e72e421-9d43-4bd7-8c30-0bbffceeb84e" className="text-slate-300 hover:text-green-400 transition-colors">Night Jungle Safari</Link></li>
+            <li><Link to={i18n.language === 'fr-CA' ? '/fr-ca/tours/tube-cave-et-trek-jungle' : '/tours/cave-tubing-and-jungle-trek'} className="text-slate-300 hover:text-green-400 transition-colors">{t('footer:adventures.caveTubing')}</Link></li>
+            <li><Link to={i18n.language === 'fr-CA' ? '/fr-ca/tours/plongee-hol-chan-reserve-marine' : '/tours/snorkeling-at-hol-chan-marine-reserve'} className="text-slate-300 hover:text-green-400 transition-colors">{t('footer:adventures.snorkelingTours')}</Link></li>
+            <li><Link to={i18n.language === 'fr-CA' ? '/fr-ca/tours/tyrolienne-jungle-et-tour-cascade' : '/tours/jungle-zip-lining-and-waterfall-tour'} className="text-slate-300 hover:text-green-400 transition-colors">{t('footer:adventures.jungleZiplining')}</Link></li>
+            <li><Link to={i18n.language === 'fr-CA' ? '/fr-ca/tours/observation-lamantins-et-journee-plage' : '/tours/manatee-watching-and-beach-day'} className="text-slate-300 hover:text-green-400 transition-colors">{t('footer:adventures.wildlifeWatching')}</Link></li>
+            <li><Link to={i18n.language === 'fr-CA' ? '/fr-ca/tours/peche-lever-soleil-et-saut-iles' : '/tours/sunrise-fishing-and-island-hopping'} className="text-slate-300 hover:text-green-400 transition-colors">Sunrise Fishing & Island Hopping</Link></li>
+            <li><Link to={i18n.language === 'fr-CA' ? '/fr-ca/tours/safari-jungle-nocturne' : '/tours/night-jungle-safari'} className="text-slate-300 hover:text-green-400 transition-colors">Night Jungle Safari</Link></li>
           </>
         )}
       </ul>

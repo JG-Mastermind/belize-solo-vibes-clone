@@ -200,6 +200,240 @@ curl http://localhost:5176/tours/pine-ridge-adventure-big-rock-falls-and-caracol
 
 **Result**: French users see French URLs, English users see English URLs, same content system serves both via i18n.
 
+## 🔒 CRITICAL SECURITY: Admin Portal Implementation (August 2025)
+
+**See also Database Lessons Learned** — these security rules apply to all schema changes and role assignments.
+
+### Security Status Tracker
+
+| Phase | Status | Last Updated |
+|-------|--------|--------------|
+| Phase 1: IMMEDIATE Security Fixes | 🔄 In Progress | August 13, 2025 |
+| Phase 2: Server-Side Role Enforcement | ⏳ Pending | - |
+| Phase 3: UI Implementation | ⏳ Pending | - |
+| Phase 4: Email & Edge Functions | ⏳ Pending | - |
+
+### Security Audit Findings
+**CRITICAL VULNERABILITIES DISCOVERED** requiring immediate remediation:
+
+#### 1. Exposed Supabase Credentials (CRITICAL RISK) - ✅ FIXED
+- **File**: `src/integrations/supabase/client.ts:5-6`
+- **Issue**: Hardcoded database URL and JWT token in source code
+- **Risk**: Complete database access exposed to public
+- **Status**: ✅ RESOLVED - Now uses environment variables
+
+#### 2. Client-Side Role Manipulation (HIGH RISK)
+- **File**: `src/components/auth/AuthProvider.tsx:175-198`  
+- **Issue**: Users can set their own admin roles via client-side code
+- **Risk**: Privilege escalation to admin access
+- **Status**: ⚠️ REQUIRES SERVER-SIDE ENFORCEMENT
+
+#### 3. Unprotected Admin Routes (HIGH RISK)
+- **File**: `src/App.tsx:97-101`
+- **Issue**: `/admin/*` routes accessible without authentication
+- **Risk**: Anyone can access admin functionality
+- **Status**: ⚠️ REQUIRES IMMEDIATE ROUTE GUARDS
+
+### Database Schema Status
+**Current user_type enum**: `['traveler', 'guide', 'host', 'admin']`
+**Missing**: `blogger`, `super_admin`
+**Super Admin**: `jg.mastermind@gmail.com` currently set as `traveler` (needs elevation)
+
+### Production-Grade Implementation Plan
+
+#### Phase 1: IMMEDIATE Security Fixes (45 minutes) - CRITICAL FIRST
+**CRITICAL: Complete before any admin portal development**
+
+**Rollback Note**: If any Phase 1 change fails, revert and re-issue new credentials before retrying.
+
+1. **Rotate Supabase Credentials**
+```bash
+# 1. Generate new keys in Supabase dashboard
+# 2. Update environment variables in .env files
+# 3. Replace hardcoded values with process.env
+```
+
+2. **Database Enum & Super Admin Setup**
+```sql
+-- Add missing enum values (admin already exists)
+ALTER TYPE user_type_enum ADD VALUE IF NOT EXISTS 'blogger';
+ALTER TYPE user_type_enum ADD VALUE IF NOT EXISTS 'super_admin';
+
+-- Elevate super admin (CRITICAL)
+UPDATE users SET user_type = 'super_admin' 
+WHERE LOWER(email) = LOWER('jg.mastermind@gmail.com');
+```
+
+3. **Admin Invitations Table (Production-Grade)**
+```sql
+-- Enable case-insensitive emails
+CREATE EXTENSION IF NOT EXISTS citext;
+
+CREATE TABLE IF NOT EXISTS admin_invitations (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  email CITEXT NOT NULL,
+  invitation_code TEXT UNIQUE NOT NULL,
+  invited_by UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+  role_type user_type_enum NOT NULL CHECK (role_type IN ('admin', 'blogger')),
+  expires_at TIMESTAMPTZ NOT NULL,
+  used_at TIMESTAMPTZ,
+  created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+  is_active BOOLEAN NOT NULL DEFAULT TRUE
+);
+
+-- Prevent duplicate active invitations
+CREATE UNIQUE INDEX IF NOT EXISTS uq_active_invite_per_email
+ON admin_invitations (email)
+WHERE is_active = TRUE AND used_at IS NULL;
+
+-- Performance indexes
+CREATE INDEX IF NOT EXISTS ix_invites_code ON admin_invitations (invitation_code);
+CREATE INDEX IF NOT EXISTS ix_invites_expiry ON admin_invitations (expires_at);
+```
+
+4. **Row Level Security (RLS) Policies**
+```sql
+-- Enable RLS
+ALTER TABLE admin_invitations ENABLE ROW LEVEL SECURITY;
+
+-- Super admin write access only
+CREATE POLICY invite_write_super_admin ON admin_invitations
+FOR ALL TO authenticated
+USING (EXISTS (SELECT 1 FROM users u WHERE u.id = auth.uid() AND u.user_type = 'super_admin'))
+WITH CHECK (EXISTS (SELECT 1 FROM users u WHERE u.id = auth.uid() AND u.user_type = 'super_admin'));
+
+-- Invitees can read their own active invites
+CREATE POLICY invitee_read_own ON admin_invitations
+FOR SELECT TO authenticated
+USING (email = (SELECT auth.email()));
+```
+
+#### Phase 2: Server-Side Role Enforcement (60 minutes)
+
+5. **Audit Trail Table**
+```sql
+CREATE TABLE IF NOT EXISTS admin_invitation_audit (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  invitation_id UUID NOT NULL REFERENCES admin_invitations(id),
+  acted_by UUID REFERENCES users(id),
+  action TEXT NOT NULL CHECK (action IN ('accept', 'revoke', 'resend')),
+  created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+);
+```
+
+6. **SECURITY DEFINER Function (Prevents Client Role Manipulation)**
+```sql
+CREATE OR REPLACE FUNCTION accept_admin_invitation(p_email CITEXT, p_code TEXT)
+RETURNS TEXT LANGUAGE plpgsql SECURITY DEFINER
+AS $
+DECLARE
+  v_inv admin_invitations;
+  v_user users;
+BEGIN
+  -- Lock and verify invite
+  SELECT * INTO v_inv FROM admin_invitations
+  WHERE email = p_email AND invitation_code = p_code 
+    AND is_active = TRUE AND used_at IS NULL AND expires_at > NOW()
+  FOR UPDATE;
+  
+  IF NOT FOUND THEN RAISE EXCEPTION 'Invalid or expired invitation'; END IF;
+  
+  -- Find user
+  SELECT * INTO v_user FROM users WHERE LOWER(email) = LOWER(p_email);
+  IF NOT FOUND THEN RAISE EXCEPTION 'User must sign up before using invitation'; END IF;
+  
+  -- Elevate role (SERVER-SIDE ONLY)
+  UPDATE users SET user_type = v_inv.role_type WHERE id = v_user.id;
+  
+  -- Deactivate invite (single use)
+  UPDATE admin_invitations SET used_at = NOW(), is_active = FALSE WHERE id = v_inv.id;
+  
+  -- Audit log
+  INSERT INTO admin_invitation_audit (invitation_id, acted_by, action)
+  VALUES (v_inv.id, v_user.id, 'accept');
+  
+  RETURN 'ok';
+END;
+$;
+```
+
+#### Phase 3: UI Implementation (90 minutes)
+
+**i18n Note**: `/admin/*` routes must respect existing i18n detection system. Consider if admin portal will support `/fr-ca/admin/*` routes for French-speaking administrators.
+
+7. **Route Guards (RequireRole HOC)**
+```typescript
+// src/components/auth/RequireRole.tsx
+const RequireRole = ({ children, allowedRoles }) => {
+  const { user, loading } = useAuth();
+  if (loading) return <div>Loading...</div>;
+  if (!user || !allowedRoles.includes(user.user_type)) {
+    return <Navigate to="/403" />;
+  }
+  return children;
+};
+```
+
+8. **Protected Admin Routes**
+```typescript
+// App.tsx - Wrap admin routes with protection
+<Route path="/admin/invitations" element={
+  <RequireRole allowedRoles={['super_admin']}>
+    <InvitationManager />
+  </RequireRole>
+} />
+```
+
+9. **Extend DashboardSidebar with Super Admin Navigation**
+```typescript
+// Reuse existing DashboardSidebar component
+// Add super_admin-only navigation items for /admin/invitations and /admin/users
+```
+
+#### Phase 4: Email & Edge Functions (60 minutes)
+
+10. **Supabase Edge Functions**
+- `create_admin_invite` - Generate secure codes, send emails with 48-hour expiry
+- `revoke_admin_invite` - Deactivate invitations and audit
+- Server-side validation for all invitation operations
+
+11. **Invitation Acceptance Flow**
+- `/admin/accept?email=...&code=...` route for invitation redemption
+- Calls `accept_admin_invitation()` SECURITY DEFINER function
+- Redirects to admin dashboard after successful role elevation
+
+### Critical Security Principles
+
+1. **Server-Side Enforcement**: Never trust client-side role validation
+2. **Atomic Operations**: Use SECURITY DEFINER functions for role changes
+3. **Audit Everything**: Log all admin invitation actions to `admin_invitation_audit`
+4. **Time-Limited Access**: 48-hour invitation expiry with automatic cleanup
+5. **Single Use**: Invitation codes work only once, marked `used_at` after acceptance
+6. **Email Binding**: Invitations tied to specific email addresses via CITEXT
+
+### Security Validation Checklist
+
+**Before Deployment:**
+- [ ] Supabase credentials moved to environment variables
+- [ ] Super admin role elevated in database (`jg.mastermind@gmail.com` = `super_admin`)
+- [ ] RLS policies active on admin_invitations table
+- [ ] Route guards prevent unauthorized admin access
+- [ ] SECURITY DEFINER function prevents client role manipulation
+- [ ] 48-hour invitation expiry working
+- [ ] Audit trail capturing all admin actions
+
+**IMPORTANT**: Do not proceed with Phase 2-4 until Phase 1 security fixes are completed.
+
+### TypeScript Security Configuration
+**Current Risk**: `tsconfig.json` has weak type safety settings
+- `noImplicitAny: false` - allows untyped variables  
+- `strictNullChecks: false` - allows null/undefined errors
+
+**Recommended Gradual Fix**:
+1. Enable strict mode for new admin files only
+2. Fix type errors incrementally  
+3. Focus on auth and invitation-related files first
+
 # Claude Code Session Initialization
 
 ## CRITICAL: Always Read .claude Directory at Session Start

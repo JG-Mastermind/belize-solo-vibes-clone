@@ -1,9 +1,49 @@
 
 import { MapPin, Phone, Mail, Facebook, Instagram, Twitter } from "lucide-react";
 import { useTranslation } from "react-i18next";
+import { Link, useNavigate, useLocation } from "react-router-dom";
 
 const Footer = () => {
-  const { t } = useTranslation(['footer', 'common']);
+  const { t, i18n } = useTranslation(['footer', 'common']);
+  const navigate = useNavigate();
+  const location = useLocation();
+  
+  // Get localized path for bilingual support
+  const getLocalizedPath = (englishPath: string) => {
+    if (i18n.language === 'fr-CA') {
+      const pathMappings = {
+        '/adventures': '/fr-ca/aventures',
+        '/about': '/fr-ca/a-propos',
+        '/contact': '/fr-ca/contact',
+        '/safety': '/fr-ca/securite',
+        '/blog': '/fr-ca/blog'
+      };
+      return pathMappings[englishPath as keyof typeof pathMappings] || englishPath;
+    }
+    return englishPath;
+  };
+
+  const handleReviewsClick = (e: React.MouseEvent) => {
+    e.preventDefault();
+    const currentPath = location.pathname;
+    const isOnAdventuresPage = currentPath === '/adventures' || currentPath === '/fr-ca/aventures';
+    
+    if (isOnAdventuresPage) {
+      const element = document.getElementById('testimonials');
+      if (element) {
+        element.scrollIntoView({ behavior: 'smooth' });
+      }
+    } else {
+      const targetAdventuresPage = getLocalizedPath('/adventures');
+      navigate(targetAdventuresPage);
+      setTimeout(() => {
+        const element = document.getElementById('testimonials');
+        if (element) {
+          element.scrollIntoView({ behavior: 'smooth' });
+        }
+      }, 750);
+    }
+  };
   return (
     <footer className="bg-slate-900 dark:bg-slate-950 text-white">
       <div className="container mx-auto px-4 py-12">
@@ -36,12 +76,12 @@ const Footer = () => {
           <div className="space-y-4">
             <h3 className="font-playfair font-semibold text-lg">{t('footer:sections.quickLinks')}</h3>
             <ul className="space-y-2 text-sm">
-              <li><a href="/adventures" className="text-slate-300 hover:text-green-400 transition-colors">{t('footer:quickLinks.adventures')}</a></li>
-              <li><a href="#about" className="text-slate-300 hover:text-green-400 transition-colors">{t('footer:quickLinks.aboutUs')}</a></li>
-              <li><a href="/adventures#testimonials" className="text-slate-300 hover:text-green-400 transition-colors">{t('footer:quickLinks.reviews')}</a></li>
-              <li><a href="#" className="text-slate-300 hover:text-green-400 transition-colors">{t('footer:quickLinks.soloTravelGuide')}</a></li>
-              <li><a href="#" className="text-slate-300 hover:text-green-400 transition-colors">{t('footer:quickLinks.safetyInformation')}</a></li>
-              <li><a href="#" className="text-slate-300 hover:text-green-400 transition-colors">{t('footer:quickLinks.faq')}</a></li>
+              <li><Link to={getLocalizedPath('/adventures')} className="text-slate-300 hover:text-green-400 transition-colors">{t('footer:quickLinks.adventures')}</Link></li>
+              <li><Link to={getLocalizedPath('/about')} className="text-slate-300 hover:text-green-400 transition-colors">{t('footer:quickLinks.aboutUs')}</Link></li>
+              <li><button onClick={handleReviewsClick} className="text-slate-300 hover:text-green-400 transition-colors text-left">{t('footer:quickLinks.reviews')}</button></li>
+              <li><Link to={getLocalizedPath('/blog')} className="text-slate-300 hover:text-green-400 transition-colors">{t('footer:quickLinks.soloTravelGuide')}</Link></li>
+              <li><Link to={getLocalizedPath('/safety')} className="text-slate-300 hover:text-green-400 transition-colors">{t('footer:quickLinks.safetyInformation')}</Link></li>
+              <li><Link to={getLocalizedPath('/contact')} className="text-slate-300 hover:text-green-400 transition-colors">{t('footer:quickLinks.faq')}</Link></li>
             </ul>
           </div>
 
@@ -49,12 +89,12 @@ const Footer = () => {
           <div className="space-y-4">
             <h3 className="font-playfair font-semibold text-lg">{t('footer:sections.popularAdventures')}</h3>
             <ul className="space-y-2 text-sm">
-              <li><a href="#" className="text-slate-300 hover:text-green-400 transition-colors">{t('footer:adventures.caveTubing')}</a></li>
-              <li><a href="#" className="text-slate-300 hover:text-green-400 transition-colors">{t('footer:adventures.blueHoleDiving')}</a></li>
-              <li><a href="#" className="text-slate-300 hover:text-green-400 transition-colors">{t('footer:adventures.mayaRuinsTours')}</a></li>
-              <li><a href="#" className="text-slate-300 hover:text-green-400 transition-colors">{t('footer:adventures.snorkelingTours')}</a></li>
-              <li><a href="#" className="text-slate-300 hover:text-green-400 transition-colors">{t('footer:adventures.jungleZiplining')}</a></li>
-              <li><a href="#" className="text-slate-300 hover:text-green-400 transition-colors">{t('footer:adventures.wildlifeWatching')}</a></li>
+              <li><Link to={getLocalizedPath('/adventures')} className="text-slate-300 hover:text-green-400 transition-colors">{t('footer:adventures.caveTubing')}</Link></li>
+              <li><Link to={getLocalizedPath('/adventures')} className="text-slate-300 hover:text-green-400 transition-colors">{t('footer:adventures.blueHoleDiving')}</Link></li>
+              <li><Link to={getLocalizedPath('/adventures')} className="text-slate-300 hover:text-green-400 transition-colors">{t('footer:adventures.mayaRuinsTours')}</Link></li>
+              <li><Link to={getLocalizedPath('/adventures')} className="text-slate-300 hover:text-green-400 transition-colors">{t('footer:adventures.snorkelingTours')}</Link></li>
+              <li><Link to={getLocalizedPath('/adventures')} className="text-slate-300 hover:text-green-400 transition-colors">{t('footer:adventures.jungleZiplining')}</Link></li>
+              <li><Link to={getLocalizedPath('/adventures')} className="text-slate-300 hover:text-green-400 transition-colors">{t('footer:adventures.wildlifeWatching')}</Link></li>
             </ul>
           </div>
 

@@ -29,6 +29,11 @@ export const adminNavigationItems: NavigationItem[] = [
   { name: 'Safety Alerts', path: '/dashboard/alerts', requiresAuth: true, roles: ['admin'] },
 ];
 
+export const superAdminNavigationItems: NavigationItem[] = [
+  { name: 'Invitations', path: '/admin/invitations', requiresAuth: true, roles: ['super_admin'] },
+  { name: 'Users', path: '/admin/users', requiresAuth: true, roles: ['super_admin'] },
+];
+
 export const socialLinks = [
   { name: 'Instagram', url: 'https://instagram.com/belizevibes', color: 'text-pink-500 dark:text-pink-400' },
   { name: 'YouTube', url: 'https://youtube.com/@belizevibes', color: 'text-red-500 dark:text-red-400' },

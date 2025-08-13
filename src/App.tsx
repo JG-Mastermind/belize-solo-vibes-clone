@@ -35,6 +35,10 @@ import EditPost from "./pages/dashboard/EditPost";
 import AdminAdventures from "./pages/admin/AdminAdventures";
 import AdminCreateAdventure from "./pages/admin/AdminCreateAdventure";
 import AdminEditAdventure from "./pages/admin/AdminEditAdventure";
+import InvitationManager from "./pages/admin/InvitationManager";
+import UserManager from "./pages/admin/UserManager";
+import AcceptInvitation from "./pages/admin/AcceptInvitation";
+import RequireRole from "./components/auth/RequireRole";
 import TestAI from "./pages/TestAI";
 
 const queryClient = new QueryClient();
@@ -98,10 +102,21 @@ const App = () => (
               <Route path="adventures" element={<AdminAdventures />} />
               <Route path="adventures/new" element={<AdminCreateAdventure />} />
               <Route path="adventures/edit/:id" element={<AdminEditAdventure />} />
+              <Route path="invitations" element={
+                <RequireRole allowedRoles={['super_admin']}>
+                  <InvitationManager />
+                </RequireRole>
+              } />
+              <Route path="users" element={
+                <RequireRole allowedRoles={['super_admin']}>
+                  <UserManager />
+                </RequireRole>
+              } />
             </Route>
             
             <Route path="/admin/posts/new" element={<CreatePost />} />
             <Route path="/admin/posts/edit/:id" element={<EditPost />} />
+            <Route path="/admin/accept" element={<AcceptInvitation />} />
             
             <Route path="*" element={<NotFound />} />
           </Routes>

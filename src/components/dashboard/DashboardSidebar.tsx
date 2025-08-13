@@ -25,9 +25,11 @@ import {
   AlertTriangle,
   MessageSquare,
   Plus,
+  UserPlus,
+  Shield,
 } from 'lucide-react';
 import { useAuth } from '../auth/AuthProvider';
-import { dashboardNavigationItems, adminNavigationItems, filterNavigationByRole } from '@/lib/navigation';
+import { dashboardNavigationItems, adminNavigationItems, superAdminNavigationItems, filterNavigationByRole } from '@/lib/navigation';
 
 // Icon mapping for dashboard navigation
 const iconMap = {
@@ -40,6 +42,8 @@ const iconMap = {
   '/dashboard/payouts': CreditCard,
   '/dashboard/users': Users,
   '/dashboard/alerts': AlertTriangle,
+  '/admin/invitations': UserPlus,
+  '/admin/users': Shield,
 };
 
 export const DashboardSidebar = () => {
@@ -63,6 +67,8 @@ export const DashboardSidebar = () => {
       '/dashboard/payouts': t('dashboard:navigation.payouts'),
       '/dashboard/users': t('dashboard:navigation.users'),
       '/dashboard/alerts': t('dashboard:navigation.alerts'),
+      '/admin/invitations': 'Invitations',
+      '/admin/users': 'Users',
     };
     return pathMap[path] || path;
   };
@@ -70,6 +76,7 @@ export const DashboardSidebar = () => {
   // Filter navigation items based on user role
   const mainNavItems = filterNavigationByRole(dashboardNavigationItems, userRole);
   const adminNavItems = filterNavigationByRole(adminNavigationItems, userRole);
+  const superAdminNavItems = filterNavigationByRole(superAdminNavigationItems, userRole);
 
   return (
     <Sidebar className="border-r border-sidebar-border bg-sidebar">
@@ -107,6 +114,29 @@ export const DashboardSidebar = () => {
             <SidebarGroupContent>
               <SidebarMenu>
                 {adminNavItems.map((item) => {
+                  const IconComponent = iconMap[item.path as keyof typeof iconMap];
+                  return (
+                    <SidebarMenuItem key={item.name}>
+                      <SidebarMenuButton asChild isActive={isActive(item.path)}>
+                        <Link to={item.path} className="sidebar-nav-item">
+                          {IconComponent && <IconComponent className="h-4 w-4" />}
+                          <span>{getNavName(item.path)}</span>
+                        </Link>
+                      </SidebarMenuButton>
+                    </SidebarMenuItem>
+                  );
+                })}
+              </SidebarMenu>
+            </SidebarGroupContent>
+          </SidebarGroup>
+        )}
+
+        {superAdminNavItems.length > 0 && (
+          <SidebarGroup>
+            <SidebarGroupLabel className="text-sidebar-foreground/60">Super Admin</SidebarGroupLabel>
+            <SidebarGroupContent>
+              <SidebarMenu>
+                {superAdminNavItems.map((item) => {
                   const IconComponent = iconMap[item.path as keyof typeof iconMap];
                   return (
                     <SidebarMenuItem key={item.name}>

@@ -2,6 +2,54 @@
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
+## 🚨 PRODUCTION PROJECT STATUS - READ FIRST
+
+### PROJECT MATURITY: 85% COMPLETE - LAUNCH READY
+**This is NOT a new project, demo, or experimental codebase.**
+
+- **Status**: Production-ready application approaching launch
+- **Completion**: 85% complete with all major features implemented
+- **Codebase**: Mature, interconnected system with established patterns
+- **Users**: Real users and business logic in production database
+
+### CRITICAL DEVELOPMENT PRINCIPLES
+
+#### 1. SURGICAL CHANGES ONLY
+- **NO rewriting existing logic** for simple fixes
+- **NO new architectural patterns** - use existing patterns
+- **NO major refactoring** - work within current structure
+- Find the **simplest solution** that fits existing codebase
+
+#### 2. HIGH-RISK AREAS - EXTREME CAUTION
+- **Database**: Every schema change affects production data
+- **Translation/i18n**: Complex multilingual routing already working
+- **Authentication**: Role-based access with real users
+- **Booking System**: Financial transactions and payments
+- **Routing**: Intricate English/French URL patterns
+
+#### 3. TREAT AS PRODUCTION ENVIRONMENT
+- **Every file matters** - no experimental changes
+- **Everything is interconnected** - changes ripple through system
+- **Real business impact** - bugs affect actual users
+- **Launch timeline** - delays have business consequences
+
+#### 4. PROBLEM-SOLVING APPROACH
+1. **Understand first** - Read existing code patterns thoroughly
+2. **Minimal change** - Find smallest possible fix
+3. **Use existing infrastructure** - Don't reinvent solutions
+4. **Test carefully** - Verify change doesn't break connections
+5. **Ask before major changes** - Get explicit permission
+
+### WHEN TO STOP AND ASK
+- Any database schema modifications
+- Changes to authentication or user roles  
+- Modifications to payment or booking flow
+- Translation system changes
+- New dependencies or architectural patterns
+- Anything that seems to require "rewriting" existing logic
+
+**Remember: This application has real users, real data, and a real launch timeline. Treat every change as if it affects production because it does.**
+
 ## Development Commands
 
 - **Start development server**: `npm run dev` (runs on port 5173)

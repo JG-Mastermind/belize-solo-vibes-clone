@@ -1,11 +1,14 @@
 
-import React from 'react';
+import React, { Suspense, lazy } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { StatsCard } from '@/components/dashboard/StatsCard';
-import { BookingsTable } from '@/components/dashboard/BookingsTable';
-import { RevenueChart, BookingsChart } from '@/components/dashboard/DashboardCharts';
-import { AIAssistantPanel } from '@/components/dashboard/AIAssistantPanel';
+
+// Lazy load heavy dashboard components
+const BookingsTable = lazy(() => import('@/components/dashboard/BookingsTable').then(module => ({ default: module.BookingsTable })));
+const RevenueChart = lazy(() => import('@/components/dashboard/DashboardCharts').then(module => ({ default: module.RevenueChart })));
+const BookingsChart = lazy(() => import('@/components/dashboard/DashboardCharts').then(module => ({ default: module.BookingsChart })));
+const AIAssistantPanel = lazy(() => import('@/components/dashboard/AIAssistantPanel').then(module => ({ default: module.AIAssistantPanel })));
 import { useAuth } from '@/components/auth/AuthProvider';
 import { useAdventureCreation } from '@/contexts/AdventureCreationContext';
 import { toast } from 'sonner';
@@ -46,10 +49,14 @@ const AdminDashboard = () => {
 
       {/* AI Assistant Panel */}
       {user && (
-        <AIAssistantPanel 
-          userType={user.user_metadata?.role || 'admin'}
-          onUseGenerated={handleAIGenerated}
-        />
+        <Suspense fallback={
+          <div className="animate-pulse bg-gray-200 rounded-lg h-64 w-full"></div>
+        }>
+          <AIAssistantPanel 
+            userType={user.user_metadata?.role || 'admin'}
+            onUseGenerated={handleAIGenerated}
+          />
+        </Suspense>
       )}
 
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
@@ -85,14 +92,26 @@ const AdminDashboard = () => {
 
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-7">
         <div className="col-span-4">
-          <RevenueChart />
+          <Suspense fallback={
+            <div className="animate-pulse bg-gray-200 rounded-lg h-96 w-full"></div>
+          }>
+            <RevenueChart />
+          </Suspense>
         </div>
         <div className="col-span-3">
-          <BookingsChart />
+          <Suspense fallback={
+            <div className="animate-pulse bg-gray-200 rounded-lg h-96 w-full"></div>
+          }>
+            <BookingsChart />
+          </Suspense>
         </div>
       </div>
 
-      <BookingsTable />
+      <Suspense fallback={
+        <div className="animate-pulse bg-gray-200 rounded-lg h-64 w-full"></div>
+      }>
+        <BookingsTable />
+      </Suspense>
     </div>
   );
 };

@@ -142,7 +142,7 @@ let translationService: TranslationService | null = null;
 export const getTranslationService = (): TranslationService => {
   if (!translationService) {
     translationService = new TranslationService({
-      apiKey: process.env.REACT_APP_OPENAI_API_KEY || import.meta.env.VITE_OPENAI_API_KEY
+      apiKey: import.meta.env.VITE_OPENAI_API_KEY
     });
   }
   return translationService;

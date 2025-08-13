@@ -27,8 +27,8 @@ class AIImageService {
 
   constructor() {
     // Check for API key - graceful degradation if not available
-    this.apiKey = import.meta.env.VITE_OPENAI_API_KEY || process.env.OPENAI_API_KEY || '';
-    this.organizationId = import.meta.env.VITE_OPENAI_ORGANIZATION || process.env.OPENAI_ORGANIZATION;
+    this.apiKey = import.meta.env.VITE_OPENAI_API_KEY || '';
+    this.organizationId = import.meta.env.VITE_OPENAI_ORGANIZATION;
     
     if (!this.apiKey) {
       console.warn('⚠️  OpenAI API key not found. AI image generation will be disabled.');

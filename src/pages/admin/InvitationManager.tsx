@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { Button } from '@/components/ui/button';
+import * as Sentry from '@sentry/react';
 import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { 
@@ -240,4 +241,18 @@ const InvitationManager = () => {
   );
 };
 
-export default InvitationManager;
+export default Sentry.withErrorBoundary(InvitationManager, {
+  fallback: ({ error }) => (
+    <Card className="max-w-4xl mx-auto">
+      <CardHeader>
+        <CardTitle className="text-red-600">Something went wrong</CardTitle>
+        <CardDescription>
+          There was an error loading the invitation manager. Please refresh the page or contact support.
+        </CardDescription>
+      </CardHeader>
+    </Card>
+  ),
+  beforeCapture: (scope) => {
+    scope.setTag('component', 'InvitationManager');
+  }
+});

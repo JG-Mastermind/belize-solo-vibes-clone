@@ -1,567 +1,380 @@
-# CLAUDE.md
-
-This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
-
-## 🚨 PRODUCTION PROJECT STATUS - READ FIRST
-
-### PROJECT MATURITY: 85% COMPLETE - LAUNCH READY
-**This is NOT a new project, demo, or experimental codebase.**
-
-- **Status**: Production-ready application approaching launch
-- **Completion**: 85% complete with all major features implemented
-- **Codebase**: Mature, interconnected system with established patterns
-- **Users**: Real users and business logic in production database
-
-### CRITICAL DEVELOPMENT PRINCIPLES
-
-#### 1. SURGICAL CHANGES ONLY
-- **NO rewriting existing logic** for simple fixes
-- **NO new architectural patterns** - use existing patterns
-- **NO major refactoring** - work within current structure
-- Find the **simplest solution** that fits existing codebase
-
-#### 2. HIGH-RISK AREAS - EXTREME CAUTION
-- **Database**: Every schema change affects production data
-- **Translation/i18n**: Complex multilingual routing already working
-- **Authentication**: Role-based access with real users
-- **Booking System**: Financial transactions and payments
-- **Routing**: Intricate English/French URL patterns
-
-#### 3. TREAT AS PRODUCTION ENVIRONMENT
-- **Every file matters** - no experimental changes
-- **Everything is interconnected** - changes ripple through system
-- **Real business impact** - bugs affect actual users
-- **Launch timeline** - delays have business consequences
-
-#### 4. PROBLEM-SOLVING APPROACH
-1. **Understand first** - Read existing code patterns thoroughly
-2. **Minimal change** - Find smallest possible fix
-3. **Use existing infrastructure** - Don't reinvent solutions
-4. **Test carefully** - Verify change doesn't break connections
-5. **Ask before major changes** - Get explicit permission
-
-### WHEN TO STOP AND ASK
-- Any database schema modifications
-- Changes to authentication or user roles  
-- Modifications to payment or booking flow
-- Translation system changes
-- New dependencies or architectural patterns
-- Anything that seems to require "rewriting" existing logic
-
-**Remember: This application has real users, real data, and a real launch timeline. Treat every change as if it affects production because it does.**
-
-## Development Commands
-
-- **Start development server**: `npm run dev` (runs on port 5173)
-- **Start backend server**: `npm run dev:server` (separate Node.js server with Express)
-- **Build for production**: `npm run build`
-- **Build for development**: `npm run build:dev`
-- **Lint code**: `npm run lint` (ESLint)
-- **Preview production build**: `npm run preview`
-
-## Architecture Overview
-
-### Tech Stack
-- **Frontend**: Vite + React 18 + TypeScript
-- **Styling**: Tailwind CSS + shadcn/ui components
-- **State Management**: React Context + TanStack Query
-- **Database**: Supabase (PostgreSQL)
-- **Authentication**: Supabase Auth
-- **Payments**: Stripe integration
-- **Internationalization**: i18next with English/French Canadian (fr-CA)
-- **Routing**: React Router v6 with nested layouts
-
-### Project Structure
-
-#### Core Architecture
-- **Frontend**: React SPA with component-based architecture
-- **Backend**: Supabase Edge Functions for serverless logic
-- **Database**: PostgreSQL with comprehensive schema including adventures, bookings, users, guides, reviews
-- **File Storage**: Supabase Storage for images/media
-
-#### Key Components
-- **Authentication**: Complete auth flow with role-based access (admin, guide, traveler, host)
-- **Booking System**: Multi-step booking flow with cart persistence, availability checking, and Stripe payments
-- **Multilingual**: URL-based language detection (/fr-ca routes) with fallback logic
-- **SEO**: Helmet-based meta management with structured data
-
-#### Database Schema
-Core tables: `users`, `adventures`, `bookings`, `guides`, `hosts`, `reviews`, `messages`, `tours`
-- User types: traveler, guide, host, admin
-- Comprehensive booking system with availability tracking
-- Multi-language content support with slug_fr for French routes
-
-### Important Patterns
-
-#### Language/i18n System
-- URL-based language detection (`useLanguageContext` hook)
-- Route structure: `/` (English), `/fr-ca/*` (French)
-- Adventure details support both `slug` and `slug_fr` routing
-- Language context switches based on URL path
-
-#### Booking System Architecture
-- Multi-step booking flow with cart persistence
-- Availability checking with blocked dates and capacity management
-- Stripe integration for payments with webhooks
-- Email notifications and confirmation system
-
-#### Authentication Flow
-- Supabase Auth with social providers (Google, etc.)
-- Role-based access control throughout app
-- Profile management with user type selection
-
-#### Component Organization
-- `/components` - Reusable UI components
-- `/pages` - Route components
-- `/hooks` - Custom React hooks
-- `/services` - Business logic and API calls
-- `/types` - TypeScript type definitions
-- `/utils` - Utility functions
-
-#### Routing Architecture
-The app uses React Router v6 with nested layouts:
-- Main routes wrapped in `AppLayout` (Header + Footer)
-- French routes like `/fr-ca/securite`, `/fr-ca/a-propos`, `/fr-ca/contact`
-- Adventure detail routes support both UUID and slug patterns (`/tours/:slug`)
-- Dashboard routes use separate `DashboardLayout` for admin/guide/traveler
-- Authentication callback and booking success pages have dedicated routes
-
-#### Service Layer Pattern
-Business logic is centralized in service classes:
-- `BookingService`: Comprehensive booking flow, availability checking, cart management
-- `paymentService`: Stripe integration for payment processing
-- `translationService`: Content translation and localization helpers
-- Services handle database operations, error handling, and data transformation
-
-#### State Management
-- **React Context**: Auth state, language context, adventure creation flow
-- **TanStack Query**: Server state management, caching, and synchronization
-- **Local Storage**: Cart persistence, session management, user preferences
-- Component-level state for UI interactions and form management
-
-## Database Lessons Learned
-
-### Critical SQL Command Mistakes
-- Rushed SQL commands without careful verification
-- Included comments in SQL causing syntax errors
-- Assumed titles instead of using exact database values
-- Kept trying different approaches instead of being surgical
-
-### Correct Approach to Database Work
-- Audit first, change second
-- Use exact IDs and values from database results
-- Test on single record, then batch
-- NO comments in SQL queries
-- Stop and verify each step instead of rushing
-
-### Guiding Principle
-Database = Production Business Logic. Not a testing playground.
-
-### Commitment to Improvement
-- Be precise with exact values
-- Verify each step completely
-- Use surgical approaches only
-- Never rush SQL commands
-
-LESSON LEARNED: Need to implement proper route-based language context
-  switching before adding multilingual routes to prevent content/URL language
-   mismatches.
-
-## i18n French Navigation Resolution (August 2025)
-
-### Bug Root Causes Successfully Identified
-- Missing URL-based language detection in i18n config (order: ['path', 'localStorage', 'navigator'])
-- Hardcoded English paths in header navigation (/about, /safety, /contact)
-- Language context mismatch between content translation and URL routing
-
-### Surgical Fixes Applied
-1. **i18n Configuration**: Added 'path' to detection order in src/lib/i18n.ts
-2. **Dynamic Navigation**: Created getLocalizedPath() function for both Header.tsx and MobileMenu.tsx
-3. **UX Enhancement**: Added transitions (duration-200) and language indicator (FR/EN toggle)
-
-### Critical Success Pattern
-- **Audit first**: Comprehensive file review before any changes
-- **Surgical approach**: Minimal, focused fixes without rewriting existing logic
-- **Validation**: Build tests after each change, TypeScript checks
-- **Consistency**: Applied same pattern to both desktop and mobile components
-
-## ✅ COMPLETED: French URL Slug Implementation (August 2025)
-
-### Successfully Implemented French Dynamic URLs
-- ✅ **French tour URLs working**: `/fr-ca/tours/aventure-pine-ridge-big-rock-falls-caracol`
-- ✅ **French blog URLs working**: `/fr-ca/blog` and `/fr-ca/blog/:slug`
-- ✅ **Bidirectional slug conversion**: English ↔ French slug mapping
-- ✅ **Route consistency**: All French routes follow `/fr-ca/` pattern
-- ✅ **Content integration**: French URLs display French content via i18n system
-
-### Surgical Implementation Process (SUCCESSFUL PATTERN)
-**Step 1: Add French Routes**
-```typescript
-// App.tsx - Add French dynamic routes alongside existing static routes
-<Route path="fr-ca/tours/:slug" element={<AdventureDetail />} />
-<Route path="fr-ca/blog" element={<Blog />} />
-<Route path="fr-ca/blog/:slug" element={<BlogPost />} />
-```
-
-**Step 2: Create Slug Conversion Utilities**
-```typescript
-// src/utils/frenchSlugs.ts - Bidirectional slug mapping
-export const convertFrenchSlugToEnglish = (frenchSlug: string): string => { ... }
-export const convertEnglishSlugToFrench = (englishSlug: string): string => { ... }
-```
-
-**Step 3: Update Data Fetching (AdventureDetail.tsx)**
-```typescript
-// Convert French slug to English for data fetching only
-const englishSlug = slug ? convertFrenchSlugToEnglish(slug) : slug;
-// Use englishSlug for all database operations
-```
-
-**Step 4: Update Link Generation (AdventureCards.tsx)**
-```typescript
-// Generate French URLs when in French mode
-const url = i18n.language === 'fr-CA' 
-  ? `/fr-ca/tours/${convertEnglishSlugToFrench(slug)}`
-  : `/tours/${slug}`;
-```
-
-### Critical Success Factors
-1. **Route Path Consistency**: Ensure link generation matches route definitions exactly
-2. **Singular vs Plural**: `/fr-ca/tours/` (plural) not `/fr-ca/tour/` (singular)
-3. **Don't Touch Content Translation**: Use existing i18n system, only handle URL slugs
-4. **Bidirectional Mapping**: Both English→French and French→English conversion needed
-5. **Language Detection**: Use `i18n.language === 'fr-CA'` for French mode detection
-
-### Common Pitfalls Avoided
-- ❌ **Route Mismatch**: AdventureCards generating `/fr-ca/tours/` but route expecting `/fr-ca/tour/`
-- ❌ **Over-engineering**: Touching content translation when only URL slugs needed changes
-- ❌ **One-way Conversion**: Only having French→English without English→French for link generation
-- ❌ **Missing Blog Routes**: Forgetting to add `/fr-ca/blog` routes alongside tour routes
-
-### Implementation Validation
-```bash
-# Test URLs that now work correctly:
-curl http://localhost:5176/fr-ca/tours/aventure-pine-ridge-big-rock-falls-caracol  # ✅ 200
-curl http://localhost:5176/fr-ca/blog                                               # ✅ 200
-curl http://localhost:5176/tours/pine-ridge-adventure-big-rock-falls-and-caracol   # ✅ 200
-```
-
-**Result**: French users see French URLs, English users see English URLs, same content system serves both via i18n.
-
-## ✅ CRITICAL DEBUG: Meta Title "meta.title /" Issue Resolution (August 2025)
-
-### Bug Symptom
-- Browser tabs showing literal "meta.title /" instead of proper page titles
-- AdventuresPage component calling `t('adventures:meta.title')` but translation key missing
-- Similar issue could affect any page using `namespace:meta.title` pattern
-
-### Root Cause Analysis
-**Missing i18n Namespace Structure**: The component referenced `adventures:meta.title` but no `adventures` namespace existed in `src/lib/i18n.ts`
-
-### Systematic Debugging Process (SUCCESSFUL PATTERN)
-1. **Verify Component Usage**: Confirmed AdventuresPage.tsx line 59 uses `t('adventures:meta.title')`
-2. **Search i18n Structure**: Used grep to find existing `meta.title` patterns in other namespaces
-3. **Identify Missing Namespace**: Found `contact`, `safety`, `about`, `blog` all have `meta: { title: ... }` but `adventures` missing
-4. **Locate Insertion Point**: Found correct placement after `adventureCards` section, before `home` section
-5. **Add Both Languages**: Added English and French versions with proper titles
-
-### Surgical Fix Applied
-```typescript
-// Added to src/lib/i18n.ts after adventureCards section:
-
-// English section (around line 665):
-adventures: {
-  meta: {
-    title: 'Adventures - BelizeVibes'
-  },
-},
-
-// French section (around line 1939):  
-adventures: {
-  meta: {
-    title: 'Aventures - BelizeVibes'
-  },
-},
-```
-
-### Prevention Commands
-```bash
-# Search for missing translation keys when browser shows "meta.title /"
-grep -n "t('.*:meta\.title')" src/pages/*.tsx
-grep -n "meta: {" src/lib/i18n.ts
-grep -n -A 3 -B 3 "adventures:" src/lib/i18n.ts
-
-# Verify namespace exists for component
-# If component uses t('namespace:key'), ensure src/lib/i18n.ts has matching structure
-```
-
-### Key Lessons
-- **Don't assume namespaces exist** - Always verify in i18n.ts when adding new pages
-- **Check both languages** - English AND French sections need matching structure  
-- **Follow existing patterns** - Use same `meta: { title: ... }` structure as other pages
-- **Build test immediately** - Run `npm run build` after i18n changes
-- **Literal key display = missing translation** - When browser shows "namespace:key" literally, the key is missing
-
-### Files Modified
-- ✅ `src/lib/i18n.ts`: Added `adventures` namespace with `meta.title` for EN/FR
-- ✅ Build successful, dev server tested on port 5175
-- ✅ Browser tab now shows "Adventures - BelizeVibes" instead of "meta.title /"
-
-## 🔒 CRITICAL SECURITY: Admin Portal Implementation (August 2025)
-
-**See also Database Lessons Learned** — these security rules apply to all schema changes and role assignments.
-
-### Security Status Tracker
-
-| Phase | Status | Last Updated |
-|-------|--------|--------------|
-| Phase 1: IMMEDIATE Security Fixes | 🔄 In Progress | August 13, 2025 |
-| Phase 2: Server-Side Role Enforcement | ⏳ Pending | - |
-| Phase 3: UI Implementation | ⏳ Pending | - |
-| Phase 4: Email & Edge Functions | ⏳ Pending | - |
-
-### Security Audit Findings
-**CRITICAL VULNERABILITIES DISCOVERED** requiring immediate remediation:
-
-#### 1. Exposed Supabase Credentials (CRITICAL RISK) - ✅ FIXED
-- **File**: `src/integrations/supabase/client.ts:5-6`
-- **Issue**: Hardcoded database URL and JWT token in source code
-- **Risk**: Complete database access exposed to public
-- **Status**: ✅ RESOLVED - Now uses environment variables
-
-#### 2. Client-Side Role Manipulation (HIGH RISK)
-- **File**: `src/components/auth/AuthProvider.tsx:175-198`  
-- **Issue**: Users can set their own admin roles via client-side code
-- **Risk**: Privilege escalation to admin access
-- **Status**: ⚠️ REQUIRES SERVER-SIDE ENFORCEMENT
-
-#### 3. Unprotected Admin Routes (HIGH RISK)
-- **File**: `src/App.tsx:97-101`
-- **Issue**: `/admin/*` routes accessible without authentication
-- **Risk**: Anyone can access admin functionality
-- **Status**: ⚠️ REQUIRES IMMEDIATE ROUTE GUARDS
-
-### Database Schema Status
-**Current user_type enum**: `['traveler', 'guide', 'host', 'admin']`
-**Missing**: `blogger`, `super_admin`
-**Super Admin**: `jg.mastermind@gmail.com` currently set as `traveler` (needs elevation)
-
-### Production-Grade Implementation Plan
-
-#### Phase 1: IMMEDIATE Security Fixes (45 minutes) - CRITICAL FIRST
-**CRITICAL: Complete before any admin portal development**
-
-**Rollback Note**: If any Phase 1 change fails, revert and re-issue new credentials before retrying.
-
-1. **Rotate Supabase Credentials**
-```bash
-# 1. Generate new keys in Supabase dashboard
-# 2. Update environment variables in .env files
-# 3. Replace hardcoded values with process.env
-```
-
-2. **Database Enum & Super Admin Setup**
-```sql
--- Add missing enum values (admin already exists)
-ALTER TYPE user_type_enum ADD VALUE IF NOT EXISTS 'blogger';
-ALTER TYPE user_type_enum ADD VALUE IF NOT EXISTS 'super_admin';
-
--- Elevate super admin (CRITICAL)
-UPDATE users SET user_type = 'super_admin' 
-WHERE LOWER(email) = LOWER('jg.mastermind@gmail.com');
-```
-
-3. **Admin Invitations Table (Production-Grade)**
-```sql
--- Enable case-insensitive emails
-CREATE EXTENSION IF NOT EXISTS citext;
-
-CREATE TABLE IF NOT EXISTS admin_invitations (
-  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-  email CITEXT NOT NULL,
-  invitation_code TEXT UNIQUE NOT NULL,
-  invited_by UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
-  role_type user_type_enum NOT NULL CHECK (role_type IN ('admin', 'blogger')),
-  expires_at TIMESTAMPTZ NOT NULL,
-  used_at TIMESTAMPTZ,
-  created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
-  is_active BOOLEAN NOT NULL DEFAULT TRUE
-);
-
--- Prevent duplicate active invitations
-CREATE UNIQUE INDEX IF NOT EXISTS uq_active_invite_per_email
-ON admin_invitations (email)
-WHERE is_active = TRUE AND used_at IS NULL;
-
--- Performance indexes
-CREATE INDEX IF NOT EXISTS ix_invites_code ON admin_invitations (invitation_code);
-CREATE INDEX IF NOT EXISTS ix_invites_expiry ON admin_invitations (expires_at);
-```
-
-4. **Row Level Security (RLS) Policies**
-```sql
--- Enable RLS
-ALTER TABLE admin_invitations ENABLE ROW LEVEL SECURITY;
-
--- Super admin write access only
-CREATE POLICY invite_write_super_admin ON admin_invitations
-FOR ALL TO authenticated
-USING (EXISTS (SELECT 1 FROM users u WHERE u.id = auth.uid() AND u.user_type = 'super_admin'))
-WITH CHECK (EXISTS (SELECT 1 FROM users u WHERE u.id = auth.uid() AND u.user_type = 'super_admin'));
-
--- Invitees can read their own active invites
-CREATE POLICY invitee_read_own ON admin_invitations
-FOR SELECT TO authenticated
-USING (email = (SELECT auth.email()));
-```
-
-#### Phase 2: Server-Side Role Enforcement (60 minutes)
-
-5. **Audit Trail Table**
-```sql
-CREATE TABLE IF NOT EXISTS admin_invitation_audit (
-  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-  invitation_id UUID NOT NULL REFERENCES admin_invitations(id),
-  acted_by UUID REFERENCES users(id),
-  action TEXT NOT NULL CHECK (action IN ('accept', 'revoke', 'resend')),
-  created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
-);
-```
-
-6. **SECURITY DEFINER Function (Prevents Client Role Manipulation)**
-```sql
-CREATE OR REPLACE FUNCTION accept_admin_invitation(p_email CITEXT, p_code TEXT)
-RETURNS TEXT LANGUAGE plpgsql SECURITY DEFINER
-AS $
-DECLARE
-  v_inv admin_invitations;
-  v_user users;
-BEGIN
-  -- Lock and verify invite
-  SELECT * INTO v_inv FROM admin_invitations
-  WHERE email = p_email AND invitation_code = p_code 
-    AND is_active = TRUE AND used_at IS NULL AND expires_at > NOW()
-  FOR UPDATE;
-  
-  IF NOT FOUND THEN RAISE EXCEPTION 'Invalid or expired invitation'; END IF;
-  
-  -- Find user
-  SELECT * INTO v_user FROM users WHERE LOWER(email) = LOWER(p_email);
-  IF NOT FOUND THEN RAISE EXCEPTION 'User must sign up before using invitation'; END IF;
-  
-  -- Elevate role (SERVER-SIDE ONLY)
-  UPDATE users SET user_type = v_inv.role_type WHERE id = v_user.id;
-  
-  -- Deactivate invite (single use)
-  UPDATE admin_invitations SET used_at = NOW(), is_active = FALSE WHERE id = v_inv.id;
-  
-  -- Audit log
-  INSERT INTO admin_invitation_audit (invitation_id, acted_by, action)
-  VALUES (v_inv.id, v_user.id, 'accept');
-  
-  RETURN 'ok';
-END;
-$;
-```
-
-#### Phase 3: UI Implementation (90 minutes)
-
-**i18n Note**: `/admin/*` routes must respect existing i18n detection system. Consider if admin portal will support `/fr-ca/admin/*` routes for French-speaking administrators.
-
-7. **Route Guards (RequireRole HOC)**
-```typescript
-// src/components/auth/RequireRole.tsx
-const RequireRole = ({ children, allowedRoles }) => {
-  const { user, loading } = useAuth();
-  if (loading) return <div>Loading...</div>;
-  if (!user || !allowedRoles.includes(user.user_type)) {
-    return <Navigate to="/403" />;
-  }
-  return children;
-};
-```
-
-8. **Protected Admin Routes**
-```typescript
-// App.tsx - Wrap admin routes with protection
-<Route path="/admin/invitations" element={
-  <RequireRole allowedRoles={['super_admin']}>
-    <InvitationManager />
-  </RequireRole>
-} />
-```
-
-9. **Extend DashboardSidebar with Super Admin Navigation**
-```typescript
-// Reuse existing DashboardSidebar component
-// Add super_admin-only navigation items for /admin/invitations and /admin/users
-```
-
-#### Phase 4: Email & Edge Functions (60 minutes)
-
-10. **Supabase Edge Functions**
-- `create_admin_invite` - Generate secure codes, send emails with 48-hour expiry
-- `revoke_admin_invite` - Deactivate invitations and audit
-- Server-side validation for all invitation operations
-
-11. **Invitation Acceptance Flow**
-- `/admin/accept?email=...&code=...` route for invitation redemption
-- Calls `accept_admin_invitation()` SECURITY DEFINER function
-- Redirects to admin dashboard after successful role elevation
-
-### Critical Security Principles
-
-1. **Server-Side Enforcement**: Never trust client-side role validation
-2. **Atomic Operations**: Use SECURITY DEFINER functions for role changes
-3. **Audit Everything**: Log all admin invitation actions to `admin_invitation_audit`
-4. **Time-Limited Access**: 48-hour invitation expiry with automatic cleanup
-5. **Single Use**: Invitation codes work only once, marked `used_at` after acceptance
-6. **Email Binding**: Invitations tied to specific email addresses via CITEXT
-
-### Security Validation Checklist
-
-**Before Deployment:**
-- [ ] Supabase credentials moved to environment variables
-- [ ] Super admin role elevated in database (`jg.mastermind@gmail.com` = `super_admin`)
-- [ ] RLS policies active on admin_invitations table
-- [ ] Route guards prevent unauthorized admin access
-- [ ] SECURITY DEFINER function prevents client role manipulation
-- [ ] 48-hour invitation expiry working
-- [ ] Audit trail capturing all admin actions
-
-**IMPORTANT**: Do not proceed with Phase 2-4 until Phase 1 security fixes are completed.
-
-### TypeScript Security Configuration
-**Current Risk**: `tsconfig.json` has weak type safety settings
-- `noImplicitAny: false` - allows untyped variables  
-- `strictNullChecks: false` - allows null/undefined errors
-
-**Recommended Gradual Fix**:
-1. Enable strict mode for new admin files only
-2. Fix type errors incrementally  
-3. Focus on auth and invitation-related files first
-
-# Claude Code Session Initialization
-
-## CRITICAL: Always Read .claude Directory at Session Start
-Every Claude Code session MUST begin by reading the local `.claude/` directory:
-
-```bash
-# Session initialization sequence (NEVER SKIP):
-1. Read /Users/smg.inc/CODES/GitHub/belize-solo-vibes-clone/.claude/context.md
-2. Read /Users/smg.inc/CODES/GitHub/belize-solo-vibes-clone/.claude/session-template.md  
-3. Read /Users/smg.inc/CODES/GitHub/belize-solo-vibes-clone/.claude/session.md
-4. Read /Users/smg.inc/CODES/GitHub/belize-solo-vibes-clone/.claude/settings.local.json
-```
-
-**These files contain:**
-- Project context and Claude's autonomous developer role
-- Session reporting structure and CTO review protocols
-- Critical file boundaries and permissions
-- Testing requirements and safeguards
-
-**IMPORTANT:** 
-- `.claude/` directory stays LOCAL (never commit to git)
-- These instructions override any default Claude behavior
-- Must be loaded fresh every session - no assumptions from previous sessions
-- File locations are fixed and should not change during updates
+🚨 PRODUCTION PROJECT STATUS - READ FIRST
+PROJECT MATURITY: 85% COMPLETE - LAUNCH READY
+This is NOT a new project, demo, or experimental codebase.
+
+Status: Production-ready application approaching launch
+
+Completion: 85% complete with all major features implemented
+
+Codebase: Mature, interconnected system with established patterns
+
+Users: Real users and business logic in production database
+
+CRITICAL DEVELOPMENT PRINCIPLES
+1. SURGICAL CHANGES ONLY
+NO rewriting existing logic for simple fixes
+
+NO new architectural patterns - use existing patterns
+
+NO major refactoring - work within current structure
+
+Find the simplest solution that fits the codebase
+
+2. HIGH-RISK AREAS - EXTREME CAUTION
+Database (migrations/RLS/SECURITY DEFINER)
+
+Translation/i18n (multilingual routing)
+
+Authentication (role-based access)
+
+Booking & Payments (Stripe)
+
+Routing (English/French URL patterns)
+
+3. TREAT AS PRODUCTION
+Every file matters — no experiments
+
+Everything is interconnected — changes ripple
+
+Real business impact — bugs affect real users
+
+Launch timeline — delays cost money
+
+4. PROBLEM-SOLVING APPROACH
+Understand first (read the code + patterns)
+
+Minimal change (smallest viable fix)
+
+Reuse existing infra (don’t reinvent)
+
+Test carefully (unit/integration/E2E)
+
+Ask before major changes (get explicit permission)
+
+WHEN TO STOP AND ASK
+Any database schema modifications
+
+Changes to authentication or user roles
+
+Modifications to payment or booking flow
+
+Translation system changes
+
+New dependencies / architectural patterns
+
+Anything that smells like a rewrite
+
+🔁 Session Bootstrap (/init)
+Run this sequence at the start of every Claude Code session:
+
+bash
+Copy
+Edit
+# 1) Load local session context (NEVER commit .claude/)
+read .claude/context.md
+read .claude/session-template.md
+read .claude/session.md
+read .claude/settings.local.json
+
+# 2) Load optional Master Dev Manual (single source of truth if present)
+if [ -f docs/Claude-Ready Master Dev Manual.md ]; then
+  read docs/Claude-Ready Master Dev Manual.md
+fi
+
+# 3) Auto-discover and load sub-agents (preferred over fallback)
+for f in .claude/agents/*.md .claude/agents/*.agent.md; do
+  [ -f "$f" ] && read "$f"
+done
+
+# 4) Respect the IMMUTABLE block in this CLAUDE.md (do not modify it)
+Rules:
+
+.claude/ stays local only (not committed).
+
+If an agent exists in .claude/agents/, prefer that definition over the fallback registry.
+
+If not found, use the fallback registry below.
+
+🧩 Agent Loader & Task Selection
+Claude must choose exactly one sub‑agent per task. If a task spans multiple concerns, split into multiple PRs with one agent each.
+
+Routing cheatsheet:
+
+Password reset / Supabase recovery → Password Reset Surgeon
+
+Migrations/RLS/SECURITY DEFINER → Backend Architecture Agent
+
+/fr-ca routes, slug_fr, hreflang/sitemap → i18n Route & SEO Agent
+
+Pipelines/tests/security scans → CI/CD Butler
+
+Secrets/CSP/headers/rate limits/role enforcement checks → Security & Compliance Agent
+
+If an agent file is present in .claude/agents/ with the same name, use that file’s scope; otherwise, fall back to the immutable registry below.
+
+<!-- =========================== BEGIN IMMUTABLE REGISTRY DO NOT EDIT / DO NOT REMOVE This block must persist across /init updates. =========================== -->
+🔐 IMMUTABLE: Core Agent Registry (Fallback)
+Each agent is defined with Allowed Paths, DB Scope, Blocked Areas, and Testing Hooks. Do not exceed scope.
+
+1) Password Reset Surgeon (Authentication Flow)
+Scope: Fix/guard Supabase password recovery so reset links never auto‑login; require explicit password entry; sign out after reset.
+
+Allowed (read/write):
+
+src/components/auth/**
+
+src/pages/auth/callback.tsx
+
+src/pages/ResetPassword.tsx or src/pages/NewPassword.tsx (create if missing)
+
+src/components/auth/__tests__/**, src/__tests__/auth/**
+
+docs/runbooks/password-reset.md
+
+DB Scope:
+
+No DDL. May require Supabase Auth redirect URL changes (dashboard) to land on the reset form.
+
+Blocked:
+
+Booking/Stripe flows, admin portal, dashboards, blog internals, i18n/SEO code, migrations.
+
+Testing Hooks (must pass):
+
+Existing auth tests remain green (e.g., RequireRole.test.tsx).
+
+New tests: recovery URL → no session adoption → reset form → updateUser({ password }) → signOut() → manual login required.
+
+(If present) E2E: happy path + expired token.
+
+Acceptance: No code path sets a session during recovery; minimal diff; all tests pass.
+
+2) Backend Architecture Agent
+Scope: Database schema stability, Supabase migrations, RLS policy integrity.
+
+Allowed (read/write):
+
+supabase/migrations/**
+
+supabase/functions/** (DB contract enforcement only)
+
+supabase/.temp/** (scratch)
+
+scripts/db/** (helper scripts)
+
+docs/architecture/db/** (ERDs, rollback playbooks)
+
+DB Scope:
+
+Tables: tours (canonical), users, bookings, testimonials, admin_invitations, admin_invitation_audit
+
+Functions: accept_admin_invitation(...) (SECURITY DEFINER) + SQL utilities
+
+Policies: RLS on tables above
+
+Migrations: up/down idempotency; conflict resolution
+
+Blocked:
+
+/src/pages/**, /src/components/** (UI)
+
+Stripe/webhooks business logic
+
+Secrets in code
+
+Testing Hooks:
+
+Drift check (supabase db diff) clean
+
+Up → Down → Up passes on blank DB and snapshot schema
+
+RLS tests: allow/deny per role proven
+
+Canonical assertion: no writes to deprecated adventures; reads/writes use tours
+
+Acceptance: Green migration cycle, proven RLS, secure SECURITY DEFINER, canonical tours enforced.
+
+3) i18n Route & SEO Agent
+Scope: /fr-ca/* routing, slug_fr support, hreflang + sitemap; English routes must remain unchanged.
+
+Allowed (read/write):
+
+src/App.tsx
+
+src/pages/AdventureDetail.tsx, src/pages/Safety.tsx, src/pages/About.tsx, src/pages/Contact.tsx (route wiring only)
+
+src/hooks/useLanguageContext.ts (new)
+
+src/utils/languageDetection.ts (new)
+
+src/utils/frenchSlugs.ts (new)
+
+src/components/SEO/GlobalMeta.tsx (hreflang)
+
+src/utils/sitemapGenerator.ts
+
+src/__tests__/i18n/**
+
+DB Scope:
+
+Migration to add tours.slug_fr (nullable) + backfill (approved)
+
+Read‑only slug ↔ slug_fr mapping
+
+Blocked:
+
+Booking, payments, admin portal, auth flows, blog internals
+
+Testing Hooks:
+
+Unit: language detection + slug utils
+
+Integration: / renders EN; /fr-ca/* renders FR; valid hreflang pairs
+
+Non‑functional: Lighthouse on /fr-ca/* meets perf budget; EN snapshots unchanged
+
+Acceptance: /fr-ca works with SEO slugs; English routes identical; tests pass.
+
+4) CI/CD Butler
+Scope: Pipelines for lint/type/test/build; optional E2E; security scans.
+
+Allowed (read/write):
+
+.github/workflows/ci.yml
+
+.github/workflows/e2e.yml (optional)
+
+.github/workflows/security.yml (optional)
+
+package.json (scripts only)
+
+docs/runbooks/ci.md
+
+cypress/** or e2e/** scaffolds (optional)
+
+DB Scope:
+
+None. May spin up a temp DB; no schema edits.
+
+Blocked:
+
+Feature source files, edge functions, secrets
+
+Testing Hooks (PR gates):
+
+npm run lint, npm run type-check, npm test -- --coverage, npm run build
+
+Optional labeled E2E job
+
+Security job (npm audit, secret scan) report → later gate
+
+Acceptance: CI blocks on failures; no secret leakage; cached fast path.
+
+5) Security & Compliance Agent
+Scope: Secrets hygiene, baseline headers/CSP, rate‑limiting guards, role enforcement checks.
+
+Allowed (read/write):
+
+.github/workflows/security.yml (+ security steps in ci.yml)
+
+vite.config.ts (dev preview headers only)
+
+docs/runbooks/security.md
+
+scripts/security/** (scan patterns, CSP checks)
+
+supabase/functions/** (rate limit/auth guard middleware only)
+
+DB/Config Scope:
+
+No DDL; adjust Edge Function CORS/auth guards as needed
+
+Verify .env.example exists; no secrets in repo
+
+Blocked:
+
+UI/business code, Stripe/webhooks logic, printing secrets
+
+Testing Hooks:
+
+Secret scan (repo + PR diff) → zero findings
+
+Dev preview sends security headers (X‑Frame‑Options, X‑Content‑Type‑Options, Referrer‑Policy; CSP documented)
+
+npm audit --audit-level=high runs (report → later gate)
+
+Auth reset E2E (from Password Reset Surgeon) wired into security job
+
+Acceptance: Security workflow active; headers present; no leaks; auth hardening tests pass.
+
+<!-- =========================== END IMMUTABLE REGISTRY =========================== -->
+🧭 Execution Contract (All Agents)
+One agent per PR (split cross‑cutting work).
+
+Diff discipline: small, scoped, within Allowed Paths.
+
+No silent rewrites or opportunistic refactors.
+
+Tests required: run relevant unit/integration/E2E for the chosen agent.
+
+Docs: update/create runbooks in /docs/runbooks/ for new flows/pipelines.
+
+Approvals: any schema or auth/role change needs explicit CTO approval.
+
+Development Commands
+Start dev server: npm run dev (port 5173)
+
+Start backend server: npm run dev:server
+
+Build prod: npm run build • Preview: npm run preview
+
+Lint: npm run lint • Types: npm run type-check • Tests: npm test
+
+Architecture Overview (Short)
+Frontend: Vite + React 18 + TypeScript • Tailwind + shadcn/ui • React Router v6
+State: React Context + TanStack Query
+Backend: Supabase (PostgreSQL, Auth, Storage, Edge Functions)
+Payments: Stripe
+i18n: i18next (English + fr‑CA) • URL‑based detection for /fr-ca/*
+Routing: Nested layouts, bilingual routes
+
+Important Patterns & Lessons (Kept for Context)
+Language/i18n System: URL-based detection (/ EN, /fr-ca/* FR); slug_fr for SEO; hreflang + sitemap.
+
+Booking System: Multi-step flow, availability, Stripe; keep untouched unless scoped.
+
+Authentication Flow: Supabase Auth; role-based access; no client-side role elevation.
+
+DB Lessons: Audit first; exact IDs/values; single-record test then batch; no comments in SQL; never rush.
+
+Meta Title Fix Pattern: Missing namespace → add both EN/FR; validate with build.
+
+✅ Ready-to-Run: Agent Invocation Examples
+A — Password reset fix
+
+Use Password Reset Surgeon. Enforce explicit reset form, prevent session adoption on type=recovery, add tests, update runbook. Only touch allowed auth files. Open PR.
+
+B — /fr-ca routes & French slugs
+
+Use i18n Route & SEO Agent. Add /fr-ca/*, slug_fr migration, hreflang & sitemap. English snapshots must remain identical. Open PR.
+
+C — Stabilize migrations & RLS
+
+Use Backend Architecture Agent. Verify tours canonical, run up/down/up; add RLS tests; review SECURITY DEFINER. Open PR.
+
+D — Wire CI and security scans
+
+Use CI/CD Butler for CI and Security & Compliance Agent for security.yml. No app code changes. Separate PRs.
+
+Claude Code Session Initialization (Local)
+Always read the local .claude/ directory at session start (not committed):
+
+bash
+Copy
+Edit
+read .claude/context.md
+read .claude/session-template.md
+read .claude/session.md
+read .claude/settings.local.json
+These hold: project context, autonomous dev role, boundaries, and required tests. They override default Claude behavior.
+

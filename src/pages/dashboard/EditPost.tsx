@@ -3,6 +3,7 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { Helmet } from 'react-helmet-async';
 import { Button } from '@/components/ui/button';
 import { BlogForm } from '@/components/admin/BlogForm';
+import { useAuth } from '@/components/auth/AuthProvider';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 
@@ -23,10 +24,12 @@ interface BlogPostData {
 
 const EditPost: React.FC = () => {
   const navigate = useNavigate();
+  const { getUserRole } = useAuth();
   const { id } = useParams<{ id: string }>();
   const [loading, setLoading] = useState(false);
   const [fetchLoading, setFetchLoading] = useState(true);
   const [postData, setPostData] = useState<BlogPostData | null>(null);
+  const userRole = getUserRole() || 'blogger';
 
   useEffect(() => {
     if (id) {
@@ -147,6 +150,7 @@ const EditPost: React.FC = () => {
           <BlogForm
             onSubmit={handleSubmit}
             isLoading={loading}
+            userType={userRole}
             initialData={{
               title: postData.title,
               title_fr: postData.title_fr || '',

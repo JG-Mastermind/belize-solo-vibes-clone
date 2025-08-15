@@ -3,12 +3,15 @@ import { useNavigate } from 'react-router-dom';
 import { Helmet } from 'react-helmet-async';
 import { Button } from '@/components/ui/button';
 import { BlogForm } from '@/components/admin/BlogForm';
+import { useAuth } from '@/components/auth/AuthProvider';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 
 const CreatePost: React.FC = () => {
   const navigate = useNavigate();
+  const { getUserRole } = useAuth();
   const [loading, setLoading] = useState(false);
+  const userRole = getUserRole() || 'blogger';
 
   const handleSubmit = async (blogData: {
     title: string;
@@ -86,6 +89,7 @@ const CreatePost: React.FC = () => {
           <BlogForm
             onSubmit={handleSubmit}
             isLoading={loading}
+            userType={userRole}
             initialData={{
               author: 'BelizeVibes',
               status: 'draft'

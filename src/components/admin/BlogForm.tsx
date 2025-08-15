@@ -7,6 +7,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { TranslationButton, TranslationStatus } from '@/components/ui/translation-button';
 import { useTranslation } from '@/hooks/useTranslation';
 import { RichTextEditor } from '@/components/admin/RichTextEditor';
+import { AIBlogAssistantPanel } from '@/components/admin/AIBlogAssistantPanel';
 import { Save, Eye, Languages } from 'lucide-react';
 import { toast } from 'sonner';
 
@@ -29,13 +30,15 @@ interface BlogFormProps {
   onSubmit: (data: BlogFormData) => Promise<void>;
   onPreview?: (data: BlogFormData) => void;
   isLoading?: boolean;
+  userType?: string;
 }
 
 export const BlogForm: React.FC<BlogFormProps> = ({
   initialData,
   onSubmit,
   onPreview,
-  isLoading = false
+  isLoading = false,
+  userType = 'blogger'
 }) => {
   const [formData, setFormData] = useState<BlogFormData>({
     title: '',
@@ -51,6 +54,8 @@ export const BlogForm: React.FC<BlogFormProps> = ({
     status: 'draft',
     ...initialData
   });
+
+  const [seoKeywords, setSeoKeywords] = useState<string>('');
 
   const {
     translateText,
@@ -144,6 +149,36 @@ export const BlogForm: React.FC<BlogFormProps> = ({
     }
   };
 
+  const handleAIGenerated = (aiData: {
+    title?: string;
+    title_fr?: string;
+    excerpt?: string;
+    excerpt_fr?: string;
+    content?: string;
+    content_fr?: string;
+    featured_image_url?: string;
+  }) => {
+    setFormData(prev => ({
+      ...prev,
+      ...(aiData.title && { title: aiData.title }),
+      ...(aiData.title_fr && { title_fr: aiData.title_fr }),
+      ...(aiData.excerpt && { excerpt: aiData.excerpt }),
+      ...(aiData.excerpt_fr && { excerpt_fr: aiData.excerpt_fr }),
+      ...(aiData.content && { content: aiData.content }),
+      ...(aiData.content_fr && { content_fr: aiData.content_fr }),
+      ...(aiData.featured_image_url && { featured_image_url: aiData.featured_image_url })
+    }));
+    
+    // Auto-generate slug if title was updated
+    if (aiData.title && !initialData?.slug) {
+      const slug = aiData.title
+        .toLowerCase()
+        .replace(/[^a-z0-9]+/g, '-')
+        .replace(/(^-|-$)/g, '');
+      setFormData(prev => ({ ...prev, slug }));
+    }
+  };
+
   return (
     <form onSubmit={handleSubmit} className="space-y-6">
       {/* Translation Status */}
@@ -152,6 +187,18 @@ export const BlogForm: React.FC<BlogFormProps> = ({
         error={translationError}
         onRetry={() => clearError()}
         className="mb-4"
+      />
+
+      {/* AI Blog Assistant Panel */}
+      <AIBlogAssistantPanel
+        userType={userType}
+        onUseGenerated={handleAIGenerated}
+        currentContent={{
+          title: formData.title,
+          excerpt: formData.excerpt,
+          content: formData.content
+        }}
+        className="mb-6"
       />
 
       {/* Bulk Translation */}
@@ -224,6 +271,16 @@ export const BlogForm: React.FC<BlogFormProps> = ({
               placeholder="https://example.com/image.jpg"
             />
           </div>
+
+          <div>
+            <Label htmlFor="seo_keywords">SEO Keywords (comma-separated)</Label>
+            <Input
+              id="seo_keywords"
+              value={seoKeywords}
+              onChange={(e) => setSeoKeywords(e.target.value)}
+              placeholder="belize travel, adventure tours, caribbean"
+            />
+          </div>
         </CardContent>
       </Card>
 
@@ -294,6 +351,10 @@ export const BlogForm: React.FC<BlogFormProps> = ({
               value={formData.content}
               onChange={(value) => updateField('content', value)}
               placeholder="Write your blog post content here..."
+              seoKeywords={seoKeywords.split(',').map(k => k.trim()).filter(k => k.length > 0)}
+              title={formData.title}
+              excerpt={formData.excerpt}
+              showSEOPanel={true}
             />
           </div>
         </CardContent>
@@ -364,6 +425,10 @@ export const BlogForm: React.FC<BlogFormProps> = ({
               value={formData.content_fr}
               onChange={(value) => updateField('content_fr', value)}
               placeholder="Écrivez le contenu de votre blog en français ici..."
+              seoKeywords={seoKeywords.split(',').map(k => k.trim()).filter(k => k.length > 0)}
+              title={formData.title_fr}
+              excerpt={formData.excerpt_fr}
+              showSEOPanel={false}
             />
           </div>
         </CardContent>

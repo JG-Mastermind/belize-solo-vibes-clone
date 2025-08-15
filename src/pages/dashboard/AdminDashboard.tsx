@@ -1,14 +1,33 @@
 
-import React, { Suspense, lazy } from 'react';
+import React, { Suspense, lazy, useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
+import { useQuery } from '@tanstack/react-query';
+import { supabase } from '@/integrations/supabase/client';
 import { StatsCard } from '@/components/dashboard/StatsCard';
 
-// Lazy load heavy dashboard components
-const BookingsTable = lazy(() => import('@/components/dashboard/BookingsTable').then(module => ({ default: module.BookingsTable })));
-const RevenueChart = lazy(() => import('@/components/dashboard/DashboardCharts').then(module => ({ default: module.RevenueChart })));
-const BookingsChart = lazy(() => import('@/components/dashboard/DashboardCharts').then(module => ({ default: module.BookingsChart })));
-const AIAssistantPanel = lazy(() => import('@/components/dashboard/AIAssistantPanel').then(module => ({ default: module.AIAssistantPanel })));
+// Lazy load heavy dashboard components with improved loading
+const BookingsTable = lazy(() => 
+  import('@/components/dashboard/BookingsTable').then(module => ({ 
+    default: module.BookingsTable 
+  }))
+);
+const RevenueChart = lazy(() => 
+  import('@/components/dashboard/DashboardCharts').then(module => ({ 
+    default: module.RevenueChart 
+  }))
+);
+const BookingsChart = lazy(() => 
+  import('@/components/dashboard/DashboardCharts').then(module => ({ 
+    default: module.BookingsChart 
+  }))
+);
+const AIAssistantPanel = lazy(() => 
+  import('@/components/dashboard/AIAssistantPanel').then(module => ({ 
+    default: module.AIAssistantPanel 
+  }))
+);
+
 import { useAuth } from '@/components/auth/AuthProvider';
 import { useAdventureCreation } from '@/contexts/AdventureCreationContext';
 import { toast } from 'sonner';
@@ -17,6 +36,9 @@ import {
   BookOpen,
   DollarSign,
   TrendingUp,
+  AlertCircle,
+  Activity,
+  BarChart3,
 } from 'lucide-react';
 
 const AdminDashboard = () => {

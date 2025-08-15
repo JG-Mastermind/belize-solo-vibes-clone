@@ -19,7 +19,17 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import { Shield, Users, Calendar, AlertTriangle } from 'lucide-react';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from '@/components/ui/alert-dialog';
+import { Shield, Users, Calendar, AlertTriangle, Trash2 } from 'lucide-react';
 import { useAuth } from '@/components/auth/AuthProvider';
 
 interface User {
@@ -32,11 +42,30 @@ interface User {
   profile_image?: string;
 }
 
+interface BookingConflict {
+  type: 'imminent' | 'future';
+  count: number;
+  bookings: Array<{
+    id: string;
+    booking_date: string;
+    start_time?: string;
+    participants: number;
+    status: string;
+  }>;
+  message: string;
+}
+
 const UserManager = () => {
   const [users, setUsers] = useState<User[]>([]);
   const [loading, setLoading] = useState(true);
   const [updating, setUpdating] = useState<string | null>(null);
-  const { user: currentUser } = useAuth();
+  const [deleting, setDeleting] = useState<string | null>(null);
+  const [deleteDialog, setDeleteDialog] = useState<{
+    open: boolean;
+    user: User | null;
+    bookingConflict?: BookingConflict;
+  }>({ open: false, user: null });
+  const { user: currentUser, getUserRole } = useAuth();
 
   useEffect(() => {
     fetchUsers();
@@ -80,6 +109,71 @@ const UserManager = () => {
     } finally {
       setUpdating(null);
     }
+  };
+
+  const handleDeleteUser = async (user: User) => {
+    // Only super_admin can delete users
+    if (getUserRole() !== 'super_admin') {
+      alert('Unauthorized: Super admin access required');
+      return;
+    }
+
+    if (user.id === currentUser?.id) {
+      alert('You cannot delete your own account');
+      return;
+    }
+
+    setDeleteDialog({ open: true, user });
+  };
+
+  const confirmDeleteUser = async () => {
+    const user = deleteDialog.user;
+    if (!user) return;
+
+    setDeleting(user.id);
+    try {
+      const { data: session } = await supabase.auth.getSession();
+      if (!session.session) {
+        throw new Error('No active session');
+      }
+
+      const response = await fetch(`${supabase.supabaseUrl}/functions/v1/delete-user`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${session.session.access_token}`,
+        },
+        body: JSON.stringify({ userId: user.id }),
+      });
+
+      const result = await response.json();
+
+      if (!response.ok) {
+        if (result.bookingConflict) {
+          // Show booking conflict dialog
+          setDeleteDialog({
+            open: true,
+            user,
+            bookingConflict: result.bookingConflict
+          });
+          return;
+        }
+        throw new Error(result.error || 'Failed to delete user');
+      }
+
+      alert(`User ${result.deletedUser.name} deleted successfully`);
+      fetchUsers();
+      setDeleteDialog({ open: false, user: null });
+    } catch (error) {
+      console.error('Error deleting user:', error);
+      alert(error instanceof Error ? error.message : 'Error deleting user. Please try again.');
+    } finally {
+      setDeleting(null);
+    }
+  };
+
+  const closeDeleteDialog = () => {
+    setDeleteDialog({ open: false, user: null });
   };
 
   const getRoleBadgeVariant = (role: string) => {
@@ -180,44 +274,59 @@ const UserManager = () => {
                     </TableCell>
                     <TableCell>{formatDate(user.created_at)}</TableCell>
                     <TableCell>
-                      {user.user_type !== 'super_admin' && user.id !== currentUser?.id ? (
-                        <Select
-                          value={user.user_type}
-                          onValueChange={(value) => updateUserRole(user.id, value)}
-                          disabled={updating === user.id}
-                        >
-                          <SelectTrigger className="w-32">
-                            <SelectValue />
-                          </SelectTrigger>
-                          <SelectContent>
-                            {availableRoles.map((role) => (
-                              <SelectItem key={role} value={role}>
-                                {role.replace('_', ' ')}
-                              </SelectItem>
-                            ))}
-                          </SelectContent>
-                        </Select>
-                      ) : (
-                        <div className="flex items-center gap-1 text-xs text-muted-foreground">
-                          {user.user_type === 'super_admin' && (
-                            <>
-                              <AlertTriangle className="w-3 h-3" />
-                              Protected
-                            </>
-                          )}
-                          {user.id === currentUser?.id && user.user_type !== 'super_admin' && (
-                            <>
-                              <AlertTriangle className="w-3 h-3" />
-                              Self
-                            </>
-                          )}
-                        </div>
-                      )}
-                      {updating === user.id && (
-                        <div className="text-xs text-muted-foreground mt-1">
-                          Updating...
-                        </div>
-                      )}
+                      <div className="flex items-center gap-2">
+                        {user.user_type !== 'super_admin' && user.id !== currentUser?.id ? (
+                          <>
+                            <Select
+                              value={user.user_type}
+                              onValueChange={(value) => updateUserRole(user.id, value)}
+                              disabled={updating === user.id}
+                            >
+                              <SelectTrigger className="w-32">
+                                <SelectValue />
+                              </SelectTrigger>
+                              <SelectContent>
+                                {availableRoles.map((role) => (
+                                  <SelectItem key={role} value={role}>
+                                    {role.replace('_', ' ')}
+                                  </SelectItem>
+                                ))}
+                              </SelectContent>
+                            </Select>
+                            {getUserRole() === 'super_admin' && (
+                              <Button
+                                variant="outline"
+                                size="sm"
+                                onClick={() => handleDeleteUser(user)}
+                                disabled={deleting === user.id}
+                                className="h-8 w-8 p-0 text-destructive hover:text-destructive"
+                              >
+                                <Trash2 className="h-4 w-4" />
+                              </Button>
+                            )}
+                          </>
+                        ) : (
+                          <div className="flex items-center gap-1 text-xs text-muted-foreground">
+                            {user.user_type === 'super_admin' && (
+                              <>
+                                <AlertTriangle className="w-3 h-3" />
+                                Protected
+                              </>
+                            )}
+                            {user.id === currentUser?.id && user.user_type !== 'super_admin' && (
+                              <>
+                                <AlertTriangle className="w-3 h-3" />
+                                Self
+                              </>
+                            )}
+                          </div>
+                        )}
+                        {(updating === user.id || deleting === user.id) && (
+                          <div className="text-xs text-muted-foreground mt-1">
+                            {updating === user.id ? 'Updating...' : 'Deleting...'}
+                          </div>
+                        )}
+                      </div>
                     </TableCell>
                   </TableRow>
                 ))}
@@ -257,6 +366,88 @@ const UserManager = () => {
           </div>
         </CardContent>
       </Card>
+
+      {/* Delete User Confirmation Dialog */}
+      <AlertDialog open={deleteDialog.open} onOpenChange={closeDeleteDialog}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>
+              {deleteDialog.bookingConflict ? 'Cannot Delete User' : 'Delete User'}
+            </AlertDialogTitle>
+            <AlertDialogDescription asChild>
+              <div className="space-y-3">
+                {deleteDialog.bookingConflict ? (
+                  <div>
+                    <p className="mb-2">{deleteDialog.bookingConflict.message}</p>
+                    {deleteDialog.bookingConflict.type === 'imminent' ? (
+                      <div className="bg-red-50 border border-red-200 rounded-lg p-3">
+                        <div className="flex items-center gap-2 mb-2">
+                          <AlertTriangle className="h-4 w-4 text-red-600" />
+                          <span className="font-medium text-red-800">
+                            Blocked: Imminent Bookings ({deleteDialog.bookingConflict.count})
+                          </span>
+                        </div>
+                        <p className="text-sm text-red-700">
+                          This guide has bookings within the next 48 hours. Deletion is blocked for customer safety.
+                          Please contact customers directly to reschedule or assign a replacement guide.
+                        </p>
+                      </div>
+                    ) : (
+                      <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-3">
+                        <div className="flex items-center gap-2 mb-2">
+                          <AlertTriangle className="h-4 w-4 text-yellow-600" />
+                          <span className="font-medium text-yellow-800">
+                            Warning: Future Bookings ({deleteDialog.bookingConflict.count})
+                          </span>
+                        </div>
+                        <p className="text-sm text-yellow-700 mb-3">
+                          This guide has {deleteDialog.bookingConflict.count} future booking(s). 
+                          You must handle refunds or reassignments before deletion.
+                        </p>
+                        <div className="space-y-2">
+                          <p className="text-sm font-medium text-yellow-800">Required actions:</p>
+                          <ul className="text-sm text-yellow-700 space-y-1">
+                            <li>• Contact customers to arrange refunds or reschedule with another guide</li>
+                            <li>• Cancel or reassign all future bookings</li>
+                            <li>• Process any necessary refunds through Stripe</li>
+                          </ul>
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                ) : (
+                  <div>
+                    <p>
+                      Are you sure you want to delete{' '}
+                      <span className="font-semibold">
+                        {deleteDialog.user ? getDisplayName(deleteDialog.user) : ''}
+                      </span>{' '}
+                      ({deleteDialog.user?.email})?
+                    </p>
+                    <p className="text-sm text-muted-foreground mt-2">
+                      This action cannot be undone. The user will be permanently removed from the system.
+                    </p>
+                  </div>
+                )}
+              </div>
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>
+              {deleteDialog.bookingConflict ? 'Close' : 'Cancel'}
+            </AlertDialogCancel>
+            {!deleteDialog.bookingConflict && (
+              <AlertDialogAction
+                onClick={confirmDeleteUser}
+                disabled={deleting === deleteDialog.user?.id}
+                className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+              >
+                {deleting === deleteDialog.user?.id ? 'Deleting...' : 'Delete User'}
+              </AlertDialogAction>
+            )}
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 };

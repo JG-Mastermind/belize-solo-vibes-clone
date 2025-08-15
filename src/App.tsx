@@ -39,6 +39,7 @@ const GuideDashboard = lazy(() => import("./pages/dashboard/GuideDashboard"));
 const TravelerDashboard = lazy(() => import("./pages/dashboard/TravelerDashboard"));
 const CreateAdventure = lazy(() => import("./pages/dashboard/CreateAdventure"));
 const CreatePost = lazy(() => import("./pages/dashboard/CreatePost"));
+const BlogPosts = lazy(() => import("./pages/dashboard/BlogPosts"));
 const EditPost = lazy(() => import("./pages/dashboard/EditPost"));
 
 // Lazy load admin components
@@ -49,6 +50,11 @@ const InvitationManager = lazy(() => import("./pages/admin/InvitationManager"));
 const UserManager = lazy(() => import("./pages/admin/UserManager"));
 const AcceptInvitation = lazy(() => import("./pages/admin/AcceptInvitation"));
 const AdminLogin = lazy(() => import("./pages/admin/AdminLogin"));
+const SafetyAlerts = lazy(() => import("./pages/dashboard/SafetyAlerts"));
+const Bookings = lazy(() => import("./pages/dashboard/Bookings"));
+const Calendar = lazy(() => import("./pages/dashboard/Calendar"));
+const Messages = lazy(() => import("./pages/dashboard/Messages"));
+const Payouts = lazy(() => import("./pages/dashboard/Payouts"));
 const TestAI = lazy(() => import("./pages/TestAI"));
 
 // Loading component for suspense fallback
@@ -125,7 +131,25 @@ const App = () => {
                 <Route path="admin" element={<AdminDashboard />} />
                 <Route path="guide" element={<GuideDashboard />} />
                 <Route path="traveler" element={<TravelerDashboard />} />
+                <Route path="bookings" element={<Bookings />} />
+                <Route path="calendar" element={<Calendar />} />
+                <Route path="adventures" element={<AdminAdventures />} />
+                <Route path="messages" element={<Messages />} />
+                <Route path="payouts" element={<Payouts />} />
                 <Route path="create-adventure" element={<CreateAdventure />} />
+                <Route path="users" element={
+                  <RequireRole allowedRoles={['admin', 'super_admin']}>
+                    <UserManager />
+                  </RequireRole>
+                } />
+                <Route path="alerts" element={
+                  <RequireRole allowedRoles={['admin', 'super_admin']}>
+                    <SafetyAlerts />
+                  </RequireRole>
+                } />
+                <Route path="create-post" element={<CreatePost />} />
+                <Route path="blog-posts" element={<BlogPosts />} />
+                <Route path="edit-post/:id" element={<EditPost />} />
               </Route>
               
               <Route path="/admin" element={<DashboardLayout />}>

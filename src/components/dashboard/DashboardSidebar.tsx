@@ -27,6 +27,8 @@ import {
   Plus,
   UserPlus,
   Shield,
+  FileText,
+  UserCheck,
 } from 'lucide-react';
 import { useAuth } from '../auth/AuthProvider';
 import { dashboardNavigationItems, adminNavigationItems, superAdminNavigationItems, filterNavigationByRole } from '@/lib/navigation';
@@ -44,6 +46,8 @@ const iconMap = {
   '/dashboard/alerts': AlertTriangle,
   '/admin/invitations': UserPlus,
   '/admin/users': Shield,
+  '/dashboard/blog-management': FileText,
+  '/dashboard/guide-assignment': UserCheck,
 };
 
 export const DashboardSidebar = () => {
@@ -67,6 +71,8 @@ export const DashboardSidebar = () => {
       '/dashboard/payouts': t('dashboard:navigation.payouts'),
       '/dashboard/users': t('dashboard:navigation.users'),
       '/dashboard/alerts': t('dashboard:navigation.alerts'),
+      '/dashboard/create-post': 'Create Post',
+      '/dashboard/blog-posts': 'Blog Posts',
       '/admin/invitations': 'Invitations',
       '/admin/users': 'Users',
     };

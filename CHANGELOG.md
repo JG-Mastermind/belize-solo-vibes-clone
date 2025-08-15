@@ -7,6 +7,27 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added - ADMIN FEATURES 🛡️
+- **Super Admin User Deletion**: Complete user deletion system with booking safety checks
+  - Enhanced delete-user Edge Function with super_admin role verification and JWT authentication
+  - Added delete functionality to UserManager with context-aware confirmation dialogs
+  - **48-hour safety window**: Blocks guide deletion for bookings within 48 hours to prevent service disruption
+  - **Future booking warnings**: Clear alerts with guidance for booking replacement/refund processes
+  - **Customer protection**: Prevents orphaned bookings and maintains service continuity
+  - **Role-based security**: Only super admins can delete users, with protection against self-deletion
+  - Comprehensive booking conflict detection for guides with active reservations
+
+### Fixed - DASHBOARD NAVIGATION 🔧
+- **Blog Management System**: Fixed broken edit-post route by creating comprehensive BlogPosts management page
+  - Created BlogPosts.tsx with full CRUD operations (view, edit, delete posts)
+  - Added search and filter functionality (by status: draft/published)
+  - Integrated with existing CreatePost and EditPost components
+  - **Navigation Fix**: Replaced broken "Edit Post" link with functional "Blog Posts" management
+- **Super Admin Access**: Fixed role filtering to give super admin access to ALL dashboard tabs
+  - Added super_admin to Create Adventure, Blog Posts, User Management, Safety Alerts
+  - Removed duplicate components to prevent logic conflicts
+  - Preserved original components with AI integration (CreateAdventure with AI assistant)
+
 ### Performance - HIGH IMPACT ⚡
 - **Image lazy loading**: Implemented `loading="lazy"` across all image components
   - AdventureCards.tsx - Tour card hero images now load on scroll

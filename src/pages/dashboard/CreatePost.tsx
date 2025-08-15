@@ -67,13 +67,22 @@ const CreatePost: React.FC = () => {
         <meta name="description" content="Create a new blog post for BelizeVibes" />
       </Helmet>
 
-      <div className="container mx-auto px-4 py-8">
-        <div className="max-w-4xl mx-auto">
-          <div className="mb-6">
+      <div className="container mx-auto py-6 space-y-6">
+        <div className="flex items-center justify-between">
+          <div>
             <h1 className="text-2xl font-bold">Create New Post</h1>
             <p className="text-muted-foreground">Create a new bilingual blog post with AI-powered translation support</p>
           </div>
-          
+          <Button
+            type="button"
+            variant="outline"
+            onClick={() => navigate('/dashboard/blog-posts')}
+          >
+            ← Back to Blog Posts
+          </Button>
+        </div>
+        
+        <div className="max-w-4xl mx-auto">
           <BlogForm
             onSubmit={handleSubmit}
             isLoading={loading}
@@ -82,16 +91,6 @@ const CreatePost: React.FC = () => {
               status: 'draft'
             }}
           />
-          
-          <div className="flex justify-center mt-6">
-            <Button
-              type="button"
-              variant="outline"
-              onClick={() => navigate('/dashboard/admin')}
-            >
-              ← Back to Dashboard
-            </Button>
-          </div>
         </div>
       </div>
     </>

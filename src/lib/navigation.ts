@@ -19,14 +19,16 @@ export const dashboardNavigationItems: NavigationItem[] = [
   { name: 'Bookings', path: '/dashboard/bookings', requiresAuth: true },
   { name: 'Calendar', path: '/dashboard/calendar', requiresAuth: true },
   { name: 'Adventures', path: '/dashboard/adventures', requiresAuth: true },
-  { name: 'Create Adventure', path: '/dashboard/create-adventure', requiresAuth: true, roles: ['guide', 'admin'] },
+  { name: 'Create Adventure', path: '/dashboard/create-adventure', requiresAuth: true, roles: ['guide', 'admin', 'super_admin'] },
+  { name: 'Create Post', path: '/dashboard/create-post', requiresAuth: true, roles: ['blogger', 'admin', 'super_admin'] },
+  { name: 'Blog Posts', path: '/dashboard/blog-posts', requiresAuth: true, roles: ['blogger', 'admin', 'super_admin'] },
   { name: 'Messages', path: '/dashboard/messages', requiresAuth: true },
   { name: 'Payouts', path: '/dashboard/payouts', requiresAuth: true },
 ];
 
 export const adminNavigationItems: NavigationItem[] = [
-  { name: 'User Management', path: '/dashboard/users', requiresAuth: true, roles: ['admin'] },
-  { name: 'Safety Alerts', path: '/dashboard/alerts', requiresAuth: true, roles: ['admin'] },
+  { name: 'User Management', path: '/dashboard/users', requiresAuth: true, roles: ['admin', 'super_admin'] },
+  { name: 'Safety Alerts', path: '/dashboard/alerts', requiresAuth: true, roles: ['admin', 'super_admin'] },
 ];
 
 export const superAdminNavigationItems: NavigationItem[] = [

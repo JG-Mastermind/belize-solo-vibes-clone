@@ -7,10 +7,12 @@ import { AuthProvider } from '../AuthProvider';
 // Mock the AuthProvider to provide controlled user state
 const MockAuthProvider = ({ 
   children, 
-  mockUser 
+  mockUser,
+  mockRole
 }: { 
   children: React.ReactNode; 
-  mockUser: any 
+  mockUser: any;
+  mockRole?: string | null;
 }) => {
   const mockAuthContextValue = {
     user: mockUser,
@@ -18,7 +20,7 @@ const MockAuthProvider = ({
     signIn: jest.fn(),
     signUp: jest.fn(),
     signOut: jest.fn(),
-    getUserRole: jest.fn().mockReturnValue(mockUser?.user_type || null),
+    getUserRole: jest.fn().mockReturnValue(mockRole ?? mockUser?.user_type ?? null),
   };
 
   return (
@@ -45,7 +47,7 @@ describe('RequireRole', () => {
 
     render(
       <MemoryRouter>
-        <MockAuthProvider mockUser={mockSuperAdmin}>
+        <MockAuthProvider mockUser={mockSuperAdmin} mockRole="super_admin">
           <RequireRole allowedRoles={['super_admin']}>
             <RestrictedContent />
           </RequireRole>
@@ -65,7 +67,7 @@ describe('RequireRole', () => {
 
     render(
       <MemoryRouter initialEntries={['/admin/invitations']}>
-        <MockAuthProvider mockUser={mockRegularUser}>
+        <MockAuthProvider mockUser={mockRegularUser} mockRole="traveler">
           <RequireRole allowedRoles={['super_admin']}>
             <RestrictedContent />
           </RequireRole>
@@ -80,7 +82,7 @@ describe('RequireRole', () => {
   test('redirects unauthenticated user to 403', () => {
     render(
       <MemoryRouter initialEntries={['/admin/invitations']}>
-        <MockAuthProvider mockUser={null}>
+        <MockAuthProvider mockUser={null} mockRole={null}>
           <RequireRole allowedRoles={['super_admin']}>
             <RestrictedContent />
           </RequireRole>
@@ -137,7 +139,7 @@ describe('RequireRole', () => {
 
     render(
       <MemoryRouter>
-        <MockAuthProvider mockUser={mockAdmin}>
+        <MockAuthProvider mockUser={mockAdmin} mockRole="admin">
           <RequireRole allowedRoles={['admin', 'super_admin']}>
             <RestrictedContent />
           </RequireRole>

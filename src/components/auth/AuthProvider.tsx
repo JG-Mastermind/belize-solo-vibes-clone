@@ -41,12 +41,47 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const [user, setUser] = useState<User | null>(null);
   const [session, setSession] = useState<Session | null>(null);
   const [loading, setLoading] = useState(true);
+  const [userRole, setUserRole] = useState<string | null>(null);
+
+  // Fetch user role from database
+  const fetchUserRole = async (userId: string) => {
+    try {
+      const { data, error } = await supabase
+        .from('users')
+        .select('user_type')
+        .eq('id', userId)
+        .maybeSingle();
+      
+      if (error) {
+        console.error('Error fetching user role from users table:', error);
+        
+        // Fallback: try to get role from current user metadata
+        const { data: { user } } = await supabase.auth.getUser();
+        const metadataRole = user?.user_metadata?.role || user?.user_metadata?.user_type;
+        return metadataRole || null;
+      }
+      
+      return data?.user_type || null;
+    } catch (error) {
+      console.error('Error fetching user role:', error);
+      return null;
+    }
+  };
 
   useEffect(() => {
     // Get initial session
-    supabase.auth.getSession().then(({ data: { session } }) => {
+    supabase.auth.getSession().then(async ({ data: { session } }) => {
       setSession(session);
       setUser(session?.user ?? null);
+      
+      // Fetch user role if user exists
+      if (session?.user) {
+        const role = await fetchUserRole(session.user.id);
+        setUserRole(role);
+      } else {
+        setUserRole(null);
+      }
+      
       setLoading(false);
     });
 
@@ -55,6 +90,15 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       async (_event, session) => {
         setSession(session);
         setUser(session?.user ?? null);
+        
+        // Fetch user role if user exists
+        if (session?.user) {
+          const role = await fetchUserRole(session.user.id);
+          setUserRole(role);
+        } else {
+          setUserRole(null);
+        }
+        
         setLoading(false);
       }
     );
@@ -83,7 +127,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       try {
         const { error: updateError } = await supabase
           .from('users')
-          .update({ user_type: metadata.user_type })
+          .update({ user_type: metadata.user_type as any })
           .eq('id', data.user.id);
         
         if (updateError) {
@@ -147,7 +191,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   const resetPassword = async (email: string) => {
     const { data, error } = await supabase.auth.resetPasswordForEmail(email, {
-      redirectTo: `${window.location.origin}/auth/reset-password`,
+      redirectTo: `${window.location.origin}/admin/login`,
     });
     return { data, error };
   };
@@ -168,8 +212,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   };
 
   const getUserRole = () => {
-    // Try to get role from user metadata first, then fallback to database query if needed
-    return user?.user_metadata?.role || user?.user_metadata?.user_type || null;
+    // Return role from state (fetched from database)
+    return userRole;
   };
 
   const updateUserRole = async (role: string) => {
@@ -183,11 +227,14 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       try {
         const { error: updateError } = await supabase
           .from('users')
-          .update({ user_type: role })
+          .update({ user_type: role as any })
           .eq('id', user.id);
         
         if (updateError) {
           console.error('Error updating user type in database:', updateError);
+        } else {
+          // Update local state if database update was successful
+          setUserRole(role);
         }
       } catch (updateError) {
         console.error('Error updating user type in database:', updateError);
@@ -224,31 +271,27 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const syncUserProfileWithSocial = async () => {
     if (!user) return;
     
-    const avatarUrl = getUserAvatar();
-    const provider = localStorage.getItem('oauth_provider');
-    
-    if (avatarUrl && provider) {
-      // Update user profile with social avatar
-      try {
+    // Update users table with profile info if available
+    try {
+      const fullName = user.user_metadata?.full_name || `${user.user_metadata?.first_name || ''} ${user.user_metadata?.last_name || ''}`.trim();
+      
+      if (fullName) {
         const { error } = await supabase
-          .from('user_profiles')
-          .upsert({
-            id: user.id,
-            email: user.email,
-            full_name: user.user_metadata?.full_name || `${user.user_metadata?.first_name || ''} ${user.user_metadata?.last_name || ''}`.trim(),
-            avatar_url: avatarUrl,
-            provider: provider,
+          .from('users')
+          .update({
+            first_name: user.user_metadata?.first_name,
+            last_name: user.user_metadata?.last_name,
+            profile_image_url: getUserAvatar(),
             updated_at: new Date().toISOString()
-          }, {
-            onConflict: 'id'
-          });
+          })
+          .eq('id', user.id);
         
         if (error) {
           console.error('Error syncing user profile:', error);
         }
-      } catch (error) {
-        console.error('Error syncing user profile:', error);
       }
+    } catch (error) {
+      console.error('Error syncing user profile:', error);
     }
   };
 

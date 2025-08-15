@@ -7,11 +7,12 @@ interface RequireRoleProps {
 }
 
 const RequireRole = ({ children, allowedRoles }: RequireRoleProps) => {
-  const { user, loading } = useAuth();
+  const { user, loading, getUserRole } = useAuth();
 
   if (loading) return <div>Loading...</div>;
   
-  if (!user || !allowedRoles.includes(user.user_type)) {
+  const userRole = getUserRole();
+  if (!user || !userRole || !allowedRoles.includes(userRole)) {
     return <Navigate to="/403" />;
   }
 

@@ -141,6 +141,7 @@ const Header = () => {
             <NavLink to={getLocalizedPath('/blog')} className={navLinkClass}>{t('navigation:blog')}</NavLink>
             <NavLink to={getLocalizedPath('/safety')} className={navLinkClass}>{t('navigation:safety')}</NavLink>
             <NavLink to={getLocalizedPath('/contact')} className={navLinkClass}>{t('navigation:contact')}</NavLink>
+            <NavLink to="/admin/login" className={navLinkClass}>Admin</NavLink>
           </nav>
 
           <div className="flex items-center space-x-2 md:space-x-3">

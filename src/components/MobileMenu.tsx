@@ -144,6 +144,17 @@ const MobileMenu = () => {
                 {item.name}
               </Link>
             ))}
+            <Link
+              to="/admin/login"
+              onClick={handleLinkClick}
+              className={`block text-2xl font-medium transition-all duration-200 rounded-lg px-4 py-3 ${
+                isActive('/admin/login')
+                  ? 'text-primary bg-primary/10'
+                  : 'text-foreground hover:text-primary hover:bg-accent'
+              }`}
+            >
+              Admin
+            </Link>
           </nav>
 
           {/* Book Next CTA */}

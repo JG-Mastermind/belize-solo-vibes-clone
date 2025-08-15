@@ -30,6 +30,7 @@ const SuccessPage = lazy(() => import("./pages/booking/success"));
 const Confirmation = lazy(() => import("./pages/Confirmation"));
 const NotFound = lazy(() => import("./pages/NotFound"));
 const AuthCallback = lazy(() => import("./pages/auth/callback"));
+const ResetPassword = lazy(() => import("./pages/ResetPassword"));
 
 // Lazy load dashboard components
 const DashboardLayout = lazy(() => import("./components/dashboard/DashboardLayout").then(module => ({ default: module.DashboardLayout })));
@@ -47,6 +48,7 @@ const AdminEditAdventure = lazy(() => import("./pages/admin/AdminEditAdventure")
 const InvitationManager = lazy(() => import("./pages/admin/InvitationManager"));
 const UserManager = lazy(() => import("./pages/admin/UserManager"));
 const AcceptInvitation = lazy(() => import("./pages/admin/AcceptInvitation"));
+const AdminLogin = lazy(() => import("./pages/admin/AdminLogin"));
 const TestAI = lazy(() => import("./pages/TestAI"));
 
 // Loading component for suspense fallback
@@ -114,6 +116,7 @@ const App = () => {
                 <Route path="confirmation" element={<Confirmation />} />
                 <Route path="test-ai" element={<TestAI />} />
                 <Route path="auth/callback" element={<AuthCallback />} />
+                <Route path="auth/reset-password" element={<ResetPassword />} />
                 <Route path="*" element={<NotFound />} />
               </Route>
               
@@ -144,6 +147,7 @@ const App = () => {
               <Route path="/admin/posts/new" element={<CreatePost />} />
               <Route path="/admin/posts/edit/:id" element={<EditPost />} />
               <Route path="/admin/accept" element={<AcceptInvitation />} />
+              <Route path="/admin/login" element={<AdminLogin />} />
               
               <Route path="*" element={<NotFound />} />
               </Routes>

@@ -1,0 +1,226 @@
+import { render, screen, fireEvent, waitFor } from '@testing-library/react';
+import { BrowserRouter, MemoryRouter } from 'react-router-dom';
+import AdminLogin from '@/pages/admin/AdminLogin';
+import { AuthProvider } from '@/components/auth/AuthProvider';
+import { toast } from 'sonner';
+
+// Mock the components that might cause issues
+jest.mock('sonner', () => ({
+  toast: {
+    success: jest.fn(),
+    error: jest.fn()
+  }
+}));
+
+jest.mock('@/integrations/supabase/client', () => ({
+  supabase: {
+    auth: {
+      getUser: jest.fn(),
+      setSession: jest.fn(),
+      updateUser: jest.fn(),
+      resetPasswordForEmail: jest.fn(),
+      signInWithPassword: jest.fn(),
+      signOut: jest.fn(),
+      getSession: jest.fn().mockResolvedValue({ data: { session: null } }),
+      onAuthStateChange: jest.fn().mockReturnValue({
+        data: { subscription: { unsubscribe: jest.fn() } }
+      })
+    }
+  }
+}));
+
+const mockNavigate = jest.fn();
+jest.mock('react-router-dom', () => ({
+  ...jest.requireActual('react-router-dom'),
+  useNavigate: () => mockNavigate
+}));
+
+const TestWrapper: React.FC<{ children: React.ReactNode; initialEntries?: string[] }> = ({ children, initialEntries = ['/'] }) => (
+  <MemoryRouter initialEntries={initialEntries}>
+    <AuthProvider>
+      {children}
+    </AuthProvider>
+  </MemoryRouter>
+);
+
+describe('AdminLogin Password Reset Flow', () => {
+  beforeEach(() => {
+    jest.clearAllMocks();
+  });
+
+  test('shows normal admin login by default', () => {
+    render(
+      <TestWrapper initialEntries={['/admin/login']}>
+        <AdminLogin />
+      </TestWrapper>
+    );
+
+    expect(screen.getByText('Admin Portal')).toBeInTheDocument();
+    expect(screen.getByText('Restricted access - Admin credentials required')).toBeInTheDocument();
+    expect(screen.getByPlaceholderText('Enter your admin email')).toBeInTheDocument();
+    expect(screen.getByPlaceholderText('Enter your password')).toBeInTheDocument();
+  });
+
+  test('shows password reset form when recovery parameters are present', () => {
+    const recoveryUrl = '/admin/login?type=recovery&access_token=fake-token&refresh_token=fake-refresh';
+    
+    render(
+      <TestWrapper initialEntries={[recoveryUrl]}>
+        <AdminLogin />
+      </TestWrapper>
+    );
+
+    expect(screen.getByText('Reset Admin Password')).toBeInTheDocument();
+    expect(screen.getByText('Create a new secure password for your admin account')).toBeInTheDocument();
+    expect(screen.getByPlaceholderText('Enter your new password')).toBeInTheDocument();
+    expect(screen.getByPlaceholderText('Confirm your new password')).toBeInTheDocument();
+  });
+
+  test('admin login form handles forgot password correctly', async () => {
+    const { supabase } = require('@/integrations/supabase/client');
+    supabase.auth.resetPasswordForEmail.mockResolvedValue({ data: {}, error: null });
+
+    render(
+      <TestWrapper initialEntries={['/admin/login']}>
+        <AdminLogin />
+      </TestWrapper>
+    );
+
+    // Enter email
+    const emailInput = screen.getByPlaceholderText('Enter your admin email');
+    fireEvent.change(emailInput, { target: { value: 'admin@test.com' } });
+
+    // Click forgot password
+    const forgotPasswordButton = screen.getByText('Forgot admin password?');
+    fireEvent.click(forgotPasswordButton);
+
+    await waitFor(() => {
+      expect(supabase.auth.resetPasswordForEmail).toHaveBeenCalledWith('admin@test.com', {
+        redirectTo: 'http://localhost/admin/login'
+      });
+    });
+  });
+
+  test('password reset form validates token on mount', async () => {
+    const { supabase } = require('@/integrations/supabase/client');
+    supabase.auth.getUser.mockResolvedValue({ 
+      data: { user: { id: 'user-123' } }, 
+      error: null 
+    });
+
+    const recoveryUrl = '/admin/login?type=recovery&access_token=valid-token';
+    
+    render(
+      <TestWrapper initialEntries={[recoveryUrl]}>
+        <AdminLogin />
+      </TestWrapper>
+    );
+
+    await waitFor(() => {
+      expect(supabase.auth.getUser).toHaveBeenCalledWith('valid-token');
+    });
+  });
+
+  test('password reset form redirects on invalid token', async () => {
+    const { supabase } = require('@/integrations/supabase/client');
+    supabase.auth.getUser.mockResolvedValue({ 
+      data: { user: null }, 
+      error: new Error('Invalid token') 
+    });
+
+    const recoveryUrl = '/admin/login?type=recovery&access_token=invalid-token';
+    
+    render(
+      <TestWrapper initialEntries={[recoveryUrl]}>
+        <AdminLogin />
+      </TestWrapper>
+    );
+
+    await waitFor(() => {
+      expect(mockNavigate).toHaveBeenCalledWith('/admin/login');
+      expect(toast.error).toHaveBeenCalledWith('Invalid or expired recovery token');
+    });
+  });
+
+  test('password reset form validates password strength', async () => {
+    const { supabase } = require('@/integrations/supabase/client');
+    supabase.auth.getUser.mockResolvedValue({ 
+      data: { user: { id: 'user-123' } }, 
+      error: null 
+    });
+
+    const recoveryUrl = '/admin/login?type=recovery&access_token=valid-token';
+    
+    render(
+      <TestWrapper initialEntries={[recoveryUrl]}>
+        <AdminLogin />
+      </TestWrapper>
+    );
+
+    await waitFor(() => {
+      expect(screen.queryByText('Validating recovery token...')).not.toBeInTheDocument();
+    });
+
+    // Enter weak password
+    const passwordInput = screen.getByPlaceholderText('Enter your new password');
+    fireEvent.change(passwordInput, { target: { value: 'weak' } });
+
+    await waitFor(() => {
+      expect(screen.getByText('Weak')).toBeInTheDocument();
+    });
+
+    // Enter strong password
+    fireEvent.change(passwordInput, { target: { value: 'StrongP@ssw0rd123!' } });
+
+    await waitFor(() => {
+      expect(screen.getByText('Strong')).toBeInTheDocument();
+    });
+  });
+
+  test('password reset form signs out after successful reset', async () => {
+    const { supabase } = require('@/integrations/supabase/client');
+    supabase.auth.getUser.mockResolvedValue({ 
+      data: { user: { id: 'user-123' } }, 
+      error: null 
+    });
+    supabase.auth.setSession.mockResolvedValue({ error: null });
+    supabase.auth.updateUser.mockResolvedValue({ error: null });
+    supabase.auth.signOut.mockResolvedValue({ error: null });
+
+    const recoveryUrl = '/admin/login?type=recovery&access_token=valid-token&refresh_token=refresh-token';
+    
+    render(
+      <TestWrapper initialEntries={[recoveryUrl]}>
+        <AdminLogin />
+      </TestWrapper>
+    );
+
+    await waitFor(() => {
+      expect(screen.queryByText('Validating recovery token...')).not.toBeInTheDocument();
+    });
+
+    // Enter strong password
+    const passwordInput = screen.getByPlaceholderText('Enter your new password');
+    const confirmInput = screen.getByPlaceholderText('Confirm your new password');
+    
+    fireEvent.change(passwordInput, { target: { value: 'StrongP@ssw0rd123!' } });
+    fireEvent.change(confirmInput, { target: { value: 'StrongP@ssw0rd123!' } });
+
+    // Submit form
+    const submitButton = screen.getByText('Update Password');
+    fireEvent.click(submitButton);
+
+    await waitFor(() => {
+      expect(supabase.auth.setSession).toHaveBeenCalledWith({
+        access_token: 'valid-token',
+        refresh_token: 'refresh-token'
+      });
+      expect(supabase.auth.updateUser).toHaveBeenCalledWith({
+        password: 'StrongP@ssw0rd123!'
+      });
+      expect(supabase.auth.signOut).toHaveBeenCalled();
+      expect(mockNavigate).toHaveBeenCalledWith('/admin/login');
+      expect(toast.success).toHaveBeenCalledWith('Password updated successfully! Please sign in with your new password.');
+    });
+  });
+});

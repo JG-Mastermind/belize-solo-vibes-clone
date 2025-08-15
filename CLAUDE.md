@@ -349,6 +349,64 @@ DB Lessons: Audit first; exact IDs/values; single-record test then batch; no com
 
 Meta Title Fix Pattern: Missing namespace → add both EN/FR; validate with build.
 
+🚨 CRITICAL: 5-Day Admin Portal Authentication Crisis - Post-Mortem Report
+
+**INCIDENT SUMMARY:**
+Admin portal was completely non-functional. Super admin user `jg.mastermind@gmail.com` could not log in despite having correct credentials and database records. Frontend showed "Invalid login credentials" error while backend Supabase Auth API returned 400 Bad Request.
+
+**ROOT CAUSES IDENTIFIED:**
+
+1. **Multiple Supabase Client Instances (Primary Cause)**
+   - File: `src/lib/supabase.ts` created duplicate GoTrueClient instance
+   - Conflicted with main client in `src/integrations/supabase/client.ts`
+   - Console warning: "Multiple GoTrueClient instances detected in the same browser context"
+   - Result: Auth requests failed due to client state conflicts
+
+2. **Database Trigger Failure (Secondary)**
+   - Function: `handle_new_user()` missing `user_type` field in INSERT
+   - Triggered on auth.users INSERT, failed on public.users constraint
+   - Result: User creation partially failed, inconsistent data state
+
+3. **Query Method Error in Role Detection**
+   - Code: `fetchUserRole()` used `.single()` instead of `.maybeSingle()`
+   - Result: Threw errors when no user found, broke role detection flow
+
+4. **Data Consistency Issues**
+   - User records existed in auth.users but not properly synced to public.users
+   - Missing or incorrect user_type, is_verified flags
+   - Result: Authentication succeeded but role verification failed
+
+**IMPACT:**
+- Admin portal completely inaccessible for 5 days
+- Super admin, admin, and tour guide roles non-functional
+- Blocked all administrative functions, user management, content management
+
+**PERMANENT FIXES APPLIED:**
+1. **Removed Duplicate Client**: Deleted conflicting `src/lib/supabase.ts`
+2. **Fixed Database Trigger**: Updated `handle_new_user()` to include user_type with fallback
+3. **Fixed Role Query**: Changed `.single()` to `.maybeSingle()` in getUserRole()
+4. **User Data Cleanup**: Rebuilt admin user with proper metadata in both auth.users and public.users
+
+**CRITICAL LESSONS FOR DEV TEAM:**
+- ⚠️ **NEVER create additional Supabase clients** - always use single instance from `src/integrations/supabase/client.ts`
+- ⚠️ **Database triggers MUST handle ALL required fields** - missing fields cause cascade failures
+- ⚠️ **Test authentication at API level FIRST** before debugging frontend
+- ⚠️ **Role-based systems require data consistency** across auth.users and public.users tables
+- ⚠️ **Console warnings about multiple clients are CRITICAL** - indicates breaking auth conflicts
+
+**PREVENTION CHECKLIST FOR FUTURE AUTH WORK:**
+- Always verify single Supabase client instance
+- Test Edge Function authentication before frontend debugging
+- Check database triggers handle all required fields
+- Verify user exists in BOTH auth.users AND public.users with matching data
+- Monitor console for GoTrueClient warnings
+
+🔧 Technical Fixes Applied (Aug 2025)
+1. **getUserRole() Function**: Fixed .single() → .maybeSingle() to handle null results gracefully
+2. **Database Trigger**: Updated handle_new_user() to include user_type field with proper fallback
+3. **Duplicate Supabase Clients**: Removed conflicting src/lib/supabase.ts that caused multiple GoTrueClient instances
+4. **Admin User Setup**: Use Edge Functions for secure user creation with proper role metadata
+
 ✅ Ready-to-Run: Agent Invocation Examples
 A — Password reset fix
 
@@ -378,3 +436,5 @@ read .claude/session.md
 read .claude/settings.local.json
 These hold: project context, autonomous dev role, boundaries, and required tests. They override default Claude behavior.
 
+
+- memorize

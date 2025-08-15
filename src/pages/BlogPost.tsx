@@ -305,6 +305,7 @@ const BlogPost: React.FC = () => {
               <img 
                 src={getBlogPostImageUrl(blogPost)} 
                 alt={getImageAltText(blogPost, translatedContent?.title || blogPost.title)}
+                loading="lazy"
                 className="w-full h-full object-cover"
                 onError={(e) => handleImageError(e, blogPost)}
               />

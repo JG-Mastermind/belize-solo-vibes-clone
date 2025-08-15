@@ -42,6 +42,7 @@ export const ImageGallery: React.FC<ImageGalleryProps> = ({
           <img
             src={images[selectedIndex]}
             alt={`Adventure image ${selectedIndex + 1}`}
+            loading="lazy"
             className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
             onError={(e) => {
               (e.target as HTMLImageElement).src = '/placeholder.svg';
@@ -122,6 +123,7 @@ export const ImageGallery: React.FC<ImageGalleryProps> = ({
                   <img
                     src={image}
                     alt={`Thumbnail ${index + 1}`}
+                    loading="lazy"
                     className="w-full h-full object-cover"
                     onError={(e) => {
                       (e.target as HTMLImageElement).src = '/placeholder.svg';
@@ -159,6 +161,7 @@ export const ImageGallery: React.FC<ImageGalleryProps> = ({
             <img
               src={images[selectedIndex]}
               alt={`Adventure image ${selectedIndex + 1}`}
+              loading="lazy"
               className="max-w-full max-h-full object-contain"
               onError={(e) => {
                 (e.target as HTMLImageElement).src = '/placeholder.svg';
@@ -205,6 +208,7 @@ export const ImageGallery: React.FC<ImageGalleryProps> = ({
                   <img
                     src={image}
                     alt={`Thumbnail ${index + 1}`}
+                    loading="lazy"
                     className="w-full h-full object-cover"
                     onError={(e) => {
                       (e.target as HTMLImageElement).src = '/placeholder.svg';

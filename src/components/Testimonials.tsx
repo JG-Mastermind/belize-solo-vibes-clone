@@ -638,6 +638,7 @@ const Testimonials = () => {
                                   <img
                                     src={preview}
                                     alt={t('testimonials:accessibility.previewImage', { index: index + 1 })}
+                                    loading="lazy"
                                     className="w-full h-full object-cover"
                                   />
                                 </div>
@@ -733,6 +734,7 @@ const Testimonials = () => {
                               <img
                                 src={imageUrl}
                                 alt={t('testimonials:accessibility.reviewPhoto', { index: index + 1, name: testimonials[currentIndex].name })}
+                                loading="lazy"
                                 className="w-full h-full object-cover hover:scale-105 transition-transform duration-300 cursor-pointer"
                                 onClick={() => window.open(imageUrl, '_blank')}
                               />

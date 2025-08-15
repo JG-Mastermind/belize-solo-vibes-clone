@@ -1,5 +1,5 @@
 
-import React from 'react';
+import React, { memo } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import {
   LineChart,
@@ -14,7 +14,7 @@ import {
 } from 'recharts';
 import { useDashboardAnalytics } from '@/hooks/useDashboardAnalytics';
 
-export const RevenueChart = () => {
+export const RevenueChart = memo(() => {
   const { bookingAnalytics } = useDashboardAnalytics();
   
   // Transform booking analytics data for the chart
@@ -61,9 +61,9 @@ export const RevenueChart = () => {
       </CardContent>
     </Card>
   );
-};
+});
 
-export const BookingsChart = () => {
+export const BookingsChart = memo(() => {
   const { bookingAnalytics } = useDashboardAnalytics();
   
   // Transform booking analytics data for the chart
@@ -105,4 +105,4 @@ export const BookingsChart = () => {
       </CardContent>
     </Card>
   );
-};
+});

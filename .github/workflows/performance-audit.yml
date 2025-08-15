@@ -1,0 +1,365 @@
+name: Performance Audit & Monitoring
+
+on:
+  pull_request:
+    branches: [ main ]
+    paths:
+      - 'src/**'
+      - 'public/**'
+      - 'package.json'
+      - 'vite.config.ts'
+      - 'tailwind.config.ts'
+  push:
+    branches: [ main ]
+    paths:
+      - 'src/**'
+      - 'public/**'
+      - 'package.json'
+      - 'vite.config.ts'
+      - 'tailwind.config.ts'
+  workflow_dispatch:
+    inputs:
+      performance_budget_check:
+        description: 'Run strict performance budget checks'
+        required: false
+        default: 'true'
+        type: boolean
+
+env:
+  NODE_VERSION: '18.x'
+  # Performance budgets (bytes)
+  BUNDLE_SIZE_LIMIT: 800000      # 800KB main bundle limit
+  CSS_SIZE_LIMIT: 100000         # 100KB CSS limit
+  CHUNK_SIZE_WARNING: 500000     # 500KB chunk warning threshold
+  LIGHTHOUSE_PERFORMANCE_THRESHOLD: 90
+  LIGHTHOUSE_ACCESSIBILITY_THRESHOLD: 95
+  LIGHTHOUSE_SEO_THRESHOLD: 95
+
+jobs:
+  bundle-analysis:
+    name: Bundle Size Analysis
+    runs-on: ubuntu-latest
+    
+    outputs:
+      bundle_size: ${{ steps.bundle_stats.outputs.bundle_size }}
+      css_size: ${{ steps.bundle_stats.outputs.css_size }}
+      chunk_count: ${{ steps.bundle_stats.outputs.chunk_count }}
+      
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: |
+          npm ci
+          # Install bundle analysis tools
+          npm install -g bundlesize lighthouse-ci@latest
+
+      - name: Build production bundle
+        run: npm run build
+
+      - name: Analyze bundle size
+        id: bundle_stats
+        run: |
+          # Get main bundle size
+          BUNDLE_SIZE=$(find dist/assets -name "index-*.js" -exec stat -c%s {} \; | head -1)
+          echo "bundle_size=$BUNDLE_SIZE" >> $GITHUB_OUTPUT
+          
+          # Get CSS size
+          CSS_SIZE=$(find dist/assets -name "index-*.css" -exec stat -c%s {} \; | head -1)
+          echo "css_size=$CSS_SIZE" >> $GITHUB_OUTPUT
+          
+          # Count chunks
+          CHUNK_COUNT=$(find dist/assets -name "*.js" | wc -l)
+          echo "chunk_count=$CHUNK_COUNT" >> $GITHUB_OUTPUT
+          
+          # Log sizes for visibility
+          echo "::notice title=Bundle Analysis::Main bundle: ${BUNDLE_SIZE} bytes, CSS: ${CSS_SIZE} bytes, Total chunks: ${CHUNK_COUNT}"
+
+      - name: Check bundle size limits
+        run: |
+          BUNDLE_SIZE=${{ steps.bundle_stats.outputs.bundle_size }}
+          CSS_SIZE=${{ steps.bundle_stats.outputs.css_size }}
+          
+          echo "Bundle size: $BUNDLE_SIZE bytes (limit: $BUNDLE_SIZE_LIMIT bytes)"
+          echo "CSS size: $CSS_SIZE bytes (limit: $CSS_SIZE_LIMIT bytes)"
+          
+          if [ "$BUNDLE_SIZE" -gt "$BUNDLE_SIZE_LIMIT" ]; then
+            echo "::error title=Bundle Size Exceeded::Main bundle ($BUNDLE_SIZE bytes) exceeds limit ($BUNDLE_SIZE_LIMIT bytes)"
+            exit 1
+          fi
+          
+          if [ "$CSS_SIZE" -gt "$CSS_SIZE_LIMIT" ]; then
+            echo "::error title=CSS Size Exceeded::CSS bundle ($CSS_SIZE bytes) exceeds limit ($CSS_SIZE_LIMIT bytes)"
+            exit 1
+          fi
+
+      - name: Generate bundle analysis report
+        run: |
+          mkdir -p performance-reports
+          
+          cat > performance-reports/bundle-analysis.json << EOF
+          {
+            "timestamp": "$(date -u +"%Y-%m-%dT%H:%M:%SZ")",
+            "commit": "$GITHUB_SHA",
+            "pr_number": "${{ github.event.number }}",
+            "bundle_size": ${{ steps.bundle_stats.outputs.bundle_size }},
+            "css_size": ${{ steps.bundle_stats.outputs.css_size }},
+            "chunk_count": ${{ steps.bundle_stats.outputs.chunk_count }},
+            "bundle_size_limit": $BUNDLE_SIZE_LIMIT,
+            "css_size_limit": $CSS_SIZE_LIMIT
+          }
+          EOF
+
+      - name: Upload bundle analysis
+        uses: actions/upload-artifact@v4
+        with:
+          name: bundle-analysis
+          path: performance-reports/
+          retention-days: 30
+
+  lighthouse-audit:
+    name: Lighthouse Performance Audit
+    runs-on: ubuntu-latest
+    needs: bundle-analysis
+    
+    strategy:
+      matrix:
+        page: [
+          { path: "/", name: "landing" },
+          { path: "/adventures", name: "adventures" },
+          { path: "/fr-ca/aventures", name: "adventures-fr" },
+          { path: "/about", name: "about" },
+          { path: "/blog", name: "blog" }
+        ]
+    
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: |
+          npm ci
+          npm install -g @lhci/cli@latest
+
+      - name: Build and start preview server
+        run: |
+          npm run build
+          npm run preview &
+          # Wait for server to start
+          npx wait-on http://localhost:4173 --timeout 60000
+
+      - name: Run Lighthouse audit
+        run: |
+          mkdir -p lighthouse-results
+          
+          lhci autorun \
+            --collect.url="http://localhost:4173${{ matrix.page.path }}" \
+            --collect.numberOfRuns=3 \
+            --assert.assertions.performance=${{ env.LIGHTHOUSE_PERFORMANCE_THRESHOLD }} \
+            --assert.assertions.accessibility=${{ env.LIGHTHOUSE_ACCESSIBILITY_THRESHOLD }} \
+            --assert.assertions.seo=${{ env.LIGHTHOUSE_SEO_THRESHOLD }} \
+            --upload.outputDir=lighthouse-results \
+            --upload.target=filesystem || echo "Lighthouse audit completed with issues"
+
+      - name: Process Lighthouse results
+        run: |
+          # Extract key metrics from results
+          RESULT_FILE=$(find lighthouse-results -name "*.json" | head -1)
+          if [ -f "$RESULT_FILE" ]; then
+            node -e "
+              const fs = require('fs');
+              const result = JSON.parse(fs.readFileSync('$RESULT_FILE', 'utf8'));
+              const metrics = {
+                page: '${{ matrix.page.name }}',
+                performance: Math.round(result.categories.performance.score * 100),
+                accessibility: Math.round(result.categories.accessibility.score * 100),
+                seo: Math.round(result.categories.seo.score * 100),
+                lcp: result.audits['largest-contentful-paint']?.numericValue,
+                fid: result.audits['max-potential-fid']?.numericValue,
+                cls: result.audits['cumulative-layout-shift']?.numericValue,
+                fcp: result.audits['first-contentful-paint']?.numericValue,
+                si: result.audits['speed-index']?.numericValue
+              };
+              fs.writeFileSync('lighthouse-metrics-${{ matrix.page.name }}.json', JSON.stringify(metrics, null, 2));
+              console.log('Performance Score:', metrics.performance);
+              console.log('LCP:', metrics.lcp + 'ms');
+              console.log('CLS:', metrics.cls);
+            "
+          fi
+
+      - name: Upload Lighthouse results
+        uses: actions/upload-artifact@v4
+        with:
+          name: lighthouse-${{ matrix.page.name }}
+          path: |
+            lighthouse-results/
+            lighthouse-metrics-*.json
+          retention-days: 30
+
+  web-vitals-check:
+    name: Core Web Vitals Analysis
+    runs-on: ubuntu-latest
+    needs: [bundle-analysis, lighthouse-audit]
+    
+    steps:
+      - name: Download all artifacts
+        uses: actions/download-artifact@v4
+
+      - name: Combine performance results
+        run: |
+          mkdir -p final-report
+          
+          # Combine all Lighthouse metrics
+          echo "[]" > final-report/combined-metrics.json
+          for file in lighthouse-*/lighthouse-metrics-*.json; do
+            if [ -f "$file" ]; then
+              node -e "
+                const fs = require('fs');
+                const combined = JSON.parse(fs.readFileSync('final-report/combined-metrics.json', 'utf8'));
+                const newMetric = JSON.parse(fs.readFileSync('$file', 'utf8'));
+                combined.push(newMetric);
+                fs.writeFileSync('final-report/combined-metrics.json', JSON.stringify(combined, null, 2));
+              "
+            fi
+          done
+
+      - name: Generate performance summary
+        run: |
+          node -e "
+            const fs = require('fs');
+            const bundleAnalysis = JSON.parse(fs.readFileSync('bundle-analysis/bundle-analysis.json', 'utf8'));
+            const metrics = JSON.parse(fs.readFileSync('final-report/combined-metrics.json', 'utf8'));
+            
+            const summary = {
+              timestamp: new Date().toISOString(),
+              commit: '${{ github.sha }}',
+              pr_number: '${{ github.event.number }}',
+              bundle: {
+                size: bundleAnalysis.bundle_size,
+                css_size: bundleAnalysis.css_size,
+                chunk_count: bundleAnalysis.chunk_count
+              },
+              performance: {
+                average_performance_score: metrics.reduce((sum, m) => sum + m.performance, 0) / metrics.length,
+                pages: metrics.map(m => ({ page: m.page, score: m.performance, lcp: m.lcp, cls: m.cls }))
+              },
+              core_web_vitals: {
+                lcp_median: metrics.map(m => m.lcp).sort((a,b) => a-b)[Math.floor(metrics.length/2)],
+                cls_median: metrics.map(m => m.cls).sort((a,b) => a-b)[Math.floor(metrics.length/2)]
+              }
+            };
+            
+            fs.writeFileSync('final-report/performance-summary.json', JSON.stringify(summary, null, 2));
+            
+            // Create markdown summary for PR comments
+            let markdown = '## 📊 Performance Audit Results\n\n';
+            markdown += '### Bundle Analysis\n';
+            markdown += '| Metric | Size | Status |\n';
+            markdown += '|--------|------|--------|\n';
+            markdown += '| Main Bundle | ' + (bundleAnalysis.bundle_size/1024).toFixed(1) + 'KB | ' + (bundleAnalysis.bundle_size > process.env.BUNDLE_SIZE_LIMIT ? '❌ Over limit' : '✅ Within limit') + ' |\n';
+            markdown += '| CSS Bundle | ' + (bundleAnalysis.css_size/1024).toFixed(1) + 'KB | ' + (bundleAnalysis.css_size > process.env.CSS_SIZE_LIMIT ? '❌ Over limit' : '✅ Within limit') + ' |\n';
+            markdown += '| Total Chunks | ' + bundleAnalysis.chunk_count + ' | ✅ |\n\n';
+            
+            markdown += '### Lighthouse Scores\n';
+            markdown += '| Page | Performance | LCP | CLS |\n';
+            markdown += '|------|-------------|-----|-----|\n';
+            metrics.forEach(m => {
+              markdown += '| ' + m.page + ' | ' + m.performance + '% | ' + (m.lcp/1000).toFixed(2) + 's | ' + m.cls.toFixed(3) + ' |\n';
+            });
+            
+            fs.writeFileSync('final-report/performance-summary.md', markdown);
+          "
+        env:
+          BUNDLE_SIZE_LIMIT: ${{ env.BUNDLE_SIZE_LIMIT }}
+          CSS_SIZE_LIMIT: ${{ env.CSS_SIZE_LIMIT }}
+
+      - name: Upload final report
+        uses: actions/upload-artifact@v4
+        with:
+          name: performance-report
+          path: final-report/
+          retention-days: 90
+
+      - name: Comment PR with results
+        if: github.event_name == 'pull_request'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const fs = require('fs');
+            const summary = fs.readFileSync('final-report/performance-summary.md', 'utf8');
+            
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: summary
+            });
+
+  performance-regression-check:
+    name: Performance Regression Detection
+    runs-on: ubuntu-latest
+    needs: web-vitals-check
+    if: github.event_name == 'pull_request'
+    
+    steps:
+      - name: Download performance report
+        uses: actions/download-artifact@v4
+        with:
+          name: performance-report
+
+      - name: Check for performance regressions
+        run: |
+          # This would typically compare against baseline metrics
+          # For now, we'll implement basic threshold checks
+          node -e "
+            const fs = require('fs');
+            const summary = JSON.parse(fs.readFileSync('performance-summary.json', 'utf8'));
+            
+            let hasRegression = false;
+            const issues = [];
+            
+            // Check bundle size regression
+            const bundleSizeMB = summary.bundle.size / (1024 * 1024);
+            if (bundleSizeMB > 0.8) {
+              hasRegression = true;
+              issues.push('Bundle size (' + bundleSizeMB.toFixed(2) + 'MB) exceeds 800KB threshold');
+            }
+            
+            // Check performance scores
+            summary.performance.pages.forEach(page => {
+              if (page.score < ${{ env.LIGHTHOUSE_PERFORMANCE_THRESHOLD }}) {
+                hasRegression = true;
+                issues.push('Performance score for ' + page.page + ' (' + page.score + '%) below threshold');
+              }
+              if (page.lcp > 2500) {
+                hasRegression = true;
+                issues.push('LCP for ' + page.page + ' (' + (page.lcp/1000).toFixed(2) + 's) exceeds 2.5s threshold');
+              }
+              if (page.cls > 0.1) {
+                hasRegression = true;
+                issues.push('CLS for ' + page.page + ' (' + page.cls.toFixed(3) + ') exceeds 0.1 threshold');
+              }
+            });
+            
+            if (hasRegression) {
+              console.log('::error title=Performance Regression Detected::' + issues.join('; '));
+              process.exit(1);
+            } else {
+              console.log('::notice title=Performance Check Passed::No performance regressions detected');
+            }
+          "

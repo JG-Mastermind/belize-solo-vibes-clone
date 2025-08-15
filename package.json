@@ -11,7 +11,11 @@
     "lint": "eslint .",
     "preview": "vite preview",
     "test": "jest",
-    "test:watch": "jest --watch"
+    "test:watch": "jest --watch",
+    "type-check": "tsc --noEmit",
+    "analyze-bundle": "npm run build && npx vite-bundle-analyzer dist/",
+    "performance:audit": "lighthouse http://localhost:4173 --output=json --output=html --output-path=./lighthouse-report",
+    "performance:ci": "npm run build && npm run preview & npx wait-on http://localhost:4173 && npm run performance:audit"
   },
   "dependencies": {
     "@hookform/resolvers": "^3.9.0",

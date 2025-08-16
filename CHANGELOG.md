@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed - CLAUDE CODE AGENT SYSTEM 🤖
+- **Agent Creation Discovery**: Resolved issue where manually created agent files weren't recognized by Claude Code
+  - **Problem**: `image-ai-content-optimizer.md` file existed but wasn't available in agent registry
+  - **Solution**: Use Claude Code's `/agents` interface instead of manual file creation for proper registration
+  - **Result**: All 7 custom agents now functional (Aug 16, 2025)
+
 ### Added - AI-POWERED BLOG SYSTEM 🤖
 - **Complete AI Blog Creation Platform**: Transformed basic blog forms into professional AI-powered content studio
   - **Real OpenAI Integration**: GPT-4o-mini for content generation, DALL-E 3 for custom images (NOT mocks)

@@ -14,6 +14,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 import { ArrowLeft } from 'lucide-react';
 import ImageUploader from '@/components/ui/ImageUploader';
+import { AdventureDALLEGenerator } from '@/components/admin/AdventureDALLEGenerator';
 
 // Reuse the same schema as provider CreateAdventure
 const adventureFormSchema = z.object({
@@ -154,6 +155,28 @@ const AdminCreateAdventure: React.FC = () => {
     } finally {
       setIsSubmitting(false);
     }
+  };
+
+  // Handle DALL-E generated featured image
+  const handleFeaturedImageGenerated = (imageUrl: string, altText: string) => {
+    setUploadedImageUrl(imageUrl);
+    form.setValue("featured_image_url", imageUrl);
+    toast.success("AI-generated featured image applied!");
+  };
+
+  // Handle DALL-E generated gallery image  
+  const handleGalleryImageGenerated = (imageUrl: string, altText: string) => {
+    const currentGalleryImages = form.getValues("gallery_images");
+    const newImageUrl = imageUrl;
+    
+    if (currentGalleryImages) {
+      const updatedGallery = `${currentGalleryImages}\n${newImageUrl}`;
+      form.setValue("gallery_images", updatedGallery);
+    } else {
+      form.setValue("gallery_images", newImageUrl);
+    }
+    
+    toast.success("AI-generated image added to gallery!");
   };
 
   return (
@@ -451,6 +474,20 @@ const AdminCreateAdventure: React.FC = () => {
                 </div>
               </CardContent>
             </Card>
+
+            {/* DALL-E Adventure Image Generator */}
+            <AdventureDALLEGenerator
+              userType="admin"
+              onFeaturedImageGenerated={handleFeaturedImageGenerated}
+              onGalleryImageGenerated={handleGalleryImageGenerated}
+              currentAdventure={{
+                title: form.watch("title") || "",
+                description: form.watch("description") || "",
+                location: form.watch("location_name") || "",
+                difficulty_level: form.watch("difficulty_level")
+              }}
+              className="mt-6"
+            />
           </div>
         </div>
       </div>

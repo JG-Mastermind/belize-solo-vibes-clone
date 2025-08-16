@@ -8,6 +8,7 @@ import { useAdventureCreation } from "@/contexts/AdventureCreationContext";
 import { useAuth } from "@/components/auth/AuthProvider";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
+import { AdventureDALLEGenerator } from "@/components/admin/AdventureDALLEGenerator";
 import {
   Form,
   FormControl,
@@ -65,6 +66,7 @@ const CreateAdventurePage: React.FC = () => {
   const navigate = useNavigate();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [uploadedImageUrl, setUploadedImageUrl] = useState<string>("");
+  const [userRole, setUserRole] = useState<string>('');
   const form = useForm<AdventureFormData>({
     resolver: zodResolver(adventureFormSchema),
     defaultValues: {
@@ -105,6 +107,33 @@ const CreateAdventurePage: React.FC = () => {
       toast.success("Form pre-filled with AI-generated content!");
     }
   }, [prefilledData, form]);
+
+  // Fetch user role for DALL-E access control
+  useEffect(() => {
+    const fetchUserRole = async () => {
+      if (!user) return;
+      
+      try {
+        const { data, error } = await supabase
+          .from('users')
+          .select('raw_user_meta_data')
+          .eq('id', user.id)
+          .maybeSingle();
+        
+        if (error) {
+          console.error('Error fetching user role:', error);
+          return;
+        }
+        
+        const role = data?.raw_user_meta_data?.role || 'user';
+        setUserRole(role);
+      } catch (error) {
+        console.error('Error in fetchUserRole:', error);
+      }
+    };
+
+    fetchUserRole();
+  }, [user]);
 
   const onSubmit = async (values: AdventureFormData) => {
     // Validate user authentication
@@ -191,6 +220,28 @@ const CreateAdventurePage: React.FC = () => {
   const handleImageRemove = () => {
     setUploadedImageUrl("");
     form.setValue("featured_image_url", "");
+  };
+
+  // Handle DALL-E generated featured image
+  const handleFeaturedImageGenerated = (imageUrl: string, altText: string) => {
+    setUploadedImageUrl(imageUrl);
+    form.setValue("featured_image_url", imageUrl);
+    toast.success("AI-generated featured image applied!");
+  };
+
+  // Handle DALL-E generated gallery image  
+  const handleGalleryImageGenerated = (imageUrl: string, altText: string) => {
+    const currentGalleryImages = form.getValues("gallery_images");
+    const newImageUrl = imageUrl;
+    
+    if (currentGalleryImages) {
+      const updatedGallery = `${currentGalleryImages}\n${newImageUrl}`;
+      form.setValue("gallery_images", updatedGallery);
+    } else {
+      form.setValue("gallery_images", newImageUrl);
+    }
+    
+    toast.success("AI-generated image added to gallery!");
   };
 
   const difficultyOptions = [
@@ -696,6 +747,22 @@ const CreateAdventurePage: React.FC = () => {
                   </div>
                 </CardContent>
               </Card>
+
+              {/* DALL-E Adventure Image Generator */}
+              {userRole && (
+                <AdventureDALLEGenerator
+                  userType={userRole}
+                  onFeaturedImageGenerated={handleFeaturedImageGenerated}
+                  onGalleryImageGenerated={handleGalleryImageGenerated}
+                  currentAdventure={{
+                    title: form.watch("title") || "",
+                    description: form.watch("description") || "",
+                    location: form.watch("location_name") || "",
+                    difficulty_level: form.watch("difficulty_level")
+                  }}
+                  className="mt-6"
+                />
+              )}
             </div>
           </div>
         </div>

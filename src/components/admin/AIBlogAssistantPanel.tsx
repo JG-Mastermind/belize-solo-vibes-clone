@@ -11,6 +11,7 @@ import { Separator } from '@/components/ui/separator';
 import { Progress } from '@/components/ui/progress';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { ScrollArea } from '@/components/ui/scroll-area';
+import { DALLEImageGenerator } from '@/components/admin/DALLEImageGenerator';
 import { 
   Sparkles, 
   Image as ImageIcon, 
@@ -679,6 +680,19 @@ export const AIBlogAssistantPanel: React.FC<AIBlogAssistantPanelProps> = ({
               </Button>
             )}
           </div>
+
+          {/* DALL-E Image Generator Section */}
+          <Separator />
+          <DALLEImageGenerator
+            userType={userType}
+            onImageGenerated={(imageUrl) => {
+              if (onUseGenerated) {
+                onUseGenerated({ featured_image_url: imageUrl });
+              }
+            }}
+            currentContent={currentContent}
+            className="mt-6"
+          />
 
           {(isGenerating || generatedData) && (
             <>

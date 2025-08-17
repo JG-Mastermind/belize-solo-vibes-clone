@@ -27,7 +27,6 @@ export const dashboardNavigationItems: NavigationItem[] = [
 ];
 
 export const adminNavigationItems: NavigationItem[] = [
-  { name: 'Analytics', path: '/dashboard/analytics', requiresAuth: true, roles: ['admin', 'super_admin'] },
   { name: 'User Management', path: '/dashboard/users', requiresAuth: true, roles: ['admin', 'super_admin'] },
   { name: 'Safety Alerts', path: '/dashboard/alerts', requiresAuth: true, roles: ['admin', 'super_admin'] },
 ];

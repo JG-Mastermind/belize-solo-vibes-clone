@@ -29,7 +29,6 @@ import {
   Shield,
   FileText,
   UserCheck,
-  BarChart3,
 } from 'lucide-react';
 import { useAuth } from '../auth/AuthProvider';
 import { dashboardNavigationItems, adminNavigationItems, superAdminNavigationItems, filterNavigationByRole } from '@/lib/navigation';
@@ -43,7 +42,6 @@ const iconMap = {
   '/dashboard/create-adventure': Plus,
   '/dashboard/messages': MessageSquare,
   '/dashboard/payouts': CreditCard,
-  '/dashboard/analytics': BarChart3,
   '/dashboard/users': Users,
   '/dashboard/alerts': AlertTriangle,
   '/admin/invitations': UserPlus,
@@ -71,7 +69,6 @@ export const DashboardSidebar = () => {
       '/dashboard/create-adventure': t('dashboard:navigation.createAdventure'),
       '/dashboard/messages': t('dashboard:navigation.messages'),
       '/dashboard/payouts': t('dashboard:navigation.payouts'),
-      '/dashboard/analytics': 'Analytics',
       '/dashboard/users': t('dashboard:navigation.users'),
       '/dashboard/alerts': t('dashboard:navigation.alerts'),
       '/dashboard/create-post': 'Create Post',

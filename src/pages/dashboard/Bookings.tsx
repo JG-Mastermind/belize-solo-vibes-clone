@@ -196,7 +196,7 @@ const Bookings = () => {
             <CardContent className="pt-6">
               <div className="text-center py-8">
                 <CalendarDays className="h-12 w-12 mx-auto text-gray-400 mb-4" />
-                <h3 className="text-lg font-medium text-gray-900 mb-2">No bookings found</h3>
+                <h3 className="text-lg font-medium text-white mb-2">No bookings found</h3>
                 <p className="text-gray-500">
                   {userRole === 'admin' || userRole === 'super_admin' 
                     ? 'Bookings will appear here once customers make reservations.'

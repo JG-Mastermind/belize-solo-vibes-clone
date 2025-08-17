@@ -255,8 +255,8 @@ const CreateAdventurePage: React.FC = () => {
     return (
       <div className="w-full flex items-center justify-center min-h-[400px]">
         <div className="text-center space-y-4">
-          <h2 className="text-2xl font-bold text-gray-900">Authentication Required</h2>
-          <p className="text-gray-600">You must be logged in to create an adventure.</p>
+          <h2 className="text-2xl font-bold text-white">Authentication Required</h2>
+          <p className="text-gray-400">You must be logged in to create an adventure.</p>
           <Button onClick={() => window.location.reload()}>
             Refresh Page
           </Button>
@@ -270,14 +270,14 @@ const CreateAdventurePage: React.FC = () => {
       <div className="max-w-6xl mx-auto">
           {/* Header Section */}
           <div className="text-center mb-8">
-            <h1 className="text-4xl font-playfair font-bold text-belize-neutral-900 mb-4">
+            <h1 className="text-4xl font-playfair font-bold text-white mb-4">
               Create New Adventure
             </h1>
-            <p className="text-lg text-belize-neutral-800 max-w-2xl mx-auto">
+            <p className="text-lg text-gray-400 max-w-2xl mx-auto">
               Fill out the details below to add a new tour to the BelizeVibes platform. 
               Share your expertise and help travelers discover amazing experiences.
             </p>
-            <div className="mt-2 text-sm text-gray-500">
+            <div className="mt-2 text-sm text-gray-400">
               Creating as: {user.email}
             </div>
           </div>
@@ -285,7 +285,7 @@ const CreateAdventurePage: React.FC = () => {
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
             {/* Main Form */}
             <div className="lg:col-span-2">
-              <Card>
+              <Card className="dashboard-card">
                 <CardHeader>
                   <CardTitle className="flex items-center space-x-2">
                     <MapPin className="w-5 h-5 text-belize-blue-600" />
@@ -685,27 +685,27 @@ const CreateAdventurePage: React.FC = () => {
 
             {/* Sidebar - Tips and Preview */}
             <div className="space-y-6">
-              <Card>
+              <Card className="dashboard-card">
                 <CardHeader>
                   <CardTitle className="text-lg">💡 Tips for Success</CardTitle>
                 </CardHeader>
                 <CardContent className="space-y-4">
                   <div className="space-y-3 text-sm">
                     <div>
-                      <h4 className="font-semibold text-belize-blue-700">Great Title</h4>
-                      <p className="text-belize-neutral-800">
+                      <h4 className="font-semibold text-blue-400">Great Title</h4>
+                      <p className="text-gray-300">
                         Be specific and exciting. Include the main activity and location.
                       </p>
                     </div>
                     <div>
-                      <h4 className="font-semibold text-belize-blue-700">Compelling Description</h4>
-                      <p className="text-belize-neutral-800">
+                      <h4 className="font-semibold text-blue-400">Compelling Description</h4>
+                      <p className="text-gray-300">
                         Paint a picture of the experience. What will they see, feel, and discover?
                       </p>
                     </div>
                     <div>
-                      <h4 className="font-semibold text-belize-blue-700">Eye-catching Image</h4>
-                      <p className="text-belize-neutral-800">
+                      <h4 className="font-semibold text-blue-400">Eye-catching Image</h4>
+                      <p className="text-gray-300">
                         Upload a high-quality image that showcases the adventure. Required for publication!
                       </p>
                       {uploadedImageUrl && (
@@ -713,8 +713,8 @@ const CreateAdventurePage: React.FC = () => {
                       )}
                     </div>
                     <div>
-                      <h4 className="font-semibold text-belize-blue-700">Fair Pricing</h4>
-                      <p className="text-belize-neutral-800">
+                      <h4 className="font-semibold text-blue-400">Fair Pricing</h4>
+                      <p className="text-gray-300">
                         Research similar tours in your area. Include value-adds to justify your price.
                       </p>
                     </div>
@@ -722,7 +722,7 @@ const CreateAdventurePage: React.FC = () => {
                 </CardContent>
               </Card>
 
-              <Card>
+              <Card className="dashboard-card">
                 <CardHeader>
                   <CardTitle className="text-lg">🚀 Next Steps</CardTitle>
                 </CardHeader>

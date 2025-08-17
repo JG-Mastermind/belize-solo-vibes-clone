@@ -141,8 +141,8 @@ const EditPost: React.FC = () => {
       <div className="container mx-auto px-4 py-8">
         <div className="max-w-4xl mx-auto">
           <div className="mb-6">
-            <h1 className="text-2xl font-bold">Edit Post</h1>
-            <p className="text-muted-foreground">
+            <h1 className="text-2xl font-bold text-white">Edit Post</h1>
+            <p className="text-gray-400">
               Edit bilingual blog post with AI-powered translation support
             </p>
           </div>

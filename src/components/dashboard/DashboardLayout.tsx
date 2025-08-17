@@ -8,7 +8,7 @@ import { SidebarProvider } from '@/components/ui/sidebar';
 export const DashboardLayout = () => {
   return (
     <SidebarProvider>
-      <div className="dashboard-layout flex min-h-screen w-full bg-background">
+      <div className="dashboard-layout flex min-h-screen w-full bg-[hsl(var(--dashboard-bg))]">
         <DashboardSidebar />
         <div className="flex-1 flex flex-col min-w-0">
           <DashboardTopbar />

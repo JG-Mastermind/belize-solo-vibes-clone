@@ -601,7 +601,7 @@ const SafetyAlerts = () => {
             <CardContent className="pt-6">
               <div className="text-center py-8">
                 <AlertTriangle className="h-12 w-12 mx-auto text-gray-400 mb-4" />
-                <h3 className="text-lg font-medium text-gray-900 mb-2">No safety alerts</h3>
+                <h3 className="text-lg font-medium text-white mb-2">No safety alerts</h3>
                 <p className="text-gray-500">Create your first safety alert to get started.</p>
               </div>
             </CardContent>

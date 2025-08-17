@@ -202,7 +202,7 @@ export const BlogForm: React.FC<BlogFormProps> = ({
       />
 
       {/* Bulk Translation */}
-      <Card>
+      <Card className="dashboard-card">
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <Languages className="h-5 w-5" />
@@ -234,7 +234,7 @@ export const BlogForm: React.FC<BlogFormProps> = ({
       </Card>
 
       {/* Basic Information */}
-      <Card>
+      <Card className="dashboard-card">
         <CardHeader>
           <CardTitle>Basic Information</CardTitle>
         </CardHeader>
@@ -285,7 +285,7 @@ export const BlogForm: React.FC<BlogFormProps> = ({
       </Card>
 
       {/* English Content */}
-      <Card>
+      <Card className="dashboard-card">
         <CardHeader>
           <CardTitle className="flex items-center justify-between">
             🇺🇸 English Content
@@ -361,7 +361,7 @@ export const BlogForm: React.FC<BlogFormProps> = ({
       </Card>
 
       {/* French Content */}
-      <Card>
+      <Card className="dashboard-card">
         <CardHeader>
           <CardTitle className="flex items-center justify-between">
             🇫🇷 French Content (Contenu Français)

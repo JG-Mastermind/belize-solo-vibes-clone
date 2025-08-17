@@ -55,6 +55,7 @@ const Bookings = lazy(() => import("./pages/dashboard/Bookings"));
 const Calendar = lazy(() => import("./pages/dashboard/Calendar"));
 const Messages = lazy(() => import("./pages/dashboard/Messages"));
 const Payouts = lazy(() => import("./pages/dashboard/Payouts"));
+const AnalyticsDashboard = lazy(() => import("./pages/dashboard/AnalyticsDashboard"));
 const TestAI = lazy(() => import("./pages/TestAI"));
 
 // Loading component for suspense fallback
@@ -145,6 +146,11 @@ const App = () => {
                 <Route path="alerts" element={
                   <RequireRole allowedRoles={['admin', 'super_admin']}>
                     <SafetyAlerts />
+                  </RequireRole>
+                } />
+                <Route path="analytics" element={
+                  <RequireRole allowedRoles={['admin', 'super_admin']}>
+                    <AnalyticsDashboard />
                   </RequireRole>
                 } />
                 <Route path="create-post" element={<CreatePost />} />

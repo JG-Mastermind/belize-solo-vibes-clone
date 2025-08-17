@@ -159,15 +159,15 @@ export const RichTextEditor: React.FC<RichTextEditorProps> = ({
   }, [editor]);
 
   const getSEOScoreColor = (score: number) => {
-    if (score >= 80) return 'text-green-600';
-    if (score >= 60) return 'text-yellow-600';
-    return 'text-red-600';
+    if (score >= 80) return 'text-green-600 dark:text-green-400';
+    if (score >= 60) return 'text-yellow-600 dark:text-yellow-400';
+    return 'text-red-600 dark:text-red-400';
   };
 
   const getSEOScoreBg = (score: number) => {
-    if (score >= 80) return 'bg-green-100';
-    if (score >= 60) return 'bg-yellow-100';
-    return 'bg-red-100';
+    if (score >= 80) return 'bg-green-100 dark:bg-green-900/20';
+    if (score >= 60) return 'bg-yellow-100 dark:bg-yellow-900/20';
+    return 'bg-red-100 dark:bg-red-900/20';
   };
 
   const highlightKeywords = (content: string, keywords: string[]) => {
@@ -178,7 +178,7 @@ export const RichTextEditor: React.FC<RichTextEditorProps> = ({
       const regex = new RegExp(`\\b${keyword}\\b`, 'gi');
       highlightedContent = highlightedContent.replace(
         regex, 
-        `<mark class="bg-yellow-200 px-1 rounded">${keyword}</mark>`
+        `<mark class="bg-yellow-200 dark:bg-yellow-800 px-1 rounded">${keyword}</mark>`
       );
     });
     
@@ -192,15 +192,15 @@ export const RichTextEditor: React.FC<RichTextEditorProps> = ({
   return (
     <div className="space-y-4">
       {/* Editor with enhanced toolbar */}
-      <div className="border border-gray-200 rounded-lg overflow-hidden">
+      <div className="border border-border rounded-lg overflow-hidden bg-card dark:bg-gray-800 text-card-foreground">
         {/* Toolbar */}
-        <div className="flex flex-wrap gap-1 p-2 border-b border-gray-200 bg-gray-50">
+        <div className="flex flex-wrap gap-1 p-2 border-b border-border bg-muted/30 dark:bg-gray-700">
           <Button
             type="button"
             variant="ghost"
             size="sm"
             onClick={() => editor.chain().focus().toggleBold().run()}
-            className={editor.isActive('bold') ? 'bg-gray-200' : ''}
+            className={editor.isActive('bold') ? 'bg-accent text-accent-foreground' : ''}
           >
             <Bold className="h-4 w-4" />
           </Button>
@@ -210,7 +210,7 @@ export const RichTextEditor: React.FC<RichTextEditorProps> = ({
             variant="ghost"
             size="sm"
             onClick={() => editor.chain().focus().toggleItalic().run()}
-            className={editor.isActive('italic') ? 'bg-gray-200' : ''}
+            className={editor.isActive('italic') ? 'bg-accent text-accent-foreground' : ''}
           >
             <Italic className="h-4 w-4" />
           </Button>
@@ -220,7 +220,7 @@ export const RichTextEditor: React.FC<RichTextEditorProps> = ({
             variant="ghost"
             size="sm"
             onClick={() => editor.chain().focus().toggleHeading({ level: 1 }).run()}
-            className={editor.isActive('heading', { level: 1 }) ? 'bg-gray-200' : ''}
+            className={editor.isActive('heading', { level: 1 }) ? 'bg-accent text-accent-foreground' : ''}
           >
             <Heading1 className="h-4 w-4" />
           </Button>
@@ -230,7 +230,7 @@ export const RichTextEditor: React.FC<RichTextEditorProps> = ({
             variant="ghost"
             size="sm"
             onClick={() => editor.chain().focus().toggleHeading({ level: 2 }).run()}
-            className={editor.isActive('heading', { level: 2 }) ? 'bg-gray-200' : ''}
+            className={editor.isActive('heading', { level: 2 }) ? 'bg-accent text-accent-foreground' : ''}
           >
             <Heading2 className="h-4 w-4" />
           </Button>
@@ -240,7 +240,7 @@ export const RichTextEditor: React.FC<RichTextEditorProps> = ({
             variant="ghost"
             size="sm"
             onClick={() => editor.chain().focus().toggleBulletList().run()}
-            className={editor.isActive('bulletList') ? 'bg-gray-200' : ''}
+            className={editor.isActive('bulletList') ? 'bg-accent text-accent-foreground' : ''}
           >
             <List className="h-4 w-4" />
           </Button>
@@ -250,7 +250,7 @@ export const RichTextEditor: React.FC<RichTextEditorProps> = ({
             variant="ghost" 
             size="sm"
             onClick={() => editor.chain().focus().toggleOrderedList().run()}
-            className={editor.isActive('orderedList') ? 'bg-gray-200' : ''}
+            className={editor.isActive('orderedList') ? 'bg-accent text-accent-foreground' : ''}
           >
             <ListOrdered className="h-4 w-4" />
           </Button>
@@ -279,10 +279,10 @@ export const RichTextEditor: React.FC<RichTextEditorProps> = ({
         </div>
         
         {/* Editor Content */}
-        <div className="p-4 min-h-[300px]">
+        <div className="p-4 min-h-[300px] bg-background dark:bg-gray-800 text-foreground">
           <EditorContent 
             editor={editor} 
-            className="prose prose-sm max-w-none focus:outline-none"
+            className="prose prose-sm max-w-none focus:outline-none dark:prose-invert"
             placeholder={placeholder}
           />
         </div>
@@ -290,7 +290,7 @@ export const RichTextEditor: React.FC<RichTextEditorProps> = ({
 
       {/* SEO Analysis Panel */}
       {showSEOPanel && (
-        <Card>
+        <Card className="dashboard-card">
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <TrendingUp className="w-4 h-4" />
@@ -339,15 +339,15 @@ export const RichTextEditor: React.FC<RichTextEditorProps> = ({
 
                     {/* Quick Stats */}
                     <div className="grid grid-cols-3 gap-3">
-                      <div className="p-3 bg-muted/50 rounded text-center">
+                      <div className="p-3 bg-muted/30 rounded text-center">
                         <div className="text-lg font-bold">{seoAnalysis.readabilityAnalysis.fleschScore}</div>
                         <div className="text-xs text-muted-foreground">Readability</div>
                       </div>
-                      <div className="p-3 bg-muted/50 rounded text-center">
+                      <div className="p-3 bg-muted/30 rounded text-center">
                         <div className="text-lg font-bold">{Object.keys(seoAnalysis.keywordAnalysis.keywordDensity).length}</div>
                         <div className="text-xs text-muted-foreground">Keywords Found</div>
                       </div>
-                      <div className="p-3 bg-muted/50 rounded text-center">
+                      <div className="p-3 bg-muted/30 rounded text-center">
                         <div className="text-lg font-bold">{seoAnalysis.readabilityAnalysis.gradeLevel}</div>
                         <div className="text-xs text-muted-foreground">Reading Level</div>
                       </div>
@@ -361,7 +361,7 @@ export const RichTextEditor: React.FC<RichTextEditorProps> = ({
                       <h4 className="font-medium mb-2">Keyword Density</h4>
                       <div className="space-y-2">
                         {Object.entries(seoAnalysis.keywordAnalysis.keywordDensity).map(([keyword, density]) => (
-                          <div key={keyword} className="flex items-center justify-between p-2 bg-muted/50 rounded">
+                          <div key={keyword} className="flex items-center justify-between p-2 bg-muted/30 rounded">
                             <span className="text-sm">{keyword}</span>
                             <div className="flex items-center gap-2">
                               <Progress value={Math.min(density * 33, 100)} className="w-16" />
@@ -375,7 +375,7 @@ export const RichTextEditor: React.FC<RichTextEditorProps> = ({
                     {seoAnalysis.keywordAnalysis.missingKeywords.length > 0 && (
                       <div>
                         <h4 className="font-medium mb-2 flex items-center gap-2">
-                          <AlertCircle className="w-4 h-4 text-yellow-600" />
+                          <AlertCircle className="w-4 h-4 text-yellow-600 dark:text-yellow-400" />
                           Missing Keywords
                         </h4>
                         <div className="flex flex-wrap gap-1">
@@ -396,17 +396,17 @@ export const RichTextEditor: React.FC<RichTextEditorProps> = ({
                       <div 
                         key={index}
                         className={`p-3 rounded border-l-4 ${
-                          rec.type === 'critical' ? 'border-red-500 bg-red-50' :
-                          rec.type === 'warning' ? 'border-yellow-500 bg-yellow-50' :
-                          'border-blue-500 bg-blue-50'
+                          rec.type === 'critical' ? 'border-red-500 bg-red-50 dark:bg-red-900/20' :
+                          rec.type === 'warning' ? 'border-yellow-500 bg-yellow-50 dark:bg-yellow-900/20' :
+                          'border-blue-500 bg-blue-50 dark:bg-blue-900/20'
                         }`}
                       >
                         <div className="flex items-start gap-2">
                           {rec.type === 'critical' ? 
-                            <AlertCircle className="w-4 h-4 text-red-600 mt-0.5" /> :
+                            <AlertCircle className="w-4 h-4 text-red-600 dark:text-red-400 mt-0.5" /> :
                             rec.type === 'warning' ? 
-                            <AlertCircle className="w-4 h-4 text-yellow-600 mt-0.5" /> :
-                            <CheckCircle className="w-4 h-4 text-blue-600 mt-0.5" />
+                            <AlertCircle className="w-4 h-4 text-yellow-600 dark:text-yellow-400 mt-0.5" /> :
+                            <CheckCircle className="w-4 h-4 text-blue-600 dark:text-blue-400 mt-0.5" />
                           }
                           <div className="flex-1">
                             <p className="font-medium text-sm">{rec.issue}</p>

@@ -73,8 +73,8 @@ const CreatePost: React.FC = () => {
       <div className="container mx-auto py-6 space-y-6">
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-2xl font-bold text-white">Create New Post</h1>
-            <p className="text-gray-400">Create a new bilingual blog post with AI-powered translation support</p>
+            <h1 className="text-2xl font-bold text-foreground">Create New Post</h1>
+            <p className="text-muted-foreground">Create a new bilingual blog post with AI-powered translation support</p>
           </div>
           <Button
             type="button"

@@ -90,7 +90,7 @@
     --destructive-foreground: 210 40% 98%;
 
     --border: 217.2 32.6% 17.5%;
-    --input: 217.2 32.6% 17.5%;
+    --input: 222 18% 19%;
 
     /* --- BELIZEVIBES BRAND COLORS (UNCHANGED) --- */
     --ring: 142.4 71.8% 29.2%; /* Ring color matches primary green (dark mode) */
@@ -123,6 +123,62 @@
 
   h1, h2, h3, h4, h5, h6 {
     @apply font-playfair;
+  }
+
+  /* Dark theme prose styling for rich text editor */
+  .dark .prose {
+    @apply text-foreground;
+  }
+
+  .dark .prose h1,
+  .dark .prose h2,
+  .dark .prose h3,
+  .dark .prose h4,
+  .dark .prose h5,
+  .dark .prose h6 {
+    @apply text-foreground;
+  }
+
+  .dark .prose p {
+    @apply text-foreground;
+  }
+
+  .dark .prose strong {
+    @apply text-foreground;
+  }
+
+  .dark .prose em {
+    @apply text-foreground;
+  }
+
+  .dark .prose ul li,
+  .dark .prose ol li {
+    @apply text-foreground;
+  }
+
+  .dark .prose blockquote {
+    @apply text-foreground border-border;
+  }
+
+  .dark .prose code {
+    @apply text-foreground bg-muted;
+  }
+
+  .dark .prose pre {
+    @apply bg-muted text-foreground;
+  }
+
+  /* Enhanced dark mode form styling for better readability */
+  .dark label {
+    @apply text-foreground font-medium;
+  }
+
+  .dark input, .dark textarea {
+    @apply text-foreground bg-input border-border;
+  }
+
+  .dark input::placeholder, .dark textarea::placeholder {
+    @apply text-muted-foreground;
   }
 }
 

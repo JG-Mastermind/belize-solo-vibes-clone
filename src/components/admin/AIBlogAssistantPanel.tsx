@@ -530,13 +530,13 @@ export const AIBlogAssistantPanel: React.FC<AIBlogAssistantPanelProps> = ({
   };
 
   return (
-    <Card className={`bg-gradient-to-br from-blue-50 to-purple-50 border-2 border-dashed border-blue-200 ${className}`}>
+    <Card className={`dashboard-card border-2 border-dashed border-blue-200 dark:border-blue-700 ${className}`}>
       <CardHeader>
         <div className="flex items-center justify-between">
           <CardTitle className="flex items-center space-x-2">
             <Zap className="w-5 h-5 text-blue-600" />
             <span>AI Blog Generator</span>
-            <Badge variant="outline" className="ml-2 bg-white">
+            <Badge variant="outline" className="ml-2 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100">
               {userType.replace('_', ' ').toUpperCase()}
             </Badge>
           </CardTitle>
@@ -558,8 +558,8 @@ export const AIBlogAssistantPanel: React.FC<AIBlogAssistantPanelProps> = ({
       {isEnabled && (
         <CardContent className="space-y-6">
           {!isOnline && (
-            <div className="p-3 bg-yellow-50 border border-yellow-200 rounded-md">
-              <p className="text-sm text-yellow-800">
+            <div className="p-3 bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-700 rounded-md">
+              <p className="text-sm text-yellow-800 dark:text-yellow-200">
                 ⚠️ AI generation not available offline. Please check your internet connection.
               </p>
             </div>

@@ -111,7 +111,7 @@ const EditPost: React.FC = () => {
         <div className="max-w-4xl mx-auto">
           <div className="flex justify-center items-center h-64">
             <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
-            <span className="ml-2">Loading blog post...</span>
+            <span className="ml-2 text-muted-foreground">Loading blog post...</span>
           </div>
         </div>
       </div>
@@ -122,7 +122,7 @@ const EditPost: React.FC = () => {
     return (
       <div className="container mx-auto px-4 py-8">
         <div className="max-w-4xl mx-auto text-center">
-          <h1 className="text-2xl font-bold mb-4">Post Not Found</h1>
+          <h1 className="text-2xl font-bold mb-4 text-foreground">Post Not Found</h1>
           <Button onClick={() => navigate('/dashboard/admin')}>
             ← Back to Dashboard
           </Button>
@@ -141,8 +141,8 @@ const EditPost: React.FC = () => {
       <div className="container mx-auto px-4 py-8">
         <div className="max-w-4xl mx-auto">
           <div className="mb-6">
-            <h1 className="text-2xl font-bold text-white">Edit Post</h1>
-            <p className="text-gray-400">
+            <h1 className="text-2xl font-bold text-foreground">Edit Post</h1>
+            <p className="text-muted-foreground">
               Edit bilingual blog post with AI-powered translation support
             </p>
           </div>

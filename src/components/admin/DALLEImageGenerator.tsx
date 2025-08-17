@@ -243,12 +243,12 @@ export const DALLEImageGenerator: React.FC<DALLEImageGeneratorProps> = ({
   };
 
   return (
-    <Card className={`border-2 border-dashed border-purple-200 bg-gradient-to-br from-purple-50 to-pink-50 ${className}`}>
+    <Card className={`dashboard-card border-2 border-dashed border-purple-200 dark:border-purple-700 ${className}`}>
       <CardHeader>
         <CardTitle className="flex items-center gap-2">
           <Camera className="w-5 h-5 text-purple-600" />
           DALL-E Image Generator
-          <Badge variant="outline" className="ml-auto bg-white">
+          <Badge variant="outline" className="ml-auto bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100">
             AI Powered
           </Badge>
         </CardTitle>

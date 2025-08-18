@@ -44,6 +44,9 @@ import {
   Target,
   Eye,
   Users2,
+  Receipt,
+  Calculator,
+  PieChart,
 } from 'lucide-react';
 import { useAuth } from '../auth/AuthProvider';
 import { dashboardNavigationItems, adminNavigationItems, superAdminNavigationItems, filterNavigationByRole } from '@/lib/navigation';
@@ -76,6 +79,7 @@ export const DashboardSidebar = () => {
   const [marketingIntelligenceOpen, setMarketingIntelligenceOpen] = useState(false);
   const [adventuresOpen, setAdventuresOpen] = useState(false);
   const [blogPostsOpen, setBlogPostsOpen] = useState(false);
+  const [invoiceManagementOpen, setInvoiceManagementOpen] = useState(false);
 
   const isActive = (path: string) => currentPath === path;
 
@@ -240,6 +244,49 @@ export const DashboardSidebar = () => {
                     </SidebarMenuItem>
                   );
                 })}
+                
+                {/* Invoice Management Dropdown - Admin and Super Admin Only */}
+                {userRole && ['admin', 'super_admin'].includes(userRole) && (
+                  <SidebarMenuItem>
+                    <SidebarMenuButton 
+                      onClick={() => setInvoiceManagementOpen(!invoiceManagementOpen)}
+                      isActive={currentPath.startsWith('/dashboard/invoices')}
+                      className="cursor-pointer"
+                    >
+                      <Receipt className="h-4 w-4" />
+                      <span>Invoice Management</span>
+                      <ChevronRight className={`h-4 w-4 ml-auto transition-transform ${invoiceManagementOpen ? 'rotate-90' : ''}`} />
+                    </SidebarMenuButton>
+                    {invoiceManagementOpen && (
+                      <SidebarMenuSub>
+                        <SidebarMenuSubItem>
+                          <SidebarMenuSubButton asChild isActive={isActive('/dashboard/invoices/sent')}>
+                            <Link to="/dashboard/invoices/sent">
+                              <Receipt className="h-4 w-4" />
+                              <span>Invoices Sent</span>
+                            </Link>
+                          </SidebarMenuSubButton>
+                        </SidebarMenuSubItem>
+                        <SidebarMenuSubItem>
+                          <SidebarMenuSubButton asChild isActive={isActive('/dashboard/invoices/received')}>
+                            <Link to="/dashboard/invoices/received">
+                              <FileText className="h-4 w-4" />
+                              <span>Invoices Received</span>
+                            </Link>
+                          </SidebarMenuSubButton>
+                        </SidebarMenuSubItem>
+                        <SidebarMenuSubItem>
+                          <SidebarMenuSubButton asChild isActive={isActive('/dashboard/invoices/reports')}>
+                            <Link to="/dashboard/invoices/reports">
+                              <PieChart className="h-4 w-4" />
+                              <span>Financial Reports</span>
+                            </Link>
+                          </SidebarMenuSubButton>
+                        </SidebarMenuSubItem>
+                      </SidebarMenuSub>
+                    )}
+                  </SidebarMenuItem>
+                )}
               </SidebarMenu>
             </SidebarGroupContent>
           </SidebarGroup>

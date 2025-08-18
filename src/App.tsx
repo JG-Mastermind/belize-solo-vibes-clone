@@ -68,6 +68,9 @@ const MarketingLeads = lazy(() => import("./pages/dashboard/MarketingLeads"));
 const MarketingContent = lazy(() => import("./pages/dashboard/MarketingContent"));
 const MarketingConversions = lazy(() => import("./pages/dashboard/MarketingConversions"));
 const MarketingROI = lazy(() => import("./pages/dashboard/MarketingROI"));
+const InvoicesSent = lazy(() => import("./pages/dashboard/InvoicesSent"));
+const InvoicesReceived = lazy(() => import("./pages/dashboard/InvoicesReceived"));
+const FinancialReports = lazy(() => import("./pages/dashboard/FinancialReports"));
 const TestAI = lazy(() => import("./pages/TestAI"));
 
 // Loading component for suspense fallback
@@ -223,6 +226,21 @@ const App = () => {
                 <Route path="marketing/roi" element={
                   <RequireRole allowedRoles={['super_admin']}>
                     <MarketingROI />
+                  </RequireRole>
+                } />
+                <Route path="invoices/sent" element={
+                  <RequireRole allowedRoles={['admin', 'super_admin']}>
+                    <InvoicesSent />
+                  </RequireRole>
+                } />
+                <Route path="invoices/received" element={
+                  <RequireRole allowedRoles={['admin', 'super_admin']}>
+                    <InvoicesReceived />
+                  </RequireRole>
+                } />
+                <Route path="invoices/reports" element={
+                  <RequireRole allowedRoles={['admin', 'super_admin']}>
+                    <FinancialReports />
                   </RequireRole>
                 } />
                 <Route path="create-post" element={<CreatePost />} />

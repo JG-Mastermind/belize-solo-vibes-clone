@@ -41,6 +41,9 @@ import {
   ChevronRight,
   Database,
   Zap,
+  Target,
+  Eye,
+  Users2,
 } from 'lucide-react';
 import { useAuth } from '../auth/AuthProvider';
 import { dashboardNavigationItems, adminNavigationItems, superAdminNavigationItems, filterNavigationByRole } from '@/lib/navigation';
@@ -70,6 +73,7 @@ export const DashboardSidebar = () => {
   const currentPath = location.pathname;
   const userRole = getUserRole();
   const [apiManagementOpen, setApiManagementOpen] = useState(false);
+  const [marketingIntelligenceOpen, setMarketingIntelligenceOpen] = useState(false);
 
   const isActive = (path: string) => currentPath === path;
 
@@ -238,6 +242,80 @@ export const DashboardSidebar = () => {
                           <Link to="/dashboard/api-management/metrics">
                             <TrendingUp className="h-4 w-4" />
                             <span>Super Admin Metrics</span>
+                          </Link>
+                        </SidebarMenuSubButton>
+                      </SidebarMenuSubItem>
+                    </SidebarMenuSub>
+                  )}
+                </SidebarMenuItem>
+              </SidebarMenu>
+            </SidebarGroupContent>
+          </SidebarGroup>
+        )}
+
+        {/* Marketing Intelligence Section - Super Admin Only */}
+        {userRole === 'super_admin' && (
+          <SidebarGroup>
+            <SidebarGroupLabel className="text-sidebar-foreground/60">3. 📊 Marketing Intelligence</SidebarGroupLabel>
+            <SidebarGroupContent>
+              <SidebarMenu>
+                <SidebarMenuItem>
+                  <SidebarMenuButton 
+                    onClick={() => setMarketingIntelligenceOpen(!marketingIntelligenceOpen)}
+                    isActive={currentPath.startsWith('/dashboard/marketing')}
+                    className="cursor-pointer"
+                  >
+                    <BarChart3 className="h-4 w-4" />
+                    <span>Marketing Intelligence</span>
+                    <ChevronRight className={`h-4 w-4 ml-auto transition-transform ${marketingIntelligenceOpen ? 'rotate-90' : ''}`} />
+                  </SidebarMenuButton>
+                  {marketingIntelligenceOpen && (
+                    <SidebarMenuSub>
+                      <SidebarMenuSubItem>
+                        <SidebarMenuSubButton asChild isActive={isActive('/dashboard/marketing/campaigns')}>
+                          <Link to="/dashboard/marketing/campaigns">
+                            <Target className="h-4 w-4" />
+                            <span>Campaign Performance</span>
+                          </Link>
+                        </SidebarMenuSubButton>
+                      </SidebarMenuSubItem>
+                      <SidebarMenuSubItem>
+                        <SidebarMenuSubButton asChild isActive={isActive('/dashboard/marketing/traffic')}>
+                          <Link to="/dashboard/marketing/traffic">
+                            <TrendingUp className="h-4 w-4" />
+                            <span>Traffic Analytics</span>
+                          </Link>
+                        </SidebarMenuSubButton>
+                      </SidebarMenuSubItem>
+                      <SidebarMenuSubItem>
+                        <SidebarMenuSubButton asChild isActive={isActive('/dashboard/marketing/leads')}>
+                          <Link to="/dashboard/marketing/leads">
+                            <Users2 className="h-4 w-4" />
+                            <span>Lead Generation</span>
+                          </Link>
+                        </SidebarMenuSubButton>
+                      </SidebarMenuSubItem>
+                      <SidebarMenuSubItem>
+                        <SidebarMenuSubButton asChild isActive={isActive('/dashboard/marketing/content')}>
+                          <Link to="/dashboard/marketing/content">
+                            <Eye className="h-4 w-4" />
+                            <span>Content Performance</span>
+                          </Link>
+                        </SidebarMenuSubButton>
+                      </SidebarMenuSubItem>
+                      <SidebarMenuSubItem>
+                        <SidebarMenuSubButton asChild isActive={isActive('/dashboard/marketing/conversions')}>
+                          <Link to="/dashboard/marketing/conversions">
+                            <Activity className="h-4 w-4" />
+                            <span>Conversion Analytics</span>
+                          </Link>
+                        </SidebarMenuSubButton>
+                      </SidebarMenuSubItem>
+                      <SidebarMenuSubItem>
+                        <SidebarMenuSubButton asChild isActive={isActive('/dashboard/marketing/roi')}>
+                          <Link to="/dashboard/marketing/roi">
+                            <DollarSign className="h-4 w-4" />
+                            <span>Marketing ROI</span>
                           </Link>
                         </SidebarMenuSubButton>
                       </SidebarMenuSubItem>

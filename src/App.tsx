@@ -62,6 +62,12 @@ const ApiCostAnalysis = lazy(() => import("./pages/dashboard/ApiCostAnalysis"));
 const ApiUsageMonitoring = lazy(() => import("./pages/dashboard/ApiUsageMonitoring"));
 const ApiAlertsManagement = lazy(() => import("./pages/dashboard/ApiAlertsManagement"));
 const ApiOptimization = lazy(() => import("./pages/dashboard/ApiOptimization"));
+const MarketingCampaigns = lazy(() => import("./pages/dashboard/MarketingCampaigns"));
+const MarketingTraffic = lazy(() => import("./pages/dashboard/MarketingTraffic"));
+const MarketingLeads = lazy(() => import("./pages/dashboard/MarketingLeads"));
+const MarketingContent = lazy(() => import("./pages/dashboard/MarketingContent"));
+const MarketingConversions = lazy(() => import("./pages/dashboard/MarketingConversions"));
+const MarketingROI = lazy(() => import("./pages/dashboard/MarketingROI"));
 const TestAI = lazy(() => import("./pages/TestAI"));
 
 // Loading component for suspense fallback
@@ -187,6 +193,36 @@ const App = () => {
                 <Route path="api-management/optimization" element={
                   <RequireRole allowedRoles={['super_admin']}>
                     <ApiOptimization />
+                  </RequireRole>
+                } />
+                <Route path="marketing/campaigns" element={
+                  <RequireRole allowedRoles={['super_admin']}>
+                    <MarketingCampaigns />
+                  </RequireRole>
+                } />
+                <Route path="marketing/traffic" element={
+                  <RequireRole allowedRoles={['super_admin']}>
+                    <MarketingTraffic />
+                  </RequireRole>
+                } />
+                <Route path="marketing/leads" element={
+                  <RequireRole allowedRoles={['super_admin']}>
+                    <MarketingLeads />
+                  </RequireRole>
+                } />
+                <Route path="marketing/content" element={
+                  <RequireRole allowedRoles={['super_admin']}>
+                    <MarketingContent />
+                  </RequireRole>
+                } />
+                <Route path="marketing/conversions" element={
+                  <RequireRole allowedRoles={['super_admin']}>
+                    <MarketingConversions />
+                  </RequireRole>
+                } />
+                <Route path="marketing/roi" element={
+                  <RequireRole allowedRoles={['super_admin']}>
+                    <MarketingROI />
                   </RequireRole>
                 } />
                 <Route path="create-post" element={<CreatePost />} />

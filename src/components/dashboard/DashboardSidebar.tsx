@@ -1,5 +1,5 @@
 
-import React from 'react';
+import React, { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import {
@@ -11,6 +11,9 @@ import {
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
+  SidebarMenuSub,
+  SidebarMenuSubItem,
+  SidebarMenuSubButton,
   SidebarHeader,
   SidebarFooter,
 } from '@/components/ui/sidebar';
@@ -30,6 +33,14 @@ import {
   FileText,
   UserCheck,
   BarChart3,
+  Key,
+  DollarSign,
+  Activity,
+  Bell,
+  TrendingUp,
+  ChevronRight,
+  Database,
+  Zap,
 } from 'lucide-react';
 import { useAuth } from '../auth/AuthProvider';
 import { dashboardNavigationItems, adminNavigationItems, superAdminNavigationItems, filterNavigationByRole } from '@/lib/navigation';
@@ -58,6 +69,7 @@ export const DashboardSidebar = () => {
   const { t } = useTranslation(['dashboard']);
   const currentPath = location.pathname;
   const userRole = getUserRole();
+  const [apiManagementOpen, setApiManagementOpen] = useState(false);
 
   const isActive = (path: string) => currentPath === path;
 
@@ -158,6 +170,80 @@ export const DashboardSidebar = () => {
                     </SidebarMenuItem>
                   );
                 })}
+              </SidebarMenu>
+            </SidebarGroupContent>
+          </SidebarGroup>
+        )}
+
+        {/* API Management Section - Super Admin Only */}
+        {userRole === 'super_admin' && (
+          <SidebarGroup>
+            <SidebarGroupLabel className="text-sidebar-foreground/60">2. 🔑 API Management</SidebarGroupLabel>
+            <SidebarGroupContent>
+              <SidebarMenu>
+                <SidebarMenuItem>
+                  <SidebarMenuButton 
+                    onClick={() => setApiManagementOpen(!apiManagementOpen)}
+                    isActive={currentPath.startsWith('/dashboard/api-management')}
+                    className="cursor-pointer"
+                  >
+                    <Key className="h-4 w-4" />
+                    <span>API Management</span>
+                    <ChevronRight className={`h-4 w-4 ml-auto transition-transform ${apiManagementOpen ? 'rotate-90' : ''}`} />
+                  </SidebarMenuButton>
+                  {apiManagementOpen && (
+                    <SidebarMenuSub>
+                      <SidebarMenuSubItem>
+                        <SidebarMenuSubButton asChild isActive={isActive('/dashboard/api-management/keys')}>
+                          <Link to="/dashboard/api-management/keys">
+                            <Database className="h-4 w-4" />
+                            <span>API Keys Dashboard</span>
+                          </Link>
+                        </SidebarMenuSubButton>
+                      </SidebarMenuSubItem>
+                      <SidebarMenuSubItem>
+                        <SidebarMenuSubButton asChild isActive={isActive('/dashboard/api-management/costs')}>
+                          <Link to="/dashboard/api-management/costs">
+                            <DollarSign className="h-4 w-4" />
+                            <span>Cost Analysis</span>
+                          </Link>
+                        </SidebarMenuSubButton>
+                      </SidebarMenuSubItem>
+                      <SidebarMenuSubItem>
+                        <SidebarMenuSubButton asChild isActive={isActive('/dashboard/api-management/monitoring')}>
+                          <Link to="/dashboard/api-management/monitoring">
+                            <Activity className="h-4 w-4" />
+                            <span>Usage Monitoring</span>
+                          </Link>
+                        </SidebarMenuSubButton>
+                      </SidebarMenuSubItem>
+                      <SidebarMenuSubItem>
+                        <SidebarMenuSubButton asChild isActive={isActive('/dashboard/api-management/alerts')}>
+                          <Link to="/dashboard/api-management/alerts">
+                            <Bell className="h-4 w-4" />
+                            <span>Alerts & Notifications</span>
+                          </Link>
+                        </SidebarMenuSubButton>
+                      </SidebarMenuSubItem>
+                      <SidebarMenuSubItem>
+                        <SidebarMenuSubButton asChild isActive={isActive('/dashboard/api-management/optimization')}>
+                          <Link to="/dashboard/api-management/optimization">
+                            <Zap className="h-4 w-4" />
+                            <span>Optimization</span>
+                          </Link>
+                        </SidebarMenuSubButton>
+                      </SidebarMenuSubItem>
+                      <SidebarMenuSubItem>
+                        <SidebarMenuSubButton asChild isActive={isActive('/dashboard/api-management/metrics')}>
+                          <Link to="/dashboard/api-management/metrics">
+                            <TrendingUp className="h-4 w-4" />
+                            <span>Super Admin Metrics</span>
+                          </Link>
+                        </SidebarMenuSubButton>
+                      </SidebarMenuSubItem>
+                    </SidebarMenuSub>
+                  )}
+                </SidebarMenuItem>
               </SidebarMenu>
             </SidebarGroupContent>
           </SidebarGroup>

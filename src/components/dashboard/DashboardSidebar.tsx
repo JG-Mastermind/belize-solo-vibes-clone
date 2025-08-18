@@ -74,6 +74,8 @@ export const DashboardSidebar = () => {
   const userRole = getUserRole();
   const [apiManagementOpen, setApiManagementOpen] = useState(false);
   const [marketingIntelligenceOpen, setMarketingIntelligenceOpen] = useState(false);
+  const [adventuresOpen, setAdventuresOpen] = useState(false);
+  const [blogPostsOpen, setBlogPostsOpen] = useState(false);
 
   const isActive = (path: string) => currentPath === path;
 
@@ -118,6 +120,93 @@ export const DashboardSidebar = () => {
             <SidebarMenu>
               {mainNavItems.map((item) => {
                 const IconComponent = iconMap[item.path as keyof typeof iconMap];
+                
+                // Handle Adventures with dropdown for Create Adventure
+                if (item.path === '/dashboard/adventures') {
+                  const hasCreatePermission = userRole && ['guide', 'admin', 'super_admin'].includes(userRole);
+                  return (
+                    <SidebarMenuItem key={item.name}>
+                      <SidebarMenuButton 
+                        onClick={() => setAdventuresOpen(!adventuresOpen)}
+                        isActive={currentPath.startsWith('/dashboard/adventures') || currentPath === '/dashboard/create-adventure'}
+                        className="cursor-pointer"
+                      >
+                        {IconComponent && <IconComponent className="h-4 w-4" />}
+                        <span>{getNavName(item.path)}</span>
+                        <ChevronRight className={`h-4 w-4 ml-auto transition-transform ${adventuresOpen ? 'rotate-90' : ''}`} />
+                      </SidebarMenuButton>
+                      {adventuresOpen && (
+                        <SidebarMenuSub>
+                          <SidebarMenuSubItem>
+                            <SidebarMenuSubButton asChild isActive={isActive('/dashboard/adventures')}>
+                              <Link to="/dashboard/adventures">
+                                <MapPin className="h-4 w-4" />
+                                <span>View Adventures</span>
+                              </Link>
+                            </SidebarMenuSubButton>
+                          </SidebarMenuSubItem>
+                          {hasCreatePermission && (
+                            <SidebarMenuSubItem>
+                              <SidebarMenuSubButton asChild isActive={isActive('/dashboard/create-adventure')}>
+                                <Link to="/dashboard/create-adventure">
+                                  <Plus className="h-4 w-4" />
+                                  <span>{getNavName('/dashboard/create-adventure')}</span>
+                                </Link>
+                              </SidebarMenuSubButton>
+                            </SidebarMenuSubItem>
+                          )}
+                        </SidebarMenuSub>
+                      )}
+                    </SidebarMenuItem>
+                  );
+                }
+                
+                // Handle Blog Posts with dropdown for Create Post
+                if (item.path === '/dashboard/blog-posts') {
+                  const hasCreatePermission = userRole && ['blogger', 'admin', 'super_admin'].includes(userRole);
+                  return (
+                    <SidebarMenuItem key={item.name}>
+                      <SidebarMenuButton 
+                        onClick={() => setBlogPostsOpen(!blogPostsOpen)}
+                        isActive={currentPath.startsWith('/dashboard/blog') || currentPath === '/dashboard/create-post'}
+                        className="cursor-pointer"
+                      >
+                        <FileText className="h-4 w-4" />
+                        <span>{getNavName(item.path)}</span>
+                        <ChevronRight className={`h-4 w-4 ml-auto transition-transform ${blogPostsOpen ? 'rotate-90' : ''}`} />
+                      </SidebarMenuButton>
+                      {blogPostsOpen && (
+                        <SidebarMenuSub>
+                          <SidebarMenuSubItem>
+                            <SidebarMenuSubButton asChild isActive={isActive('/dashboard/blog-posts')}>
+                              <Link to="/dashboard/blog-posts">
+                                <FileText className="h-4 w-4" />
+                                <span>View Posts</span>
+                              </Link>
+                            </SidebarMenuSubButton>
+                          </SidebarMenuSubItem>
+                          {hasCreatePermission && (
+                            <SidebarMenuSubItem>
+                              <SidebarMenuSubButton asChild isActive={isActive('/dashboard/create-post')}>
+                                <Link to="/dashboard/create-post">
+                                  <Plus className="h-4 w-4" />
+                                  <span>{getNavName('/dashboard/create-post')}</span>
+                                </Link>
+                              </SidebarMenuSubButton>
+                            </SidebarMenuSubItem>
+                          )}
+                        </SidebarMenuSub>
+                      )}
+                    </SidebarMenuItem>
+                  );
+                }
+                
+                // Skip standalone Create Adventure and Create Post items as they're now in dropdowns
+                if (item.path === '/dashboard/create-adventure' || item.path === '/dashboard/create-post') {
+                  return null;
+                }
+                
+                // Handle all other navigation items normally
                 return (
                   <SidebarMenuItem key={item.name}>
                     <SidebarMenuButton asChild isActive={isActive(item.path)}>
@@ -182,7 +271,7 @@ export const DashboardSidebar = () => {
         {/* API Management Section - Super Admin Only */}
         {userRole === 'super_admin' && (
           <SidebarGroup>
-            <SidebarGroupLabel className="text-sidebar-foreground/60">2. 🔑 API Management</SidebarGroupLabel>
+            <SidebarGroupLabel className="text-sidebar-foreground/60">API Management</SidebarGroupLabel>
             <SidebarGroupContent>
               <SidebarMenu>
                 <SidebarMenuItem>
@@ -256,7 +345,7 @@ export const DashboardSidebar = () => {
         {/* Marketing Intelligence Section - Super Admin Only */}
         {userRole === 'super_admin' && (
           <SidebarGroup>
-            <SidebarGroupLabel className="text-sidebar-foreground/60">3. 📊 Marketing Intelligence</SidebarGroupLabel>
+            <SidebarGroupLabel className="text-sidebar-foreground/60">Marketing Intelligence</SidebarGroupLabel>
             <SidebarGroupContent>
               <SidebarMenu>
                 <SidebarMenuItem>

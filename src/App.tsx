@@ -57,6 +57,11 @@ const Messages = lazy(() => import("./pages/dashboard/Messages"));
 const Payouts = lazy(() => import("./pages/dashboard/Payouts"));
 const AnalyticsDashboard = lazy(() => import("./pages/dashboard/AnalyticsDashboard"));
 const SuperAdminMetricsPage = lazy(() => import("./pages/dashboard/SuperAdminMetrics"));
+const ApiKeysManagement = lazy(() => import("./pages/dashboard/ApiKeysManagement"));
+const ApiCostAnalysis = lazy(() => import("./pages/dashboard/ApiCostAnalysis"));
+const ApiUsageMonitoring = lazy(() => import("./pages/dashboard/ApiUsageMonitoring"));
+const ApiAlertsManagement = lazy(() => import("./pages/dashboard/ApiAlertsManagement"));
+const ApiOptimization = lazy(() => import("./pages/dashboard/ApiOptimization"));
 const TestAI = lazy(() => import("./pages/TestAI"));
 
 // Loading component for suspense fallback
@@ -157,6 +162,31 @@ const App = () => {
                 <Route path="api-management/metrics" element={
                   <RequireRole allowedRoles={['super_admin']}>
                     <SuperAdminMetricsPage />
+                  </RequireRole>
+                } />
+                <Route path="api-management/keys" element={
+                  <RequireRole allowedRoles={['super_admin']}>
+                    <ApiKeysManagement />
+                  </RequireRole>
+                } />
+                <Route path="api-management/costs" element={
+                  <RequireRole allowedRoles={['super_admin']}>
+                    <ApiCostAnalysis />
+                  </RequireRole>
+                } />
+                <Route path="api-management/monitoring" element={
+                  <RequireRole allowedRoles={['super_admin']}>
+                    <ApiUsageMonitoring />
+                  </RequireRole>
+                } />
+                <Route path="api-management/alerts" element={
+                  <RequireRole allowedRoles={['super_admin']}>
+                    <ApiAlertsManagement />
+                  </RequireRole>
+                } />
+                <Route path="api-management/optimization" element={
+                  <RequireRole allowedRoles={['super_admin']}>
+                    <ApiOptimization />
                   </RequireRole>
                 } />
                 <Route path="create-post" element={<CreatePost />} />

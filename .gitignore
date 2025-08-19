@@ -33,3 +33,5 @@ database-fixes/
 
 # Supabase
 supabase/.temp/
+# Claude agent configurations (local only)
+.claude/

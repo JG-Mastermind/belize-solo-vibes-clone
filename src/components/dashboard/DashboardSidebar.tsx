@@ -47,6 +47,8 @@ import {
   Receipt,
   Calculator,
   PieChart,
+  Banknote,
+  ShieldAlert,
 } from 'lucide-react';
 import { useAuth } from '../auth/AuthProvider';
 import { dashboardNavigationItems, adminNavigationItems, superAdminNavigationItems, filterNavigationByRole } from '@/lib/navigation';
@@ -77,6 +79,7 @@ export const DashboardSidebar = () => {
   const userRole = getUserRole();
   const [apiManagementOpen, setApiManagementOpen] = useState(false);
   const [marketingIntelligenceOpen, setMarketingIntelligenceOpen] = useState(false);
+  const [financialTransactionsOpen, setFinancialTransactionsOpen] = useState(false);
   const [adventuresOpen, setAdventuresOpen] = useState(false);
   const [blogPostsOpen, setBlogPostsOpen] = useState(false);
   const [invoiceManagementOpen, setInvoiceManagementOpen] = useState(false);
@@ -452,6 +455,56 @@ export const DashboardSidebar = () => {
                           <Link to="/dashboard/marketing/roi">
                             <DollarSign className="h-4 w-4" />
                             <span>Marketing ROI</span>
+                          </Link>
+                        </SidebarMenuSubButton>
+                      </SidebarMenuSubItem>
+                    </SidebarMenuSub>
+                  )}
+                </SidebarMenuItem>
+              </SidebarMenu>
+            </SidebarGroupContent>
+          </SidebarGroup>
+        )}
+
+        {/* Financial Transactions Section - Super Admin Only */}
+        {userRole === 'super_admin' && (
+          <SidebarGroup>
+            <SidebarGroupLabel className="text-sidebar-foreground/60">Financial Transactions</SidebarGroupLabel>
+            <SidebarGroupContent>
+              <SidebarMenu>
+                <SidebarMenuItem>
+                  <SidebarMenuButton 
+                    onClick={() => setFinancialTransactionsOpen(!financialTransactionsOpen)}
+                    isActive={currentPath.startsWith('/dashboard/financial-transactions')}
+                    className="cursor-pointer"
+                  >
+                    <Banknote className="h-4 w-4" />
+                    <span>Financial Transactions</span>
+                    <ChevronRight className={`h-4 w-4 ml-auto transition-transform ${financialTransactionsOpen ? 'rotate-90' : ''}`} />
+                  </SidebarMenuButton>
+                  {financialTransactionsOpen && (
+                    <SidebarMenuSub>
+                      <SidebarMenuSubItem>
+                        <SidebarMenuSubButton asChild isActive={isActive('/dashboard/financial-transactions/processing')}>
+                          <Link to="/dashboard/financial-transactions/processing">
+                            <CreditCard className="h-4 w-4" />
+                            <span>Payment Processing</span>
+                          </Link>
+                        </SidebarMenuSubButton>
+                      </SidebarMenuSubItem>
+                      <SidebarMenuSubItem>
+                        <SidebarMenuSubButton asChild isActive={isActive('/dashboard/financial-transactions/analytics')}>
+                          <Link to="/dashboard/financial-transactions/analytics">
+                            <TrendingUp className="h-4 w-4" />
+                            <span>Revenue Analytics</span>
+                          </Link>
+                        </SidebarMenuSubButton>
+                      </SidebarMenuSubItem>
+                      <SidebarMenuSubItem>
+                        <SidebarMenuSubButton asChild isActive={isActive('/dashboard/financial-transactions/disputes')}>
+                          <Link to="/dashboard/financial-transactions/disputes">
+                            <ShieldAlert className="h-4 w-4" />
+                            <span>Dispute Management</span>
                           </Link>
                         </SidebarMenuSubButton>
                       </SidebarMenuSubItem>

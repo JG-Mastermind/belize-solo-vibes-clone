@@ -89,7 +89,7 @@ const MarketingROI: React.FC = () => {
 
   const monthlyROI = [
     { month: 'Jan', spend: 6800, revenue: 339621, roi: 4994, customers: 287 },
-    { month: 'Feb', spend: 7200, revenue: 404586, revenue: 5619, customers: 342 },
+    { month: 'Feb', spend: 7200, revenue: 404586, roi: 5619, customers: 342 },
     { month: 'Mar', spend: 8100, revenue: 470834, roi: 5814, customers: 398 },
     { month: 'Apr', spend: 8900, revenue: 526635, roi: 5916, customers: 445 },
     { month: 'May', spend: 9200, revenue: 618729, roi: 6726, customers: 523 },

@@ -71,6 +71,9 @@ const MarketingROI = lazy(() => import("./pages/dashboard/MarketingROI"));
 const InvoicesSent = lazy(() => import("./pages/dashboard/InvoicesSent"));
 const InvoicesReceived = lazy(() => import("./pages/dashboard/InvoicesReceived"));
 const FinancialReports = lazy(() => import("./pages/dashboard/FinancialReports"));
+const FinancialTransactionsProcessing = lazy(() => import("./pages/dashboard/FinancialTransactionsProcessing"));
+const FinancialTransactionsAnalytics = lazy(() => import("./pages/dashboard/FinancialTransactionsAnalytics"));
+const FinancialTransactionsDisputes = lazy(() => import("./pages/dashboard/FinancialTransactionsDisputes"));
 const TestAI = lazy(() => import("./pages/TestAI"));
 
 // Loading component for suspense fallback
@@ -241,6 +244,21 @@ const App = () => {
                 <Route path="invoices/reports" element={
                   <RequireRole allowedRoles={['admin', 'super_admin']}>
                     <FinancialReports />
+                  </RequireRole>
+                } />
+                <Route path="financial-transactions/processing" element={
+                  <RequireRole allowedRoles={['super_admin']}>
+                    <FinancialTransactionsProcessing />
+                  </RequireRole>
+                } />
+                <Route path="financial-transactions/analytics" element={
+                  <RequireRole allowedRoles={['super_admin']}>
+                    <FinancialTransactionsAnalytics />
+                  </RequireRole>
+                } />
+                <Route path="financial-transactions/disputes" element={
+                  <RequireRole allowedRoles={['super_admin']}>
+                    <FinancialTransactionsDisputes />
                   </RequireRole>
                 } />
                 <Route path="create-post" element={<CreatePost />} />

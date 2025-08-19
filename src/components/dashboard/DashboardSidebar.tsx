@@ -295,7 +295,7 @@ export const DashboardSidebar = () => {
           </SidebarGroup>
         )}
 
-        {superAdminNavItems.length > 0 && (
+        {(superAdminNavItems.length > 0 || userRole === 'super_admin') && (
           <SidebarGroup>
             <SidebarGroupLabel className="text-sidebar-foreground/60">Super Admin</SidebarGroupLabel>
             <SidebarGroupContent>
@@ -313,204 +313,183 @@ export const DashboardSidebar = () => {
                     </SidebarMenuItem>
                   );
                 })}
-              </SidebarMenu>
-            </SidebarGroupContent>
-          </SidebarGroup>
-        )}
 
-        {/* API Management Section - Super Admin Only */}
-        {userRole === 'super_admin' && (
-          <SidebarGroup>
-            <SidebarGroupLabel className="text-sidebar-foreground/60">API Management</SidebarGroupLabel>
-            <SidebarGroupContent>
-              <SidebarMenu>
-                <SidebarMenuItem>
-                  <SidebarMenuButton 
-                    onClick={() => setApiManagementOpen(!apiManagementOpen)}
-                    isActive={currentPath.startsWith('/dashboard/api-management')}
-                    className="cursor-pointer"
-                  >
-                    <Key className="h-4 w-4" />
-                    <span>API Management</span>
-                    <ChevronRight className={`h-4 w-4 ml-auto transition-transform ${apiManagementOpen ? 'rotate-90' : ''}`} />
-                  </SidebarMenuButton>
-                  {apiManagementOpen && (
-                    <SidebarMenuSub>
-                      <SidebarMenuSubItem>
-                        <SidebarMenuSubButton asChild isActive={isActive('/dashboard/api-management/keys')}>
-                          <Link to="/dashboard/api-management/keys">
-                            <Database className="h-4 w-4" />
-                            <span>API Keys Dashboard</span>
-                          </Link>
-                        </SidebarMenuSubButton>
-                      </SidebarMenuSubItem>
-                      <SidebarMenuSubItem>
-                        <SidebarMenuSubButton asChild isActive={isActive('/dashboard/api-management/costs')}>
-                          <Link to="/dashboard/api-management/costs">
-                            <DollarSign className="h-4 w-4" />
-                            <span>Cost Analysis</span>
-                          </Link>
-                        </SidebarMenuSubButton>
-                      </SidebarMenuSubItem>
-                      <SidebarMenuSubItem>
-                        <SidebarMenuSubButton asChild isActive={isActive('/dashboard/api-management/monitoring')}>
-                          <Link to="/dashboard/api-management/monitoring">
-                            <Activity className="h-4 w-4" />
-                            <span>Usage Monitoring</span>
-                          </Link>
-                        </SidebarMenuSubButton>
-                      </SidebarMenuSubItem>
-                      <SidebarMenuSubItem>
-                        <SidebarMenuSubButton asChild isActive={isActive('/dashboard/api-management/alerts')}>
-                          <Link to="/dashboard/api-management/alerts">
-                            <Bell className="h-4 w-4" />
-                            <span>Alerts & Notifications</span>
-                          </Link>
-                        </SidebarMenuSubButton>
-                      </SidebarMenuSubItem>
-                      <SidebarMenuSubItem>
-                        <SidebarMenuSubButton asChild isActive={isActive('/dashboard/api-management/optimization')}>
-                          <Link to="/dashboard/api-management/optimization">
-                            <Zap className="h-4 w-4" />
-                            <span>Optimization</span>
-                          </Link>
-                        </SidebarMenuSubButton>
-                      </SidebarMenuSubItem>
-                      <SidebarMenuSubItem>
-                        <SidebarMenuSubButton asChild isActive={isActive('/dashboard/api-management/metrics')}>
-                          <Link to="/dashboard/api-management/metrics">
-                            <TrendingUp className="h-4 w-4" />
-                            <span>Super Admin Metrics</span>
-                          </Link>
-                        </SidebarMenuSubButton>
-                      </SidebarMenuSubItem>
-                    </SidebarMenuSub>
-                  )}
-                </SidebarMenuItem>
-              </SidebarMenu>
-            </SidebarGroupContent>
-          </SidebarGroup>
-        )}
+                {/* API Management Dropdown - Super Admin Only */}
+                {userRole === 'super_admin' && (
+                  <SidebarMenuItem>
+                    <SidebarMenuButton 
+                      onClick={() => setApiManagementOpen(!apiManagementOpen)}
+                      isActive={currentPath.startsWith('/dashboard/api-management')}
+                      className="cursor-pointer"
+                    >
+                      <Key className="h-4 w-4" />
+                      <span>API Management</span>
+                      <ChevronRight className={`h-4 w-4 ml-auto transition-transform ${apiManagementOpen ? 'rotate-90' : ''}`} />
+                    </SidebarMenuButton>
+                    {apiManagementOpen && (
+                      <SidebarMenuSub>
+                        <SidebarMenuSubItem>
+                          <SidebarMenuSubButton asChild isActive={isActive('/dashboard/api-management/keys')}>
+                            <Link to="/dashboard/api-management/keys">
+                              <Database className="h-4 w-4" />
+                              <span>API Keys Dashboard</span>
+                            </Link>
+                          </SidebarMenuSubButton>
+                        </SidebarMenuSubItem>
+                        <SidebarMenuSubItem>
+                          <SidebarMenuSubButton asChild isActive={isActive('/dashboard/api-management/costs')}>
+                            <Link to="/dashboard/api-management/costs">
+                              <DollarSign className="h-4 w-4" />
+                              <span>Cost Analysis</span>
+                            </Link>
+                          </SidebarMenuSubButton>
+                        </SidebarMenuSubItem>
+                        <SidebarMenuSubItem>
+                          <SidebarMenuSubButton asChild isActive={isActive('/dashboard/api-management/monitoring')}>
+                            <Link to="/dashboard/api-management/monitoring">
+                              <Activity className="h-4 w-4" />
+                              <span>Usage Monitoring</span>
+                            </Link>
+                          </SidebarMenuSubButton>
+                        </SidebarMenuSubItem>
+                        <SidebarMenuSubItem>
+                          <SidebarMenuSubButton asChild isActive={isActive('/dashboard/api-management/alerts')}>
+                            <Link to="/dashboard/api-management/alerts">
+                              <Bell className="h-4 w-4" />
+                              <span>Alerts & Notifications</span>
+                            </Link>
+                          </SidebarMenuSubButton>
+                        </SidebarMenuSubItem>
+                        <SidebarMenuSubItem>
+                          <SidebarMenuSubButton asChild isActive={isActive('/dashboard/api-management/optimization')}>
+                            <Link to="/dashboard/api-management/optimization">
+                              <Zap className="h-4 w-4" />
+                              <span>Optimization</span>
+                            </Link>
+                          </SidebarMenuSubButton>
+                        </SidebarMenuSubItem>
+                        <SidebarMenuSubItem>
+                          <SidebarMenuSubButton asChild isActive={isActive('/dashboard/api-management/metrics')}>
+                            <Link to="/dashboard/api-management/metrics">
+                              <TrendingUp className="h-4 w-4" />
+                              <span>Super Admin Metrics</span>
+                            </Link>
+                          </SidebarMenuSubButton>
+                        </SidebarMenuSubItem>
+                      </SidebarMenuSub>
+                    )}
+                  </SidebarMenuItem>
+                )}
 
-        {/* Marketing Intelligence Section - Super Admin Only */}
-        {userRole === 'super_admin' && (
-          <SidebarGroup>
-            <SidebarGroupLabel className="text-sidebar-foreground/60">Marketing Intelligence</SidebarGroupLabel>
-            <SidebarGroupContent>
-              <SidebarMenu>
-                <SidebarMenuItem>
-                  <SidebarMenuButton 
-                    onClick={() => setMarketingIntelligenceOpen(!marketingIntelligenceOpen)}
-                    isActive={currentPath.startsWith('/dashboard/marketing')}
-                    className="cursor-pointer"
-                  >
-                    <BarChart3 className="h-4 w-4" />
-                    <span>Marketing Intelligence</span>
-                    <ChevronRight className={`h-4 w-4 ml-auto transition-transform ${marketingIntelligenceOpen ? 'rotate-90' : ''}`} />
-                  </SidebarMenuButton>
-                  {marketingIntelligenceOpen && (
-                    <SidebarMenuSub>
-                      <SidebarMenuSubItem>
-                        <SidebarMenuSubButton asChild isActive={isActive('/dashboard/marketing/campaigns')}>
-                          <Link to="/dashboard/marketing/campaigns">
-                            <Target className="h-4 w-4" />
-                            <span>Campaign Performance</span>
-                          </Link>
-                        </SidebarMenuSubButton>
-                      </SidebarMenuSubItem>
-                      <SidebarMenuSubItem>
-                        <SidebarMenuSubButton asChild isActive={isActive('/dashboard/marketing/traffic')}>
-                          <Link to="/dashboard/marketing/traffic">
-                            <TrendingUp className="h-4 w-4" />
-                            <span>Traffic Analytics</span>
-                          </Link>
-                        </SidebarMenuSubButton>
-                      </SidebarMenuSubItem>
-                      <SidebarMenuSubItem>
-                        <SidebarMenuSubButton asChild isActive={isActive('/dashboard/marketing/leads')}>
-                          <Link to="/dashboard/marketing/leads">
-                            <Users2 className="h-4 w-4" />
-                            <span>Lead Generation</span>
-                          </Link>
-                        </SidebarMenuSubButton>
-                      </SidebarMenuSubItem>
-                      <SidebarMenuSubItem>
-                        <SidebarMenuSubButton asChild isActive={isActive('/dashboard/marketing/content')}>
-                          <Link to="/dashboard/marketing/content">
-                            <Eye className="h-4 w-4" />
-                            <span>Content Performance</span>
-                          </Link>
-                        </SidebarMenuSubButton>
-                      </SidebarMenuSubItem>
-                      <SidebarMenuSubItem>
-                        <SidebarMenuSubButton asChild isActive={isActive('/dashboard/marketing/conversions')}>
-                          <Link to="/dashboard/marketing/conversions">
-                            <Activity className="h-4 w-4" />
-                            <span>Conversion Analytics</span>
-                          </Link>
-                        </SidebarMenuSubButton>
-                      </SidebarMenuSubItem>
-                      <SidebarMenuSubItem>
-                        <SidebarMenuSubButton asChild isActive={isActive('/dashboard/marketing/roi')}>
-                          <Link to="/dashboard/marketing/roi">
-                            <DollarSign className="h-4 w-4" />
-                            <span>Marketing ROI</span>
-                          </Link>
-                        </SidebarMenuSubButton>
-                      </SidebarMenuSubItem>
-                    </SidebarMenuSub>
-                  )}
-                </SidebarMenuItem>
-              </SidebarMenu>
-            </SidebarGroupContent>
-          </SidebarGroup>
-        )}
+                {/* Marketing Intelligence Dropdown - Super Admin Only */}
+                {userRole === 'super_admin' && (
+                  <SidebarMenuItem>
+                    <SidebarMenuButton 
+                      onClick={() => setMarketingIntelligenceOpen(!marketingIntelligenceOpen)}
+                      isActive={currentPath.startsWith('/dashboard/marketing')}
+                      className="cursor-pointer"
+                    >
+                      <BarChart3 className="h-4 w-4" />
+                      <span>Marketing Intelligence</span>
+                      <ChevronRight className={`h-4 w-4 ml-auto transition-transform ${marketingIntelligenceOpen ? 'rotate-90' : ''}`} />
+                    </SidebarMenuButton>
+                    {marketingIntelligenceOpen && (
+                      <SidebarMenuSub>
+                        <SidebarMenuSubItem>
+                          <SidebarMenuSubButton asChild isActive={isActive('/dashboard/marketing/campaigns')}>
+                            <Link to="/dashboard/marketing/campaigns">
+                              <Target className="h-4 w-4" />
+                              <span>Campaign Performance</span>
+                            </Link>
+                          </SidebarMenuSubButton>
+                        </SidebarMenuSubItem>
+                        <SidebarMenuSubItem>
+                          <SidebarMenuSubButton asChild isActive={isActive('/dashboard/marketing/traffic')}>
+                            <Link to="/dashboard/marketing/traffic">
+                              <TrendingUp className="h-4 w-4" />
+                              <span>Traffic Analytics</span>
+                            </Link>
+                          </SidebarMenuSubButton>
+                        </SidebarMenuSubItem>
+                        <SidebarMenuSubItem>
+                          <SidebarMenuSubButton asChild isActive={isActive('/dashboard/marketing/leads')}>
+                            <Link to="/dashboard/marketing/leads">
+                              <Users2 className="h-4 w-4" />
+                              <span>Lead Generation</span>
+                            </Link>
+                          </SidebarMenuSubButton>
+                        </SidebarMenuSubItem>
+                        <SidebarMenuSubItem>
+                          <SidebarMenuSubButton asChild isActive={isActive('/dashboard/marketing/content')}>
+                            <Link to="/dashboard/marketing/content">
+                              <Eye className="h-4 w-4" />
+                              <span>Content Performance</span>
+                            </Link>
+                          </SidebarMenuSubButton>
+                        </SidebarMenuSubItem>
+                        <SidebarMenuSubItem>
+                          <SidebarMenuSubButton asChild isActive={isActive('/dashboard/marketing/conversions')}>
+                            <Link to="/dashboard/marketing/conversions">
+                              <Activity className="h-4 w-4" />
+                              <span>Conversion Analytics</span>
+                            </Link>
+                          </SidebarMenuSubButton>
+                        </SidebarMenuSubItem>
+                        <SidebarMenuSubItem>
+                          <SidebarMenuSubButton asChild isActive={isActive('/dashboard/marketing/roi')}>
+                            <Link to="/dashboard/marketing/roi">
+                              <DollarSign className="h-4 w-4" />
+                              <span>Marketing ROI</span>
+                            </Link>
+                          </SidebarMenuSubButton>
+                        </SidebarMenuSubItem>
+                      </SidebarMenuSub>
+                    )}
+                  </SidebarMenuItem>
+                )}
 
-        {/* Financial Transactions Section - Super Admin Only */}
-        {userRole === 'super_admin' && (
-          <SidebarGroup>
-            <SidebarGroupLabel className="text-sidebar-foreground/60">Financial Transactions</SidebarGroupLabel>
-            <SidebarGroupContent>
-              <SidebarMenu>
-                <SidebarMenuItem>
-                  <SidebarMenuButton 
-                    onClick={() => setFinancialTransactionsOpen(!financialTransactionsOpen)}
-                    isActive={currentPath.startsWith('/dashboard/financial-transactions')}
-                    className="cursor-pointer"
-                  >
-                    <Banknote className="h-4 w-4" />
-                    <span>Financial Transactions</span>
-                    <ChevronRight className={`h-4 w-4 ml-auto transition-transform ${financialTransactionsOpen ? 'rotate-90' : ''}`} />
-                  </SidebarMenuButton>
-                  {financialTransactionsOpen && (
-                    <SidebarMenuSub>
-                      <SidebarMenuSubItem>
-                        <SidebarMenuSubButton asChild isActive={isActive('/dashboard/financial-transactions/processing')}>
-                          <Link to="/dashboard/financial-transactions/processing">
-                            <CreditCard className="h-4 w-4" />
-                            <span>Payment Processing</span>
-                          </Link>
-                        </SidebarMenuSubButton>
-                      </SidebarMenuSubItem>
-                      <SidebarMenuSubItem>
-                        <SidebarMenuSubButton asChild isActive={isActive('/dashboard/financial-transactions/analytics')}>
-                          <Link to="/dashboard/financial-transactions/analytics">
-                            <TrendingUp className="h-4 w-4" />
-                            <span>Revenue Analytics</span>
-                          </Link>
-                        </SidebarMenuSubButton>
-                      </SidebarMenuSubItem>
-                      <SidebarMenuSubItem>
-                        <SidebarMenuSubButton asChild isActive={isActive('/dashboard/financial-transactions/disputes')}>
-                          <Link to="/dashboard/financial-transactions/disputes">
-                            <ShieldAlert className="h-4 w-4" />
-                            <span>Dispute Management</span>
-                          </Link>
-                        </SidebarMenuSubButton>
-                      </SidebarMenuSubItem>
-                    </SidebarMenuSub>
-                  )}
-                </SidebarMenuItem>
+                {/* Financial Transactions Dropdown - Super Admin Only */}
+                {userRole === 'super_admin' && (
+                  <SidebarMenuItem>
+                    <SidebarMenuButton 
+                      onClick={() => setFinancialTransactionsOpen(!financialTransactionsOpen)}
+                      isActive={currentPath.startsWith('/dashboard/financial-transactions')}
+                      className="cursor-pointer"
+                    >
+                      <Banknote className="h-4 w-4" />
+                      <span>Financial Transactions</span>
+                      <ChevronRight className={`h-4 w-4 ml-auto transition-transform ${financialTransactionsOpen ? 'rotate-90' : ''}`} />
+                    </SidebarMenuButton>
+                    {financialTransactionsOpen && (
+                      <SidebarMenuSub>
+                        <SidebarMenuSubItem>
+                          <SidebarMenuSubButton asChild isActive={isActive('/dashboard/financial-transactions/processing')}>
+                            <Link to="/dashboard/financial-transactions/processing">
+                              <CreditCard className="h-4 w-4" />
+                              <span>Payment Processing</span>
+                            </Link>
+                          </SidebarMenuSubButton>
+                        </SidebarMenuSubItem>
+                        <SidebarMenuSubItem>
+                          <SidebarMenuSubButton asChild isActive={isActive('/dashboard/financial-transactions/analytics')}>
+                            <Link to="/dashboard/financial-transactions/analytics">
+                              <TrendingUp className="h-4 w-4" />
+                              <span>Revenue Analytics</span>
+                            </Link>
+                          </SidebarMenuSubButton>
+                        </SidebarMenuSubItem>
+                        <SidebarMenuSubItem>
+                          <SidebarMenuSubButton asChild isActive={isActive('/dashboard/financial-transactions/disputes')}>
+                            <Link to="/dashboard/financial-transactions/disputes">
+                              <ShieldAlert className="h-4 w-4" />
+                              <span>Dispute Management</span>
+                            </Link>
+                          </SidebarMenuSubButton>
+                        </SidebarMenuSubItem>
+                      </SidebarMenuSub>
+                    )}
+                  </SidebarMenuItem>
+                )}
               </SidebarMenu>
             </SidebarGroupContent>
           </SidebarGroup>

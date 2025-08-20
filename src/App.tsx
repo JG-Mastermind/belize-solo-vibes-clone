@@ -74,6 +74,7 @@ const FinancialReports = lazy(() => import("./pages/dashboard/FinancialReports")
 const FinancialTransactionsProcessing = lazy(() => import("./pages/dashboard/FinancialTransactionsProcessing"));
 const FinancialTransactionsAnalytics = lazy(() => import("./pages/dashboard/FinancialTransactionsAnalytics"));
 const FinancialTransactionsDisputes = lazy(() => import("./pages/dashboard/FinancialTransactionsDisputes"));
+const UserSettings = lazy(() => import("./pages/dashboard/UserSettings"));
 const TestAI = lazy(() => import("./pages/TestAI"));
 
 // Loading component for suspense fallback
@@ -264,6 +265,7 @@ const App = () => {
                 <Route path="create-post" element={<CreatePost />} />
                 <Route path="blog-posts" element={<BlogPosts />} />
                 <Route path="edit-post/:id" element={<EditPost />} />
+                <Route path="settings" element={<UserSettings />} />
               </Route>
               
               <Route path="/admin" element={<DashboardLayout />}>

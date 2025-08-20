@@ -1,5 +1,6 @@
 
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useAuth } from './auth/AuthProvider';
 import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
@@ -17,6 +18,7 @@ import { toast } from 'sonner';
 
 export const UserProfile: React.FC = () => {
   const { user, signOut, getUserRole, getUserAvatar } = useAuth();
+  const navigate = useNavigate();
 
   const handleSignOut = async () => {
     try {
@@ -25,6 +27,10 @@ export const UserProfile: React.FC = () => {
     } catch (error) {
       toast.error('Error signing out');
     }
+  };
+
+  const handleSettingsClick = () => {
+    navigate('/dashboard/settings');
   };
 
   // This component now only handles authenticated users
@@ -83,11 +89,7 @@ export const UserProfile: React.FC = () => {
           </Badge>
         </DropdownMenuItem>
         <DropdownMenuSeparator />
-        <DropdownMenuItem>
-          <User className="mr-2 h-4 w-4" />
-          <span>Profile</span>
-        </DropdownMenuItem>
-        <DropdownMenuItem>
+        <DropdownMenuItem onClick={handleSettingsClick}>
           <Settings className="mr-2 h-4 w-4" />
           <span>Settings</span>
         </DropdownMenuItem>

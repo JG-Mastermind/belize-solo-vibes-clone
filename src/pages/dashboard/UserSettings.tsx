@@ -11,6 +11,7 @@ import { Separator } from '@/components/ui/separator';
 import { useToast } from '@/hooks/use-toast';
 import { User, Settings, Bell, Moon, Phone, Shield, Save, Camera } from 'lucide-react';
 import { useAuth } from '@/components/auth/AuthProvider';
+import { supabase } from '@/integrations/supabase/client';
 
 interface UserProfile {
   id: string;
@@ -47,42 +48,34 @@ const UserSettings: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
 
-  // Mock profile data for now - will be replaced with backend API call
+  // Load profile data from backend API
   useEffect(() => {
     const loadProfile = async () => {
       try {
-        // Mock data based on current user
-        const mockProfile: UserProfile = {
-          id: user?.id || '',
-          email: user?.email || '',
-          full_name: user?.user_metadata?.full_name || user?.email?.split('@')[0] || '',
-          user_type: user?.user_metadata?.user_type || 'traveler',
-          profile_image: user?.user_metadata?.avatar_url || '',
-          whatsapp_enabled: false,
-          notification_preferences: {
-            email: true,
-            whatsapp: false,
-            push: false
-          },
-          dark_mode: false,
-          // Role-specific defaults
-          ...(user?.user_metadata?.user_type === 'traveler' && {
-            emergency_contact: {
-              name: '',
-              phone: '',
-              relation: ''
-            },
-            dietary_restrictions: ''
-          }),
-          ...(user?.user_metadata?.user_type === 'guide' && {
-            bio: '',
-            certifications: [],
-            operating_region: '',
-            languages_spoken: ['English']
-          })
-        };
+        // Get user session for authorization
+        const { data: { session } } = await supabase.auth.getSession();
         
-        setProfile(mockProfile);
+        if (!session) {
+          throw new Error('No authenticated session');
+        }
+
+        // Call get-user-profile Edge Function
+        const { data: profileData, error: profileError } = await supabase.functions.invoke(
+          'get-user-profile',
+          {
+            headers: {
+              Authorization: `Bearer ${session.access_token}`,
+            }
+          }
+        );
+
+        if (profileError) {
+          throw profileError;
+        }
+
+        if (profileData) {
+          setProfile(profileData);
+        }
       } catch (error) {
         console.error('Error loading profile:', error);
         toast({
@@ -105,11 +98,47 @@ const UserSettings: React.FC = () => {
 
     setSaving(true);
     try {
-      // TODO: Replace with actual backend API call to update-user-settings
-      console.log('Saving profile:', profile);
+      // Get user session for authorization
+      const { data: { session } } = await supabase.auth.getSession();
       
-      // Simulate API call
-      await new Promise(resolve => setTimeout(resolve, 1000));
+      if (!session) {
+        throw new Error('No authenticated session');
+      }
+
+      // Prepare update payload (exclude read-only fields)
+      const updatePayload = {
+        full_name: profile.full_name,
+        profile_image: profile.profile_image,
+        whatsapp_enabled: profile.whatsapp_enabled,
+        notification_preferences: profile.notification_preferences,
+        dark_mode: profile.dark_mode,
+        emergency_contact: profile.emergency_contact,
+        dietary_restrictions: profile.dietary_restrictions,
+        bio: profile.bio,
+        certifications: profile.certifications,
+        operating_region: profile.operating_region,
+        languages_spoken: profile.languages_spoken,
+      };
+
+      // Call update-user-settings Edge Function
+      const { data: updatedProfile, error: updateError } = await supabase.functions.invoke(
+        'update-user-settings',
+        {
+          body: updatePayload,
+          headers: {
+            Authorization: `Bearer ${session.access_token}`,
+          }
+        }
+      );
+
+      if (updateError) {
+        throw updateError;
+      }
+
+      // Update local state with the response from server
+      if (updatedProfile) {
+        setProfile(updatedProfile);
+      }
       
       toast({
         title: "Success",

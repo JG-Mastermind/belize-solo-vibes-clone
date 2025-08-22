@@ -71,7 +71,7 @@ const AuthCallback: React.FC = () => {
     };
 
     handleAuthCallback();
-  }, [user, getUserRole, navigate, searchParams]);
+  }, []);
 
   return (
     <div className="min-h-screen flex items-center justify-center">

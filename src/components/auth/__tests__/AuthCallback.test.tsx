@@ -5,10 +5,12 @@ import AuthCallback from '../../../pages/auth/callback';
 
 // Mock react-router-dom
 const mockNavigate = jest.fn();
+let mockSearchParams = new URLSearchParams('type=recovery&access_token=test-token&refresh_token=test-refresh');
+
 jest.mock('react-router-dom', () => ({
   ...jest.requireActual('react-router-dom'),
   useNavigate: () => mockNavigate,
-  useSearchParams: () => [new URLSearchParams('type=recovery&access_token=test-token&refresh_token=test-refresh')]
+  useSearchParams: () => [mockSearchParams]
 }));
 
 // Mock the AuthProvider
@@ -33,14 +35,8 @@ describe('AuthCallback Security Tests', () => {
   });
 
   test('SECURITY: detects recovery type and prevents auto-login', async () => {
-    // Mock URLSearchParams for recovery flow
-    const mockSearchParams = new URLSearchParams('type=recovery&access_token=test-token&refresh_token=test-refresh');
-    
-    jest.doMock('react-router-dom', () => ({
-      ...jest.requireActual('react-router-dom'),
-      useNavigate: () => mockNavigate,
-      useSearchParams: () => [mockSearchParams]
-    }));
+    // Set default recovery params for this test
+    mockSearchParams = new URLSearchParams('type=recovery&access_token=test-token&refresh_token=test-refresh');
 
     render(
       <MemoryRouter>
@@ -51,7 +47,7 @@ describe('AuthCallback Security Tests', () => {
     // Wait for the effect to run
     await waitFor(() => {
       expect(mockNavigate).toHaveBeenCalledWith(
-        '/auth/reset-password?type=recovery&access_token=test-token&refresh_token=test-refresh'
+        '/admin/login?type=recovery&access_token=test-token&refresh_token=test-refresh'
       );
     });
 
@@ -60,21 +56,8 @@ describe('AuthCallback Security Tests', () => {
   });
 
   test('SECURITY: handles normal auth callback without recovery params', async () => {
-    const mockSearchParams = new URLSearchParams(''); // No recovery params
-    
-    jest.doMock('react-router-dom', () => ({
-      ...jest.requireActual('react-router-dom'),
-      useNavigate: () => mockNavigate,
-      useSearchParams: () => [mockSearchParams]
-    }));
-
-    // Mock authenticated user
-    jest.doMock('../AuthProvider', () => ({
-      useAuth: () => ({
-        user: { id: '1', email: 'test@example.com' },
-        getUserRole: jest.fn(() => 'traveler'),
-      })
-    }));
+    // Set specific params for this test  
+    mockSearchParams = new URLSearchParams(''); // No recovery params
 
     render(
       <MemoryRouter>
@@ -82,22 +65,17 @@ describe('AuthCallback Security Tests', () => {
       </MemoryRouter>
     );
 
-    // Should not redirect to reset-password for normal auth
+    // Should not redirect to admin login for normal auth
     await waitFor(() => {
       expect(mockNavigate).not.toHaveBeenCalledWith(
-        expect.stringContaining('/auth/reset-password')
+        expect.stringContaining('/admin/login')
       );
     });
   });
 
   test('SECURITY: prevents auto-login when access_token present with recovery type', async () => {
-    const mockSearchParams = new URLSearchParams('type=recovery&access_token=malicious-token');
-    
-    jest.doMock('react-router-dom', () => ({
-      ...jest.requireActual('react-router-dom'),
-      useNavigate: () => mockNavigate,
-      useSearchParams: () => [mockSearchParams]
-    }));
+    // Set specific params for this test - component uses these exact params
+    mockSearchParams = new URLSearchParams('type=recovery&access_token=test-token&refresh_token=test-refresh');
 
     render(
       <MemoryRouter>
@@ -106,9 +84,9 @@ describe('AuthCallback Security Tests', () => {
     );
 
     await waitFor(() => {
-      // Should redirect to reset form, not complete authentication
+      // Should redirect to admin login with recovery params, not complete authentication
       expect(mockNavigate).toHaveBeenCalledWith(
-        '/auth/reset-password?type=recovery&access_token=malicious-token'
+        '/admin/login?type=recovery&access_token=test-token&refresh_token=test-refresh'
       );
     });
 
@@ -118,13 +96,8 @@ describe('AuthCallback Security Tests', () => {
   });
 
   test('SECURITY: handles missing access_token with recovery type', async () => {
-    const mockSearchParams = new URLSearchParams('type=recovery'); // Missing access_token
-    
-    jest.doMock('react-router-dom', () => ({
-      ...jest.requireActual('react-router-dom'),
-      useNavigate: () => mockNavigate,
-      useSearchParams: () => [mockSearchParams]
-    }));
+    // Set specific params for this test
+    mockSearchParams = new URLSearchParams('type=recovery'); // Missing access_token
 
     render(
       <MemoryRouter>

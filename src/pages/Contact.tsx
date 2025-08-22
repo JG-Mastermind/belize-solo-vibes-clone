@@ -14,11 +14,6 @@ const Contact = () => {
   const location = useLocation();
   const isFrench = location.pathname.startsWith('/fr-ca');
   const currentPath = isFrench ? '/fr-ca/contact' : '/contact';
-
-  if (!i18n.isInitialized || !i18n.hasResourceBundle(i18n.language, 'contact')) {
-    return null;
-  }
-
   const currentLang = isFrench ? 'fr-ca' : 'en';
   
   const [formData, setFormData] = useState({
@@ -29,6 +24,10 @@ const Contact = () => {
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [showSuccess, setShowSuccess] = useState(false);
+
+  if (!i18n.isInitialized || !i18n.hasResourceBundle(i18n.language, 'contact')) {
+    return null;
+  }
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const { name, value } = e.target;

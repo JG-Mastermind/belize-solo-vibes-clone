@@ -264,7 +264,7 @@ export const compareImagePerformance = (
   const original = getBlogAnalytics(originalSlug);
   const test = getBlogAnalytics(testSlug);
   
-  let improvements = {
+  const improvements = {
     ctrImprovement: 0,
     engagementImprovement: 0,
     feedbackImprovement: 0,
@@ -301,7 +301,7 @@ export const compareImagePerformance = (
 // Auto-track scroll depth on blog posts
 export const initScrollTracking = (postSlug: string): () => void => {
   let maxScrollDepth = 0;
-  let startTime = Date.now();
+  const startTime = Date.now();
   let isActive = true;
 
   const trackScroll = () => {

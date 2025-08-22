@@ -14,15 +14,7 @@ module.exports = {
   // Transform configuration - modern ts-jest setup
   transform: {
     '^.+\\.(ts|tsx)$': ['ts-jest', {
-      tsconfig: {
-        jsx: 'react-jsx',
-        esModuleInterop: true,
-        allowSyntheticDefaultImports: true,
-        moduleResolution: 'node',
-        target: 'ES2020',
-        module: 'ESNext',
-        lib: ['ES2020', 'DOM', 'DOM.Iterable']
-      }
+      tsconfig: './tsconfig.jest.json'
     }]
   },
   
@@ -51,5 +43,8 @@ module.exports = {
   // Test environment options
   testEnvironmentOptions: {
     customExportConditions: ['node', 'node-addons']
-  }
+  },
+  
+  // Global test timeout
+  testTimeout: 10000
 };

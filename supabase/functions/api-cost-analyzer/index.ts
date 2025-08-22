@@ -61,7 +61,7 @@ Deno.serve(async (req: Request) => {
         
         // Calculate date range based on period type
         let startDate: string;
-        let endDate: string = analysisDate;
+        const endDate: string = analysisDate;
         
         switch (request.period_type) {
           case 'daily':

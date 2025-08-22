@@ -288,7 +288,7 @@ export class BookingService {
   ): PricingBreakdown {
     const basePrice = adventure.base_price;
     const participants = formData.participants;
-    let subtotal = basePrice * participants;
+    const subtotal = basePrice * participants;
     
     // Group discount
     let groupDiscount = 0;

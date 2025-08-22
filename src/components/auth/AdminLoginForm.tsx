@@ -34,9 +34,9 @@ const AdminLoginForm: React.FC<AdminLoginFormProps> = ({ onForgotPassword }) => 
       if (signInError) {
         console.error('❌ Sign in error:', signInError);
         console.error('Error details:', {
-          message: signInError.message,
-          code: signInError.code,
-          status: signInError.status
+          message: (signInError as any)?.message,
+          code: (signInError as any)?.code,
+          status: (signInError as any)?.status
         });
         setError('Invalid credentials. Please check your email and password.');
         return;

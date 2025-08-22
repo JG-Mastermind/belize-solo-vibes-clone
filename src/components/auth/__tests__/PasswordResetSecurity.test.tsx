@@ -8,7 +8,14 @@ const mockNavigate = jest.fn();
 
 // Mock supabase client
 const mockVerifyOtp = jest.fn();
-const mockSetSession = jest.fn();
+const mockSetSession = jest.fn().mockResolvedValue({
+  data: { 
+    session: { access_token: 'valid-token', refresh_token: 'valid-refresh' },
+    user: { id: '123', email: 'test@example.com' }
+  }, 
+  error: null 
+});
+const mockSignOut = jest.fn().mockResolvedValue({ error: null });
 const mockUpdateUser = jest.fn();
 
 jest.mock('../../../integrations/supabase/client', () => ({
@@ -16,16 +23,17 @@ jest.mock('../../../integrations/supabase/client', () => ({
     auth: {
       verifyOtp: mockVerifyOtp,
       setSession: mockSetSession,
+      signOut: mockSignOut,
       updateUser: mockUpdateUser,
     }
   }
 }));
 
 // Mock the AuthProvider
-const mockSignOut = jest.fn();
+const mockAuthSignOut = jest.fn();
 jest.mock('../AuthProvider', () => ({
   useAuth: () => ({
-    signOut: mockSignOut,
+    signOut: mockAuthSignOut,
   })
 }));
 
@@ -35,6 +43,14 @@ jest.mock('sonner', () => ({
     success: jest.fn(),
     error: jest.fn(),
   }
+}));
+
+// Mock TokenDebugger
+jest.mock('../TokenDebugger', () => ({
+  TokenDebugger: () => null,
+  useTokenInspector: () => ({
+    inspectTokens: jest.fn(() => ({}))
+  })
 }));
 
 // Create a wrapper component to test with different URL params

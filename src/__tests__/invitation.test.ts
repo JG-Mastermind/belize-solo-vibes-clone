@@ -176,15 +176,15 @@ describe('Invitation System', () => {
       } as any);
 
       // This would be called in the InvitationManager component
-      const { data, error } = await supabase
+      const { data, error } = await (supabase as any)
         .from('admin_invitations')
         .select('*')
         .order('created_at', { ascending: false });
 
       expect(error).toBeNull();
       expect(data).toEqual(mockInvitations);
-      expect(data[0].email).toBe('test1@belizevibes.com');
-      expect(data[0].role_type).toBe('admin');
+      expect((data as any)?.[0]?.email).toBe('test1@belizevibes.com');
+      expect((data as any)?.[0]?.role_type).toBe('admin');
     });
 
     test('validates invitation expiry', () => {

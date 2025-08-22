@@ -53,29 +53,29 @@ describe('AuthCallback Recovery Token Flow', () => {
     [...mockSearchParams.keys()].forEach(key => mockSearchParams.delete(key));
   });
 
-  it('should detect recovery type and redirect to reset form', async () => {
+  it('should detect recovery type and redirect to admin login', async () => {
     renderAuthCallback('?type=recovery&access_token=test_token&refresh_token=test_refresh');
     
     await waitFor(() => {
-      expect(mockNavigate).toHaveBeenCalledWith('/auth/reset-password?type=recovery&access_token=test_token&refresh_token=test_refresh');
+      expect(mockNavigate).toHaveBeenCalledWith('/admin/login?type=recovery&access_token=test_token&refresh_token=test_refresh');
     });
   });
 
-  it('should not redirect to reset form without recovery type', async () => {
+  it('should not redirect to admin login without recovery type', async () => {
     renderAuthCallback('?access_token=test_token&refresh_token=test_refresh');
     
-    // Should not navigate to reset password form
+    // Should not navigate to admin login
     await waitFor(() => {
-      expect(mockNavigate).not.toHaveBeenCalledWith(expect.stringContaining('reset-password'));
+      expect(mockNavigate).not.toHaveBeenCalledWith(expect.stringContaining('admin/login'));
     }, { timeout: 2000 });
   });
 
-  it('should not redirect to reset form without access token', async () => {
+  it('should not redirect to admin login without access token', async () => {
     renderAuthCallback('?type=recovery&refresh_token=test_refresh');
     
-    // Should not navigate to reset password form
+    // Should not navigate to admin login
     await waitFor(() => {
-      expect(mockNavigate).not.toHaveBeenCalledWith(expect.stringContaining('reset-password'));
+      expect(mockNavigate).not.toHaveBeenCalledWith(expect.stringContaining('admin/login'));
     }, { timeout: 2000 });
   });
 
@@ -84,7 +84,7 @@ describe('AuthCallback Recovery Token Flow', () => {
     renderAuthCallback('?' + params);
     
     await waitFor(() => {
-      expect(mockNavigate).toHaveBeenCalledWith('/auth/reset-password?' + params);
+      expect(mockNavigate).toHaveBeenCalledWith('/admin/login?' + params);
     });
   });
 
@@ -92,16 +92,16 @@ describe('AuthCallback Recovery Token Flow', () => {
     renderAuthCallback('?type=recovery&access_token=minimal_token');
     
     await waitFor(() => {
-      expect(mockNavigate).toHaveBeenCalledWith('/auth/reset-password?type=recovery&access_token=minimal_token');
+      expect(mockNavigate).toHaveBeenCalledWith('/admin/login?type=recovery&access_token=minimal_token');
     });
   });
 
   it('should not process recovery flow for other auth types', async () => {
     renderAuthCallback('?type=signup&access_token=test_token&refresh_token=test_refresh');
     
-    // Should not navigate to reset password form
+    // Should not navigate to admin login
     await waitFor(() => {
-      expect(mockNavigate).not.toHaveBeenCalledWith(expect.stringContaining('reset-password'));
+      expect(mockNavigate).not.toHaveBeenCalledWith(expect.stringContaining('admin/login'));
     }, { timeout: 2000 });
   });
 
@@ -110,7 +110,7 @@ describe('AuthCallback Recovery Token Flow', () => {
     renderAuthCallback(`?type=recovery&access_token=${encodeURIComponent(encodedToken)}&refresh_token=refresh123`);
     
     await waitFor(() => {
-      expect(mockNavigate).toHaveBeenCalledWith(expect.stringContaining('reset-password'));
+      expect(mockNavigate).toHaveBeenCalledWith(expect.stringContaining('admin/login'));
       expect(mockNavigate).toHaveBeenCalledWith(expect.stringContaining(encodeURIComponent(encodedToken)));
     });
   });

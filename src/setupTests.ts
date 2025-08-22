@@ -1,4 +1,30 @@
 import '@testing-library/jest-dom';
+import { configure } from '@testing-library/react';
+
+// Configure testing library for better async handling
+configure({
+  testIdAttribute: 'data-testid',
+  asyncUtilTimeout: 5000,
+});
+
+// Suppress act() warnings for known async operations in tests
+// These are expected when testing components that trigger async state updates
+const originalError = console.error;
+beforeEach(() => {
+  console.error = (...args: any[]) => {
+    if (
+      args[0]?.includes?.('Warning: An update to') &&
+      args[0]?.includes?.('inside a test was not wrapped in act')
+    ) {
+      return;
+    }
+    originalError.call(console, ...args);
+  };
+});
+
+afterEach(() => {
+  console.error = originalError;
+});
 
 // Mock import.meta.env for Jest compatibility with Vite
 const mockEnv = {

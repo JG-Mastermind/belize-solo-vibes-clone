@@ -100,7 +100,7 @@ If not found, use the fallback registry below.
 🧩 Agent Loader & Task Selection
 Claude must choose exactly one sub‑agent per task. If a task spans multiple concerns, split into multiple PRs with one agent each.
 
-Routing cheatsheet:
+Routing cheatsheet (9 Specialized Agents Available):
 
 Password reset / Supabase recovery → Password Reset Surgeon
 
@@ -112,13 +112,41 @@ Pipelines/tests/security scans → CI/CD Butler
 
 Secrets/CSP/headers/rate limits/role enforcement checks → Security & Compliance Agent
 
-If an agent file is present in .claude/agents/ with the same name, use that file’s scope; otherwise, fall back to the immutable registry below.
+Complex multi-step tasks / research / general development → General Purpose Agent
+
+Code status line configuration → StatusLine Setup Agent
+
+Claude Code output styling → Output Style Setup Agent
+
+Business intelligence / analytics / booking reports → BelizeVibes Analytics Reporter
+
+If an agent file is present in .claude/agents/ with the same name, use that file's scope; otherwise, fall back to the immutable registry below.
 
 <!-- =========================== BEGIN IMMUTABLE REGISTRY DO NOT EDIT / DO NOT REMOVE This block must persist across /init updates. =========================== -->
 🔐 IMMUTABLE: Core Agent Registry (Fallback)
 Each agent is defined with Allowed Paths, DB Scope, Blocked Areas, and Testing Hooks. Do not exceed scope.
 
-1) Password Reset Surgeon (Authentication Flow)
+1) General Purpose Agent
+Scope: Complex multi-step tasks, research, code searching, general development work requiring multiple tools/approaches.
+Use for: Open-ended tasks, codebase exploration, feature planning, complex debugging, architectural analysis.
+Tools: All tools available (*) - no restrictions on tool usage.
+
+2) StatusLine Setup Agent  
+Scope: Configure Claude Code status line settings for user workspace.
+Use for: Status line configuration, user preferences, display customization.
+Tools: Read, Edit only.
+
+3) Output Style Setup Agent
+Scope: Create and configure Claude Code output styles for enhanced user experience.
+Use for: Output formatting, display preferences, styling configuration.
+Tools: Read, Write, Edit, Glob, LS, Grep.
+
+4) BelizeVibes Analytics Reporter
+Scope: Business intelligence, analytics, booking data analysis, revenue insights for tourism platform.
+Use for: Business reports, booking trends, revenue analysis, customer insights, data exports.
+Tools: All tools available (*) - full analytics capabilities.
+
+5) Password Reset Surgeon (Authentication Flow)
 Scope: Fix/guard Supabase password recovery so reset links never auto‑login; require explicit password entry; sign out after reset.
 
 Allowed (read/write):
@@ -151,7 +179,7 @@ New tests: recovery URL → no session adoption → reset form → updateUser({ 
 
 Acceptance: No code path sets a session during recovery; minimal diff; all tests pass.
 
-2) Backend Architecture Agent
+6) Backend Architecture Agent
 Scope: Database schema stability, Supabase migrations, RLS policy integrity.
 
 Allowed (read/write):
@@ -196,7 +224,7 @@ Canonical assertion: no writes to deprecated adventures; reads/writes use tours
 
 Acceptance: Green migration cycle, proven RLS, secure SECURITY DEFINER, canonical tours enforced.
 
-3) i18n Route & SEO Agent
+7) i18n Route & SEO Agent
 Scope: /fr-ca/* routing, slug_fr support, hreflang + sitemap; English routes must remain unchanged.
 
 Allowed (read/write):
@@ -237,7 +265,7 @@ Non‑functional: Lighthouse on /fr-ca/* meets perf budget; EN snapshots unchang
 
 Acceptance: /fr-ca works with SEO slugs; English routes identical; tests pass.
 
-4) CI/CD Butler
+8) CI/CD Butler
 Scope: Pipelines for lint/type/test/build; optional E2E; security scans.
 
 Allowed (read/write):
@@ -272,7 +300,7 @@ Security job (npm audit, secret scan) report → later gate
 
 Acceptance: CI blocks on failures; no secret leakage; cached fast path.
 
-5) Security & Compliance Agent
+9) Security & Compliance Agent
 Scope: Secrets hygiene, baseline headers/CSP, rate‑limiting guards, role enforcement checks.
 
 Allowed (read/write):
@@ -469,3 +497,4 @@ These hold: project context, autonomous dev role, boundaries, and required tests
 
 
 - memorize
+- m3morize

@@ -1,3 +1,31 @@
+🚨 SESSION INITIALIZATION REQUIRED - READ FIRST
+**MANDATORY**: Initiate session by reading local context files as specified in bootstrap sequence
+
+⚡ **SESSION BOOTSTRAP COMMAND**:
+```bash
+# 1) Load local session context (NEVER commit .claude/)
+read .claude/context.md
+read .claude/session-template.md  
+read .claude/session.md
+read .claude/settings.local.json
+
+# 2) ALWAYS review CHANGELOG.md for recent project changes
+read CHANGELOG.md
+
+# 3) Load optional Master Dev Manual if present
+if [ -f docs/Claude-Ready Master Dev Manual.md ]; then
+  read docs/Claude-Ready Master Dev Manual.md
+fi
+
+# 4) Auto-discover and load sub-agents (9 specialized agents available)
+for f in .claude/agents/*.md .claude/agents/*.agent.md; do
+  [ -f "$f" ] && read "$f"  
+done
+
+# 5) Prepare subagent readiness - identify task scope before work
+# Match task to agent routing cheatsheet before proceeding
+```
+
 🚨 PRODUCTION PROJECT STATUS - READ FIRST
 PROJECT MATURITY: 97% COMPLETE - DEPLOYMENT READY ✅
 This is NOT a new project, demo, or experimental codebase.

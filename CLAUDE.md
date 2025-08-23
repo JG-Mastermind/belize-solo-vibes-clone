@@ -78,17 +78,23 @@ read .claude/session-template.md
 read .claude/session.md
 read .claude/settings.local.json
 
-# 2) Load optional Master Dev Manual (single source of truth if present)
+# 2) ALWAYS review CHANGELOG.md for recent project changes and context
+read CHANGELOG.md
+
+# 3) Load optional Master Dev Manual (single source of truth if present)
 if [ -f docs/Claude-Ready Master Dev Manual.md ]; then
   read docs/Claude-Ready Master Dev Manual.md
 fi
 
-# 3) Auto-discover and load sub-agents (preferred over fallback)
+# 4) Auto-discover and load sub-agents (preferred over fallback)
 for f in .claude/agents/*.md .claude/agents/*.agent.md; do
   [ -f "$f" ] && read "$f"
 done
 
-# 4) Respect the IMMUTABLE block in this CLAUDE.md (do not modify it)
+# 5) Prepare subagent readiness - identify task scope and select appropriate agent
+# Match task to agent routing cheatsheet before proceeding with any work
+
+# 6) Respect the IMMUTABLE block in this CLAUDE.md (do not modify it)
 Rules:
 
 .claude/ stays local only (not committed).

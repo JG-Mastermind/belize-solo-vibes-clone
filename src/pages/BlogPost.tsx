@@ -23,7 +23,15 @@ import { supabase } from '@/integrations/supabase/client';
 import ScrollToTopButton from '@/components/ui/ScrollToTopButton';
 import { getTranslatedReadingTime } from '@/utils/translations';
 import { initScrollTracking } from '@/utils/blogAnalytics';
-import { getBlogPostImageUrl, handleImageError, getImageAltText } from '@/utils/blogImageUtils';
+import { 
+  getBlogPostImageUrl, 
+  handleImageError, 
+  getImageAltText,
+  getImageLoadingState,
+  generateResponsiveImageSrcSet,
+  getBlogPostImageUrlAsync,
+  type ImageLoadResult
+} from '@/utils/blogImageUtils.enhanced';
 
 interface BlogPostData {
   id: string;

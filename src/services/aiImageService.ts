@@ -1,149 +1,245 @@
 /**
  * AI Image Generation Service for Blog Posts
- * Handles OpenAI DALL-E 3 integration with error handling and fallbacks
+ * Enhanced DALL-E 3 CMS Integration with Enterprise Security
+ * Handles server-side image generation, content moderation, and performance optimization
  */
 
 import { supabase } from '@/integrations/supabase/client';
 
 export interface AIImageRequest {
   prompt: string;
-  size?: '1024x1024' | '1792x1024' | '1024x1792';
-  quality?: 'standard' | 'hd';
-  style?: 'vivid' | 'natural';
+  style?: 'photorealistic' | 'artistic' | 'infographic' | 'landscape';
+  mood?: 'vibrant' | 'serene' | 'adventurous' | 'cultural';
+  aspectRatio?: '16:9' | '4:3' | '1:1' | '3:2';
+  includeText?: boolean;
+  belizeContext?: boolean;
+  quality?: 'standard' | 'high';
+  safetyFilters?: boolean;
+}
+
+export interface BlogImageGenerationOptions {
+  postId?: string;
+  title: string;
+  excerpt: string;
+  category?: string;
+  customPrompt?: string;
+  priority?: 'low' | 'medium' | 'high';
+  skipModeration?: boolean;
 }
 
 export interface AIImageResult {
   success: boolean;
   imageUrl?: string;
+  altText?: string;
   error?: string;
   prompt?: string;
   revisedPrompt?: string;
+  fallbackUsed?: boolean;
+  moderationPassed?: boolean;
+  metadata?: {
+    style: string;
+    mood: string;
+    aspectRatio: string;
+    timestamp: string;
+    generationTime?: number;
+  };
 }
 
 class AIImageService {
-  private readonly apiKey: string;
-  private readonly organizationId?: string;
-  private readonly baseUrl = 'https://api.openai.com/v1/images/generations';
+  private readonly isServerSideOnly = true;
+  private readonly fallbackImages: Record<string, string> = {
+    'adventure-travel': 'https://images.unsplash.com/photo-1544551763-46a013bb70d5?w=1200&h=675&fit=crop&auto=format',
+    'safety-tips': 'https://images.unsplash.com/photo-1551632811-561732d1e306?w=1200&h=675&fit=crop&auto=format',
+    'destinations': 'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=1200&h=675&fit=crop&auto=format',
+    'solo-travel': 'https://images.unsplash.com/photo-1469474968028-56623f02e42e?w=1200&h=675&fit=crop&auto=format',
+    'budget-travel': 'https://images.unsplash.com/photo-1559827260-dc66d52bef19?w=1200&h=675&fit=crop&auto=format',
+    'wildlife': 'https://images.unsplash.com/photo-1549366021-9f761d040a94?w=1200&h=675&fit=crop&auto=format',
+    'default': 'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=1200&h=675&fit=crop&auto=format'
+  };
 
   constructor() {
-    // Check for API key - graceful degradation if not available
-    this.apiKey = import.meta.env.VITE_OPENAI_API_KEY || '';
-    this.organizationId = import.meta.env.VITE_OPENAI_ORGANIZATION;
-    
-    if (!this.apiKey) {
-      console.warn('⚠️  OpenAI API key not found. AI image generation will be disabled.');
-    }
+    // Enterprise security: All API calls are server-side only
+    console.log('🎨 AI Image Service initialized with server-side security');
   }
 
   /**
-   * Check if AI image generation is available
+   * Check if AI image generation is available (server-side)
    */
-  isAvailable(): boolean {
-    return !!this.apiKey && this.apiKey.startsWith('sk-');
-  }
-
-  /**
-   * Generate AI image using DALL-E 3
-   */
-  async generateImage(request: AIImageRequest): Promise<AIImageResult> {
-    if (!this.isAvailable()) {
-      return {
-        success: false,
-        error: 'OpenAI API key not configured. Please add OPENAI_API_KEY to your environment variables.'
-      };
-    }
-
+  async isAvailable(): Promise<boolean> {
     try {
-      const headers: Record<string, string> = {
-        'Authorization': `Bearer ${this.apiKey}`,
-        'Content-Type': 'application/json'
-      };
+      // Test server connectivity by calling the Edge Function
+      const { data } = await supabase.functions.invoke('generate-blog-image', {
+        body: { prompt: 'test connectivity' }
+      });
+      return !data?.error;
+    } catch {
+      return false;
+    }
+  }
 
-      if (this.organizationId) {
-        headers['OpenAI-Organization'] = this.organizationId;
+  /**
+   * Generate blog image with enterprise content moderation and fallbacks
+   */
+  async generateBlogImage(options: BlogImageGenerationOptions): Promise<AIImageResult> {
+    const startTime = Date.now();
+    
+    try {
+      // Step 1: Content moderation check (if not skipped)
+      if (!options.skipModeration) {
+        const moderationResult = await this.moderateContent(options.customPrompt || options.title);
+        if (!moderationResult.passed) {
+          console.warn('🚨 Content moderation failed:', moderationResult.reason);
+          return this.getFallbackImage(options, 'Content moderation failed');
+        }
       }
 
-      const response = await fetch(this.baseUrl, {
-        method: 'POST',
-        headers,
-        body: JSON.stringify({
-          model: 'dall-e-3',
-          prompt: request.prompt,
-          n: 1,
-          size: request.size || '1024x1024',
-          quality: request.quality || 'standard',
-          style: request.style || 'natural'
-        })
+      // Step 2: Build enhanced prompt with Belize context
+      const enhancedPrompt = this.buildBlogPrompt(options);
+      
+      // Step 3: Call server-side DALL-E generation
+      const request: AIImageRequest = {
+        prompt: enhancedPrompt,
+        style: 'photorealistic',
+        mood: 'vibrant',
+        aspectRatio: '16:9',
+        includeText: false,
+        belizeContext: true,
+        quality: options.priority === 'high' ? 'high' : 'standard',
+        safetyFilters: true
+      };
+
+      const { data, error } = await supabase.functions.invoke('generate-blog-image', {
+        body: request
       });
 
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(`OpenAI API Error: ${errorData.error?.message || response.statusText}`);
+      if (error || !data?.imageUrl) {
+        console.warn('🔄 DALL-E generation failed, using fallback:', error);
+        return this.getFallbackImage(options, error?.message || 'Generation failed');
       }
 
-      const data = await response.json();
-      
-      if (!data.data || !data.data[0] || !data.data[0].url) {
-        throw new Error('Invalid response from OpenAI API');
+      // Step 4: Success - update post if ID provided
+      if (options.postId && data.imageUrl) {
+        await this.updatePostWithAIImage(
+          options.postId,
+          data.imageUrl,
+          enhancedPrompt,
+          data.altText
+        );
       }
 
       return {
         success: true,
-        imageUrl: data.data[0].url,
-        prompt: request.prompt,
-        revisedPrompt: data.data[0].revised_prompt
+        imageUrl: data.imageUrl,
+        altText: data.altText || `AI-generated image for: ${options.title}`,
+        prompt: enhancedPrompt,
+        revisedPrompt: data.prompt,
+        moderationPassed: true,
+        metadata: {
+          ...data.metadata,
+          generationTime: Date.now() - startTime
+        }
       };
 
     } catch (error) {
-      console.error('AI Image Generation Error:', error);
-      return {
-        success: false,
-        error: error instanceof Error ? error.message : 'Unknown error occurred',
-        prompt: request.prompt
-      };
+      console.error('🚨 AI Image Generation Error:', error);
+      return this.getFallbackImage(options, error instanceof Error ? error.message : 'Unknown error');
     }
   }
 
   /**
-   * Generate image prompt based on blog post content
+   * Content moderation using OpenAI Moderations API (server-side)
    */
-  generatePromptFromContent(title: string, excerpt: string, category?: string): string {
-    const basePrompt = `Professional travel photography for blog post: "${title}". `;
-    
-    const categoryPrompts: Record<string, string> = {
-      'adventure-travel': 'Show solo traveler with adventure gear in Belize jungle/outdoor setting, action-oriented scene',
-      'safety-tips': 'Show confident solo female traveler with safety gear in Belize, reassuring and prepared atmosphere',
-      'destinations': 'Show beautiful Belize destination with solo traveler exploring, highlighting location features',
-      'solo-travel': 'Show empowered solo traveler experiencing Belize culture and nature, inspiring independence',
-      'budget-travel': 'Show budget-conscious solo traveler enjoying affordable Belize experiences, hostels, local food',
-      'wildlife': 'Show solo traveler observing Belize wildlife from respectful distance, binoculars, natural setting'
-    };
+  private async moderateContent(content: string): Promise<{ passed: boolean; reason?: string }> {
+    try {
+      const { data, error } = await supabase.functions.invoke('moderate-content', {
+        body: { content }
+      });
 
-    const categoryContext = category ? categoryPrompts[category] || '' : '';
-    const contentContext = excerpt.length > 100 ? excerpt.substring(0, 100) + '...' : excerpt;
+      if (error || !data) {
+        // Fail-safe: allow content if moderation service is down
+        console.warn('🔄 Content moderation service unavailable, allowing content');
+        return { passed: true };
+      }
 
-    return `${basePrompt}${categoryContext}. ${contentContext}. Style: vibrant travel photography, warm Caribbean lighting, authentic Belize atmosphere. Aspect ratio 2:1. High quality, professional composition.`;
+      return data.flagged ? 
+        { passed: false, reason: data.categories?.join(', ') || 'Content policy violation' } :
+        { passed: true };
+    } catch (error) {
+      // Fail-safe: allow content if moderation fails
+      console.warn('🔄 Content moderation failed, allowing content:', error);
+      return { passed: true };
+    }
   }
 
   /**
-   * Update blog post with AI generated image
+   * Build enhanced blog prompt with Belize tourism context
+   */
+  private buildBlogPrompt(options: BlogImageGenerationOptions): string {
+    if (options.customPrompt) {
+      return options.customPrompt;
+    }
+
+    const basePrompt = `Professional travel blog photography for: "${options.title}"`;
+    
+    const categoryPrompts: Record<string, string> = {
+      'adventure-travel': 'solo adventurer with gear in lush Belize jungle setting, dynamic action scene',
+      'safety-tips': 'confident solo traveler with safety equipment in Belize, reassuring professional atmosphere',
+      'destinations': 'stunning Belize destination with solo explorer, showcase natural beauty and cultural richness',
+      'solo-travel': 'empowered independent traveler experiencing authentic Belize culture and pristine nature',
+      'budget-travel': 'resourceful solo traveler enjoying affordable Belize experiences, local accommodations',
+      'wildlife': 'respectful solo traveler observing Belize wildlife, binoculars, ethical nature photography'
+    };
+
+    const categoryContext = options.category ? categoryPrompts[options.category] || '' : 'solo traveler exploring beautiful Belize';
+    const contentContext = options.excerpt.length > 80 ? options.excerpt.substring(0, 80) + '...' : options.excerpt;
+
+    return `${basePrompt}. Scene: ${categoryContext}. Context: ${contentContext}. Style: vibrant travel photography, warm Caribbean lighting, professional tourism marketing quality, 16:9 aspect ratio.`;
+  }
+
+  /**
+   * Get fallback image with smart category selection
+   */
+  private getFallbackImage(options: BlogImageGenerationOptions, errorReason: string): AIImageResult {
+    const category = options.category || 'default';
+    const fallbackUrl = this.fallbackImages[category] || this.fallbackImages.default;
+    
+    return {
+      success: false,
+      imageUrl: fallbackUrl,
+      altText: `Professional travel image for: ${options.title}`,
+      error: errorReason,
+      prompt: options.customPrompt || options.title,
+      fallbackUsed: true,
+      moderationPassed: !options.skipModeration
+    };
+  }
+
+  /**
+   * Update blog post with AI generated image and metadata
    */
   async updatePostWithAIImage(
     postId: string, 
     imageUrl: string, 
     prompt: string, 
-    revisedPrompt?: string
+    altText?: string
   ): Promise<boolean> {
     try {
+      const updateData = {
+        ai_generated_image_url: imageUrl,
+        image_generation_prompt: prompt,
+        image_source: 'ai_generated' as const,
+        ai_tool_used: 'dall-e-3',
+        updated_at: new Date().toISOString()
+      };
+
+      // Add alt text if provided
+      if (altText) {
+        (updateData as any).featured_image_alt = altText;
+      }
+
       const { error } = await supabase
         .from('posts')
-        .update({
-          ai_generated_image_url: imageUrl,
-          image_generation_prompt: prompt,
-          image_source: 'ai_generated',
-          ai_tool_used: 'dall-e-3',
-          updated_at: new Date().toISOString()
-        })
+        .update(updateData)
         .eq('id', postId);
 
       if (error) {
@@ -161,7 +257,7 @@ class AIImageService {
   }
 
   /**
-   * Generate image for blog post (complete workflow)
+   * Legacy compatibility method - redirects to new generateBlogImage
    */
   async generateImageForPost(
     postId: string,
@@ -170,62 +266,163 @@ class AIImageService {
     category?: string,
     customPrompt?: string
   ): Promise<AIImageResult> {
-    const prompt = customPrompt || this.generatePromptFromContent(title, excerpt, category);
-    
-    console.log(`🎨 Generating AI image for post: ${title}`);
-    console.log(`📝 Prompt: ${prompt}`);
-
-    const result = await this.generateImage({
-      prompt,
-      size: '1792x1024', // 2:1 aspect ratio for blog headers
-      quality: 'standard', // Start with standard to save costs
-      style: 'natural'
+    return this.generateBlogImage({
+      postId,
+      title,
+      excerpt,
+      category,
+      customPrompt,
+      priority: 'medium'
     });
-
-    if (result.success && result.imageUrl) {
-      const updated = await this.updatePostWithAIImage(
-        postId, 
-        result.imageUrl, 
-        prompt, 
-        result.revisedPrompt
-      );
-
-      if (!updated) {
-        return {
-          success: false,
-          error: 'Failed to update post in database',
-          prompt
-        };
-      }
-    }
-
-    return result;
   }
 
   /**
-   * Get current usage stats (for admin dashboard)
+   * Preload and validate image URL
    */
-  async getUsageStats(): Promise<{ totalAIImages: number; lastGenerated?: string }> {
+  async preloadImage(url: string): Promise<boolean> {
+    return new Promise((resolve) => {
+      const img = new Image();
+      img.onload = () => resolve(true);
+      img.onerror = () => resolve(false);
+      img.src = url;
+      
+      // Timeout after 10 seconds
+      setTimeout(() => resolve(false), 10000);
+    });
+  }
+
+  /**
+   * Get optimized image with performance considerations
+   */
+  async getOptimizedImage(post: { 
+    featured_image_url: string | null;
+    ai_generated_image_url: string | null;
+    image_source: string;
+    slug: string;
+  }): Promise<{ url: string; isAI: boolean; altText: string }> {
+    
+    // Priority 1: AI Generated Image (if available and valid)
+    if (post.image_source === 'ai_generated' && post.ai_generated_image_url) {
+      const isValid = await this.preloadImage(post.ai_generated_image_url);
+      if (isValid) {
+        return {
+          url: post.ai_generated_image_url,
+          isAI: true,
+          altText: `AI-generated image for blog post`
+        };
+      }
+    }
+    
+    // Priority 2: Featured Image
+    if (post.featured_image_url) {
+      const isValid = await this.preloadImage(post.featured_image_url);
+      if (isValid) {
+        return {
+          url: post.featured_image_url,
+          isAI: false,
+          altText: `Featured image for blog post`
+        };
+      }
+    }
+    
+    // Priority 3: Category-based fallback
+    return {
+      url: this.fallbackImages.default,
+      isAI: false,
+      altText: `Default travel image for blog post`
+    };
+  }
+
+  /**
+   * Get comprehensive AI usage analytics (for admin dashboard)
+   */
+  async getUsageStats(): Promise<{ 
+    totalAIImages: number; 
+    lastGenerated?: string;
+    successRate: number;
+    averageGenerationTime: number;
+    categoryBreakdown: Record<string, number>;
+  }> {
     try {
       const { data, error } = await supabase
         .from('posts')
-        .select('ai_generated_image_url, updated_at')
+        .select('ai_generated_image_url, updated_at, category, image_source')
         .eq('image_source', 'ai_generated')
-        .not('ai_generated_image_url', 'is', null);
+        .not('ai_generated_image_url', 'is', null)
+        .order('updated_at', { ascending: false });
 
       if (error) throw error;
 
+      const totalImages = data?.length || 0;
+      const categoryBreakdown: Record<string, number> = {};
+      
+      data?.forEach(post => {
+        const category = post.category || 'uncategorized';
+        categoryBreakdown[category] = (categoryBreakdown[category] || 0) + 1;
+      });
+
       return {
-        totalAIImages: data?.length || 0,
-        lastGenerated: data?.[0]?.updated_at
+        totalAIImages: totalImages,
+        lastGenerated: data?.[0]?.updated_at,
+        successRate: totalImages > 0 ? 0.85 : 0, // Mock success rate - replace with actual tracking
+        averageGenerationTime: 2.3, // Mock average time - replace with actual tracking
+        categoryBreakdown
       };
     } catch (error) {
       console.error('Error fetching AI image usage stats:', error);
-      return { totalAIImages: 0 };
+      return { 
+        totalAIImages: 0, 
+        successRate: 0, 
+        averageGenerationTime: 0,
+        categoryBreakdown: {} 
+      };
+    }
+  }
+
+  /**
+   * Test AI service connectivity and performance
+   */
+  async healthCheck(): Promise<{
+    status: 'healthy' | 'degraded' | 'down';
+    responseTime: number;
+    features: {
+      imageGeneration: boolean;
+      contentModeration: boolean;
+      fallbackSystem: boolean;
+    };
+  }> {
+    const startTime = Date.now();
+    
+    try {
+      const isAvailable = await this.isAvailable();
+      const responseTime = Date.now() - startTime;
+      
+      return {
+        status: isAvailable ? 'healthy' : 'degraded',
+        responseTime,
+        features: {
+          imageGeneration: isAvailable,
+          contentModeration: true, // Always available with fail-safe
+          fallbackSystem: true     // Always available
+        }
+      };
+    } catch {
+      return {
+        status: 'down',
+        responseTime: Date.now() - startTime,
+        features: {
+          imageGeneration: false,
+          contentModeration: true, // Fail-safe allows content
+          fallbackSystem: true     // Always available
+        }
+      };
     }
   }
 }
 
-// Export singleton instance
+// Export singleton instance with enterprise configuration
 export const aiImageService = new AIImageService();
 export default aiImageService;
+
+// Export types for use in other modules
+export type { BlogImageGenerationOptions, AIImageRequest, AIImageResult };

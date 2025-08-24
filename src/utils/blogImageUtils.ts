@@ -1,14 +1,20 @@
 /**
- * Blog Image Utilities
- * Handles image selection logic with AI-generated image priority and fallbacks
+ * Blog Image Utilities - Enhanced CMS Integration (Backward Compatible)
+ * Re-exports from enhanced version for seamless transition
  */
+
+// Re-export enhanced functionality for backward compatibility
+export * from './blogImageUtils.enhanced';
 
 interface BlogPost {
   id: string;
+  title?: string;
   featured_image_url: string | null;
   ai_generated_image_url: string | null;
   image_source: 'unsplash' | 'ai_generated' | 'uploaded';
   slug: string;
+  category?: string;
+  featured_image_alt?: string;
 }
 
 /**

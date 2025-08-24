@@ -1,0 +1,210 @@
+# BelizeVibes Production Apache Security Headers Configuration
+# =============================================================
+#
+# This .htaccess provides enterprise-grade security headers for production deployment.
+# HSTS is DISABLED by default and must be manually enabled with proper planning.
+# CSP starts in Report-Only mode for safe staging validation.
+#
+# Usage:
+# 1. Place this file in your web root or copy directives to virtual host config
+# 2. Customize domains and report-uri endpoints  
+# 3. Test in staging with CSP Report-Only mode
+# 4. Enable HSTS only after domain preload planning
+# 5. Switch CSP from Report-Only to enforce mode after validation
+
+# Enable mod_headers (required for security headers)
+<IfModule mod_headers.c>
+    
+    # Security Headers - Core Protection
+    # ===================================
+    
+    # Prevent clickjacking attacks
+    Header always set X-Frame-Options "DENY"
+    
+    # Prevent MIME type sniffing  
+    Header always set X-Content-Type-Options "nosniff"
+    
+    # Control referrer information
+    Header always set Referrer-Policy "strict-origin-when-cross-origin"
+    
+    # Content Security Policy - START IN REPORT-ONLY MODE
+    # =====================================================
+    # This CSP allows our domain, Supabase, and Stripe while providing strong protection
+    # IMPORTANT: Starts in Report-Only mode for safe staging validation
+    
+    # STAGING: CSP Report-Only Mode (Safe for initial deployment)
+    Header always set Content-Security-Policy-Report-Only "default-src 'self' https://belizevibes.com; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://js.stripe.com https://*.supabase.co https://www.google.com https://www.gstatic.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; img-src 'self' data: blob: https: https://*.supabase.co https://*.stripe.com; connect-src 'self' https://*.supabase.co wss://*.supabase.co https://api.stripe.com https://*.stripe.com; font-src 'self' data: https://fonts.gstatic.com; object-src 'none'; media-src 'self' data: blob:; frame-src 'self' https://js.stripe.com https://hooks.stripe.com; worker-src 'self' blob:; manifest-src 'self'; report-uri https://belizevibes.com/api/csp-report;"
+    
+    # PRODUCTION: Enforce CSP (Enable after Report-Only validation)
+    # Uncomment the line below and comment the Report-Only line above
+    # Header always set Content-Security-Policy "default-src 'self' https://belizevibes.com; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://js.stripe.com https://*.supabase.co; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; img-src 'self' data: blob: https: https://*.supabase.co https://*.stripe.com; connect-src 'self' https://*.supabase.co wss://*.supabase.co https://api.stripe.com; font-src 'self' data: https://fonts.gstatic.com; object-src 'none'; media-src 'self' data: blob:; frame-src 'self' https://js.stripe.com; worker-src 'self' blob:; manifest-src 'self';"
+    
+    # Permissions Policy - Minimal Required Permissions
+    # =================================================
+    Header always set Permissions-Policy "camera=(), microphone=(), geolocation=(), payment=('self' https://js.stripe.com), usb=(), interest-cohort=()"
+    
+    # HSTS - DISABLED BY DEFAULT (Enable manually after planning)
+    # ============================================================
+    # CRITICAL: Only enable HSTS after:
+    # 1. Confirming all subdomains support HTTPS
+    # 2. Planning domain preload strategy
+    # 3. Understanding 12-month commitment implications
+    
+    # HSTS_ENABLED=false (Change to true when ready)
+    # Uncomment and customize when ready to enable:
+    # Header always set Strict-Transport-Security "max-age=31536000; includeSubDomains; preload"
+    
+    # Cross-Origin Policies (if needed for enhanced isolation)
+    # =========================================================
+    # Uncomment if your application requires enhanced origin isolation
+    # Header always set Cross-Origin-Opener-Policy "same-origin"
+    # Header always set Cross-Origin-Embedder-Policy "require-corp"
+    
+</IfModule>
+
+# CORS Configuration - Secure Defaults
+# =====================================
+<IfModule mod_headers.c>
+    
+    # Handle preflight requests
+    RewriteEngine On
+    RewriteCond %{REQUEST_METHOD} OPTIONS
+    RewriteRule ^(.*)$ $1 [R=200,L]
+    
+    # Set CORS headers for all requests
+    Header always set Access-Control-Allow-Origin "https://belizevibes.com"
+    Header always set Access-Control-Allow-Methods "GET, POST, OPTIONS, PUT, DELETE"
+    Header always set Access-Control-Allow-Headers "Accept, Authorization, Cache-Control, Content-Type, DNT, If-Modified-Since, Keep-Alive, Origin, User-Agent, X-Requested-With, apikey"
+    Header always set Access-Control-Max-Age "86400"
+    
+    # For OPTIONS requests, return immediately with CORS headers
+    <FilesMatch ".*">
+        RewriteCond %{REQUEST_METHOD} OPTIONS
+        RewriteRule .* - [R=204,L]
+    </FilesMatch>
+    
+</IfModule>
+
+# Static File Caching with Security Headers
+# ==========================================
+<IfModule mod_expires.c>
+    ExpiresActive On
+    
+    # Cache static assets for 1 year
+    <FilesMatch "\.(js|css|png|jpg|jpeg|gif|ico|svg|woff|woff2|ttf|eot)$">
+        ExpiresDefault "access plus 1 year"
+        Header merge Cache-Control "public, immutable"
+        
+        # Apply security headers to static files
+        Header always set X-Frame-Options "DENY"
+        Header always set X-Content-Type-Options "nosniff"
+        Header always set Referrer-Policy "strict-origin-when-cross-origin"
+    </FilesMatch>
+    
+    # Cache HTML files for shorter duration
+    <FilesMatch "\.html$">
+        ExpiresDefault "access plus 1 hour"
+        Header merge Cache-Control "public, must-revalidate"
+        
+        # Security headers for HTML pages
+        Header always set X-Frame-Options "DENY"
+        Header always set X-Content-Type-Options "nosniff"
+        Header always set Referrer-Policy "strict-origin-when-cross-origin"
+    </FilesMatch>
+    
+</IfModule>
+
+# API Routes Security
+# ===================
+<Location "/api">
+    <IfModule mod_headers.c>
+        # Stricter headers for API endpoints
+        Header always set X-Frame-Options "DENY"
+        Header always set X-Content-Type-Options "nosniff"
+        Header always set Referrer-Policy "no-referrer"
+        Header always set Cache-Control "no-cache, no-store, must-revalidate"
+        Header always set Pragma "no-cache"
+        Header always set Expires "0"
+    </IfModule>
+</Location>
+
+# Disable server signature and version info
+# ==========================================
+<IfModule mod_security.c>
+    SecServerSignature Off
+</IfModule>
+
+ServerTokens Prod
+
+# Additional Security Measures
+# =============================
+
+# Disable directory browsing
+Options -Indexes
+
+# Prevent access to sensitive files
+<FilesMatch "\.(htaccess|htpasswd|env|log|ini)$">
+    Require all denied
+</FilesMatch>
+
+# Prevent access to version control files
+<FilesMatch "\.(git|svn)">
+    Require all denied
+</FilesMatch>
+
+# Block common exploit attempts
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+    
+    # Block SQL injection attempts
+    RewriteCond %{QUERY_STRING} (\<|%3C).*script.*(\>|%3E) [NC,OR]
+    RewriteCond %{QUERY_STRING} GLOBALS(=|\[|\%[0-9A-Z]{0,2}) [OR]
+    RewriteCond %{QUERY_STRING} _REQUEST(=|\[|\%[0-9A-Z]{0,2}) [OR]
+    RewriteCond %{QUERY_STRING} \.\./\.\./\.\./etc/passwd [OR]
+    RewriteCond %{QUERY_STRING} (localhost|loopback|127\.0\.0\.1) [OR]
+    RewriteCond %{QUERY_STRING} (<|%3C)([^s]*s)+cript.*(>|%3E) [NC,OR]
+    RewriteCond %{QUERY_STRING} (<|%3C)([^e]*e)+mbed.*(>|%3E) [NC,OR]
+    RewriteCond %{QUERY_STRING} (<|%3C)([^o]*o)+bject.*(>|%3E) [NC,OR]
+    RewriteCond %{QUERY_STRING} (<|%3C)([^i]*i)+frame.*(>|%3E) [NC,OR]
+    RewriteCond %{QUERY_STRING} base64_encode.*\(.*\) [OR]
+    RewriteCond %{QUERY_STRING} base64_(en|de)code[^(]*\([^)]*\) [OR]
+    RewriteCond %{QUERY_STRING} GLOBALS(=|\[|\%[0-9A-Z]{0,2}) [OR]
+    RewriteCond %{QUERY_STRING} _REQUEST(=|\[|\%[0-9A-Z]{0,2})
+    RewriteRule ^(.*)$ - [F,L]
+    
+</IfModule>
+
+# Force HTTPS redirect (if HTTPS is available)
+# =============================================
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+    RewriteCond %{HTTPS} off
+    RewriteCond %{HTTP_HOST} ^(www\.)?belizevibes\.com$ [NC]
+    RewriteRule ^(.*)$ https://%{HTTP_HOST}%{REQUEST_URI} [R=301,L]
+</IfModule>
+
+# =============================
+# SECURITY HEADERS ROLLOUT PLAN
+# =============================
+# 
+# Phase 1: CSP Report-Only (CURRENT)
+# - Deploy with Content-Security-Policy-Report-Only
+# - Monitor reports for 2-4 weeks via /api/csp-report endpoint
+# - Fix any legitimate violations
+# 
+# Phase 2: CSP Enforcement  
+# - Switch to Content-Security-Policy header
+# - Monitor for any breaking changes
+# - Adjust policy as needed
+# 
+# Phase 3: HSTS Enablement (Manual Decision Required)
+# - Plan subdomain HTTPS coverage
+# - Consider domain preload implications (12+ month commitment)
+# - Enable HSTS with appropriate max-age
+# - Submit to browser preload lists if desired
+#
+# IMPORTANT NOTES:
+# - Test thoroughly in staging environment first
+# - Monitor CSP reports before enforcement
+# - HSTS is a long-term commitment - plan carefully
+# - Consider impact on all subdomains and services

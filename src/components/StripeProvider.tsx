@@ -3,9 +3,14 @@ import React from 'react';
 import { loadStripe } from '@stripe/stripe-js';
 import { Elements } from '@stripe/react-stripe-js';
 
-// Replace with your actual Stripe publishable key
-// For now using a test key - you'll need to replace this with your real key
-const stripePromise = loadStripe('pk_test_51HdSGjxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx');
+// Use environment variable for Stripe publishable key
+const stripePublishableKey = import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY;
+
+if (!stripePublishableKey) {
+  throw new Error('Missing VITE_STRIPE_PUBLISHABLE_KEY environment variable');
+}
+
+const stripePromise = loadStripe(stripePublishableKey);
 
 interface StripeProviderProps {
   children: React.ReactNode;

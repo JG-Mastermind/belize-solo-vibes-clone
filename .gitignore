@@ -23,9 +23,27 @@ dist-ssr
 *.sln
 *.sw?
 
-# Environment variables
-# This line is critical and prevents your secret keys from being uploaded.
+# Environment variables - CRITICAL SECURITY
+# These patterns prevent secret keys from being uploaded to version control
 .env
+.env.*
+!.env.example
+.envrc
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+.env.production
+.env.staging
+
+# Additional secret file patterns
+secrets/
+*.key
+*.pem
+*.p12
+*.pfx
+config/secrets.json
+auth.json
 
 # Database scripts and backups
 database-fixes/

@@ -3,6 +3,7 @@
  * 
  * Provides configurable rate limiting with Redis (Upstash) or Deno KV fallback.
  * Implements sliding window algorithm with per-route, per-IP, and auth-state granular control.
+ * Integrated with security event monitoring for real-time threat detection.
  * 
  * Environment Variables Required:
  * - UPSTASH_REDIS_REST_URL: Upstash Redis REST URL (optional, falls back to Deno KV)
@@ -11,7 +12,10 @@
  * - RATE_LIMIT_UNAUTH_RPM: Rate limit for unauthenticated users per minute (default: 60)
  * - RATE_LIMIT_AUTH_RPM: Rate limit for authenticated users per minute (default: 300)
  * - RATE_LIMIT_WEBHOOK_RPM: Rate limit for webhook endpoints per minute (default: 30)
+ * - SECURITY_MONITORING_ENABLED: Enable security event logging (default: true)
  */
+
+import { SecurityEventLogger, RateLimitEventPayload } from './_utils/securityEvents.ts';
 
 interface RateLimitConfig {
   windowSizeMs: number;
@@ -368,6 +372,47 @@ export async function rateLimit(request: Request, route?: string): Promise<{
     const rateLimitHeaders = createRateLimitHeaders(result, config);
     
     if (!result.allowed) {
+      // Log rate limit violation to security monitoring
+      try {
+        const securityLogger = new SecurityEventLogger();
+        const rateLimitPayload: RateLimitEventPayload = {
+          limit: config.maxRequests,
+          windowMs: config.windowSizeMs,
+          attempts: config.maxRequests + (config.maxRequests - result.remaining), // Estimate attempts
+          retryAfter: result.retryAfter || 60,
+          endpoint: routePath,
+        };
+
+        // Log rate limit exceeded event asynchronously (don't block response)
+        securityLogger.logRateLimitExceeded(
+          request, 
+          'rate-limit-middleware', 
+          rateLimitPayload,
+          userId
+        ).catch(error => {
+          console.warn('Failed to log rate limit security event:', error);
+        });
+
+        // Check for suspicious patterns (multiple routes being hit rapidly)
+        const suspiciousThreshold = config.maxRequests * 2;
+        if ((config.maxRequests - result.remaining) > suspiciousThreshold) {
+          securityLogger.logSuspiciousIP(request, 'rate-limit-analysis', {
+            pattern: 'aggressive_rate_limiting',
+            confidence: 0.8,
+            indicators: [
+              'excessive_requests',
+              `route_${routePath}`,
+              `attempts_${config.maxRequests - result.remaining}`
+            ]
+          }).catch(error => {
+            console.warn('Failed to log suspicious IP event:', error);
+          });
+        }
+      } catch (securityError) {
+        console.warn('Security event logging failed:', securityError);
+        // Continue with rate limiting even if security logging fails
+      }
+
       // Create 429 Too Many Requests response
       const errorResponse = new Response(
         JSON.stringify({

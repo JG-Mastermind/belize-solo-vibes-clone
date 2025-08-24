@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, Suspense, lazy } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -6,8 +6,18 @@ import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { TranslationButton, TranslationStatus } from '@/components/ui/translation-button';
 import { useTranslation } from '@/hooks/useTranslation';
-import { RichTextEditor } from '@/components/admin/RichTextEditor';
-import { AIBlogAssistantPanel } from '@/components/admin/AIBlogAssistantPanel';
+
+// Lazy load heavy TipTap editor to reduce main bundle size
+const RichTextEditor = lazy(() => 
+  import('@/components/admin/RichTextEditor').then(module => ({ 
+    default: module.RichTextEditor 
+  }))
+);
+const AIBlogAssistantPanel = lazy(() => 
+  import('@/components/admin/AIBlogAssistantPanel').then(module => ({ 
+    default: module.AIBlogAssistantPanel 
+  }))
+);
 import { Save, Eye, Languages } from 'lucide-react';
 import { toast } from 'sonner';
 
@@ -190,16 +200,26 @@ export const BlogForm: React.FC<BlogFormProps> = ({
       />
 
       {/* AI Blog Assistant Panel */}
-      <AIBlogAssistantPanel
-        userType={userType}
-        onUseGenerated={handleAIGenerated}
-        currentContent={{
-          title: formData.title,
-          excerpt: formData.excerpt,
-          content: formData.content
-        }}
-        className="mb-6"
-      />
+      <Suspense fallback={
+        <div className="animate-pulse bg-gray-200 dark:bg-gray-800 rounded-lg h-64 w-full mb-6">
+          <div className="p-6 space-y-4">
+            <div className="h-4 bg-gray-300 dark:bg-gray-700 rounded w-1/4"></div>
+            <div className="h-4 bg-gray-300 dark:bg-gray-700 rounded w-3/4"></div>
+            <div className="h-4 bg-gray-300 dark:bg-gray-700 rounded w-1/2"></div>
+          </div>
+        </div>
+      }>
+        <AIBlogAssistantPanel
+          userType={userType}
+          onUseGenerated={handleAIGenerated}
+          currentContent={{
+            title: formData.title,
+            excerpt: formData.excerpt,
+            content: formData.content
+          }}
+          className="mb-6"
+        />
+      </Suspense>
 
       {/* Bulk Translation */}
       <Card className="dashboard-card">
@@ -347,15 +367,28 @@ export const BlogForm: React.FC<BlogFormProps> = ({
                 size="sm"
               />
             </div>
-            <RichTextEditor
-              value={formData.content}
-              onChange={(value) => updateField('content', value)}
-              placeholder="Write your blog post content here..."
-              seoKeywords={seoKeywords.split(',').map(k => k.trim()).filter(k => k.length > 0)}
-              title={formData.title}
-              excerpt={formData.excerpt}
-              showSEOPanel={true}
-            />
+            <Suspense fallback={
+              <div className="animate-pulse bg-gray-200 dark:bg-gray-800 rounded-lg h-48 w-full">
+                <div className="p-4 space-y-3">
+                  <div className="flex gap-2">
+                    <div className="h-8 bg-gray-300 dark:bg-gray-700 rounded w-16"></div>
+                    <div className="h-8 bg-gray-300 dark:bg-gray-700 rounded w-16"></div>
+                    <div className="h-8 bg-gray-300 dark:bg-gray-700 rounded w-16"></div>
+                  </div>
+                  <div className="h-32 bg-gray-300 dark:bg-gray-700 rounded w-full"></div>
+                </div>
+              </div>
+            }>
+              <RichTextEditor
+                value={formData.content}
+                onChange={(value) => updateField('content', value)}
+                placeholder="Write your blog post content here..."
+                seoKeywords={seoKeywords.split(',').map(k => k.trim()).filter(k => k.length > 0)}
+                title={formData.title}
+                excerpt={formData.excerpt}
+                showSEOPanel={true}
+              />
+            </Suspense>
           </div>
         </CardContent>
       </Card>
@@ -421,15 +454,28 @@ export const BlogForm: React.FC<BlogFormProps> = ({
                 size="sm"
               />
             </div>
-            <RichTextEditor
-              value={formData.content_fr}
-              onChange={(value) => updateField('content_fr', value)}
-              placeholder="Écrivez le contenu de votre blog en français ici..."
-              seoKeywords={seoKeywords.split(',').map(k => k.trim()).filter(k => k.length > 0)}
-              title={formData.title_fr}
-              excerpt={formData.excerpt_fr}
-              showSEOPanel={false}
-            />
+            <Suspense fallback={
+              <div className="animate-pulse bg-gray-200 dark:bg-gray-800 rounded-lg h-48 w-full">
+                <div className="p-4 space-y-3">
+                  <div className="flex gap-2">
+                    <div className="h-8 bg-gray-300 dark:bg-gray-700 rounded w-16"></div>
+                    <div className="h-8 bg-gray-300 dark:bg-gray-700 rounded w-16"></div>
+                    <div className="h-8 bg-gray-300 dark:bg-gray-700 rounded w-16"></div>
+                  </div>
+                  <div className="h-32 bg-gray-300 dark:bg-gray-700 rounded w-full"></div>
+                </div>
+              </div>
+            }>
+              <RichTextEditor
+                value={formData.content_fr}
+                onChange={(value) => updateField('content_fr', value)}
+                placeholder="Écrivez le contenu de votre blog en français ici..."
+                seoKeywords={seoKeywords.split(',').map(k => k.trim()).filter(k => k.length > 0)}
+                title={formData.title_fr}
+                excerpt={formData.excerpt_fr}
+                showSEOPanel={false}
+              />
+            </Suspense>
           </div>
         </CardContent>
       </Card>

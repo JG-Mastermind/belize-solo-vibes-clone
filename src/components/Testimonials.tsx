@@ -1,7 +1,7 @@
 
 import { Card, CardContent } from "@/components/ui/card";
 import { Star, Quote, Plus, Upload, X, Image as ImageIcon, Loader2 } from "lucide-react";
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, memo } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -866,4 +866,5 @@ const Testimonials = () => {
   );
 };
 
-export default Testimonials;
+// Memoized component to prevent unnecessary re-renders
+export default memo(Testimonials);

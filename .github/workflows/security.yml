@@ -159,6 +159,83 @@ jobs:
           echo "Security headers validation completed"
           echo "See job output for detailed results"
 
+  # Edge Function Rate Limiting Tests - Deno test suite for rate limiting middleware
+  edge-function-tests:
+    name: Edge Function Rate Limiting Tests
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        
+      - name: Setup Deno
+        uses: denoland/setup-deno@v1
+        with:
+          deno-version: v1.x
+          
+      - name: Verify test files exist
+        run: |
+          if [ -f "supabase/functions/_tests/rateLimit.spec.ts" ]; then
+            echo "✅ Rate limiting test file found"
+            echo "📊 Test file size: $(wc -l < supabase/functions/_tests/rateLimit.spec.ts) lines"
+          else
+            echo "⚠️  Rate limiting test file not found - skipping tests"
+            exit 0
+          fi
+          
+      - name: Run rate limiting security tests
+        run: |
+          echo "Running Edge Function rate limiting tests..."
+          echo "🧪 Testing: Rate limiting middleware with Redis/Deno KV storage"
+          echo "🔒 Security Focus: Per-IP, per-route, and auth-based rate limiting"
+          
+          # Run Deno tests with required permissions
+          deno test supabase/functions/_tests/rateLimit.spec.ts \
+            --allow-net \
+            --allow-env \
+            --allow-read \
+            --reporter=pretty \
+            --fail-fast || test_exit_code=$?
+          
+          if [ "${test_exit_code:-0}" -eq 0 ]; then
+            echo "✅ All rate limiting tests passed"
+            echo "🛡️  Rate limiting middleware security validated"
+          else
+            echo "❌ Rate limiting tests failed (exit code: ${test_exit_code:-0})"
+            echo "🚨 Critical: Rate limiting security controls may be compromised"
+            exit 1
+          fi
+          
+      - name: Generate rate limiting test report
+        if: failure()
+        run: |
+          echo "Generating detailed rate limiting test report..."
+          echo "Rate Limiting Test Failure Report" > rate-limit-test-report.txt
+          echo "=================================" >> rate-limit-test-report.txt
+          echo "Timestamp: $(date -u)" >> rate-limit-test-report.txt
+          echo "Test Command: deno test supabase/functions/_tests/rateLimit.spec.ts --allow-net --allow-env --allow-read" >> rate-limit-test-report.txt
+          echo "" >> rate-limit-test-report.txt
+          echo "CRITICAL SECURITY IMPACT:" >> rate-limit-test-report.txt
+          echo "- Rate limiting middleware may not function properly" >> rate-limit-test-report.txt
+          echo "- Edge Functions may be vulnerable to DoS attacks" >> rate-limit-test-report.txt
+          echo "- API abuse protection may be compromised" >> rate-limit-test-report.txt
+          echo "" >> rate-limit-test-report.txt
+          
+          # Re-run tests with verbose output for debugging
+          echo "DETAILED TEST OUTPUT:" >> rate-limit-test-report.txt
+          deno test supabase/functions/_tests/rateLimit.spec.ts \
+            --allow-net --allow-env --allow-read \
+            --reporter=pretty 2>&1 | head -100 >> rate-limit-test-report.txt || true
+          
+      - name: Upload rate limiting test artifacts
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: rate-limit-test-report
+          path: rate-limit-test-report.txt
+          retention-days: 30
+
   # Authentication Security Tests - Run auth-focused test subset
   auth-security-tests:
     name: Authentication Security Tests
@@ -215,7 +292,7 @@ jobs:
   security-status:
     name: Security Compliance Summary
     runs-on: ubuntu-latest
-    needs: [audit-check, secret-scan, codeql-analysis, headers-check, auth-security-tests]
+    needs: [audit-check, secret-scan, codeql-analysis, headers-check, edge-function-tests, auth-security-tests]
     if: always()
     timeout-minutes: 3
     
@@ -235,14 +312,16 @@ jobs:
           secret_result="${{ needs.secret-scan.result }}"
           codeql_result="${{ needs.codeql-analysis.result }}"
           headers_result="${{ needs.headers-check.result }}"
+          edge_tests_result="${{ needs.edge-function-tests.result }}"
           auth_tests_result="${{ needs.auth-security-tests.result }}"
           
           echo "📊 Security Check Results:"
-          echo "  NPM Audit:           ${audit_result}"
-          echo "  Secret Detection:    ${secret_result}"
-          echo "  CodeQL Analysis:     ${codeql_result}"
-          echo "  Security Headers:    ${headers_result}"
-          echo "  Auth Security Tests: ${auth_tests_result}"
+          echo "  NPM Audit:               ${audit_result}"
+          echo "  Secret Detection:        ${secret_result}"
+          echo "  CodeQL Analysis:         ${codeql_result}"
+          echo "  Security Headers:        ${headers_result}"
+          echo "  Edge Function Tests:     ${edge_tests_result}"
+          echo "  Auth Security Tests:     ${auth_tests_result}"
           echo ""
           
           # Determine overall status
@@ -251,6 +330,7 @@ jobs:
           [ "$secret_result" != "success" ] && failed_checks+=("Secret Detection")
           [ "$codeql_result" != "success" ] && failed_checks+=("CodeQL Analysis")
           [ "$headers_result" != "success" ] && failed_checks+=("Security Headers")
+          [ "$edge_tests_result" != "success" ] && failed_checks+=("Edge Function Tests")
           [ "$auth_tests_result" != "success" ] && failed_checks+=("Auth Security Tests")
           
           if [ ${#failed_checks[@]} -eq 0 ]; then

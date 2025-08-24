@@ -1,0 +1,205 @@
+{
+  "$schema": "https://json-schema.org/draft-07/schema#",
+  "title": "Supabase Edge Functions Rate Limiting Configuration",
+  "description": "Per-route rate limiting policies for production security hardening",
+  
+  "environments": {
+    "development": {
+      "enabled": false,
+      "multiplier": 10
+    },
+    "staging": {
+      "enabled": true,
+      "multiplier": 2
+    },
+    "production": {
+      "enabled": true,
+      "multiplier": 1
+    }
+  },
+
+  "defaultPolicies": {
+    "unauthenticated": {
+      "windowSizeMs": 60000,
+      "maxRequests": 60,
+      "keyPrefix": "rl:unauth:"
+    },
+    "authenticated": {
+      "windowSizeMs": 60000,
+      "maxRequests": 300,
+      "keyPrefix": "rl:auth:"
+    },
+    "webhook": {
+      "windowSizeMs": 60000,
+      "maxRequests": 30,
+      "keyPrefix": "rl:webhook:"
+    },
+    "admin": {
+      "windowSizeMs": 60000,
+      "maxRequests": 500,
+      "keyPrefix": "rl:admin:"
+    }
+  },
+
+  "routes": {
+    "/stripe-webhook": {
+      "windowSizeMs": 60000,
+      "maxRequests": 10,
+      "keyPrefix": "rl:stripe:",
+      "description": "Stripe webhook endpoint - very strict limits"
+    },
+    "/webhook": {
+      "windowSizeMs": 60000,
+      "maxRequests": 30,
+      "keyPrefix": "rl:webhook:",
+      "description": "Generic webhook endpoints"
+    },
+    "/test-auth": {
+      "windowSizeMs": 60000,
+      "maxRequests": 10,
+      "keyPrefix": "rl:test-auth:",
+      "description": "Authentication testing endpoint - prevent brute force"
+    },
+    "/create-admin-user": {
+      "windowSizeMs": 300000,
+      "maxRequests": 3,
+      "keyPrefix": "rl:create-admin:",
+      "description": "Admin user creation - very strict limits (5 min window)"
+    },
+    "/update-admin-password": {
+      "windowSizeMs": 300000,
+      "maxRequests": 5,
+      "keyPrefix": "rl:admin-pwd:",
+      "description": "Admin password updates - strict limits (5 min window)"
+    },
+    "/delete-user": {
+      "windowSizeMs": 300000,
+      "maxRequests": 10,
+      "keyPrefix": "rl:delete-user:",
+      "description": "User deletion endpoint - strict limits (5 min window)"
+    },
+    "/create_admin_invite": {
+      "windowSizeMs": 300000,
+      "maxRequests": 10,
+      "keyPrefix": "rl:admin-invite:",
+      "description": "Admin invitation creation - strict limits (5 min window)"
+    },
+    "/revoke_admin_invite": {
+      "windowSizeMs": 60000,
+      "maxRequests": 20,
+      "keyPrefix": "rl:revoke-invite:",
+      "description": "Admin invitation revocation"
+    },
+    "/create-payment-intent": {
+      "windowSizeMs": 300000,
+      "maxRequests": 20,
+      "keyPrefix": "rl:payment:",
+      "description": "Payment intent creation - prevent spam bookings (5 min window)"
+    },
+    "/create-payment": {
+      "windowSizeMs": 300000,
+      "maxRequests": 15,
+      "keyPrefix": "rl:payment-create:",
+      "description": "Direct payment creation - strict limits (5 min window)"
+    },
+    "/get-user-profile": {
+      "windowSizeMs": 60000,
+      "maxRequests": 100,
+      "keyPrefix": "rl:profile:",
+      "description": "User profile retrieval - moderate limits"
+    },
+    "/update-user-settings": {
+      "windowSizeMs": 60000,
+      "maxRequests": 30,
+      "keyPrefix": "rl:user-settings:",
+      "description": "User settings updates"
+    },
+    "/popular-adventures": {
+      "windowSizeMs": 60000,
+      "maxRequests": 200,
+      "keyPrefix": "rl:popular:",
+      "description": "Public adventure listings - higher limits for read operations"
+    },
+    "/analyze-blog-seo": {
+      "windowSizeMs": 300000,
+      "maxRequests": 10,
+      "keyPrefix": "rl:blog-seo:",
+      "description": "Blog SEO analysis - resource intensive (5 min window)"
+    },
+    "/generate-blog-content": {
+      "windowSizeMs": 600000,
+      "maxRequests": 5,
+      "keyPrefix": "rl:blog-gen:",
+      "description": "Blog content generation - very resource intensive (10 min window)"
+    },
+    "/generate-blog-image": {
+      "windowSizeMs": 300000,
+      "maxRequests": 10,
+      "keyPrefix": "rl:blog-img:",
+      "description": "Blog image generation - resource intensive (5 min window)"
+    },
+    "/api-cost-analyzer": {
+      "windowSizeMs": 300000,
+      "maxRequests": 20,
+      "keyPrefix": "rl:cost-analyzer:",
+      "description": "API cost analysis - admin/monitoring endpoint (5 min window)"
+    },
+    "/api-security-monitor": {
+      "windowSizeMs": 60000,
+      "maxRequests": 50,
+      "keyPrefix": "rl:security-monitor:",
+      "description": "Security monitoring endpoint"
+    },
+    "/api-usage-tracker": {
+      "windowSizeMs": 60000,
+      "maxRequests": 100,
+      "keyPrefix": "rl:usage-tracker:",
+      "description": "API usage tracking"
+    },
+    "/reward-operators": {
+      "windowSizeMs": 300000,
+      "maxRequests": 10,
+      "keyPrefix": "rl:rewards:",
+      "description": "Tour operator rewards - admin function (5 min window)"
+    }
+  },
+
+  "securityPolicies": {
+    "ipWhitelist": {
+      "enabled": false,
+      "addresses": [],
+      "description": "IP addresses exempt from rate limiting"
+    },
+    "burstProtection": {
+      "enabled": true,
+      "burstThreshold": 10,
+      "burstWindowMs": 1000,
+      "description": "Prevent burst attacks - max 10 requests per second"
+    },
+    "progressiveBackoff": {
+      "enabled": true,
+      "multiplier": 2,
+      "maxBackoffMs": 300000,
+      "description": "Progressive backoff for repeated violations"
+    },
+    "alerting": {
+      "enabled": true,
+      "thresholdPercentage": 80,
+      "webhookUrl": null,
+      "description": "Alert when rate limit usage exceeds threshold"
+    }
+  },
+
+  "monitoring": {
+    "logViolations": true,
+    "logAllRequests": false,
+    "metricsEnabled": true,
+    "retentionDays": 7,
+    "exportFormat": "json"
+  },
+
+  "failSafe": {
+    "failOpen": true,
+    "description": "Allow requests if rate limiting system fails"
+  }
+}

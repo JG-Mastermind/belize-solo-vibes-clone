@@ -1,0 +1,1260 @@
+{
+  "timestamp": "2025-08-24T22:44:45.901Z",
+  "buildTime": 24069,
+  "bundleSize": 2898258,
+  "chunks": [
+    {
+      "name": "AIAssistantPanel-Dw32-PYX.js",
+      "size": 9510,
+      "sizeKB": 9.29,
+      "type": "js",
+      "isMain": false,
+      "path": "assets/AIAssistantPanel-Dw32-PYX.js"
+    },
+    {
+      "name": "AIBlogAssistantPanel-vorfQu2v.js",
+      "size": 41163,
+      "sizeKB": 40.2,
+      "type": "js",
+      "isMain": false,
+      "path": "assets/AIBlogAssistantPanel-vorfQu2v.js"
+    },
+    {
+      "name": "About-_FWM9Eqm.js",
+      "size": 5981,
+      "sizeKB": 5.84,
+      "type": "js",
+      "isMain": false,
+      "path": "assets/About-_FWM9Eqm.js"
+    },
+    {
+      "name": "AcceptInvitation-D5l8zpXn.js",
+      "size": 4184,
+      "sizeKB": 4.09,
+      "type": "js",
+      "isMain": false,
+      "path": "assets/AcceptInvitation-D5l8zpXn.js"
+    },
+    {
+      "name": "AdminAdventures-DHnVY7kV.js",
+      "size": 5302,
+      "sizeKB": 5.18,
+      "type": "js",
+      "isMain": false,
+      "path": "assets/AdminAdventures-DHnVY7kV.js"
+    },
+    {
+      "name": "AdminCreateAdventure-C92J9ecB.js",
+      "size": 9496,
+      "sizeKB": 9.27,
+      "type": "js",
+      "isMain": false,
+      "path": "assets/AdminCreateAdventure-C92J9ecB.js"
+    },
+    {
+      "name": "AdminDashboard-BNoYFx-i.js",
+      "size": 3315,
+      "sizeKB": 3.24,
+      "type": "js",
+      "isMain": false,
+      "path": "assets/AdminDashboard-BNoYFx-i.js"
+    },
+    {
+      "name": "AdminEditAdventure-COqC41pS.js",
+      "size": 11476,
+      "sizeKB": 11.21,
+      "type": "js",
+      "isMain": false,
+      "path": "assets/AdminEditAdventure-COqC41pS.js"
+    },
+    {
+      "name": "AdminLogin-DXxkYXgl.js",
+      "size": 9818,
+      "sizeKB": 9.59,
+      "type": "js",
+      "isMain": false,
+      "path": "assets/AdminLogin-DXxkYXgl.js"
+    },
+    {
+      "name": "AdventureDetail-CBviDaeF.js",
+      "size": 28233,
+      "sizeKB": 27.57,
+      "type": "js",
+      "isMain": false,
+      "path": "assets/AdventureDetail-CBviDaeF.js"
+    },
+    {
+      "name": "AdventurePerformance-B5bXtHVA.js",
+      "size": 15845,
+      "sizeKB": 15.47,
+      "type": "js",
+      "isMain": false,
+      "path": "assets/AdventurePerformance-B5bXtHVA.js"
+    },
+    {
+      "name": "AdventuresPage-f8fF-2r0.js",
+      "size": 30460,
+      "sizeKB": 29.75,
+      "type": "js",
+      "isMain": false,
+      "path": "assets/AdventuresPage-f8fF-2r0.js"
+    },
+    {
+      "name": "AnalyticsDashboard-Bb6Be93_.js",
+      "size": 7495,
+      "sizeKB": 7.32,
+      "type": "js",
+      "isMain": false,
+      "path": "assets/AnalyticsDashboard-Bb6Be93_.js"
+    },
+    {
+      "name": "ApiAlertsManagement-DE7zBil0.js",
+      "size": 8407,
+      "sizeKB": 8.21,
+      "type": "js",
+      "isMain": false,
+      "path": "assets/ApiAlertsManagement-DE7zBil0.js"
+    },
+    {
+      "name": "ApiCostAnalysis-DRr39qdZ.js",
+      "size": 7187,
+      "sizeKB": 7.02,
+      "type": "js",
+      "isMain": false,
+      "path": "assets/ApiCostAnalysis-DRr39qdZ.js"
+    },
+    {
+      "name": "ApiKeysManagement-Dlv3xMVN.js",
+      "size": 5457,
+      "sizeKB": 5.33,
+      "type": "js",
+      "isMain": false,
+      "path": "assets/ApiKeysManagement-Dlv3xMVN.js"
+    },
+    {
+      "name": "ApiOptimization-CMJSVeKz.js",
+      "size": 11006,
+      "sizeKB": 10.75,
+      "type": "js",
+      "isMain": false,
+      "path": "assets/ApiOptimization-CMJSVeKz.js"
+    },
+    {
+      "name": "ApiUsageMonitoring-Dm7jmllO.js",
+      "size": 8352,
+      "sizeKB": 8.16,
+      "type": "js",
+      "isMain": false,
+      "path": "assets/ApiUsageMonitoring-Dm7jmllO.js"
+    },
+    {
+      "name": "AreaChart-DRvsG2Nr.js",
+      "size": 10965,
+      "sizeKB": 10.71,
+      "type": "js",
+      "isMain": false,
+      "path": "assets/AreaChart-DRvsG2Nr.js"
+    },
+    {
+      "name": "BarChart-h9ZcE_IT.js",
+      "size": 381230,
+      "sizeKB": 372.29,
+      "type": "js",
+      "isMain": false,
+      "path": "assets/BarChart-h9ZcE_IT.js"
+    },
+    {
+      "name": "Blog-B6wWBR5H.js",
+      "size": 10334,
+      "sizeKB": 10.09,
+      "type": "js",
+      "isMain": false,
+      "path": "assets/Blog-B6wWBR5H.js"
+    },
+    {
+      "name": "BlogForm-Cxdeabib.js",
+      "size": 14943,
+      "sizeKB": 14.59,
+      "type": "js",
+      "isMain": false,
+      "path": "assets/BlogForm-Cxdeabib.js"
+    },
+    {
+      "name": "BlogPost-DCL0B_9X.js",
+      "size": 11846,
+      "sizeKB": 11.57,
+      "type": "js",
+      "isMain": false,
+      "path": "assets/BlogPost-DCL0B_9X.js"
+    },
+    {
+      "name": "BlogPosts-Bh2GPYIf.js",
+      "size": 5656,
+      "sizeKB": 5.52,
+      "type": "js",
+      "isMain": false,
+      "path": "assets/BlogPosts-Bh2GPYIf.js"
+    },
+    {
+      "name": "Booking-DHs7J61A.js",
+      "size": 29418,
+      "sizeKB": 28.73,
+      "type": "js",
+      "isMain": false,
+      "path": "assets/Booking-DHs7J61A.js"
+    },
+    {
+      "name": "BookingCheckout-DVfh3yr2.js",
+      "size": 199910,
+      "sizeKB": 195.22,
+      "type": "js",
+      "isMain": false,
+      "path": "assets/BookingCheckout-DVfh3yr2.js"
+    },
+    {
+      "name": "BookingConversion-neXWkyI_.js",
+      "size": 10025,
+      "sizeKB": 9.79,
+      "type": "js",
+      "isMain": false,
+      "path": "assets/BookingConversion-neXWkyI_.js"
+    },
+    {
+      "name": "Bookings-q5EjdX8_.js",
+      "size": 6630,
+      "sizeKB": 6.47,
+      "type": "js",
+      "isMain": false,
+      "path": "assets/Bookings-q5EjdX8_.js"
+    },
+    {
+      "name": "BookingsTable-DpQfWCLn.js",
+      "size": 1813,
+      "sizeKB": 1.77,
+      "type": "js",
+      "isMain": false,
+      "path": "assets/BookingsTable-DpQfWCLn.js"
+    },
+    {
+      "name": "Calendar-BSXgfEj6.js",
+      "size": 6346,
+      "sizeKB": 6.2,
+      "type": "js",
+      "isMain": false,
+      "path": "assets/Calendar-BSXgfEj6.js"
+    },
+    {
+      "name": "Confirmation-CYL39Yyz.js",
+      "size": 7058,
+      "sizeKB": 6.89,
+      "type": "js",
+      "isMain": false,
+      "path": "assets/Confirmation-CYL39Yyz.js"
+    },
+    {
+      "name": "Contact-BUuzpMsM.js",
+      "size": 9141,
+      "sizeKB": 8.93,
+      "type": "js",
+      "isMain": false,
+      "path": "assets/Contact-BUuzpMsM.js"
+    },
+    {
+      "name": "CreateAdventure-7osS3Ie7.js",
+      "size": 15469,
+      "sizeKB": 15.11,
+      "type": "js",
+      "isMain": false,
+      "path": "assets/CreateAdventure-7osS3Ie7.js"
+    },
+    {
+      "name": "CreatePost-EDkfgPVc.js",
+      "size": 1693,
+      "sizeKB": 1.65,
+      "type": "js",
+      "isMain": false,
+      "path": "assets/CreatePost-EDkfgPVc.js"
+    },
+    {
+      "name": "CustomerLifetimeValue-Bmww-YIz.js",
+      "size": 21811,
+      "sizeKB": 21.3,
+      "type": "js",
+      "isMain": false,
+      "path": "assets/CustomerLifetimeValue-Bmww-YIz.js"
+    },
+    {
+      "name": "DashboardCharts-mRNYWAnQ.js",
+      "size": 3027,
+      "sizeKB": 2.96,
+      "type": "js",
+      "isMain": false,
+      "path": "assets/DashboardCharts-mRNYWAnQ.js"
+    },
+    {
+      "name": "DashboardLayout-CLiLqsPw.js",
+      "size": 29166,
+      "sizeKB": 28.48,
+      "type": "js",
+      "isMain": false,
+      "path": "assets/DashboardLayout-CLiLqsPw.js"
+    },
+    {
+      "name": "EditPost-BIzUSfB8.js",
+      "size": 2873,
+      "sizeKB": 2.81,
+      "type": "js",
+      "isMain": false,
+      "path": "assets/EditPost-BIzUSfB8.js"
+    },
+    {
+      "name": "FinancialReports-B2KtPo1D.js",
+      "size": 15072,
+      "sizeKB": 14.72,
+      "type": "js",
+      "isMain": false,
+      "path": "assets/FinancialReports-B2KtPo1D.js"
+    },
+    {
+      "name": "FinancialTransactionsAnalytics-Cbwk2WPT.js",
+      "size": 9190,
+      "sizeKB": 8.97,
+      "type": "js",
+      "isMain": false,
+      "path": "assets/FinancialTransactionsAnalytics-Cbwk2WPT.js"
+    },
+    {
+      "name": "FinancialTransactionsDisputes-Bu0heRS5.js",
+      "size": 11908,
+      "sizeKB": 11.63,
+      "type": "js",
+      "isMain": false,
+      "path": "assets/FinancialTransactionsDisputes-Bu0heRS5.js"
+    },
+    {
+      "name": "FinancialTransactionsProcessing-CyPTNUt6.js",
+      "size": 8383,
+      "sizeKB": 8.19,
+      "type": "js",
+      "isMain": false,
+      "path": "assets/FinancialTransactionsProcessing-CyPTNUt6.js"
+    },
+    {
+      "name": "GeographicDistribution-BMkwZbiU.js",
+      "size": 14832,
+      "sizeKB": 14.48,
+      "type": "js",
+      "isMain": false,
+      "path": "assets/GeographicDistribution-BMkwZbiU.js"
+    },
+    {
+      "name": "GlobalMeta-BqPR9LcT.js",
+      "size": 2157,
+      "sizeKB": 2.11,
+      "type": "js",
+      "isMain": false,
+      "path": "assets/GlobalMeta-BqPR9LcT.js"
+    },
+    {
+      "name": "GuideDashboard-DWL2ZrWl.js",
+      "size": 2086,
+      "sizeKB": 2.04,
+      "type": "js",
+      "isMain": false,
+      "path": "assets/GuideDashboard-DWL2ZrWl.js"
+    },
+    {
+      "name": "GuidePerformance-BVFQ2hMu.js",
+      "size": 29392,
+      "sizeKB": 28.7,
+      "type": "js",
+      "isMain": false,
+      "path": "assets/GuidePerformance-BVFQ2hMu.js"
+    },
+    {
+      "name": "ImageUploader-CVjgpETE.js",
+      "size": 15713,
+      "sizeKB": 15.34,
+      "type": "js",
+      "isMain": false,
+      "path": "assets/ImageUploader-CVjgpETE.js"
+    },
+    {
+      "name": "InvitationManager-CqhaX9s0.js",
+      "size": 23459,
+      "sizeKB": 22.91,
+      "type": "js",
+      "isMain": false,
+      "path": "assets/InvitationManager-CqhaX9s0.js"
+    },
+    {
+      "name": "InvoicesReceived-BZHq-2ws.js",
+      "size": 11582,
+      "sizeKB": 11.31,
+      "type": "js",
+      "isMain": false,
+      "path": "assets/InvoicesReceived-BZHq-2ws.js"
+    },
+    {
+      "name": "InvoicesSent-DAEwqGm1.js",
+      "size": 10386,
+      "sizeKB": 10.14,
+      "type": "js",
+      "isMain": false,
+      "path": "assets/InvoicesSent-DAEwqGm1.js"
+    },
+    {
+      "name": "LandingPage-Ba7kedfn.js",
+      "size": 3384,
+      "sizeKB": 3.3,
+      "type": "js",
+      "isMain": false,
+      "path": "assets/LandingPage-Ba7kedfn.js"
+    },
+    {
+      "name": "LineChart-Bf_8ulrO.js",
+      "size": 11107,
+      "sizeKB": 10.85,
+      "type": "js",
+      "isMain": false,
+      "path": "assets/LineChart-Bf_8ulrO.js"
+    },
+    {
+      "name": "MarketingCampaigns-B2KtwjQZ.js",
+      "size": 9660,
+      "sizeKB": 9.43,
+      "type": "js",
+      "isMain": false,
+      "path": "assets/MarketingCampaigns-B2KtwjQZ.js"
+    },
+    {
+      "name": "MarketingContent-BUhncZyB.js",
+      "size": 14237,
+      "sizeKB": 13.9,
+      "type": "js",
+      "isMain": false,
+      "path": "assets/MarketingContent-BUhncZyB.js"
+    },
+    {
+      "name": "MarketingConversions-BgXdjyOJ.js",
+      "size": 13431,
+      "sizeKB": 13.12,
+      "type": "js",
+      "isMain": false,
+      "path": "assets/MarketingConversions-BgXdjyOJ.js"
+    },
+    {
+      "name": "MarketingLeads-DRbxrisb.js",
+      "size": 10496,
+      "sizeKB": 10.25,
+      "type": "js",
+      "isMain": false,
+      "path": "assets/MarketingLeads-DRbxrisb.js"
+    },
+    {
+      "name": "MarketingROI-BAVBicfj.js",
+      "size": 15911,
+      "sizeKB": 15.54,
+      "type": "js",
+      "isMain": false,
+      "path": "assets/MarketingROI-BAVBicfj.js"
+    },
+    {
+      "name": "MarketingTraffic-BZS_L7IR.js",
+      "size": 10580,
+      "sizeKB": 10.33,
+      "type": "js",
+      "isMain": false,
+      "path": "assets/MarketingTraffic-BZS_L7IR.js"
+    },
+    {
+      "name": "Messages-BoXMgdHn.js",
+      "size": 6416,
+      "sizeKB": 6.27,
+      "type": "js",
+      "isMain": false,
+      "path": "assets/Messages-BoXMgdHn.js"
+    },
+    {
+      "name": "NotFound-Dt-Nul-U.js",
+      "size": 618,
+      "sizeKB": 0.6,
+      "type": "js",
+      "isMain": false,
+      "path": "assets/NotFound-Dt-Nul-U.js"
+    },
+    {
+      "name": "Payouts-CN24X9ip.js",
+      "size": 6764,
+      "sizeKB": 6.61,
+      "type": "js",
+      "isMain": false,
+      "path": "assets/Payouts-CN24X9ip.js"
+    },
+    {
+      "name": "PieChart-C5QWDUup.js",
+      "size": 11582,
+      "sizeKB": 11.31,
+      "type": "js",
+      "isMain": false,
+      "path": "assets/PieChart-C5QWDUup.js"
+    },
+    {
+      "name": "PolarAngleAxis-B-nIU7TA.js",
+      "size": 14517,
+      "sizeKB": 14.18,
+      "type": "js",
+      "isMain": false,
+      "path": "assets/PolarAngleAxis-B-nIU7TA.js"
+    },
+    {
+      "name": "ResetPassword-B1EKDull.js",
+      "size": 7144,
+      "sizeKB": 6.98,
+      "type": "js",
+      "isMain": false,
+      "path": "assets/ResetPassword-B1EKDull.js"
+    },
+    {
+      "name": "RevenueTrends-COdsC-XU.js",
+      "size": 10278,
+      "sizeKB": 10.04,
+      "type": "js",
+      "isMain": false,
+      "path": "assets/RevenueTrends-COdsC-XU.js"
+    },
+    {
+      "name": "RichTextEditor-DlnyeMuI.js",
+      "size": 352603,
+      "sizeKB": 344.34,
+      "type": "js",
+      "isMain": false,
+      "path": "assets/RichTextEditor-DlnyeMuI.js"
+    },
+    {
+      "name": "Safety-CDnVhwpV.js",
+      "size": 6545,
+      "sizeKB": 6.39,
+      "type": "js",
+      "isMain": false,
+      "path": "assets/Safety-CDnVhwpV.js"
+    },
+    {
+      "name": "SafetyAlerts-sMwowY-P.js",
+      "size": 15699,
+      "sizeKB": 15.33,
+      "type": "js",
+      "isMain": false,
+      "path": "assets/SafetyAlerts-sMwowY-P.js"
+    },
+    {
+      "name": "SeasonalPatterns-Dnxy_E7S.js",
+      "size": 20329,
+      "sizeKB": 19.85,
+      "type": "js",
+      "isMain": false,
+      "path": "assets/SeasonalPatterns-Dnxy_E7S.js"
+    },
+    {
+      "name": "StatsCard-BNOE8GWr.js",
+      "size": 822,
+      "sizeKB": 0.8,
+      "type": "js",
+      "isMain": false,
+      "path": "assets/StatsCard-BNOE8GWr.js"
+    },
+    {
+      "name": "SuperAdminMetrics-COQMPVOF.js",
+      "size": 18206,
+      "sizeKB": 17.78,
+      "type": "js",
+      "isMain": false,
+      "path": "assets/SuperAdminMetrics-COQMPVOF.js"
+    },
+    {
+      "name": "TestAI-DoJYDQ5f.js",
+      "size": 8588,
+      "sizeKB": 8.39,
+      "type": "js",
+      "isMain": false,
+      "path": "assets/TestAI-DoJYDQ5f.js"
+    },
+    {
+      "name": "TokenDebugger-BemtlUVx.js",
+      "size": 892,
+      "sizeKB": 0.87,
+      "type": "js",
+      "isMain": false,
+      "path": "assets/TokenDebugger-BemtlUVx.js"
+    },
+    {
+      "name": "TravelerDashboard-CCKAsXsL.js",
+      "size": 1070,
+      "sizeKB": 1.04,
+      "type": "js",
+      "isMain": false,
+      "path": "assets/TravelerDashboard-CCKAsXsL.js"
+    },
+    {
+      "name": "UserGrowthMetrics-CRz6T_8w.js",
+      "size": 13350,
+      "sizeKB": 13.04,
+      "type": "js",
+      "isMain": false,
+      "path": "assets/UserGrowthMetrics-CRz6T_8w.js"
+    },
+    {
+      "name": "UserManager-DaOFlsSm.js",
+      "size": 12997,
+      "sizeKB": 12.69,
+      "type": "js",
+      "isMain": false,
+      "path": "assets/UserManager-DaOFlsSm.js"
+    },
+    {
+      "name": "UserSettings-BpfsznOQ.js",
+      "size": 8815,
+      "sizeKB": 8.61,
+      "type": "js",
+      "isMain": false,
+      "path": "assets/UserSettings-BpfsznOQ.js"
+    },
+    {
+      "name": "activity-Du3LnH4W.js",
+      "size": 403,
+      "sizeKB": 0.39,
+      "type": "js",
+      "isMain": false,
+      "path": "assets/activity-Du3LnH4W.js"
+    },
+    {
+      "name": "alert-BkMOSSdn.js",
+      "size": 902,
+      "sizeKB": 0.88,
+      "type": "js",
+      "isMain": false,
+      "path": "assets/alert-BkMOSSdn.js"
+    },
+    {
+      "name": "arrow-left-w7vIirGy.js",
+      "size": 333,
+      "sizeKB": 0.33,
+      "type": "js",
+      "isMain": false,
+      "path": "assets/arrow-left-w7vIirGy.js"
+    },
+    {
+      "name": "arrow-up-right-DEOjDP-f.js",
+      "size": 334,
+      "sizeKB": 0.33,
+      "type": "js",
+      "isMain": false,
+      "path": "assets/arrow-up-right-DEOjDP-f.js"
+    },
+    {
+      "name": "award-CwHwA4Ci.js",
+      "size": 443,
+      "sizeKB": 0.43,
+      "type": "js",
+      "isMain": false,
+      "path": "assets/award-CwHwA4Ci.js"
+    },
+    {
+      "name": "bell-1uk2Enn8.js",
+      "size": 377,
+      "sizeKB": 0.37,
+      "type": "js",
+      "isMain": false,
+      "path": "assets/bell-1uk2Enn8.js"
+    },
+    {
+      "name": "blogImageUtils-B9ottWpI.js",
+      "size": 4022,
+      "sizeKB": 3.93,
+      "type": "js",
+      "isMain": false,
+      "path": "assets/blogImageUtils-B9ottWpI.js"
+    },
+    {
+      "name": "book-open-wXx7hGZX.js",
+      "size": 447,
+      "sizeKB": 0.44,
+      "type": "js",
+      "isMain": false,
+      "path": "assets/book-open-wXx7hGZX.js"
+    },
+    {
+      "name": "bookingService-BG52OEjb.js",
+      "size": 9659,
+      "sizeKB": 9.43,
+      "type": "js",
+      "isMain": false,
+      "path": "assets/bookingService-BG52OEjb.js"
+    },
+    {
+      "name": "calculator-CDxHAtRQ.js",
+      "size": 699,
+      "sizeKB": 0.68,
+      "type": "js",
+      "isMain": false,
+      "path": "assets/calculator-CDxHAtRQ.js"
+    },
+    {
+      "name": "calendar-BbO5tkvj.js",
+      "size": 426,
+      "sizeKB": 0.42,
+      "type": "js",
+      "isMain": false,
+      "path": "assets/calendar-BbO5tkvj.js"
+    },
+    {
+      "name": "calendar-DkeZutxh.js",
+      "size": 40086,
+      "sizeKB": 39.15,
+      "type": "js",
+      "isMain": false,
+      "path": "assets/calendar-DkeZutxh.js"
+    },
+    {
+      "name": "calendar-days-BWl_PvTE.js",
+      "size": 662,
+      "sizeKB": 0.65,
+      "type": "js",
+      "isMain": false,
+      "path": "assets/calendar-days-BWl_PvTE.js"
+    },
+    {
+      "name": "callback-DvIj_S-S.js",
+      "size": 1439,
+      "sizeKB": 1.41,
+      "type": "js",
+      "isMain": false,
+      "path": "assets/callback-DvIj_S-S.js"
+    },
+    {
+      "name": "camera-BWpoeotX.js",
+      "size": 417,
+      "sizeKB": 0.41,
+      "type": "js",
+      "isMain": false,
+      "path": "assets/camera-BWpoeotX.js"
+    },
+    {
+      "name": "chart-column-D10Nobkt.js",
+      "size": 419,
+      "sizeKB": 0.41,
+      "type": "js",
+      "isMain": false,
+      "path": "assets/chart-column-D10Nobkt.js"
+    },
+    {
+      "name": "chart-pie-DzYZzTrE.js",
+      "size": 441,
+      "sizeKB": 0.43,
+      "type": "js",
+      "isMain": false,
+      "path": "assets/chart-pie-DzYZzTrE.js"
+    },
+    {
+      "name": "chevron-left-D6kbTGQl.js",
+      "size": 298,
+      "sizeKB": 0.29,
+      "type": "js",
+      "isMain": false,
+      "path": "assets/chevron-left-D6kbTGQl.js"
+    },
+    {
+      "name": "circle-alert-BQ84gbY-.js",
+      "size": 418,
+      "sizeKB": 0.41,
+      "type": "js",
+      "isMain": false,
+      "path": "assets/circle-alert-BQ84gbY-.js"
+    },
+    {
+      "name": "circle-check-big-CVBtwIHK.js",
+      "size": 356,
+      "sizeKB": 0.35,
+      "type": "js",
+      "isMain": false,
+      "path": "assets/circle-check-big-CVBtwIHK.js"
+    },
+    {
+      "name": "circle-x-rtQerPFF.js",
+      "size": 370,
+      "sizeKB": 0.36,
+      "type": "js",
+      "isMain": false,
+      "path": "assets/circle-x-rtQerPFF.js"
+    },
+    {
+      "name": "clock-CPwhSLrq.js",
+      "size": 347,
+      "sizeKB": 0.34,
+      "type": "js",
+      "isMain": false,
+      "path": "assets/clock-CPwhSLrq.js"
+    },
+    {
+      "name": "cloud-DRcyFmfT.js",
+      "size": 329,
+      "sizeKB": 0.32,
+      "type": "js",
+      "isMain": false,
+      "path": "assets/cloud-DRcyFmfT.js"
+    },
+    {
+      "name": "credit-card-ZL5YQOuq.js",
+      "size": 375,
+      "sizeKB": 0.37,
+      "type": "js",
+      "isMain": false,
+      "path": "assets/credit-card-ZL5YQOuq.js"
+    },
+    {
+      "name": "database-CKlDF_wN.js",
+      "size": 412,
+      "sizeKB": 0.4,
+      "type": "js",
+      "isMain": false,
+      "path": "assets/database-CKlDF_wN.js"
+    },
+    {
+      "name": "dollar-sign-Dy3R4soB.js",
+      "size": 387,
+      "sizeKB": 0.38,
+      "type": "js",
+      "isMain": false,
+      "path": "assets/dollar-sign-Dy3R4soB.js"
+    },
+    {
+      "name": "download-BtXEzduR.js",
+      "size": 431,
+      "sizeKB": 0.42,
+      "type": "js",
+      "isMain": false,
+      "path": "assets/download-BtXEzduR.js"
+    },
+    {
+      "name": "file-text-jk7W6Arv.js",
+      "size": 501,
+      "sizeKB": 0.49,
+      "type": "js",
+      "isMain": false,
+      "path": "assets/file-text-jk7W6Arv.js"
+    },
+    {
+      "name": "form-CvxmXDze.js",
+      "size": 84762,
+      "sizeKB": 82.78,
+      "type": "js",
+      "isMain": false,
+      "path": "assets/form-CvxmXDze.js"
+    },
+    {
+      "name": "format-BN5HFSdo.js",
+      "size": 20079,
+      "sizeKB": 19.61,
+      "type": "js",
+      "isMain": false,
+      "path": "assets/format-BN5HFSdo.js"
+    },
+    {
+      "name": "generateBlogImage-SDRJucxw.js",
+      "size": 5557,
+      "sizeKB": 5.43,
+      "type": "js",
+      "isMain": false,
+      "path": "assets/generateBlogImage-SDRJucxw.js"
+    },
+    {
+      "name": "generateBlogSEO-BS5pWDzW.js",
+      "size": 7898,
+      "sizeKB": 7.71,
+      "type": "js",
+      "isMain": false,
+      "path": "assets/generateBlogSEO-BS5pWDzW.js"
+    },
+    {
+      "name": "gift-DJBEH5vA.js",
+      "size": 525,
+      "sizeKB": 0.51,
+      "type": "js",
+      "isMain": false,
+      "path": "assets/gift-DJBEH5vA.js"
+    },
+    {
+      "name": "heart-DcJpqdJu.js",
+      "size": 409,
+      "sizeKB": 0.4,
+      "type": "js",
+      "isMain": false,
+      "path": "assets/heart-DcJpqdJu.js"
+    },
+    {
+      "name": "image-DfabVlZg.js",
+      "size": 438,
+      "sizeKB": 0.43,
+      "type": "js",
+      "isMain": false,
+      "path": "assets/image-DfabVlZg.js"
+    },
+    {
+      "name": "index-BeDezWVQ.js",
+      "size": 795553,
+      "sizeKB": 776.91,
+      "type": "js",
+      "isMain": true,
+      "path": "assets/index-BeDezWVQ.js"
+    },
+    {
+      "name": "index-CkVsFj0a.css",
+      "size": 109732,
+      "sizeKB": 107.16,
+      "type": "css",
+      "isMain": true,
+      "path": "assets/index-CkVsFj0a.css"
+    },
+    {
+      "name": "index-L77QedTi.js",
+      "size": 929,
+      "sizeKB": 0.91,
+      "type": "js",
+      "isMain": true,
+      "path": "assets/index-L77QedTi.js"
+    },
+    {
+      "name": "key-CWIcm6NY.js",
+      "size": 433,
+      "sizeKB": 0.42,
+      "type": "js",
+      "isMain": false,
+      "path": "assets/key-CWIcm6NY.js"
+    },
+    {
+      "name": "leaf-y_v_uXFa.js",
+      "size": 434,
+      "sizeKB": 0.42,
+      "type": "js",
+      "isMain": false,
+      "path": "assets/leaf-y_v_uXFa.js"
+    },
+    {
+      "name": "lightbulb-DHgPSyZb.js",
+      "size": 455,
+      "sizeKB": 0.44,
+      "type": "js",
+      "isMain": false,
+      "path": "assets/lightbulb-DHgPSyZb.js"
+    },
+    {
+      "name": "message-circle-DOcD9h5c.js",
+      "size": 316,
+      "sizeKB": 0.31,
+      "type": "js",
+      "isMain": false,
+      "path": "assets/message-circle-DOcD9h5c.js"
+    },
+    {
+      "name": "message-square-L_csu49U.js",
+      "size": 347,
+      "sizeKB": 0.34,
+      "type": "js",
+      "isMain": false,
+      "path": "assets/message-square-L_csu49U.js"
+    },
+    {
+      "name": "mouse-pointer-CW308jtv.js",
+      "size": 474,
+      "sizeKB": 0.46,
+      "type": "js",
+      "isMain": false,
+      "path": "assets/mouse-pointer-CW308jtv.js"
+    },
+    {
+      "name": "parseISO-pqY0u4ov.js",
+      "size": 2781,
+      "sizeKB": 2.72,
+      "type": "js",
+      "isMain": false,
+      "path": "assets/parseISO-pqY0u4ov.js"
+    },
+    {
+      "name": "percent-BshcauxD.js",
+      "size": 406,
+      "sizeKB": 0.4,
+      "type": "js",
+      "isMain": false,
+      "path": "assets/percent-BshcauxD.js"
+    },
+    {
+      "name": "plus-D4fjKAOw.js",
+      "size": 322,
+      "sizeKB": 0.31,
+      "type": "js",
+      "isMain": false,
+      "path": "assets/plus-D4fjKAOw.js"
+    },
+    {
+      "name": "progress-D1yysI58.js",
+      "size": 2843,
+      "sizeKB": 2.78,
+      "type": "js",
+      "isMain": false,
+      "path": "assets/progress-D1yysI58.js"
+    },
+    {
+      "name": "receipt-B31GnwRA.js",
+      "size": 461,
+      "sizeKB": 0.45,
+      "type": "js",
+      "isMain": false,
+      "path": "assets/receipt-B31GnwRA.js"
+    },
+    {
+      "name": "refresh-cw-DNS1j_Oj.js",
+      "size": 489,
+      "sizeKB": 0.48,
+      "type": "js",
+      "isMain": false,
+      "path": "assets/refresh-cw-DNS1j_Oj.js"
+    },
+    {
+      "name": "save-_jGWQ5wc.js",
+      "size": 496,
+      "sizeKB": 0.48,
+      "type": "js",
+      "isMain": false,
+      "path": "assets/save-_jGWQ5wc.js"
+    },
+    {
+      "name": "search-C4AbMRLT.js",
+      "size": 336,
+      "sizeKB": 0.33,
+      "type": "js",
+      "isMain": false,
+      "path": "assets/search-C4AbMRLT.js"
+    },
+    {
+      "name": "share-2-aZ9-RbDD.js",
+      "size": 520,
+      "sizeKB": 0.51,
+      "type": "js",
+      "isMain": false,
+      "path": "assets/share-2-aZ9-RbDD.js"
+    },
+    {
+      "name": "shield-alert-3hAsG8eU.js",
+      "size": 521,
+      "sizeKB": 0.51,
+      "type": "js",
+      "isMain": false,
+      "path": "assets/shield-alert-3hAsG8eU.js"
+    },
+    {
+      "name": "skeleton-BfQc7KwF.js",
+      "size": 173,
+      "sizeKB": 0.17,
+      "type": "js",
+      "isMain": false,
+      "path": "assets/skeleton-BfQc7KwF.js"
+    },
+    {
+      "name": "smartphone-BVzaPA9i.js",
+      "size": 366,
+      "sizeKB": 0.36,
+      "type": "js",
+      "isMain": false,
+      "path": "assets/smartphone-BVzaPA9i.js"
+    },
+    {
+      "name": "sparkles-B2rw5r6Y.js",
+      "size": 677,
+      "sizeKB": 0.66,
+      "type": "js",
+      "isMain": false,
+      "path": "assets/sparkles-B2rw5r6Y.js"
+    },
+    {
+      "name": "square-pen--HYcHZMd.js",
+      "size": 488,
+      "sizeKB": 0.48,
+      "type": "js",
+      "isMain": false,
+      "path": "assets/square-pen--HYcHZMd.js"
+    },
+    {
+      "name": "star-VqApUQdD.js",
+      "size": 641,
+      "sizeKB": 0.63,
+      "type": "js",
+      "isMain": false,
+      "path": "assets/star-VqApUQdD.js"
+    },
+    {
+      "name": "storage-cDG_gN3W.js",
+      "size": 1042,
+      "sizeKB": 1.02,
+      "type": "js",
+      "isMain": false,
+      "path": "assets/storage-cDG_gN3W.js"
+    },
+    {
+      "name": "success-BATGhej_.js",
+      "size": 3099,
+      "sizeKB": 3.03,
+      "type": "js",
+      "isMain": false,
+      "path": "assets/success-BATGhej_.js"
+    },
+    {
+      "name": "switch-DOPYxG9p.js",
+      "size": 2345,
+      "sizeKB": 2.29,
+      "type": "js",
+      "isMain": false,
+      "path": "assets/switch-DOPYxG9p.js"
+    },
+    {
+      "name": "table-D7oZ0FZH.js",
+      "size": 1489,
+      "sizeKB": 1.45,
+      "type": "js",
+      "isMain": false,
+      "path": "assets/table-D7oZ0FZH.js"
+    },
+    {
+      "name": "tabs-oh8QrMx-.js",
+      "size": 3186,
+      "sizeKB": 3.11,
+      "type": "js",
+      "isMain": false,
+      "path": "assets/tabs-oh8QrMx-.js"
+    },
+    {
+      "name": "target-CIMqG_2S.js",
+      "size": 390,
+      "sizeKB": 0.38,
+      "type": "js",
+      "isMain": false,
+      "path": "assets/target-CIMqG_2S.js"
+    },
+    {
+      "name": "textarea-DSalOn5y.js",
+      "size": 483,
+      "sizeKB": 0.47,
+      "type": "js",
+      "isMain": false,
+      "path": "assets/textarea-DSalOn5y.js"
+    },
+    {
+      "name": "trash-2-CTbS4uJ2.js",
+      "size": 526,
+      "sizeKB": 0.51,
+      "type": "js",
+      "isMain": false,
+      "path": "assets/trash-2-CTbS4uJ2.js"
+    },
+    {
+      "name": "trending-down-B8umupjc.js",
+      "size": 376,
+      "sizeKB": 0.37,
+      "type": "js",
+      "isMain": false,
+      "path": "assets/trending-down-B8umupjc.js"
+    },
+    {
+      "name": "trending-up-IZfRJ8vs.js",
+      "size": 373,
+      "sizeKB": 0.36,
+      "type": "js",
+      "isMain": false,
+      "path": "assets/trending-up-IZfRJ8vs.js"
+    },
+    {
+      "name": "triangle-alert-BNhcdd5F.js",
+      "size": 433,
+      "sizeKB": 0.42,
+      "type": "js",
+      "isMain": false,
+      "path": "assets/triangle-alert-BNhcdd5F.js"
+    },
+    {
+      "name": "upload-B5MevNQc.js",
+      "size": 426,
+      "sizeKB": 0.42,
+      "type": "js",
+      "isMain": false,
+      "path": "assets/upload-B5MevNQc.js"
+    },
+    {
+      "name": "useQuery-DxV_3B1g.js",
+      "size": 8707,
+      "sizeKB": 8.5,
+      "type": "js",
+      "isMain": false,
+      "path": "assets/useQuery-DxV_3B1g.js"
+    },
+    {
+      "name": "user-check-B7nrlgE2.js",
+      "size": 422,
+      "sizeKB": 0.41,
+      "type": "js",
+      "isMain": false,
+      "path": "assets/user-check-B7nrlgE2.js"
+    },
+    {
+      "name": "user-plus-kMZF6q7b.js",
+      "size": 478,
+      "sizeKB": 0.47,
+      "type": "js",
+      "isMain": false,
+      "path": "assets/user-plus-kMZF6q7b.js"
+    },
+    {
+      "name": "users-round-vc4O0GBa.js",
+      "size": 421,
+      "sizeKB": 0.41,
+      "type": "js",
+      "isMain": false,
+      "path": "assets/users-round-vc4O0GBa.js"
+    },
+    {
+      "name": "zap-DHwMW2mP.js",
+      "size": 431,
+      "sizeKB": 0.42,
+      "type": "js",
+      "isMain": false,
+      "path": "assets/zap-DHwMW2mP.js"
+    },
+    {
+      "name": "sw.js",
+      "size": 5795,
+      "sizeKB": 5.66,
+      "type": "js",
+      "isMain": false,
+      "path": "sw.js"
+    }
+  ],
+  "warnings": [],
+  "errors": [],
+  "optimization": {
+    "treeshaking": true,
+    "minification": false,
+    "gzip": true
+  },
+  "thresholds": {
+    "MAIN_BUNDLE": 800,
+    "CHUNK_WARNING": 500,
+    "CHUNK_ERROR": 1000,
+    "TOTAL_SIZE": 2000
+  },
+  "recommendations": [
+    {
+      "type": "chunk-optimization",
+      "priority": "low",
+      "message": "1 chunks are larger than 500KB",
+      "action": "Review chunk contents and consider splitting or lazy loading"
+    }
+  ]
+}

@@ -13,6 +13,9 @@
     "test": "jest",
     "test:watch": "jest --watch",
     "type-check": "tsc --noEmit",
+    "build:monitor": "node scripts/build-monitor.mjs",
+    "build:analyze": "npm run build && npx vite-bundle-analyzer dist/",
+    "build:report": "npm run build:monitor && echo '📊 Build report generated in build-reports/'",
     "analyze-bundle": "npm run build && npx vite-bundle-analyzer dist/",
     "performance:audit": "lighthouse http://localhost:4173 --output=json --output=html --output-path=./lighthouse-report",
     "performance:ci": "npm run build && npm run preview & npx wait-on http://localhost:4173 && npm run performance:audit",
@@ -26,10 +29,11 @@
     "security:monitor": "node scripts/security-watch.mjs --health-check",
     "security:quiz": "node scripts/security-quiz.mjs",
     "security:docs": "echo 'Validating security documentation links...' && node -e \"console.log('Security docs validation completed')\"",
-    "docs:links": "npx --yes markdown-link-check docs/security/**/*.md -q || exit 1"
+    "docs:links": "npx --yes markdown-link-check docs/security/**/*.md -q || exit 1",
+    "audit:fix": "npm audit fix --force"
   },
   "dependencies": {
-    "@hookform/resolvers": "^3.9.0",
+    "@hookform/resolvers": "^5.2.1",
     "@radix-ui/react-accordion": "^1.2.0",
     "@radix-ui/react-alert-dialog": "^1.1.1",
     "@radix-ui/react-aspect-ratio": "^1.1.0",
@@ -93,7 +97,7 @@
     "tailwind-merge": "^2.5.2",
     "tailwindcss-animate": "^1.0.7",
     "vaul": "^0.9.3",
-    "zod": "^3.23.8"
+    "zod": "^4.1.1"
   },
   "devDependencies": {
     "@babel/core": "^7.28.3",
@@ -119,13 +123,12 @@
     "globals": "^15.9.0",
     "jest": "^30.0.5",
     "jest-environment-jsdom": "^30.0.5",
-    "lovable-tagger": "^1.1.7",
     "postcss": "^8.4.47",
     "tailwindcss": "^3.4.11",
     "ts-jest": "^29.4.1",
     "ts-node": "^10.9.2",
     "typescript": "^5.8.3",
     "typescript-eslint": "^8.0.1",
-    "vite": "^5.4.1"
+    "vite": "^7.1.3"
   }
 }

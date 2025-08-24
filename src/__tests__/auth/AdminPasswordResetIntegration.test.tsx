@@ -11,22 +11,7 @@ jest.mock('sonner', () => ({
   }
 }));
 
-jest.mock('@/integrations/supabase/client', () => ({
-  supabase: {
-    auth: {
-      getUser: jest.fn(),
-      setSession: jest.fn(),
-      updateUser: jest.fn(),
-      signOut: jest.fn(),
-      signInWithPassword: jest.fn(),
-      resetPasswordForEmail: jest.fn(),
-      getSession: jest.fn().mockResolvedValue({ data: { session: null } }),
-      onAuthStateChange: jest.fn().mockReturnValue({
-        data: { subscription: { unsubscribe: jest.fn() } }
-      })
-    }
-  }
-}));
+// Use centralized mock from jest.config.js moduleNameMapper
 
 const mockNavigate = jest.fn();
 jest.mock('react-router-dom', () => ({
@@ -34,14 +19,25 @@ jest.mock('react-router-dom', () => ({
   useNavigate: () => mockNavigate
 }));
 
+// Mock AuthProvider to prevent loading state
+jest.mock('@/components/auth/AuthProvider', () => ({
+  AuthProvider: ({ children }: { children: React.ReactNode }) => <div>{children}</div>,
+  useAuth: () => ({
+    user: null,
+    loading: false,
+    getUserRole: jest.fn().mockReturnValue(null),
+    resetPassword: jest.fn(),
+    signIn: jest.fn().mockResolvedValue({ error: null }),
+    signOut: jest.fn().mockResolvedValue({ error: null })
+  })
+}));
+
 const TestWrapper: React.FC<{ children: React.ReactNode; initialEntries?: string[] }> = ({ 
   children, 
   initialEntries = ['/admin/login'] 
 }) => (
   <MemoryRouter initialEntries={initialEntries}>
-    <AuthProvider>
-      {children}
-    </AuthProvider>
+    {children}
   </MemoryRouter>
 );
 

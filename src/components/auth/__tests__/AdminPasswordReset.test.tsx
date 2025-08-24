@@ -12,21 +12,35 @@ jest.mock('sonner', () => ({
   }
 }));
 
+// Mock the Supabase client to control its behavior for all tests in this file.
+// This mock resolves the AuthProvider's loading state immediately.
 jest.mock('@/integrations/supabase/client', () => ({
   supabase: {
     auth: {
-      getUser: jest.fn(),
-      setSession: jest.fn(),
-      updateUser: jest.fn(),
-      resetPasswordForEmail: jest.fn(),
-      signInWithPassword: jest.fn(),
-      signOut: jest.fn(),
-      getSession: jest.fn().mockResolvedValue({ data: { session: null } }),
-      onAuthStateChange: jest.fn().mockReturnValue({
-        data: { subscription: { unsubscribe: jest.fn() } }
-      })
-    }
-  }
+      // Simulate an initial state where no user is logged in.
+      getSession: jest.fn(() => Promise.resolve({ data: { session: null }, error: null })),
+      // Mock other auth functions to prevent errors if they are called.
+      onAuthStateChange: jest.fn(() => ({
+        data: { subscription: { unsubscribe: jest.fn() } },
+      })),
+      getUser: jest.fn(() => Promise.resolve({ data: { user: null }, error: null })),
+      setSession: jest.fn(() => Promise.resolve({ data: { session: null }, error: null })),
+      updateUser: jest.fn(() => Promise.resolve({ data: { user: null }, error: null })),
+      resetPasswordForEmail: jest.fn(() => Promise.resolve({ data: {}, error: null })),
+      signInWithPassword: jest.fn(() => Promise.resolve({ 
+        data: { user: null, session: null }, 
+        error: null 
+      })),
+      signOut: jest.fn(() => Promise.resolve({ error: null })),
+    },
+    // Mock the database query chain used by AuthProvider to get user roles.
+    from: jest.fn(() => ({
+      select: jest.fn().mockReturnThis(),
+      eq: jest.fn().mockReturnThis(),
+      // Ensure it resolves to no user data, matching the getSession mock.
+      maybeSingle: jest.fn(() => Promise.resolve({ data: null, error: null })),
+    })),
+  },
 }));
 
 const mockNavigate = jest.fn();
@@ -48,20 +62,22 @@ describe('AdminLogin Password Reset Flow', () => {
     jest.clearAllMocks();
   });
 
-  test('shows normal admin login by default', () => {
+  test('shows normal admin login by default', async () => {
     render(
       <TestWrapper initialEntries={['/admin/login']}>
         <AdminLogin />
       </TestWrapper>
     );
 
-    expect(screen.getByText('Admin Portal')).toBeInTheDocument();
+    // Use findByText which waits for the element to appear.
+    // This handles the initial loading state of the AuthProvider.
+    expect(await screen.findByText('Admin Portal')).toBeInTheDocument();
     expect(screen.getByText('Restricted access - Admin credentials required')).toBeInTheDocument();
     expect(screen.getByPlaceholderText('Enter your admin email')).toBeInTheDocument();
     expect(screen.getByPlaceholderText('Enter your password')).toBeInTheDocument();
   });
 
-  test('shows password reset form when recovery parameters are present', () => {
+  test('shows password reset form when recovery parameters are present', async () => {
     const recoveryUrl = '/admin/login?type=recovery&access_token=fake-token&refresh_token=fake-refresh';
     
     render(
@@ -70,7 +86,8 @@ describe('AdminLogin Password Reset Flow', () => {
       </TestWrapper>
     );
 
-    expect(screen.getByText('Reset Admin Password')).toBeInTheDocument();
+    // Use findByText which waits for the element to appear.
+    expect(await screen.findByText('Reset Admin Password')).toBeInTheDocument();
     expect(screen.getByText('Create a new secure password for your admin account')).toBeInTheDocument();
     expect(screen.getByPlaceholderText('Enter your new password')).toBeInTheDocument();
     expect(screen.getByPlaceholderText('Confirm your new password')).toBeInTheDocument();
@@ -86,8 +103,8 @@ describe('AdminLogin Password Reset Flow', () => {
       </TestWrapper>
     );
 
-    // Enter email
-    const emailInput = screen.getByPlaceholderText('Enter your admin email');
+    // Wait for the form to load and then enter email
+    const emailInput = await screen.findByPlaceholderText('Enter your admin email');
     fireEvent.change(emailInput, { target: { value: 'admin@test.com' } });
 
     // Click forgot password

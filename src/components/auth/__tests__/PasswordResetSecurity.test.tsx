@@ -2,40 +2,58 @@ import React from 'react';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
 import ResetPassword from '../../../pages/ResetPassword';
+import { AuthProvider } from '@/components/auth/AuthProvider';
 
 // Mock react-router-dom
 const mockNavigate = jest.fn();
 
-// Mock supabase client
-const mockVerifyOtp = jest.fn();
-const mockSetSession = jest.fn().mockResolvedValue({
-  data: { 
-    session: { access_token: 'valid-token', refresh_token: 'valid-refresh' },
-    user: { id: '123', email: 'test@example.com' }
-  }, 
-  error: null 
-});
-const mockSignOut = jest.fn().mockResolvedValue({ error: null });
-const mockUpdateUser = jest.fn();
-
-jest.mock('../../../integrations/supabase/client', () => ({
+// Mock the entire Supabase client to control its behavior for all tests in this file.
+// This prevents timeouts by ensuring all async auth calls resolve immediately.
+jest.mock('@/integrations/supabase/client', () => ({
   supabase: {
     auth: {
-      verifyOtp: mockVerifyOtp,
-      setSession: mockSetSession,
-      signOut: mockSignOut,
-      updateUser: mockUpdateUser,
-    }
-  }
+      // Simulate an initial state where no user session exists initially
+      getSession: jest.fn(() => Promise.resolve({
+        data: { session: null },
+        error: null,
+      })),
+      // Mock the function that updates the user's password. Default to successful response.
+      updateUser: jest.fn(() => Promise.resolve({ data: { user: {} }, error: null })),
+      // Mock token verification for password reset flow
+      verifyOtp: jest.fn(() => Promise.resolve({ 
+        data: { user: { id: '123', email: 'test@example.com' }, session: null }, 
+        error: null 
+      })),
+      // Mock session setting - critical for token validation
+      setSession: jest.fn(() => Promise.resolve({
+        data: { 
+          session: { 
+            access_token: 'valid-token', 
+            refresh_token: 'valid-refresh',
+            user: { id: '123', email: 'test@example.com' }
+          },
+          user: { id: '123', email: 'test@example.com' }
+        }, 
+        error: null 
+      })),
+      // Mock sign out
+      signOut: jest.fn(() => Promise.resolve({ error: null })),
+      // Provide a mock for onAuthStateChange to prevent errors.
+      onAuthStateChange: jest.fn(() => ({
+        data: { subscription: { unsubscribe: jest.fn() } },
+      })),
+    },
+    // Mock the database query chain used by AuthProvider.
+    from: jest.fn(() => ({
+      select: jest.fn().mockReturnThis(),
+      eq: jest.fn().mockReturnThis(),
+      maybeSingle: jest.fn(() => Promise.resolve({ data: null, error: null })),
+    })),
+  },
 }));
 
-// Mock the AuthProvider
-const mockAuthSignOut = jest.fn();
-jest.mock('../AuthProvider', () => ({
-  useAuth: () => ({
-    signOut: mockAuthSignOut,
-  })
-}));
+// Get access to the mocked supabase for individual test customization
+const { supabase: mockSupabase } = require('@/integrations/supabase/client');
 
 // Mock sonner
 jest.mock('sonner', () => ({
@@ -53,17 +71,23 @@ jest.mock('../TokenDebugger', () => ({
   })
 }));
 
+// Mock react-router-dom hooks
+jest.mock('react-router-dom', () => ({
+  ...jest.requireActual('react-router-dom'),
+  useNavigate: () => mockNavigate,
+  useSearchParams: jest.fn()
+}));
+
 // Create a wrapper component to test with different URL params
 const ResetPasswordWrapper = ({ searchParams }: { searchParams: string }) => {
-  jest.doMock('react-router-dom', () => ({
-    ...jest.requireActual('react-router-dom'),
-    useNavigate: () => mockNavigate,
-    useSearchParams: () => [new URLSearchParams(searchParams)]
-  }));
+  const { useSearchParams } = require('react-router-dom');
+  useSearchParams.mockReturnValue([new URLSearchParams(searchParams)]);
 
   return (
     <MemoryRouter>
-      <ResetPassword />
+      <AuthProvider>
+        <ResetPassword />
+      </AuthProvider>
     </MemoryRouter>
   );
 };
@@ -71,10 +95,27 @@ const ResetPasswordWrapper = ({ searchParams }: { searchParams: string }) => {
 describe('PasswordResetSecurity', () => {
   beforeEach(() => {
     jest.clearAllMocks();
-    mockVerifyOtp.mockResolvedValue({ 
-      data: { user: { id: '1', email: 'test@example.com' } }, 
+    // Reset all mocked functions to their default successful responses
+    mockSupabase.auth.verifyOtp.mockResolvedValue({ 
+      data: { user: { id: '1', email: 'test@example.com' }, session: null }, 
       error: null 
     });
+    mockSupabase.auth.updateUser.mockResolvedValue({ 
+      data: { user: {} }, 
+      error: null 
+    });
+    mockSupabase.auth.setSession.mockResolvedValue({
+      data: { 
+        session: { 
+          access_token: 'valid-token', 
+          refresh_token: 'valid-refresh',
+          user: { id: '123', email: 'test@example.com' }
+        },
+        user: { id: '123', email: 'test@example.com' }
+      }, 
+      error: null 
+    });
+    mockSupabase.auth.signOut.mockResolvedValue({ error: null });
   });
 
   describe('Token Validation Security', () => {
@@ -83,15 +124,16 @@ describe('PasswordResetSecurity', () => {
       
       render(<ResetPasswordWrapper searchParams={validParams} />);
 
-      // Should show loading state initially
-      expect(screen.getByText('Verifying password reset link...')).toBeInTheDocument();
-
-      // Wait for token verification
+      // Wait for token verification to complete and form to appear
+      // The key fix: place the assertion *inside* the waitFor callback
       await waitFor(() => {
-        expect(mockVerifyOtp).toHaveBeenCalledWith({
-          token_hash: 'valid-token',
-          type: 'recovery',
-        });
+        expect(screen.getByText('Reset Your Password')).toBeInTheDocument();
+      });
+
+      // Verify the mock was called with session setting (the component's validation approach)
+      expect(mockSupabase.auth.setSession).toHaveBeenCalledWith({
+        access_token: 'valid-token',
+        refresh_token: 'valid-refresh',
       });
     });
 

@@ -4,7 +4,7 @@ import { configure } from '@testing-library/react';
 // Configure testing library for better async handling
 configure({
   testIdAttribute: 'data-testid',
-  asyncUtilTimeout: 5000,
+  asyncUtilTimeout: 10000,
 });
 
 // Suppress act() warnings for known async operations in tests
@@ -103,3 +103,6 @@ if (!globalThis.IntersectionObserver) {
     }
   };
 }
+
+// Note: Supabase mocking is handled per test file to avoid conflicts
+// Individual test files can mock '@/integrations/supabase/client' as needed

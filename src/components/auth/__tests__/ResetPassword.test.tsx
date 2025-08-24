@@ -15,17 +15,24 @@ jest.mock('react-router-dom', () => ({
   useSearchParams: () => [mockSearchParams]
 }));
 
-// Mock Supabase client
-const mockSupabase = {
-  auth: {
-    setSession: jest.fn(),
-    signOut: jest.fn(),
-    updateUser: jest.fn()
-  }
-};
-
+// Mock Supabase client - complete mock for AuthProvider compatibility
 jest.mock('@/integrations/supabase/client', () => ({
-  supabase: mockSupabase
+  supabase: {
+    auth: {
+      getSession: jest.fn(() => Promise.resolve({ data: { session: null }, error: null })),
+      setSession: jest.fn(() => Promise.resolve({ data: { session: null }, error: null })),
+      signOut: jest.fn(() => Promise.resolve({ error: null })),
+      updateUser: jest.fn(() => Promise.resolve({ data: { user: null }, error: null })),
+      onAuthStateChange: jest.fn(() => ({
+        data: { subscription: { unsubscribe: jest.fn() } }
+      }))
+    },
+    from: jest.fn(() => ({
+      select: jest.fn().mockReturnThis(),
+      eq: jest.fn().mockReturnThis(),
+      maybeSingle: jest.fn(() => Promise.resolve({ data: null, error: null }))
+    }))
+  }
 }));
 
 // Mock sonner toast
@@ -35,6 +42,9 @@ jest.mock('sonner', () => ({
     success: jest.fn()
   }
 }));
+
+// Get access to mocked Supabase client
+const { supabase: mockSupabase } = require('@/integrations/supabase/client');
 
 const MockAuthProvider = ({ children }: { children: React.ReactNode }) => (
   <AuthProvider>

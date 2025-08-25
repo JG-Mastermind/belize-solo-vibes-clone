@@ -1,5 +1,6 @@
-import { supabase } from '@/lib/supabase';
+import { supabase } from '@/integrations/supabase/client';
 
+// TODO: rename to popularToursService - using canonical tours table
 export interface PopularTour {
   category: string;
   tour: {
@@ -13,6 +14,8 @@ export interface PopularTour {
     last_booked_at: string;
     created_at: string;
     is_active: boolean;
+    ai_generated_image_url?: string;
+    featured_image_url?: string;
   };
   popularity_score: number;
   visits_count: number;

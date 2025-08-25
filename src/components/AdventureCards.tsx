@@ -4,7 +4,7 @@ import { Star, Clock, Users, MapPin } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { useEffect, useState, memo } from "react";
-import { supabase } from "@/lib/supabase";
+import { supabase } from "@/integrations/supabase/client";
 import { convertEnglishSlugToFrench } from "@/utils/frenchSlugs";
 
 // Now using Supabase database - single source of truth!
@@ -27,7 +27,7 @@ const AdventureCard = memo(({ tour, index, getAdventureContent, navigate, t, i18
     duration: `${tour.duration_hours} hours`,
     groupSize: `Max ${tour.max_participants}`,
     location: tour.location_name,
-    image: tour.featured_image_url || tour.images?.[0] || '/images/belize-solo.jpg',
+    image: tour.ai_generated_image_url || tour.featured_image_url || tour.images?.[0] || '/images/belize-solo.jpg',
     highlights: []
   };
   const content = getAdventureContent(adventure);

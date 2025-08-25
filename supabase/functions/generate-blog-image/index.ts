@@ -15,6 +15,9 @@ interface BlogImageRequest {
   belizeContext: boolean;
   quality: 'standard' | 'high';
   safetyFilters: boolean;
+  // Tours support
+  entity?: 'post' | 'tour';
+  entityId?: string;
 }
 
 interface GeneratedImageResponse {
@@ -36,43 +39,131 @@ serve(async (req) => {
   }
 
   try {
+    // Parse request body first to enable fallbacks
+    let request: BlogImageRequest;
+    try {
+      request = await req.json()
+    } catch (parseError) {
+      console.error('JSON parsing error:', parseError)
+      return new Response(
+        JSON.stringify({ 
+          success: false, 
+          error: 'Invalid JSON in request body',
+          imageUrl: generateFallbackImage({ prompt: 'belize landscape' } as BlogImageRequest).imageUrl
+        }),
+        {
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+          status: 400,
+        }
+      )
+    }
+
+    // Validate required fields
+    if (!request.prompt) {
+      console.warn('Missing prompt in request')
+      return new Response(
+        JSON.stringify({ 
+          success: false,
+          error: 'Missing required field: prompt',
+          imageUrl: generateFallbackImage({ prompt: 'belize adventure' } as BlogImageRequest).imageUrl
+        }),
+        {
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+          status: 400,
+        }
+      )
+    }
+
     // Get the authorization header
     const authHeader = req.headers.get('Authorization')
     if (!authHeader) {
-      throw new Error('No authorization header')
+      console.warn('No authorization header provided')
+      return new Response(
+        JSON.stringify({ 
+          success: false,
+          error: 'No authorization header',
+          imageUrl: generateFallbackImage(request).imageUrl
+        }),
+        {
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+          status: 401,
+        }
+      )
     }
 
-    // Create Supabase client
-    const supabaseClient = createClient(
-      Deno.env.get('SUPABASE_URL') ?? '',
-      Deno.env.get('SUPABASE_ANON_KEY') ?? '',
-      {
-        global: {
-          headers: { Authorization: authHeader },
-        },
-      }
-    )
+    // Create Supabase client with proper error handling
+    let supabaseClient;
+    try {
+      supabaseClient = createClient(
+        Deno.env.get('SUPABASE_URL') ?? '',
+        Deno.env.get('SUPABASE_ANON_KEY') ?? '',
+        {
+          global: {
+            headers: { Authorization: authHeader },
+          },
+        }
+      )
+    } catch (clientError) {
+      console.error('Supabase client creation error:', clientError)
+      return new Response(
+        JSON.stringify({ 
+          success: false,
+          error: 'Database connection failed',
+          imageUrl: generateFallbackImage(request).imageUrl
+        }),
+        {
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+          status: 500,
+        }
+      )
+    }
 
     // Verify the user is authenticated
-    const { data: { user }, error: authError } = await supabaseClient.auth.getUser()
-    if (authError || !user) {
-      throw new Error('Unauthorized')
+    try {
+      const { data: { user }, error: authError } = await supabaseClient.auth.getUser()
+      if (authError || !user) {
+        console.warn('User authentication failed:', authError?.message)
+        return new Response(
+          JSON.stringify({ 
+            success: false,
+            error: 'User authentication failed',
+            imageUrl: generateFallbackImage(request).imageUrl
+          }),
+          {
+            headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+            status: 401,
+          }
+        )
+      }
+    } catch (authCheckError) {
+      console.error('Authentication check error:', authCheckError)
+      return new Response(
+        JSON.stringify({ 
+          success: false,
+          error: 'Authentication system error',
+          imageUrl: generateFallbackImage(request).imageUrl
+        }),
+        {
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+          status: 500,
+        }
+      )
     }
 
-    // Parse request body
-    const request: BlogImageRequest = await req.json()
-    
-    // Validate required fields
-    if (!request.prompt) {
-      throw new Error('Missing required field: prompt')
-    }
-
-    // Get OpenAI API key from environment
+    // Get OpenAI API key from environment - critical path
     const openaiApiKey = Deno.env.get('OPENAI_API_KEY')
     if (!openaiApiKey) {
-      console.warn('OpenAI API key not found, using fallback image')
+      console.warn('OPENAI_API_KEY not configured in Supabase secrets - using fallback')
+      const fallbackImage = generateFallbackImage(request)
       return new Response(
-        JSON.stringify(generateFallbackImage(request)),
+        JSON.stringify({ 
+          success: true, 
+          imageUrl: fallbackImage.imageUrl,
+          altText: fallbackImage.altText,
+          prompt: fallbackImage.prompt,
+          fallbackUsed: true,
+          error: 'AI generation temporarily unavailable'
+        }),
         {
           headers: { ...corsHeaders, 'Content-Type': 'application/json' },
           status: 200,
@@ -80,17 +171,52 @@ serve(async (req) => {
       )
     }
 
-    // Generate image using OpenAI DALL-E
-    const generatedImage = await generateWithDALLE(request, openaiApiKey)
+    // Generate image using OpenAI DALL-E with comprehensive error handling
+    let generatedImage: GeneratedImageResponse;
+    try {
+      generatedImage = await generateWithDALLE(request, openaiApiKey)
+    } catch (dalleError) {
+      console.error('DALL-E generation failed:', dalleError)
+      const fallbackImage = generateFallbackImage(request)
+      return new Response(
+        JSON.stringify({ 
+          success: true,
+          imageUrl: fallbackImage.imageUrl,
+          altText: fallbackImage.altText,
+          prompt: fallbackImage.prompt,
+          fallbackUsed: true,
+          error: dalleError.message || 'AI image generation failed'
+        }),
+        {
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+          status: 200,
+        }
+      )
+    }
 
+    // Determine bucket and path based on entity type
+    const isTour = request.entity === 'tour';
+    const bucketName = isTour ? 'tour_images' : 'blog_images';
+    
     // Upload generated image to Supabase Storage for persistence
-    const persistentImageUrl = await uploadToStorage(generatedImage.imageUrl, 'blog_images')
-    if (persistentImageUrl) {
-      generatedImage.imageUrl = persistentImageUrl
+    try {
+      const persistentImageUrl = await uploadToStorage(generatedImage.imageUrl, bucketName, request.entityId, isTour)
+      if (persistentImageUrl) {
+        generatedImage.imageUrl = persistentImageUrl
+        console.log(`✅ Image successfully uploaded to ${bucketName}: ${persistentImageUrl}`)
+      } else {
+        console.warn('⚠️ Storage upload failed, using temporary DALL-E URL')
+      }
+    } catch (storageError) {
+      console.error('Storage upload error (using temporary URL):', storageError)
+      // Continue with temporary URL - don't fail the entire operation
     }
 
     return new Response(
-      JSON.stringify(generatedImage),
+      JSON.stringify({
+        success: true,
+        ...generatedImage
+      }),
       {
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
         status: 200,
@@ -98,12 +224,18 @@ serve(async (req) => {
     )
 
   } catch (error) {
-    console.error('Error in generate-blog-image function:', error)
+    console.error('Unhandled error in generate-blog-image function:', error)
+    
+    // Emergency fallback - ensure we always return valid JSON
+    const emergencyFallback = generateFallbackImage({ prompt: 'beautiful Belize landscape' } as BlogImageRequest)
     
     return new Response(
       JSON.stringify({ 
+        success: false,
         error: error.message || 'Internal server error',
-        fallback: generateFallbackImage({ prompt: 'belize landscape' } as BlogImageRequest)
+        imageUrl: emergencyFallback.imageUrl,
+        altText: emergencyFallback.altText,
+        fallbackUsed: true
       }),
       {
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
@@ -127,44 +259,96 @@ async function generateWithDALLE(request: BlogImageRequest, apiKey: string): Pro
 
   // Build the enhanced prompt for DALL-E
   const enhancedPrompt = buildDALLEPrompt(request)
+  console.log('🎨 Enhanced DALL-E prompt:', enhancedPrompt)
 
   // Determine image size based on aspect ratio
   const size = aspectRatio === '16:9' ? '1792x1024' : 
                aspectRatio === '4:3' ? '1024x768' :
                aspectRatio === '1:1' ? '1024x1024' : '1536x1024' // 3:2
 
-  // Call OpenAI DALL-E API
-  const response = await fetch('https://api.openai.com/v1/images/generations', {
-    method: 'POST',
-    headers: {
-      'Authorization': `Bearer ${apiKey}`,
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify({
-      model: 'dall-e-3',
-      prompt: enhancedPrompt,
-      size,
-      quality: quality === 'high' ? 'hd' : 'standard',
-      n: 1,
-    }),
-  })
+  console.log(`🖼️ Requesting DALL-E image with size: ${size}`)
 
-  if (!response.ok) {
-    const errorData = await response.json().catch(() => ({}))
-    throw new Error(`OpenAI DALL-E API error: ${response.status} - ${errorData.error?.message || 'Unknown error'}`)
+  // Prepare API request with timeout
+  const requestBody = {
+    model: 'dall-e-3',
+    prompt: enhancedPrompt,
+    size,
+    quality: quality === 'high' ? 'hd' : 'standard',
+    n: 1,
   }
 
-  const data = await response.json()
+  console.log('📡 Making DALL-E API request...')
+
+  // Call OpenAI DALL-E API with timeout and comprehensive error handling
+  let response: Response;
+  try {
+    const controller = new AbortController()
+    const timeoutId = setTimeout(() => controller.abort(), 30000) // 30 second timeout
+
+    response = await fetch('https://api.openai.com/v1/images/generations', {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${apiKey}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(requestBody),
+      signal: controller.signal
+    })
+
+    clearTimeout(timeoutId)
+  } catch (fetchError) {
+    console.error('DALL-E API network error:', fetchError)
+    if (fetchError.name === 'AbortError') {
+      throw new Error('DALL-E API request timed out after 30 seconds')
+    }
+    throw new Error(`DALL-E API network error: ${fetchError.message}`)
+  }
+
+  console.log(`📊 DALL-E API response status: ${response.status}`)
+
+  if (!response.ok) {
+    let errorData: any = {}
+    try {
+      errorData = await response.json()
+    } catch {
+      console.warn('Failed to parse DALL-E error response as JSON')
+    }
+    
+    const errorMessage = errorData.error?.message || 'Unknown DALL-E API error'
+    console.error('DALL-E API error:', {
+      status: response.status,
+      message: errorMessage,
+      code: errorData.error?.code
+    })
+    
+    throw new Error(`DALL-E API error (${response.status}): ${errorMessage}`)
+  }
+
+  let data: any;
+  try {
+    data = await response.json()
+  } catch (jsonError) {
+    console.error('Failed to parse DALL-E success response:', jsonError)
+    throw new Error('Invalid JSON response from DALL-E API')
+  }
+
   const imageUrl = data.data?.[0]?.url
+  const revisedPrompt = data.data?.[0]?.revised_prompt
 
   if (!imageUrl) {
-    throw new Error('No image URL returned from DALL-E')
+    console.error('DALL-E response missing image URL:', data)
+    throw new Error('No image URL returned from DALL-E API')
+  }
+
+  console.log('✅ DALL-E image generated successfully:', imageUrl)
+  if (revisedPrompt) {
+    console.log('📝 DALL-E revised prompt:', revisedPrompt)
   }
 
   return {
     imageUrl,
-    altText: generateAltText(prompt, belizeContext),
-    prompt: enhancedPrompt,
+    altText: generateAltText(revisedPrompt || prompt, belizeContext),
+    prompt: revisedPrompt || enhancedPrompt,
     metadata: {
       style,
       mood,
@@ -269,7 +453,7 @@ function generateAltText(prompt: string, belizeContext: boolean): string {
     baseAlt
 }
 
-async function uploadToStorage(imageUrl: string, bucketName: string): Promise<string | null> {
+async function uploadToStorage(imageUrl: string, bucketName: string, entityId?: string, isTour?: boolean): Promise<string | null> {
   try {
     // Create Supabase admin client for storage operations
     const supabaseAdmin = createClient(
@@ -285,14 +469,18 @@ async function uploadToStorage(imageUrl: string, bucketName: string): Promise<st
     }
 
     const imageBlob = await imageResponse.blob()
-    const fileName = `ai-generated-${Date.now()}-${crypto.randomUUID()}.png`
-    const filePath = `public/${fileName}`
+    const fileName = `ai-generated-${Date.now()}-${crypto.randomUUID()}.webp`
+    
+    // Organize by entity type and ID for better structure
+    const filePath = entityId 
+      ? `${isTour ? 'tours' : 'posts'}/${entityId}/${fileName}`
+      : `public/${fileName}`
 
     // Upload to Supabase Storage
     const { data: uploadData, error: uploadError } = await supabaseAdmin.storage
       .from(bucketName)
       .upload(filePath, imageBlob, {
-        contentType: 'image/png',
+        contentType: 'image/webp',
         cacheControl: '3600',
         upsert: false,
       })
@@ -307,7 +495,21 @@ async function uploadToStorage(imageUrl: string, bucketName: string): Promise<st
       .from(bucketName)
       .getPublicUrl(filePath)
     
-    return publicUrlData.publicUrl
+    const publicUrl = publicUrlData.publicUrl
+
+    // Optional: Server-side DB writeback for tours
+    if (entityId && isTour && publicUrl) {
+      try {
+        await supabaseAdmin.from('tours')
+          .update({ ai_generated_image_url: publicUrl })
+          .eq('id', entityId);
+      } catch (dbError) {
+        console.warn('Failed to update tour with AI image URL:', dbError)
+        // Don't fail the entire operation for DB update issues
+      }
+    }
+    
+    return publicUrl
 
   } catch (error) {
     console.error('Error uploading to storage:', error)

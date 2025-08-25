@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import Hero from "@/components/Hero";
 import AdventureCards from "@/components/AdventureCards";
 import Testimonials from "@/components/Testimonials";
-import { supabase } from '@/lib/supabase';
+import { supabase } from '@/integrations/supabase/client';
 import { GlobalMeta } from "@/components/SEO/GlobalMeta";
 import { useTranslation } from 'react-i18next';
 

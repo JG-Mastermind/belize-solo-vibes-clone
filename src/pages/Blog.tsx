@@ -1,4 +1,5 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
+import { useQuery } from '@tanstack/react-query';
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Calendar, User, Facebook, Instagram, Mail, CheckCircle, AlertCircle } from "lucide-react";
@@ -46,41 +47,41 @@ const Blog = () => {
       .replace(/^-+|-+$/g, '');
   };
   
-  // Blog posts state
-  const [blogPosts, setBlogPosts] = useState<BlogPost[]>([]);
-  const [loading, setLoading] = useState(true);
-  
   // Newsletter subscription state
   const [email, setEmail] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitStatus, setSubmitStatus] = useState<'idle' | 'success' | 'error'>('idle');
   const [statusMessage, setStatusMessage] = useState('');
-  
-  // Scroll to top functionality
 
-  // Fetch blog posts from Supabase
-  useEffect(() => {
-    fetchBlogPosts();
-  }, []);
-
-  const fetchBlogPosts = async () => {
-    try {
+  // Blog posts data fetching with React Query
+  const { data: blogPosts = [], isLoading: loading, error } = useQuery({
+    queryKey: ['public-blog-posts'],
+    queryFn: async (): Promise<BlogPost[]> => {
+      console.log('📡 Fetching blog posts from Supabase...');
       const { data, error } = await supabase
         .from('posts')
         .select('id, title, title_fr, excerpt, excerpt_fr, slug, featured_image_url, ai_generated_image_url, image_source, author, published_at, reading_time')
         .eq('status', 'published')
         .order('published_at', { ascending: false });
 
-      if (error) throw error;
-      setBlogPosts(data || []);
-    } catch (error) {
-      console.error('Error fetching blog posts:', error);
-      // Fallback to empty array if tables don't exist yet
-      setBlogPosts([]);
-    } finally {
-      setLoading(false);
-    }
-  };
+      if (error) {
+        console.error('❌ Blog posts fetch error:', error);
+        throw error;
+      }
+      
+      console.log('✅ Blog posts fetched:', data?.length || 0, 'posts');
+      console.log('🔍 Blog posts data:', data);
+      return data || [];
+    },
+    staleTime: 5 * 60 * 1000, // 5 minutes
+    gcTime: 10 * 60 * 1000, // 10 minutes (corrected from deprecated cacheTime)
+    refetchOnWindowFocus: false,
+    retry: 3,
+    retryDelay: (attemptIndex) => Math.min(1000 * 2 ** attemptIndex, 30000)
+  });
+
+  // Debug logging for investigation
+  console.log('🔍 Blog.tsx Debug - Loading:', loading, 'Error:', error, 'Posts count:', blogPosts?.length, 'Posts:', blogPosts);
 
 
 
@@ -192,20 +193,39 @@ const Blog = () => {
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 {[...Array(6)].map((_, i) => (
                   <Card key={i} className="animate-pulse">
-                    <div className="h-48 bg-gray-200 rounded-t-lg"></div>
+                    <div className="h-48 bg-gray-200 dark:bg-gray-700 rounded-t-lg"></div>
                     <CardHeader>
-                      <div className="h-4 bg-gray-200 rounded w-3/4 mb-2"></div>
-                      <div className="h-3 bg-gray-200 rounded w-1/2"></div>
+                      <div className="h-4 bg-gray-200 dark:bg-gray-700 rounded w-3/4 mb-2"></div>
+                      <div className="h-3 bg-gray-200 dark:bg-gray-700 rounded w-1/2"></div>
                     </CardHeader>
                     <CardContent>
                       <div className="space-y-2">
-                        <div className="h-3 bg-gray-200 rounded"></div>
-                        <div className="h-3 bg-gray-200 rounded"></div>
-                        <div className="h-3 bg-gray-200 rounded w-3/4"></div>
+                        <div className="h-3 bg-gray-200 dark:bg-gray-700 rounded"></div>
+                        <div className="h-3 bg-gray-200 dark:bg-gray-700 rounded"></div>
+                        <div className="h-3 bg-gray-200 dark:bg-gray-700 rounded w-3/4"></div>
                       </div>
                     </CardContent>
                   </Card>
                 ))}
+              </div>
+            ) : error ? (
+              <div className="text-center py-12">
+                <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg p-6">
+                  <AlertCircle className="h-8 w-8 text-red-500 mx-auto mb-4" />
+                  <h3 className="text-lg font-semibold text-red-700 dark:text-red-400 mb-2">
+                    {t('blog:error.title', { defaultValue: 'Unable to load blog posts' })}
+                  </h3>
+                  <p className="text-red-600 dark:text-red-500 mb-4">
+                    {t('blog:error.message', { defaultValue: 'Please check your connection and try again.' })}
+                  </p>
+                  <Button 
+                    onClick={() => window.location.reload()} 
+                    variant="outline" 
+                    className="border-red-200 text-red-700 hover:bg-red-50 dark:border-red-800 dark:text-red-400 dark:hover:bg-red-900/20"
+                  >
+                    {t('blog:error.retry', { defaultValue: 'Retry' })}
+                  </Button>
+                </div>
               </div>
             ) : blogPosts.length === 0 ? (
               <div className="text-center py-12">
@@ -244,6 +264,7 @@ const Blog = () => {
                           // Track blog listing impression
                           trackListingInteraction(post.slug, 'impression');
                         }}
+                        loading="lazy"
                       />
                       {post.image_source === 'ai_generated' && post.ai_generated_image_url && (
                         <div className="absolute top-2 right-2 bg-black/70 text-white text-xs px-2 py-1 rounded-full flex items-center gap-1">

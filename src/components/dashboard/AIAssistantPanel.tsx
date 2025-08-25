@@ -17,7 +17,7 @@ import {
   Loader2,
   Lightbulb
 } from 'lucide-react';
-import { generateAdventureImage } from '@/lib/ai/generateImage';
+import { aiImageService } from '@/services/aiImageService';
 import { generateAdventureDescription } from '@/lib/ai/generateDescription';
 import { toast } from 'sonner';
 
@@ -79,14 +79,30 @@ export const AIAssistantPanel: React.FC<AIAssistantPanelProps> = ({
     setGeneratedContent(null);
 
     try {
+      console.log('🎨 Starting AI image generation for:', prompt);
       // Generate both image and description concurrently
-      const [image, description] = await Promise.all([
-        generateAdventureImage(prompt),
+      const [imageResult, description] = await Promise.all([
+        aiImageService.generateBlogImage({
+          title: prompt,
+          excerpt: prompt,
+          category: 'adventure',
+          priority: 'medium'
+        }),
         generateAdventureDescription(prompt)
       ]);
 
+      console.log('✅ aiImageService response:', imageResult);
+      const image = imageResult.imageUrl || 'https://images.unsplash.com/photo-1469474968028-56623f02e42e?w=400&h=300&fit=crop';
+      console.log('🖼️ Final image URL:', image);
+      console.log('🎯 Success status:', imageResult.success);
+      
       setGeneratedContent({ image, description });
-      toast.success('Adventure content generated successfully!');
+      
+      if (imageResult.success) {
+        toast.success('✨ AI Adventure content generated successfully!');
+      } else {
+        toast.success('Adventure content generated with curated image!');
+      }
     } catch (error) {
       console.error('Error generating content:', error);
       toast.error('Failed to generate content. Please try again.');

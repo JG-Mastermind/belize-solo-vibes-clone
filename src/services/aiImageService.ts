@@ -257,6 +257,68 @@ class AIImageService {
   }
 
   /**
+   * Generate AI image for tours with DALL-E 3 integration
+   */
+  async generateTourImage(
+    tourId: string,
+    title: string,
+    description: string,
+    location?: string,
+    customPrompt?: string
+  ): Promise<AIImageResult> {
+    const startTime = Date.now();
+    
+    try {
+      // Build tour-specific prompt with Belize context
+      const enhancedPrompt = customPrompt || 
+        `${title} tour in ${location || 'Belize'}: ${description}`;
+      
+      // Call Edge Function with tour entity type
+      const { data, error } = await supabase.functions.invoke('generate-blog-image', {
+        body: {
+          prompt: enhancedPrompt,
+          style: 'photorealistic',
+          mood: 'adventurous',
+          aspectRatio: '16:9',
+          includeText: false,
+          belizeContext: true,
+          quality: 'standard',
+          safetyFilters: true,
+          entity: 'tour',
+          entityId: tourId
+        }
+      });
+
+      if (error || !data?.imageUrl) {
+        console.warn('🔄 DALL-E tour generation failed, using fallback:', error);
+        return {
+          success: false,
+          imageUrl: '/images/belize-solo.jpg',
+          altText: `Tour image for: ${title}`,
+          generationTime: Date.now() - startTime,
+          error: error?.message || 'Tour generation failed'
+        };
+      }
+
+      return {
+        success: true,
+        imageUrl: data.imageUrl,
+        altText: data.altText || `AI-generated tour image: ${title}`,
+        generationTime: Date.now() - startTime
+      };
+    } catch (error) {
+      console.error('Error generating tour image:', error);
+      return {
+        success: false,
+        imageUrl: '/images/belize-solo.jpg',
+        altText: `Tour image for: ${title}`,
+        generationTime: Date.now() - startTime,
+        error: error instanceof Error ? error.message : 'Unknown error'
+      };
+    }
+  }
+
+  /**
    * Legacy compatibility method - redirects to new generateBlogImage
    */
   async generateImageForPost(

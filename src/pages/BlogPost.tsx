@@ -31,7 +31,7 @@ import {
   generateResponsiveImageSrcSet,
   getBlogPostImageUrlAsync,
   type ImageLoadResult
-} from '@/utils/blogImageUtils.enhanced';
+} from '@/utils/blogImageUtils';
 
 interface BlogPostData {
   id: string;

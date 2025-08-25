@@ -22,20 +22,20 @@ interface BlogPost {
  * Priority: AI Generated > Featured Image > Default Fallback
  */
 export function getBlogPostImageUrl(post: BlogPost): string {
-  const defaultFallback = 'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=800&h=400&fit=crop&crop=center';
+  const staticFallback = '/images/belize-solo.jpg';
   
   // Priority 1: AI Generated Image (if source is ai_generated and URL exists)
   if (post.image_source === 'ai_generated' && post.ai_generated_image_url) {
     return post.ai_generated_image_url;
   }
   
-  // Priority 2: Featured Image (regular uploads or Unsplash)
+  // Priority 2: Featured Image (regular uploads or Supabase Storage)
   if (post.featured_image_url) {
     return post.featured_image_url;
   }
   
-  // Priority 3: Default fallback
-  return defaultFallback;
+  // Priority 3: Static fallback (no external dependencies)
+  return staticFallback;
 }
 
 /**
@@ -95,9 +95,9 @@ export function handleImageError(event: React.SyntheticEvent<HTMLImageElement>, 
     return;
   }
   
-  // If featured image fails, use fallback
+  // If featured image fails, use static fallback
   if (currentSrc === post.featured_image_url) {
-    img.src = 'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=800&h=400&fit=crop&crop=center';
+    img.src = '/images/belize-solo.jpg';
     return;
   }
   

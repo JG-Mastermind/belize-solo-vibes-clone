@@ -27,7 +27,7 @@ const AdventureCard = memo(({ tour, index, getAdventureContent, navigate, t, i18
     duration: `${tour.duration_hours} hours`,
     groupSize: `Max ${tour.max_participants}`,
     location: tour.location_name,
-    image: tour.images?.[0] || '',
+    image: tour.featured_image_url || tour.images?.[0] || '/images/belize-solo.jpg',
     highlights: []
   };
   const content = getAdventureContent(adventure);
@@ -40,6 +40,12 @@ const AdventureCard = memo(({ tour, index, getAdventureContent, navigate, t, i18
           alt={adventure.title}
           loading="lazy"
           className="w-full h-48 object-cover transition-all duration-300 group-hover:brightness-110 group-hover:scale-110"
+          onError={(e) => {
+            const target = e.target as HTMLImageElement;
+            if (target.src !== '/images/belize-solo.jpg') {
+              target.src = '/images/belize-solo.jpg';
+            }
+          }}
         />
         <div className="absolute top-4 right-4 bg-white/95 backdrop-blur-sm rounded-full px-3 py-1 shadow-md">
           <span className="text-orange-600 font-bold text-lg">{adventure.price}</span>

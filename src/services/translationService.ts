@@ -142,7 +142,8 @@ let translationService: TranslationService | null = null;
 export const getTranslationService = (): TranslationService => {
   if (!translationService) {
     translationService = new TranslationService({
-      apiKey: import.meta.env.VITE_OPENAI_API_KEY
+      // API key handled server-side via Edge Functions
+      // Client-side translation calls proxy to server endpoints
     });
   }
   return translationService;

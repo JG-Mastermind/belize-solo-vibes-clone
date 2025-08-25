@@ -1,4 +1,4 @@
-import React, { useState, Suspense, lazy } from 'react';
+import React, { useState, Suspense, lazy, ErrorBoundary } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -18,8 +18,42 @@ const AIBlogAssistantPanel = lazy(() =>
     default: module.AIBlogAssistantPanel 
   }))
 );
-import { Save, Eye, Languages } from 'lucide-react';
+import { Save, Eye, Languages, AlertCircle } from 'lucide-react';
 import { toast } from 'sonner';
+
+// Simple error boundary for lazy-loaded components
+class ComponentErrorBoundary extends React.Component<
+  { children: React.ReactNode; fallback?: React.ReactNode },
+  { hasError: boolean }
+> {
+  constructor(props: any) {
+    super(props);
+    this.state = { hasError: false };
+  }
+
+  static getDerivedStateFromError() {
+    return { hasError: true };
+  }
+
+  componentDidCatch(error: Error, errorInfo: React.ErrorInfo) {
+    console.error('BlogForm component error:', error, errorInfo);
+  }
+
+  render() {
+    if (this.state.hasError) {
+      return this.props.fallback || (
+        <div className="p-4 border border-red-200 bg-red-50 dark:bg-red-900/20 dark:border-red-800 rounded-lg">
+          <div className="flex items-center gap-2 text-red-600 dark:text-red-400">
+            <AlertCircle className="h-5 w-5" />
+            <span className="text-sm">Component failed to load. Please refresh the page.</span>
+          </div>
+        </div>
+      );
+    }
+
+    return this.props.children;
+  }
+}
 
 interface BlogFormData {
   title: string;
@@ -200,26 +234,29 @@ export const BlogForm: React.FC<BlogFormProps> = ({
       />
 
       {/* AI Blog Assistant Panel */}
-      <Suspense fallback={
-        <div className="animate-pulse bg-gray-200 dark:bg-gray-800 rounded-lg h-64 w-full mb-6">
-          <div className="p-6 space-y-4">
-            <div className="h-4 bg-gray-300 dark:bg-gray-700 rounded w-1/4"></div>
-            <div className="h-4 bg-gray-300 dark:bg-gray-700 rounded w-3/4"></div>
-            <div className="h-4 bg-gray-300 dark:bg-gray-700 rounded w-1/2"></div>
+      <ComponentErrorBoundary>
+        <Suspense fallback={
+          <div className="animate-pulse bg-gray-200 dark:bg-gray-800 rounded-lg h-64 w-full mb-6">
+            <div className="p-6 space-y-4">
+              <div className="h-4 bg-gray-300 dark:bg-gray-700 rounded w-1/4"></div>
+              <div className="h-4 bg-gray-300 dark:bg-gray-700 rounded w-3/4"></div>
+              <div className="h-4 bg-gray-300 dark:bg-gray-700 rounded w-1/2"></div>
+              <div className="text-sm text-gray-500 dark:text-gray-400 mt-2">Loading AI Blog Assistant...</div>
+            </div>
           </div>
-        </div>
-      }>
-        <AIBlogAssistantPanel
-          userType={userType}
-          onUseGenerated={handleAIGenerated}
-          currentContent={{
-            title: formData.title,
-            excerpt: formData.excerpt,
-            content: formData.content
-          }}
-          className="mb-6"
-        />
-      </Suspense>
+        }>
+          <AIBlogAssistantPanel
+            userType={userType}
+            onUseGenerated={handleAIGenerated}
+            currentContent={{
+              title: formData.title,
+              excerpt: formData.excerpt,
+              content: formData.content
+            }}
+            className="mb-6"
+          />
+        </Suspense>
+      </ComponentErrorBoundary>
 
       {/* Bulk Translation */}
       <Card className="dashboard-card">
@@ -367,28 +404,31 @@ export const BlogForm: React.FC<BlogFormProps> = ({
                 size="sm"
               />
             </div>
-            <Suspense fallback={
-              <div className="animate-pulse bg-gray-200 dark:bg-gray-800 rounded-lg h-48 w-full">
-                <div className="p-4 space-y-3">
-                  <div className="flex gap-2">
-                    <div className="h-8 bg-gray-300 dark:bg-gray-700 rounded w-16"></div>
-                    <div className="h-8 bg-gray-300 dark:bg-gray-700 rounded w-16"></div>
-                    <div className="h-8 bg-gray-300 dark:bg-gray-700 rounded w-16"></div>
+            <ComponentErrorBoundary>
+              <Suspense fallback={
+                <div className="animate-pulse bg-gray-200 dark:bg-gray-800 rounded-lg h-48 w-full">
+                  <div className="p-4 space-y-3">
+                    <div className="flex gap-2">
+                      <div className="h-8 bg-gray-300 dark:bg-gray-700 rounded w-16"></div>
+                      <div className="h-8 bg-gray-300 dark:bg-gray-700 rounded w-16"></div>
+                      <div className="h-8 bg-gray-300 dark:bg-gray-700 rounded w-16"></div>
+                    </div>
+                    <div className="h-32 bg-gray-300 dark:bg-gray-700 rounded w-full"></div>
+                    <div className="text-sm text-gray-500 dark:text-gray-400">Loading rich text editor...</div>
                   </div>
-                  <div className="h-32 bg-gray-300 dark:bg-gray-700 rounded w-full"></div>
                 </div>
-              </div>
-            }>
-              <RichTextEditor
-                value={formData.content}
-                onChange={(value) => updateField('content', value)}
-                placeholder="Write your blog post content here..."
-                seoKeywords={seoKeywords.split(',').map(k => k.trim()).filter(k => k.length > 0)}
-                title={formData.title}
-                excerpt={formData.excerpt}
-                showSEOPanel={true}
-              />
-            </Suspense>
+              }>
+                <RichTextEditor
+                  value={formData.content}
+                  onChange={(value) => updateField('content', value)}
+                  placeholder="Write your blog post content here..."
+                  seoKeywords={seoKeywords.split(',').map(k => k.trim()).filter(k => k.length > 0)}
+                  title={formData.title}
+                  excerpt={formData.excerpt}
+                  showSEOPanel={true}
+                />
+              </Suspense>
+            </ComponentErrorBoundary>
           </div>
         </CardContent>
       </Card>
@@ -454,28 +494,31 @@ export const BlogForm: React.FC<BlogFormProps> = ({
                 size="sm"
               />
             </div>
-            <Suspense fallback={
-              <div className="animate-pulse bg-gray-200 dark:bg-gray-800 rounded-lg h-48 w-full">
-                <div className="p-4 space-y-3">
-                  <div className="flex gap-2">
-                    <div className="h-8 bg-gray-300 dark:bg-gray-700 rounded w-16"></div>
-                    <div className="h-8 bg-gray-300 dark:bg-gray-700 rounded w-16"></div>
-                    <div className="h-8 bg-gray-300 dark:bg-gray-700 rounded w-16"></div>
+            <ComponentErrorBoundary>
+              <Suspense fallback={
+                <div className="animate-pulse bg-gray-200 dark:bg-gray-800 rounded-lg h-48 w-full">
+                  <div className="p-4 space-y-3">
+                    <div className="flex gap-2">
+                      <div className="h-8 bg-gray-300 dark:bg-gray-700 rounded w-16"></div>
+                      <div className="h-8 bg-gray-300 dark:bg-gray-700 rounded w-16"></div>
+                      <div className="h-8 bg-gray-300 dark:bg-gray-700 rounded w-16"></div>
+                    </div>
+                    <div className="h-32 bg-gray-300 dark:bg-gray-700 rounded w-full"></div>
+                    <div className="text-sm text-gray-500 dark:text-gray-400">Chargement de l'éditeur de texte...</div>
                   </div>
-                  <div className="h-32 bg-gray-300 dark:bg-gray-700 rounded w-full"></div>
                 </div>
-              </div>
-            }>
-              <RichTextEditor
-                value={formData.content_fr}
-                onChange={(value) => updateField('content_fr', value)}
-                placeholder="Écrivez le contenu de votre blog en français ici..."
-                seoKeywords={seoKeywords.split(',').map(k => k.trim()).filter(k => k.length > 0)}
-                title={formData.title_fr}
-                excerpt={formData.excerpt_fr}
-                showSEOPanel={false}
-              />
-            </Suspense>
+              }>
+                <RichTextEditor
+                  value={formData.content_fr}
+                  onChange={(value) => updateField('content_fr', value)}
+                  placeholder="Écrivez le contenu de votre blog en français ici..."
+                  seoKeywords={seoKeywords.split(',').map(k => k.trim()).filter(k => k.length > 0)}
+                  title={formData.title_fr}
+                  excerpt={formData.excerpt_fr}
+                  showSEOPanel={false}
+                />
+              </Suspense>
+            </ComponentErrorBoundary>
           </div>
         </CardContent>
       </Card>

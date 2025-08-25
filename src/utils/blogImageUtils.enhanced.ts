@@ -57,9 +57,10 @@ export async function getBlogPostImageUrlAsync(post: BlogPost): Promise<ImageLoa
   } catch (error) {
     console.warn('Error in getBlogPostImageUrlAsync:', error);
     
-    // Emergency fallback
+    // Emergency fallback - use synchronous method for consistency
+    const fallbackUrl = getBlogPostImageUrl(post);
     return {
-      url: getEmergencyFallback(post.category),
+      url: fallbackUrl,
       isAI: false,
       altText: `Travel image for: ${post.title || post.slug}`,
       loadTime: Date.now() - startTime,
@@ -254,6 +255,19 @@ export function handleImageError(event: React.SyntheticEvent<HTMLImageElement>, 
   
   // Track the error for analytics
   console.warn(`Image failed to load: ${currentSrc} for post: ${post.slug}`);
+  
+  // Prevent infinite error loops
+  if (img.dataset.errorCount) {
+    const errorCount = parseInt(img.dataset.errorCount) + 1;
+    if (errorCount > 3) {
+      img.style.display = 'none';
+      console.error(`Too many image load errors for post: ${post.slug}`);
+      return;
+    }
+    img.dataset.errorCount = errorCount.toString();
+  } else {
+    img.dataset.errorCount = '1';
+  }
   
   // Step 1: If AI image fails, try featured image
   if (post.image_source === 'ai_generated' && 

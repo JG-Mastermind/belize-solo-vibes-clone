@@ -83,6 +83,12 @@ serve(async (req) => {
     // Generate image using OpenAI DALL-E
     const generatedImage = await generateWithDALLE(request, openaiApiKey)
 
+    // Upload generated image to Supabase Storage for persistence
+    const persistentImageUrl = await uploadToStorage(generatedImage.imageUrl, 'blog_images')
+    if (persistentImageUrl) {
+      generatedImage.imageUrl = persistentImageUrl
+    }
+
     return new Response(
       JSON.stringify(generatedImage),
       {
@@ -261,6 +267,52 @@ function generateAltText(prompt: string, belizeContext: boolean): string {
   return belizeContext ? 
     `${baseAlt} in Belize, Central America` : 
     baseAlt
+}
+
+async function uploadToStorage(imageUrl: string, bucketName: string): Promise<string | null> {
+  try {
+    // Create Supabase admin client for storage operations
+    const supabaseAdmin = createClient(
+      Deno.env.get('SUPABASE_URL')!,
+      Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!
+    )
+
+    // Fetch the image from DALL-E temporary URL
+    const imageResponse = await fetch(imageUrl)
+    if (!imageResponse.ok) {
+      console.error('Failed to fetch generated image from DALL-E')
+      return null
+    }
+
+    const imageBlob = await imageResponse.blob()
+    const fileName = `ai-generated-${Date.now()}-${crypto.randomUUID()}.png`
+    const filePath = `public/${fileName}`
+
+    // Upload to Supabase Storage
+    const { data: uploadData, error: uploadError } = await supabaseAdmin.storage
+      .from(bucketName)
+      .upload(filePath, imageBlob, {
+        contentType: 'image/png',
+        cacheControl: '3600',
+        upsert: false,
+      })
+
+    if (uploadError) {
+      console.error('Failed to upload image to storage:', uploadError.message)
+      return null
+    }
+
+    // Get the public URL
+    const { data: publicUrlData } = supabaseAdmin.storage
+      .from(bucketName)
+      .getPublicUrl(filePath)
+    
+    return publicUrlData.publicUrl
+
+  } catch (error) {
+    console.error('Error uploading to storage:', error)
+    return null
+  }
 }
 
 /* To deploy this function, run:

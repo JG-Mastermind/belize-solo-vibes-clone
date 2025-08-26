@@ -372,18 +372,30 @@ export const DALLEImageGenerator: React.FC<DALLEImageGeneratorProps> = ({
           )}
         </Button>
 
-        {/* Loading State */}
+        {/* Loading State with Skeleton */}
         {isGenerating && (
-          <div className="text-center p-4 bg-muted/50 rounded">
-            <div className="flex items-center justify-center space-x-2 mb-2">
-              <Loader2 className="w-4 h-4 animate-spin text-purple-600" />
-              <span className="text-sm text-muted-foreground">
-                Creating AI-generated images...
-              </span>
+          <div className="space-y-4">
+            <div className="text-center p-4 bg-muted/50 rounded">
+              <div className="flex items-center justify-center space-x-2 mb-2">
+                <Loader2 className="w-4 h-4 animate-spin text-purple-600" />
+                <span className="text-sm text-muted-foreground">
+                  Creating AI-generated images...
+                </span>
+              </div>
+              <p className="text-xs text-muted-foreground">
+                This may take 30-60 seconds for high-quality results
+              </p>
             </div>
-            <p className="text-xs text-muted-foreground">
-              This may take 30-60 seconds for high-quality results
-            </p>
+            
+            {/* Image Generation Skeleton */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="animate-pulse bg-gray-200 dark:bg-gray-800 rounded-lg h-48 flex items-center justify-center">
+                <Camera className="w-8 h-8 text-gray-400" />
+              </div>
+              <div className="animate-pulse bg-gray-200 dark:bg-gray-800 rounded-lg h-48 flex items-center justify-center">
+                <Camera className="w-8 h-8 text-gray-400" />
+              </div>
+            </div>
           </div>
         )}
 

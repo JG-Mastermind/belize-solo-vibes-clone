@@ -151,9 +151,9 @@ serve(async (req) => {
     }
 
     // Get OpenAI API key from environment - critical path
-    const openaiApiKey = Deno.env.get('OPEN_AI_KEY')
+    const openaiApiKey = Deno.env.get('OPENAI_API_KEY')
     if (!openaiApiKey) {
-      console.warn('OPEN_AI_KEY not configured in Supabase secrets - using fallback')
+      console.warn('OPENAI_API_KEY not configured in Supabase secrets - using fallback')
       const fallbackImage = generateFallbackImage(request)
       return new Response(
         JSON.stringify({ 

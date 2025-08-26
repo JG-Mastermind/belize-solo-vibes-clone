@@ -79,7 +79,7 @@ export const AIBlogAssistantPanel: React.FC<AIBlogAssistantPanelProps> = ({
   const [tone, setTone] = useState<'professional' | 'casual' | 'educational' | 'promotional'>('professional');
   const [audience, setAudience] = useState<'travelers' | 'adventure-seekers' | 'families' | 'solo-travelers'>('travelers');
   const [contentLength, setContentLength] = useState<'short' | 'medium' | 'long'>('medium');
-  const [generateBilingual, setGenerateBilingual] = useState(true);
+  const [generateBilingual, setGenerateBilingual] = useState(false);
   const [isGenerating, setIsGenerating] = useState(false);
   const [generatedData, setGeneratedData] = useState<GeneratedBlogData | null>(null);
   const [isOnline, setIsOnline] = useState(navigator.onLine);
@@ -278,7 +278,7 @@ export const AIBlogAssistantPanel: React.FC<AIBlogAssistantPanelProps> = ({
   };
 
   const renderLoadingState = () => (
-    <div className="space-y-4">
+    <div className="space-y-6">
       <div className="flex items-center space-x-2">
         <Loader2 className="w-4 h-4 animate-spin text-blue-600" />
         <span className="text-sm text-muted-foreground">
@@ -286,6 +286,24 @@ export const AIBlogAssistantPanel: React.FC<AIBlogAssistantPanelProps> = ({
         </span>
       </div>
       <Progress value={33} className="w-full" />
+      
+      {/* Content Generation Skeleton */}
+      <div className="animate-pulse bg-gray-200 dark:bg-gray-800 rounded-lg p-6 space-y-4">
+        <div className="space-y-3">
+          <div className="h-6 bg-gray-300 dark:bg-gray-700 rounded w-3/4"></div>
+          <div className="h-4 bg-gray-300 dark:bg-gray-700 rounded w-full"></div>
+          <div className="h-4 bg-gray-300 dark:bg-gray-700 rounded w-2/3"></div>
+        </div>
+        <div className="space-y-2">
+          <div className="h-3 bg-gray-300 dark:bg-gray-700 rounded w-full"></div>
+          <div className="h-3 bg-gray-300 dark:bg-gray-700 rounded w-full"></div>
+          <div className="h-3 bg-gray-300 dark:bg-gray-700 rounded w-3/4"></div>
+          <div className="h-3 bg-gray-300 dark:bg-gray-700 rounded w-1/2"></div>
+        </div>
+        {/* Image Placeholder */}
+        <div className="h-48 bg-gray-300 dark:bg-gray-700 rounded-lg"></div>
+      </div>
+      
       <div className="text-xs text-muted-foreground text-center">
         This may take 30-60 seconds for high-quality results
       </div>

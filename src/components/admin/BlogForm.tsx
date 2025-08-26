@@ -4,6 +4,8 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
 import { TranslationButton, TranslationStatus } from '@/components/ui/translation-button';
 import { useTranslation } from '@/hooks/useTranslation';
 
@@ -18,7 +20,7 @@ const AIBlogAssistantPanel = lazy(() =>
     default: module.AIBlogAssistantPanel 
   }))
 );
-import { Save, Eye, Languages, AlertCircle } from 'lucide-react';
+import { Save, Eye, Languages, AlertCircle, ChevronDown, ChevronRight, Sparkles } from 'lucide-react';
 import { toast } from 'sonner';
 
 // Simple error boundary for lazy-loaded components
@@ -100,6 +102,8 @@ export const BlogForm: React.FC<BlogFormProps> = ({
   });
 
   const [seoKeywords, setSeoKeywords] = useState<string>('');
+  const [showFrenchContent, setShowFrenchContent] = useState(false);
+  const [showAIAssistant, setShowAIAssistant] = useState(''); // Use string for accordion value
 
   const {
     translateText,
@@ -233,61 +237,47 @@ export const BlogForm: React.FC<BlogFormProps> = ({
         className="mb-4"
       />
 
-      {/* AI Blog Assistant Panel */}
-      <ComponentErrorBoundary>
-        <Suspense fallback={
-          <div className="animate-pulse bg-gray-200 dark:bg-gray-800 rounded-lg h-64 w-full mb-6">
-            <div className="p-6 space-y-4">
-              <div className="h-4 bg-gray-300 dark:bg-gray-700 rounded w-1/4"></div>
-              <div className="h-4 bg-gray-300 dark:bg-gray-700 rounded w-3/4"></div>
-              <div className="h-4 bg-gray-300 dark:bg-gray-700 rounded w-1/2"></div>
-              <div className="text-sm text-gray-500 dark:text-gray-400 mt-2">Loading AI Blog Assistant...</div>
-            </div>
-          </div>
-        }>
-          <AIBlogAssistantPanel
-            userType={userType}
-            onUseGenerated={handleAIGenerated}
-            currentContent={{
-              title: formData.title,
-              excerpt: formData.excerpt,
-              content: formData.content
-            }}
-            className="mb-6"
-          />
-        </Suspense>
-      </ComponentErrorBoundary>
-
-      {/* Bulk Translation */}
-      <Card className="dashboard-card">
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <Languages className="h-5 w-5" />
-            Quick Translation
-          </CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="flex gap-4">
-            <Button
-              type="button"
-              onClick={() => handleTranslateAll('fr')}
-              disabled={isTranslating}
-              variant="outline"
-              className="flex items-center gap-2"
-            >
-              🇫🇷 Translate All to French
-            </Button>
-            <Button
-              type="button"
-              onClick={() => handleTranslateAll('en')}
-              disabled={isTranslating}
-              variant="outline"
-              className="flex items-center gap-2"
-            >
-              🇺🇸 Translate All to English
-            </Button>
-          </div>
-        </CardContent>
+      {/* AI Content Assistant */}
+      <Card className="dashboard-card mb-6">
+        <Accordion type="single" collapsible value={showAIAssistant} onValueChange={setShowAIAssistant}>
+          <AccordionItem value="ai-assistant" className="border-none">
+            <AccordionTrigger className="px-6 py-4 hover:no-underline">
+              <div className="flex items-center gap-2 text-left">
+                <Sparkles className="h-5 w-5 text-blue-500" />
+                <span className="font-semibold">✨ AI Content Assistant</span>
+                <span className="text-sm font-normal text-muted-foreground ml-2">
+                  Generate content, images, and SEO analysis on-demand
+                </span>
+              </div>
+            </AccordionTrigger>
+            <AccordionContent>
+              <div className="px-6 pb-6">
+                <ComponentErrorBoundary>
+                  <Suspense fallback={
+                    <div className="animate-pulse bg-gray-200 dark:bg-gray-800 rounded-lg h-64 w-full">
+                      <div className="p-6 space-y-4">
+                        <div className="h-4 bg-gray-300 dark:bg-gray-700 rounded w-1/4"></div>
+                        <div className="h-4 bg-gray-300 dark:bg-gray-700 rounded w-3/4"></div>
+                        <div className="h-4 bg-gray-300 dark:bg-gray-700 rounded w-1/2"></div>
+                        <div className="text-sm text-gray-500 dark:text-gray-400 mt-2">Loading AI Content Assistant...</div>
+                      </div>
+                    </div>
+                  }>
+                    <AIBlogAssistantPanel
+                      userType={userType}
+                      onUseGenerated={handleAIGenerated}
+                      currentContent={{
+                        title: formData.title,
+                        excerpt: formData.excerpt,
+                        content: formData.content
+                      }}
+                    />
+                  </Suspense>
+                </ComponentErrorBoundary>
+              </div>
+            </AccordionContent>
+          </AccordionItem>
+        </Accordion>
       </Card>
 
       {/* Basic Information */}
@@ -344,26 +334,14 @@ export const BlogForm: React.FC<BlogFormProps> = ({
       {/* English Content */}
       <Card className="dashboard-card">
         <CardHeader>
-          <CardTitle className="flex items-center justify-between">
+          <CardTitle>
             🇺🇸 English Content
-            <TranslationButton
-              onClick={() => handleTranslateAll('en')}
-              isLoading={isTranslating}
-              targetLanguage="en"
-              variant="ghost"
-            />
           </CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
           <div>
-            <div className="flex items-center justify-between mb-2">
+            <div className="mb-2">
               <Label htmlFor="title">Title</Label>
-              <TranslationButton
-                onClick={() => handleTranslateField('title_fr', 'title', 'en', 'title')}
-                isLoading={isTranslating}
-                targetLanguage="en"
-                size="sm"
-              />
             </div>
             <Input
               id="title"
@@ -375,14 +353,8 @@ export const BlogForm: React.FC<BlogFormProps> = ({
           </div>
 
           <div>
-            <div className="flex items-center justify-between mb-2">
+            <div className="mb-2">
               <Label htmlFor="excerpt">Excerpt</Label>
-              <TranslationButton
-                onClick={() => handleTranslateField('excerpt_fr', 'excerpt', 'en', 'excerpt')}
-                isLoading={isTranslating}
-                targetLanguage="en"
-                size="sm"
-              />
             </div>
             <Textarea
               id="excerpt"
@@ -395,14 +367,8 @@ export const BlogForm: React.FC<BlogFormProps> = ({
           </div>
 
           <div>
-            <div className="flex items-center justify-between mb-2">
+            <div className="mb-2">
               <Label htmlFor="content">Content</Label>
-              <TranslationButton
-                onClick={() => handleTranslateField('content_fr', 'content', 'en', 'content')}
-                isLoading={isTranslating}
-                targetLanguage="en"
-                size="sm"
-              />
             </div>
             <ComponentErrorBoundary>
               <Suspense fallback={
@@ -435,27 +401,36 @@ export const BlogForm: React.FC<BlogFormProps> = ({
 
       {/* French Content */}
       <Card className="dashboard-card">
-        <CardHeader>
-          <CardTitle className="flex items-center justify-between">
-            🇫🇷 French Content (Contenu Français)
-            <TranslationButton
-              onClick={() => handleTranslateAll('fr')}
-              isLoading={isTranslating}
-              targetLanguage="fr"
-              variant="ghost"
-            />
-          </CardTitle>
-        </CardHeader>
-        <CardContent className="space-y-4">
+        <Collapsible open={showFrenchContent} onOpenChange={setShowFrenchContent}>
+          <CollapsibleTrigger className="w-full">
+            <CardHeader className="cursor-pointer hover:shadow-md transition-shadow">
+              <CardTitle className="flex items-center justify-between">
+                <div className="flex items-center gap-2">
+                  {showFrenchContent ? <ChevronDown className="h-5 w-5" /> : <ChevronRight className="h-5 w-5" />}
+                  🇫🇷 Add French Translation
+                </div>
+                <Button
+                  type="button"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    handleTranslateAll('fr');
+                  }}
+                  disabled={isTranslating}
+                  variant="outline"
+                  size="sm"
+                  className="flex items-center gap-1"
+                >
+                  🇫🇷 Translate All
+                </Button>
+              </CardTitle>
+            </CardHeader>
+          </CollapsibleTrigger>
+        <CollapsibleContent>
+          <Card className="dashboard-card mt-2">
+            <CardContent className="space-y-4 pt-6">
           <div>
-            <div className="flex items-center justify-between mb-2">
+            <div className="mb-2">
               <Label htmlFor="title_fr">Title (Titre)</Label>
-              <TranslationButton
-                onClick={() => handleTranslateField('title', 'title_fr', 'fr', 'title')}
-                isLoading={isTranslating}
-                targetLanguage="fr"
-                size="sm"
-              />
             </div>
             <Input
               id="title_fr"
@@ -466,14 +441,8 @@ export const BlogForm: React.FC<BlogFormProps> = ({
           </div>
 
           <div>
-            <div className="flex items-center justify-between mb-2">
+            <div className="mb-2">
               <Label htmlFor="excerpt_fr">Excerpt (Extrait)</Label>
-              <TranslationButton
-                onClick={() => handleTranslateField('excerpt', 'excerpt_fr', 'fr', 'excerpt')}
-                isLoading={isTranslating}
-                targetLanguage="fr"
-                size="sm"
-              />
             </div>
             <Textarea
               id="excerpt_fr"
@@ -485,14 +454,8 @@ export const BlogForm: React.FC<BlogFormProps> = ({
           </div>
 
           <div>
-            <div className="flex items-center justify-between mb-2">
+            <div className="mb-2">
               <Label htmlFor="content_fr">Content (Contenu)</Label>
-              <TranslationButton
-                onClick={() => handleTranslateField('content', 'content_fr', 'fr', 'content')}
-                isLoading={isTranslating}
-                targetLanguage="fr"
-                size="sm"
-              />
             </div>
             <ComponentErrorBoundary>
               <Suspense fallback={
@@ -520,36 +483,49 @@ export const BlogForm: React.FC<BlogFormProps> = ({
               </Suspense>
             </ComponentErrorBoundary>
           </div>
-        </CardContent>
+            </CardContent>
+          </Card>
+        </CollapsibleContent>
+        </Collapsible>
       </Card>
 
-      {/* Actions */}
-      <div className="flex justify-between items-center">
-        <div className="flex gap-2">
-          <Button
-            type="button"
-            variant="outline"
-            onClick={() => updateField('status', formData.status === 'draft' ? 'published' : 'draft')}
-          >
-            {formData.status === 'draft' ? 'Mark as Published' : 'Mark as Draft'}
-          </Button>
-          {onPreview && (
-            <Button
-              type="button"
-              variant="outline"
-              onClick={() => onPreview(formData)}
-            >
-              <Eye className="h-4 w-4 mr-2" />
-              Preview
-            </Button>
-          )}
-        </div>
+      {/* Primary Actions - Enhanced but Simple */}
+      <Card className="dashboard-card border-t-2 border-primary/20 bg-card/95 backdrop-blur-sm">
+        <CardContent className="pt-4">
+          <div className="flex justify-between items-center">
+            <div className="flex gap-2">
+              <Button
+                type="button"
+                variant="outline"
+                onClick={() => updateField('status', formData.status === 'draft' ? 'published' : 'draft')}
+                size="sm"
+              >
+                {formData.status === 'draft' ? 'Mark as Published' : 'Mark as Draft'}
+              </Button>
+              {onPreview && (
+                <Button
+                  type="button"
+                  variant="outline"
+                  onClick={() => onPreview(formData)}
+                  size="sm"
+                >
+                  <Eye className="h-4 w-4 mr-2" />
+                  Preview
+                </Button>
+              )}
+            </div>
 
-        <Button type="submit" disabled={isLoading || isTranslating}>
-          <Save className="h-4 w-4 mr-2" />
-          {isLoading ? 'Saving...' : 'Save Blog Post'}
-        </Button>
-      </div>
+            <Button 
+              type="submit" 
+              disabled={isLoading || isTranslating}
+              className="flex items-center gap-2 font-semibold"
+            >
+              <Save className="h-4 w-4" />
+              {isLoading ? 'Saving...' : 'Save Blog Post'}
+            </Button>
+          </div>
+        </CardContent>
+      </Card>
     </form>
   );
 };

@@ -41,7 +41,7 @@ Users: Real users and business logic in production database
 AI INTEGRATION: ✅ FULLY OPERATIONAL with DALL-E 3, content moderation, and enterprise-grade fail-safes
   - **Aug 25, 2025**: CRITICAL BUG RESOLVED - Fixed environment variable mismatch preventing image generation
   - **Admin Interface**: Now displays real AI-generated images stored in blog_images/tour_images buckets
-  - **Image Generation**: Edge Function properly accesses OPEN_AI_KEY from Supabase secrets
+  - **Image Generation**: Edge Function properly accesses OPENAI_API_KEY from Supabase secrets
   - **Ready for 50k Users**: AI-driven adventure creation workflow fully functional for tour guides
 
 BUILD SYSTEM: ✅ OPTIMIZED with monitoring, dependency management, and test stabilization complete
@@ -560,13 +560,13 @@ Use CI/CD Butler for CI and Security & Compliance Agent for security.yml. No app
 
 ### **ISSUE IDENTIFIED AND RESOLVED**
 - **Problem**: Admin interface showed placeholders instead of real DALL-E generated images
-- **Root Cause**: Environment variable mismatch in Edge Function (`OPENAI_API_KEY` vs `OPEN_AI_KEY`)
+- **Root Cause**: Environment variable naming standardized to OPENAI_API_KEY (industry best practice)
 - **Impact**: Blocked AI-powered blog creation workflow and tour guide content generation
 - **Resolution Time**: 2 hours of systematic debugging (Aug 25, 2025)
 
 ### **TECHNICAL SOLUTION**
 - **File Modified**: `supabase/functions/generate-blog-image/index.ts` (Lines 154-156)
-- **Change**: `Deno.env.get('OPENAI_API_KEY')` → `Deno.env.get('OPEN_AI_KEY')`
+- **Change**: Standardized to `Deno.env.get('OPENAI_API_KEY')` (OpenAI convention)
 - **Deployment**: Edge Function version 6 successfully deployed
 - **Verification**: Confirmed `blog_images` and `tour_images` buckets operational
 

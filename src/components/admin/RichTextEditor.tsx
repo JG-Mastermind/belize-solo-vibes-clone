@@ -549,7 +549,7 @@ export const RichTextEditor: React.FC<RichTextEditorProps> = ({
         <div className="p-4 min-h-[300px] bg-background dark:bg-gray-800 text-foreground">
           <EditorContent 
             editor={editor} 
-            className="prose prose-sm max-w-none focus:outline-none dark:prose-invert"
+            className="prose prose-sm max-w-none focus:outline-none dark:prose-invert [&_ul]:list-disc [&_ul]:list-inside [&_ul]:my-2 [&_ol]:list-decimal [&_ol]:list-inside [&_ol]:my-2 [&_li]:my-1"
             placeholder={placeholder}
           />
         </div>

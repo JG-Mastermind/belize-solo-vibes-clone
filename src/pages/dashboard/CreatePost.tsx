@@ -25,6 +25,9 @@ const CreatePost: React.FC = () => {
     author: string;
     category_id: string;
     status: 'draft' | 'published';
+    tags?: string;
+    meta_description?: string;
+    meta_description_fr?: string;
   }) => {
     setLoading(true);
 
@@ -44,6 +47,9 @@ const CreatePost: React.FC = () => {
           author: blogData.author,
           category_id: blogData.category_id,
           status: blogData.status || 'draft',
+          keywords: blogData.tags ? blogData.tags.split(',').map(tag => tag.trim()).filter(tag => tag.length > 0) : null,
+          meta_description: blogData.meta_description || null,
+          meta_description_fr: blogData.meta_description_fr || null,
         })
         .select('id')
         .single();

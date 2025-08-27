@@ -115,7 +115,7 @@ export const RichTextEditor: React.FC<RichTextEditorProps> = ({
         },
       }),
       FloatingMenu.configure({
-        element: document.querySelector('.floating-menu'),
+        element: null, // Will be rendered inline, not as floating element
       }),
     ],
     content: value,
@@ -253,7 +253,7 @@ export const RichTextEditor: React.FC<RichTextEditorProps> = ({
   }, [editor, onChange, onMarkdownImport]);
 
   const convertMarkdownToHTML = (markdown: string): string => {
-    return markdown
+    let html = markdown
       // Headers
       .replace(/^### (.*$)/gim, '<h3>$1</h3>')
       .replace(/^## (.*$)/gim, '<h2>$1</h2>')
@@ -270,13 +270,21 @@ export const RichTextEditor: React.FC<RichTextEditorProps> = ({
       .replace(/\[([^\]]+)\]\(([^\)]+)\)/gim, '<a href="$2">$1</a>')
       // Blockquotes
       .replace(/^> (.*$)/gim, '<blockquote>$1</blockquote>')
-      // Unordered lists
-      .replace(/^\* (.*$)/gim, '<li>$1</li>')
-      .replace(/^- (.*$)/gim, '<li>$1</li>')
-      // Ordered lists
-      .replace(/^\d+\. (.*$)/gim, '<li>$1</li>')
-      // Line breaks
-      .replace(/\n/gim, '<br>');
+      // Simple list items (TipTap will handle list wrapping)
+      .replace(/^\* (.*$)/gim, '<p>• $1</p>')
+      .replace(/^- (.*$)/gim, '<p>• $1</p>')
+      .replace(/^\d+\. (.*$)/gim, '<p>$1</p>')
+      // Convert paragraph breaks
+      .replace(/\n\n/g, '</p><p>')
+      // Single line breaks
+      .replace(/\n/g, '<br>');
+    
+    // Wrap in paragraphs if not already wrapped
+    if (!html.startsWith('<')) {
+      html = `<p>${html}</p>`;
+    }
+    
+    return html;
   };
 
   const addLink = useCallback(() => {

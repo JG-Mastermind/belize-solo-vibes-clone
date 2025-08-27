@@ -351,7 +351,7 @@ export const BlogForm: React.FC<BlogFormProps> = ({
 
           <div>
             <Label htmlFor="category_id">Category</Label>
-            <Select value={formData.category_id} onValueChange={(value) => updateField('category_id', value)}>
+            <Select value={formData.category_id || ''} onValueChange={(value) => updateField('category_id', value)}>
               <SelectTrigger>
                 <SelectValue placeholder="Select category" />
               </SelectTrigger>

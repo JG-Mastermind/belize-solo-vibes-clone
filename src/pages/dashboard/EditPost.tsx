@@ -20,6 +20,10 @@ interface BlogPostData {
   author: string;
   category_id: string;
   status: 'draft' | 'published';
+  tags?: string;
+  keywords?: string[];
+  meta_description?: string;
+  meta_description_fr?: string;
 }
 
 const EditPost: React.FC = () => {
@@ -69,6 +73,9 @@ const EditPost: React.FC = () => {
     author: string;
     category_id: string;
     status: 'draft' | 'published';
+    tags?: string;
+    meta_description?: string;
+    meta_description_fr?: string;
   }) => {
     if (!id) return;
     
@@ -89,6 +96,9 @@ const EditPost: React.FC = () => {
           author: blogData.author,
           category_id: blogData.category_id,
           status: blogData.status,
+          keywords: blogData.tags ? blogData.tags.split(',').map(tag => tag.trim()).filter(tag => tag.length > 0) : null,
+          meta_description: blogData.meta_description || null,
+          meta_description_fr: blogData.meta_description_fr || null,
         })
         .eq('id', id);
 
@@ -163,6 +173,9 @@ const EditPost: React.FC = () => {
               category_id: postData.category_id,
               featured_image_url: postData.featured_image_url || '',
               status: postData.status,
+              tags: postData.keywords ? postData.keywords.join(', ') : '',
+              meta_description: postData.meta_description || '',
+              meta_description_fr: postData.meta_description_fr || '',
             }}
           />
           

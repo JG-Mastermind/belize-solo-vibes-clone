@@ -344,6 +344,7 @@ export const RichTextEditor: React.FC<RichTextEditorProps> = ({
             size="sm"
             onClick={() => editor.chain().focus().toggleBold().run()}
             className={editor.isActive('bold') ? 'bg-accent text-accent-foreground' : ''}
+            title="Bold Text (Ctrl+B)"
           >
             <Bold className="h-4 w-4" />
           </Button>
@@ -354,6 +355,7 @@ export const RichTextEditor: React.FC<RichTextEditorProps> = ({
             size="sm"
             onClick={() => editor.chain().focus().toggleItalic().run()}
             className={editor.isActive('italic') ? 'bg-accent text-accent-foreground' : ''}
+            title="Italic Text (Ctrl+I)"
           >
             <Italic className="h-4 w-4" />
           </Button>
@@ -364,6 +366,7 @@ export const RichTextEditor: React.FC<RichTextEditorProps> = ({
             size="sm"
             onClick={() => editor.chain().focus().toggleHeading({ level: 1 }).run()}
             className={editor.isActive('heading', { level: 1 }) ? 'bg-accent text-accent-foreground' : ''}
+            title="Large Heading (H1)"
           >
             <Heading1 className="h-4 w-4" />
           </Button>
@@ -374,6 +377,7 @@ export const RichTextEditor: React.FC<RichTextEditorProps> = ({
             size="sm"
             onClick={() => editor.chain().focus().toggleHeading({ level: 2 }).run()}
             className={editor.isActive('heading', { level: 2 }) ? 'bg-accent text-accent-foreground' : ''}
+            title="Medium Heading (H2)"
           >
             <Heading2 className="h-4 w-4" />
           </Button>
@@ -384,6 +388,7 @@ export const RichTextEditor: React.FC<RichTextEditorProps> = ({
             size="sm"
             onClick={() => editor.chain().focus().toggleHeading({ level: 3 }).run()}
             className={editor.isActive('heading', { level: 3 }) ? 'bg-accent text-accent-foreground' : ''}
+            title="Small Heading (H3)"
           >
             <Heading3 className="h-4 w-4" />
           </Button>
@@ -394,6 +399,7 @@ export const RichTextEditor: React.FC<RichTextEditorProps> = ({
             size="sm"
             onClick={() => editor.chain().focus().toggleBulletList().run()}
             className={editor.isActive('bulletList') ? 'bg-accent text-accent-foreground' : ''}
+            title="Bullet List - Create unordered list with bullet points"
           >
             <List className="h-4 w-4" />
           </Button>
@@ -404,6 +410,7 @@ export const RichTextEditor: React.FC<RichTextEditorProps> = ({
             size="sm"
             onClick={() => editor.chain().focus().toggleOrderedList().run()}
             className={editor.isActive('orderedList') ? 'bg-accent text-accent-foreground' : ''}
+            title="Numbered List - Create ordered list with numbers"
           >
             <ListOrdered className="h-4 w-4" />
           </Button>
@@ -414,6 +421,7 @@ export const RichTextEditor: React.FC<RichTextEditorProps> = ({
             size="sm"
             onClick={() => editor.chain().focus().toggleBlockquote().run()}
             className={editor.isActive('blockquote') ? 'bg-accent text-accent-foreground' : ''}
+            title="Quote Block - Highlight important quotes or citations"
           >
             <Quote className="h-4 w-4" />
           </Button>
@@ -424,6 +432,7 @@ export const RichTextEditor: React.FC<RichTextEditorProps> = ({
             size="sm"
             onClick={() => editor.chain().focus().toggleCodeBlock().run()}
             className={editor.isActive('codeBlock') ? 'bg-accent text-accent-foreground' : ''}
+            title="Code Block - Insert programming code with syntax highlighting"
           >
             <Code className="h-4 w-4" />
           </Button>
@@ -437,6 +446,7 @@ export const RichTextEditor: React.FC<RichTextEditorProps> = ({
             size="sm"
             onClick={addLink}
             className={editor.isActive('link') ? 'bg-accent text-accent-foreground' : ''}
+            title="Add Link - Insert hyperlink to external websites or pages"
           >
             <LinkIcon className="h-4 w-4" />
           </Button>
@@ -446,6 +456,7 @@ export const RichTextEditor: React.FC<RichTextEditorProps> = ({
             variant="ghost"
             size="sm"
             onClick={handleImageUpload}
+            title="Upload Image - Add photos to your blog post"
           >
             <ImageIcon className="h-4 w-4" />
           </Button>
@@ -455,6 +466,7 @@ export const RichTextEditor: React.FC<RichTextEditorProps> = ({
             variant="ghost"
             size="sm"
             onClick={addTable}
+            title="Insert Table - Create data table with rows and columns"
           >
             <TableIcon className="h-4 w-4" />
           </Button>

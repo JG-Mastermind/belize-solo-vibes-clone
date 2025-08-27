@@ -10,6 +10,8 @@ import { TableRow } from '@tiptap/extension-table-row';
 import { TableHeader } from '@tiptap/extension-table-header';
 import { TableCell } from '@tiptap/extension-table-cell';
 import FloatingMenu from '@tiptap/extension-floating-menu';
+import { TextStyle } from '@tiptap/extension-text-style';
+import { Color } from '@tiptap/extension-color';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -38,7 +40,8 @@ import {
   Table as TableIcon,
   Type,
   FileText,
-  Upload
+  Upload,
+  Palette
 } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { analyzeBlogSEO, type SEOAnalysisResult } from '@/lib/ai/generateBlogSEO';
@@ -72,6 +75,8 @@ export const RichTextEditor: React.FC<RichTextEditorProps> = ({
   const editor = useEditor({
     extensions: [
       StarterKit,
+      TextStyle,
+      Color,
       Image.configure({
         HTMLAttributes: {
           class: 'max-w-full h-auto rounded-lg',
@@ -392,6 +397,48 @@ export const RichTextEditor: React.FC<RichTextEditorProps> = ({
           >
             <Heading3 className="h-4 w-4" />
           </Button>
+
+          <div className="relative group">
+            <Button
+              type="button"
+              variant="ghost"
+              size="sm"
+              title="Text Color - Change text color for emphasis and styling"
+              className="relative"
+            >
+              <Palette className="h-4 w-4" />
+            </Button>
+            <div className="absolute top-full left-0 mt-1 bg-popover border border-border rounded-md p-2 shadow-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50">
+              <div className="grid grid-cols-8 gap-1 w-48">
+                {[
+                  '#000000', '#374151', '#6B7280', '#9CA3AF',
+                  '#DC2626', '#EA580C', '#D97706', '#CA8A04',
+                  '#65A30D', '#16A34A', '#059669', '#0D9488',
+                  '#0284C7', '#2563EB', '#4F46E5', '#7C3AED',
+                  '#C026D3', '#DB2777', '#E11D48', '#DC2626',
+                  '#F87171', '#FB923C', '#FBBF24', '#A3E635',
+                  '#34D399', '#22D3EE', '#60A5FA', '#A78BFA'
+                ].map((color) => (
+                  <button
+                    key={color}
+                    type="button"
+                    className="w-6 h-6 rounded border border-gray-300 hover:scale-110 transition-transform"
+                    style={{ backgroundColor: color }}
+                    onClick={() => editor.chain().focus().setColor(color).run()}
+                    title={`Apply color ${color}`}
+                  />
+                ))}
+                <button
+                  type="button"
+                  className="w-6 h-6 rounded border-2 border-gray-400 bg-transparent hover:bg-gray-100 dark:hover:bg-gray-700 flex items-center justify-center text-xs font-bold"
+                  onClick={() => editor.chain().focus().unsetColor().run()}
+                  title="Remove text color"
+                >
+                  ✕
+                </button>
+              </div>
+            </div>
+          </div>
           
           <Button
             type="button"

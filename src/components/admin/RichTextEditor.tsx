@@ -2,6 +2,14 @@ import React, { useCallback, useState, useEffect } from 'react';
 import { useEditor, EditorContent } from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
 import Image from '@tiptap/extension-image';
+import Link from '@tiptap/extension-link';
+import CodeBlock from '@tiptap/extension-code-block';
+import Blockquote from '@tiptap/extension-blockquote';
+import { Table } from '@tiptap/extension-table';
+import { TableRow } from '@tiptap/extension-table-row';
+import { TableHeader } from '@tiptap/extension-table-header';
+import { TableCell } from '@tiptap/extension-table-cell';
+import FloatingMenu from '@tiptap/extension-floating-menu';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -15,6 +23,7 @@ import {
   ListOrdered, 
   Heading1, 
   Heading2, 
+  Heading3,
   Image as ImageIcon,
   Target,
   TrendingUp,
@@ -22,7 +31,14 @@ import {
   AlertCircle,
   CheckCircle,
   Lightbulb,
-  Search
+  Search,
+  Link as LinkIcon,
+  Quote,
+  Code,
+  Table as TableIcon,
+  Type,
+  FileText,
+  Upload
 } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { analyzeBlogSEO, type SEOAnalysisResult } from '@/lib/ai/generateBlogSEO';
@@ -36,6 +52,7 @@ interface RichTextEditorProps {
   title?: string;
   excerpt?: string;
   showSEOPanel?: boolean;
+  onMarkdownImport?: (content: string) => void;
 }
 
 export const RichTextEditor: React.FC<RichTextEditorProps> = ({ 
@@ -45,7 +62,8 @@ export const RichTextEditor: React.FC<RichTextEditorProps> = ({
   seoKeywords = [],
   title = "",
   excerpt = "",
-  showSEOPanel = true
+  showSEOPanel = true,
+  onMarkdownImport
 }) => {
   const [seoAnalysis, setSeoAnalysis] = useState<SEOAnalysisResult | null>(null);
   const [isAnalyzing, setIsAnalyzing] = useState(false);
@@ -58,6 +76,46 @@ export const RichTextEditor: React.FC<RichTextEditorProps> = ({
         HTMLAttributes: {
           class: 'max-w-full h-auto rounded-lg',
         },
+      }),
+      Link.configure({
+        openOnClick: false,
+        HTMLAttributes: {
+          class: 'text-blue-600 dark:text-blue-400 hover:underline cursor-pointer',
+        },
+      }),
+      CodeBlock.configure({
+        HTMLAttributes: {
+          class: 'bg-gray-100 dark:bg-gray-800 p-4 rounded-lg font-mono text-sm border',
+        },
+      }),
+      Blockquote.configure({
+        HTMLAttributes: {
+          class: 'border-l-4 border-gray-300 dark:border-gray-600 pl-4 italic text-gray-700 dark:text-gray-300',
+        },
+      }),
+      Table.configure({
+        resizable: true,
+        HTMLAttributes: {
+          class: 'border-collapse border border-gray-300 dark:border-gray-600 w-full my-4',
+        },
+      }),
+      TableRow.configure({
+        HTMLAttributes: {
+          class: 'border border-gray-300 dark:border-gray-600',
+        },
+      }),
+      TableHeader.configure({
+        HTMLAttributes: {
+          class: 'border border-gray-300 dark:border-gray-600 bg-gray-100 dark:bg-gray-800 font-bold p-2',
+        },
+      }),
+      TableCell.configure({
+        HTMLAttributes: {
+          class: 'border border-gray-300 dark:border-gray-600 p-2',
+        },
+      }),
+      FloatingMenu.configure({
+        element: document.querySelector('.floating-menu'),
       }),
     ],
     content: value,
@@ -158,6 +216,82 @@ export const RichTextEditor: React.FC<RichTextEditorProps> = ({
     input.click();
   }, [editor]);
 
+  const handleMarkdownUpload = useCallback(async () => {
+    const input = document.createElement('input');
+    input.type = 'file';
+    input.accept = '.md,.markdown,.txt';
+    
+    input.onchange = async (e) => {
+      const file = (e.target as HTMLInputElement).files?.[0];
+      if (!file) return;
+
+      try {
+        const reader = new FileReader();
+        reader.onload = (e) => {
+          const markdown = e.target?.result as string;
+          if (markdown) {
+            // Simple markdown to HTML conversion for basic formatting
+            const html = convertMarkdownToHTML(markdown);
+            if (editor) {
+              editor.commands.setContent(html);
+              onChange(html);
+            }
+            if (onMarkdownImport) {
+              onMarkdownImport(html);
+            }
+            toast.success('Markdown file imported successfully!');
+          }
+        };
+        reader.readAsText(file);
+      } catch (error) {
+        console.error('Error importing markdown:', error);
+        toast.error('Failed to import markdown file');
+      }
+    };
+
+    input.click();
+  }, [editor, onChange, onMarkdownImport]);
+
+  const convertMarkdownToHTML = (markdown: string): string => {
+    return markdown
+      // Headers
+      .replace(/^### (.*$)/gim, '<h3>$1</h3>')
+      .replace(/^## (.*$)/gim, '<h2>$1</h2>')
+      .replace(/^# (.*$)/gim, '<h1>$1</h1>')
+      // Bold
+      .replace(/\*\*(.*?)\*\*/gim, '<strong>$1</strong>')
+      // Italic
+      .replace(/\*(.*?)\*/gim, '<em>$1</em>')
+      // Code blocks
+      .replace(/```([\s\S]*?)```/gim, '<pre><code>$1</code></pre>')
+      // Inline code
+      .replace(/`([^`]*)`/gim, '<code>$1</code>')
+      // Links
+      .replace(/\[([^\]]+)\]\(([^\)]+)\)/gim, '<a href="$2">$1</a>')
+      // Blockquotes
+      .replace(/^> (.*$)/gim, '<blockquote>$1</blockquote>')
+      // Unordered lists
+      .replace(/^\* (.*$)/gim, '<li>$1</li>')
+      .replace(/^- (.*$)/gim, '<li>$1</li>')
+      // Ordered lists
+      .replace(/^\d+\. (.*$)/gim, '<li>$1</li>')
+      // Line breaks
+      .replace(/\n/gim, '<br>');
+  };
+
+  const addLink = useCallback(() => {
+    const url = window.prompt('Enter URL:');
+    if (url && editor) {
+      editor.chain().focus().extendMarkRange('link').setLink({ href: url }).run();
+    }
+  }, [editor]);
+
+  const addTable = useCallback(() => {
+    if (editor) {
+      editor.chain().focus().insertTable({ rows: 3, cols: 3, withHeaderRow: true }).run();
+    }
+  }, [editor]);
+
   const getSEOScoreColor = (score: number) => {
     if (score >= 80) return 'text-green-600 dark:text-green-400';
     if (score >= 60) return 'text-yellow-600 dark:text-yellow-400';
@@ -193,8 +327,9 @@ export const RichTextEditor: React.FC<RichTextEditorProps> = ({
     <div className="space-y-4">
       {/* Editor with enhanced toolbar */}
       <div className="border border-border rounded-lg overflow-hidden bg-card dark:bg-gray-800 text-card-foreground">
-        {/* Toolbar */}
+        {/* Enhanced Toolbar */}
         <div className="flex flex-wrap gap-1 p-2 border-b border-border bg-muted/30 dark:bg-gray-700">
+          {/* Text Formatting */}
           <Button
             type="button"
             variant="ghost"
@@ -239,6 +374,16 @@ export const RichTextEditor: React.FC<RichTextEditorProps> = ({
             type="button"
             variant="ghost"
             size="sm"
+            onClick={() => editor.chain().focus().toggleHeading({ level: 3 }).run()}
+            className={editor.isActive('heading', { level: 3 }) ? 'bg-accent text-accent-foreground' : ''}
+          >
+            <Heading3 className="h-4 w-4" />
+          </Button>
+          
+          <Button
+            type="button"
+            variant="ghost"
+            size="sm"
             onClick={() => editor.chain().focus().toggleBulletList().run()}
             className={editor.isActive('bulletList') ? 'bg-accent text-accent-foreground' : ''}
           >
@@ -259,9 +404,64 @@ export const RichTextEditor: React.FC<RichTextEditorProps> = ({
             type="button"
             variant="ghost"
             size="sm"
+            onClick={() => editor.chain().focus().toggleBlockquote().run()}
+            className={editor.isActive('blockquote') ? 'bg-accent text-accent-foreground' : ''}
+          >
+            <Quote className="h-4 w-4" />
+          </Button>
+          
+          <Button
+            type="button"
+            variant="ghost"
+            size="sm"
+            onClick={() => editor.chain().focus().toggleCodeBlock().run()}
+            className={editor.isActive('codeBlock') ? 'bg-accent text-accent-foreground' : ''}
+          >
+            <Code className="h-4 w-4" />
+          </Button>
+
+          <Separator orientation="vertical" className="mx-2 h-6" />
+
+          {/* Links & Media */}
+          <Button
+            type="button"
+            variant="ghost"
+            size="sm"
+            onClick={addLink}
+            className={editor.isActive('link') ? 'bg-accent text-accent-foreground' : ''}
+          >
+            <LinkIcon className="h-4 w-4" />
+          </Button>
+          
+          <Button
+            type="button"
+            variant="ghost"
+            size="sm"
             onClick={handleImageUpload}
           >
             <ImageIcon className="h-4 w-4" />
+          </Button>
+
+          <Button
+            type="button"
+            variant="ghost"
+            size="sm"
+            onClick={addTable}
+          >
+            <TableIcon className="h-4 w-4" />
+          </Button>
+
+          <Separator orientation="vertical" className="mx-2 h-6" />
+
+          {/* Import */}
+          <Button
+            type="button"
+            variant="ghost"
+            size="sm"
+            onClick={handleMarkdownUpload}
+            title="Import Markdown File"
+          >
+            <Upload className="h-4 w-4" />
           </Button>
 
           <Separator orientation="vertical" className="mx-2 h-6" />

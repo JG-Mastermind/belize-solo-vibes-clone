@@ -8,6 +8,7 @@ import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/component
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
 import { TranslationButton, TranslationStatus } from '@/components/ui/translation-button';
 import { useTranslation } from '@/hooks/useTranslation';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 
 // Lazy load heavy TipTap editor to reduce main bundle size
 const RichTextEditor = lazy(() => 
@@ -20,7 +21,7 @@ const AIBlogAssistantPanel = lazy(() =>
     default: module.AIBlogAssistantPanel 
   }))
 );
-import { Save, Eye, Languages, AlertCircle, ChevronDown, ChevronRight, Sparkles } from 'lucide-react';
+import { Save, Eye, Languages, AlertCircle, ChevronDown, ChevronRight, Sparkles, FileText, Download } from 'lucide-react';
 import { toast } from 'sonner';
 
 // Simple error boundary for lazy-loaded components
@@ -69,6 +70,9 @@ interface BlogFormData {
   category_id: string;
   featured_image_url: string;
   status: 'draft' | 'published';
+  tags?: string;
+  meta_description?: string;
+  meta_description_fr?: string;
 }
 
 interface BlogFormProps {
@@ -98,12 +102,16 @@ export const BlogForm: React.FC<BlogFormProps> = ({
     category_id: '',
     featured_image_url: '',
     status: 'draft',
+    tags: '',
+    meta_description: '',
+    meta_description_fr: '',
     ...initialData
   });
 
   const [seoKeywords, setSeoKeywords] = useState<string>('');
   const [showFrenchContent, setShowFrenchContent] = useState(false);
   const [showAIAssistant, setShowAIAssistant] = useState(''); // Use string for accordion value
+  const [showSEOMetadata, setShowSEOMetadata] = useState(false);
 
   const {
     translateText,
@@ -227,6 +235,28 @@ export const BlogForm: React.FC<BlogFormProps> = ({
     }
   };
 
+  const handleMarkdownImport = (content: string) => {
+    updateField('content', content);
+    toast.success('Markdown content imported successfully!');
+  };
+
+  const exportToMarkdown = () => {
+    const { title, content, author, tags } = formData;
+    const markdownContent = `# ${title}\n\n**Author:** ${author}\n${tags ? `**Tags:** ${tags}\n` : ''}\n${content.replace(/<[^>]*>/g, '')}\n`;
+    
+    const blob = new Blob([markdownContent], { type: 'text/markdown' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `${formData.slug || 'blog-post'}.md`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+    
+    toast.success('Markdown file exported!');
+  };
+
   return (
     <form onSubmit={handleSubmit} className="space-y-6">
       {/* Translation Status */}
@@ -320,6 +350,33 @@ export const BlogForm: React.FC<BlogFormProps> = ({
           </div>
 
           <div>
+            <Label htmlFor="category_id">Category</Label>
+            <Select value={formData.category_id} onValueChange={(value) => updateField('category_id', value)}>
+              <SelectTrigger>
+                <SelectValue placeholder="Select category" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="adventure">Adventure</SelectItem>
+                <SelectItem value="culture">Culture</SelectItem>
+                <SelectItem value="wildlife">Wildlife</SelectItem>
+                <SelectItem value="food">Food & Dining</SelectItem>
+                <SelectItem value="accommodation">Accommodation</SelectItem>
+                <SelectItem value="travel-tips">Travel Tips</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+          
+          <div>
+            <Label htmlFor="tags">Tags (comma-separated)</Label>
+            <Input
+              id="tags"
+              value={formData.tags}
+              onChange={(e) => updateField('tags', e.target.value)}
+              placeholder="belize travel, adventure tours, caribbean"
+            />
+          </div>
+
+          <div>
             <Label htmlFor="seo_keywords">SEO Keywords (comma-separated)</Label>
             <Input
               id="seo_keywords"
@@ -392,6 +449,7 @@ export const BlogForm: React.FC<BlogFormProps> = ({
                   title={formData.title}
                   excerpt={formData.excerpt}
                   showSEOPanel={true}
+                  onMarkdownImport={handleMarkdownImport}
                 />
               </Suspense>
             </ComponentErrorBoundary>
@@ -479,6 +537,7 @@ export const BlogForm: React.FC<BlogFormProps> = ({
                   title={formData.title_fr}
                   excerpt={formData.excerpt_fr}
                   showSEOPanel={false}
+                  onMarkdownImport={(content) => updateField('content_fr', content)}
                 />
               </Suspense>
             </ComponentErrorBoundary>
@@ -486,6 +545,68 @@ export const BlogForm: React.FC<BlogFormProps> = ({
             </CardContent>
           </Card>
         </CollapsibleContent>
+        </Collapsible>
+      </Card>
+
+      {/* SEO & Metadata */}
+      <Card className="dashboard-card">
+        <Collapsible open={showSEOMetadata} onOpenChange={setShowSEOMetadata}>
+          <CollapsibleTrigger className="w-full">
+            <CardHeader className="cursor-pointer hover:shadow-md transition-shadow">
+              <CardTitle className="flex items-center justify-between">
+                <div className="flex items-center gap-2">
+                  {showSEOMetadata ? <ChevronDown className="h-5 w-5" /> : <ChevronRight className="h-5 w-5" />}
+                  🎯 SEO & Metadata
+                </div>
+                <Button
+                  type="button"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    exportToMarkdown();
+                  }}
+                  variant="outline"
+                  size="sm"
+                  className="flex items-center gap-1"
+                >
+                  <Download className="h-4 w-4" />
+                  Export MD
+                </Button>
+              </CardTitle>
+            </CardHeader>
+          </CollapsibleTrigger>
+          <CollapsibleContent>
+            <CardContent className="space-y-4">
+              <div>
+                <Label htmlFor="meta_description">Meta Description (English)</Label>
+                <Textarea
+                  id="meta_description"
+                  value={formData.meta_description}
+                  onChange={(e) => updateField('meta_description', e.target.value)}
+                  placeholder="Brief SEO description for search engines (150-160 characters)"
+                  rows={2}
+                  maxLength={160}
+                />
+                <div className="text-xs text-muted-foreground mt-1">
+                  {(formData.meta_description?.length || 0)}/160 characters
+                </div>
+              </div>
+
+              <div>
+                <Label htmlFor="meta_description_fr">Meta Description (French)</Label>
+                <Textarea
+                  id="meta_description_fr"
+                  value={formData.meta_description_fr}
+                  onChange={(e) => updateField('meta_description_fr', e.target.value)}
+                  placeholder="Description SEO brève pour les moteurs de recherche (150-160 caractères)"
+                  rows={2}
+                  maxLength={160}
+                />
+                <div className="text-xs text-muted-foreground mt-1">
+                  {(formData.meta_description_fr?.length || 0)}/160 caractères
+                </div>
+              </div>
+            </CardContent>
+          </CollapsibleContent>
         </Collapsible>
       </Card>
 

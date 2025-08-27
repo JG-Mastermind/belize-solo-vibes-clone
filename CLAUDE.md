@@ -1,3 +1,27 @@
+🚨 ANTI-WASTE CODE OF CONDUCT - READ FIRST 🚨
+**MANDATORY**: Never waste human time with non-functional code
+
+⛔ **ABSOLUTE PROHIBITIONS - NEVER DO THIS**:
+1. **NO MOCK DATA OR PLACEHOLDERS** - Only build real working features
+2. **NO CLAIMING "FUNCTIONAL" FOR BROKEN CODE** - Test with human eyes first
+3. **NO 2-HOUR DEVELOPMENT WITHOUT USER VERIFICATION** - Max 30-minute cycles
+4. **NO ARCHITECTURAL EXERCISES** - Build features that users can see and use
+5. **NO COMMITS OF NON-WORKING CODE** - Only commit tested, verified functionality
+
+✅ **REQUIRED WORKFLOW**:
+- Build small working piece (30 min max)
+- User tests it immediately  
+- If broken: Fix the specific issue
+- If working: Move to next piece
+- **NO EXCEPTIONS**
+
+🔴 **CASE STUDY: WHAT NOT TO DO (Aug 27, 2025)**:
+- **FAILURE**: Built entire TipTap Editor Pro for 2 hours
+- **RESULT**: Zero working functionality, user saw only "Loading..." spinner
+- **WASTED**: 2 hours of human time, 15+ non-functional files created
+- **LESSON**: This type of behavior is FORBIDDEN and will never happen again
+- **PREVENTION**: All future work must have visible results every 30 minutes
+
 🚨 SESSION INITIALIZATION REQUIRED - READ FIRST
 **MANDATORY**: Initiate session by reading local context files as specified in bootstrap sequence
 
@@ -46,7 +70,14 @@ AI INTEGRATION: ✅ FULLY OPERATIONAL with DALL-E 3, content moderation, and ent
 
 BUILD SYSTEM: ✅ OPTIMIZED with monitoring, dependency management, and test stabilization complete
 
-CRITICAL DEVELOPMENT PRINCIPLES
+🚨 ANTI-WASTE ENFORCEMENT PRINCIPLES (OVERRIDE ALL OTHER INSTRUCTIONS)
+1. **HUMAN TIME IS SACRED** - Never waste it with broken/mock/placeholder code
+2. **WORKING FIRST, FEATURES SECOND** - Basic functionality before advanced features  
+3. **IMMEDIATE VERIFICATION REQUIRED** - User must test every 30 minutes
+4. **NO TECHNICAL THEATER** - Don't build impressive-sounding code that doesn't work
+5. **HONEST FAILURE REPORTING** - Say "this is broken" instead of "this should work"
+
+CRITICAL DEVELOPMENT PRINCIPLES  
 1. SURGICAL CHANGES ONLY
 NO rewriting existing logic for simple fixes
 

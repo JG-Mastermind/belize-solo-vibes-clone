@@ -59,7 +59,7 @@ const CreatePost: React.FC = () => {
       // Future: Add tag relationships support if needed
 
       toast.success('Post created successfully!');
-      navigate('/dashboard/admin');
+      navigate('/dashboard/blog-posts');
     } catch (error) {
       console.error('Error creating post:', error);
       toast.error('Failed to create post. Please try again.');

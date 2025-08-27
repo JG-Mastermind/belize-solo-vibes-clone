@@ -105,7 +105,7 @@ const EditPost: React.FC = () => {
       if (error) throw error;
 
       toast.success('Post updated successfully!');
-      navigate('/dashboard/admin');
+      navigate('/dashboard/blog-posts');
     } catch (error) {
       console.error('Error updating post:', error);
       toast.error('Failed to update post. Please try again.');

@@ -179,6 +179,13 @@ export const RichTextEditor: React.FC<RichTextEditorProps> = ({
     return () => clearTimeout(timer);
   }, [title, value, seoKeywords, showSEOPanel, performSEOAnalysis]);
 
+  // Sync editor content when value prop changes
+  useEffect(() => {
+    if (editor && value !== undefined && editor.getHTML() !== value) {
+      editor.commands.setContent(value);
+    }
+  }, [editor, value]);
+
   // Initialize content stats
   useEffect(() => {
     updateContentStats(value);

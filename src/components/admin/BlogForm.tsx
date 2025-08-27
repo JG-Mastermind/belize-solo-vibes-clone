@@ -198,7 +198,7 @@ export const BlogForm: React.FC<BlogFormProps> = ({
     e.preventDefault();
     try {
       await onSubmit(formData);
-      toast.success('Blog post saved successfully!');
+      // Success toast and navigation handled by parent component
     } catch (error) {
       console.error('Save error:', error);
       toast.error('Failed to save blog post');

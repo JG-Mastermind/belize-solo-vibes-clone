@@ -202,9 +202,9 @@ export const RichTextEditor: React.FC<RichTextEditorProps> = ({
     return () => clearTimeout(timer);
   }, [title, value, seoKeywords, showSEOPanel, performSEOAnalysis]);
 
-  // Sync editor content when value prop changes
+  // Sync editor content when value prop changes (only when not focused)
   useEffect(() => {
-    if (editor && value !== undefined && editor.getHTML() !== value) {
+    if (editor && value !== undefined && editor.getHTML() !== value && !editor.isFocused) {
       editor.commands.setContent(value);
     }
   }, [editor, value]);
@@ -852,7 +852,7 @@ export const RichTextEditor: React.FC<RichTextEditorProps> = ({
         <div className="p-4 min-h-[300px] bg-background dark:bg-gray-800 text-foreground">
           <EditorContent 
             editor={editor} 
-            className="prose prose-sm max-w-none focus:outline-none dark:prose-invert [&_ul]:list-disc [&_ul]:list-inside [&_ul]:my-2 [&_ol]:list-decimal [&_ol]:list-inside [&_ol]:my-2 [&_li]:my-1"
+            className="prose prose-sm max-w-none focus:outline-none focus-within:ring-2 focus-within:ring-primary/20 dark:prose-invert [&_ul]:list-disc [&_ul]:list-inside [&_ul]:my-2 [&_ol]:list-decimal [&_ol]:list-inside [&_ol]:my-2 [&_li]:my-1 [&_.ProseMirror]:min-h-[250px] [&_.ProseMirror]:outline-none [&_.ProseMirror]:cursor-text"
             placeholder={placeholder}
           />
         </div>

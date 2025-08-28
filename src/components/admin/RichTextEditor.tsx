@@ -1,5 +1,6 @@
 import React, { useCallback, useState, useEffect } from 'react';
 import { useEditor, EditorContent, BubbleMenu } from '@tiptap/react';
+import { marked } from 'marked';
 import StarterKit from '@tiptap/starter-kit';
 import Image from '@tiptap/extension-image';
 import { Table } from '@tiptap/extension-table';
@@ -261,19 +262,30 @@ export const RichTextEditor: React.FC<RichTextEditorProps> = ({
 
       try {
         const reader = new FileReader();
-        reader.onload = (e) => {
+        reader.onload = async (e) => {
           const markdown = e.target?.result as string;
-          if (markdown) {
-            // Simple markdown to HTML conversion for basic formatting
-            const html = convertMarkdownToHTML(markdown);
-            if (editor) {
+          if (markdown && editor) {
+            try {
+              // Use marked to convert markdown to HTML
+              const html = await marked.parse(markdown, {
+                async: true,
+                breaks: true,
+                gfm: true
+              });
+              
+              // Use TipTap's native setContent with the parsed HTML
               editor.commands.setContent(html);
               onChange(html);
+              
+              if (onMarkdownImport) {
+                onMarkdownImport(html);
+              }
+              
+              toast.success('Markdown file imported successfully!');
+            } catch (parseError) {
+              console.error('Error parsing markdown:', parseError);
+              toast.error('Failed to parse markdown content');
             }
-            if (onMarkdownImport) {
-              onMarkdownImport(html);
-            }
-            toast.success('Markdown file imported successfully!');
           }
         };
         reader.readAsText(file);
@@ -286,40 +298,6 @@ export const RichTextEditor: React.FC<RichTextEditorProps> = ({
     input.click();
   }, [editor, onChange, onMarkdownImport]);
 
-  const convertMarkdownToHTML = (markdown: string): string => {
-    let html = markdown
-      // Headers
-      .replace(/^### (.*$)/gim, '<h3>$1</h3>')
-      .replace(/^## (.*$)/gim, '<h2>$1</h2>')
-      .replace(/^# (.*$)/gim, '<h1>$1</h1>')
-      // Bold
-      .replace(/\*\*(.*?)\*\*/gim, '<strong>$1</strong>')
-      // Italic
-      .replace(/\*(.*?)\*/gim, '<em>$1</em>')
-      // Code blocks
-      .replace(/```([\s\S]*?)```/gim, '<pre><code>$1</code></pre>')
-      // Inline code
-      .replace(/`([^`]*)`/gim, '<code>$1</code>')
-      // Links
-      .replace(/\[([^\]]+)\]\(([^\)]+)\)/gim, '<a href="$2">$1</a>')
-      // Blockquotes
-      .replace(/^> (.*$)/gim, '<blockquote>$1</blockquote>')
-      // Simple list items (TipTap will handle list wrapping)
-      .replace(/^\* (.*$)/gim, '<p>• $1</p>')
-      .replace(/^- (.*$)/gim, '<p>• $1</p>')
-      .replace(/^\d+\. (.*$)/gim, '<p>$1</p>')
-      // Convert paragraph breaks
-      .replace(/\n\n/g, '</p><p>')
-      // Single line breaks
-      .replace(/\n/g, '<br>');
-    
-    // Wrap in paragraphs if not already wrapped
-    if (!html.startsWith('<')) {
-      html = `<p>${html}</p>`;
-    }
-    
-    return html;
-  };
 
   const addLink = useCallback(() => {
     const url = window.prompt('Enter URL:');

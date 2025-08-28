@@ -14,6 +14,7 @@ import { TextStyle } from '@tiptap/extension-text-style';
 import { Color } from '@tiptap/extension-color';
 import { Underline } from '@tiptap/extension-underline';
 import { TextAlign } from '@tiptap/extension-text-align';
+import { Highlight } from '@tiptap/extension-highlight';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -49,7 +50,8 @@ import {
   AlignLeft,
   AlignCenter,
   AlignRight,
-  AlignJustify
+  AlignJustify,
+  Highlighter
 } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { analyzeBlogSEO, type SEOAnalysisResult } from '@/lib/ai/generateBlogSEO';
@@ -89,6 +91,12 @@ export const RichTextEditor: React.FC<RichTextEditorProps> = ({
       TextAlign.configure({
         types: ['heading', 'paragraph'],
         alignments: ['left', 'center', 'right', 'justify'],
+      }),
+      Highlight.configure({
+        multicolor: true,
+        HTMLAttributes: {
+          class: 'px-1 rounded bg-yellow-200 dark:bg-yellow-800',
+        },
       }),
       Image.configure({
         HTMLAttributes: {
@@ -442,6 +450,48 @@ export const RichTextEditor: React.FC<RichTextEditorProps> = ({
           >
             <AlignRight className="h-4 w-4" />
           </Button>
+
+          <Separator orientation="vertical" className="mx-1 h-6" />
+
+          {/* Text Highlighting */}
+          <div className="relative group">
+            <Button
+              type="button"
+              variant="ghost"
+              size="sm"
+              title="Highlight Text - Add background color to emphasize content"
+              className="relative"
+            >
+              <Highlighter className="h-4 w-4" />
+            </Button>
+            <div className="absolute top-full left-0 mt-1 bg-popover border border-border rounded-md p-2 shadow-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50">
+              <div className="grid grid-cols-4 gap-1 w-32">
+                {[
+                  '#FEF3C7', '#FBBF24', '#F59E0B', '#D97706',
+                  '#FDE68A', '#84CC16', '#22C55E', '#10B981',
+                  '#67E8F9', '#06B6D4', '#0EA5E9', '#3B82F6',
+                  '#A78BFA', '#8B5CF6', '#A855F7', '#D946EF'
+                ].map((color) => (
+                  <button
+                    key={color}
+                    type="button"
+                    className="w-6 h-6 rounded border border-gray-300 hover:scale-110 transition-transform"
+                    style={{ backgroundColor: color }}
+                    onClick={() => editor.chain().focus().setHighlight({ color }).run()}
+                    title={`Highlight with ${color}`}
+                  />
+                ))}
+                <button
+                  type="button"
+                  className="w-6 h-6 rounded border-2 border-gray-400 bg-transparent hover:bg-gray-100 dark:hover:bg-gray-700 flex items-center justify-center text-xs font-bold"
+                  onClick={() => editor.chain().focus().unsetHighlight().run()}
+                  title="Remove highlight"
+                >
+                  ✕
+                </button>
+              </div>
+            </div>
+          </div>
           
           <Button
             type="button"

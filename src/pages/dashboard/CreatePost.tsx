@@ -17,6 +17,7 @@ const CreatePost: React.FC = () => {
     title: string;
     title_fr: string;
     slug: string;
+    slug_fr: string;
     excerpt: string;
     excerpt_fr: string;
     content: string;
@@ -39,6 +40,7 @@ const CreatePost: React.FC = () => {
           title: blogData.title,
           title_fr: blogData.title_fr,
           slug: blogData.slug,
+          slug_fr: blogData.slug_fr || null,
           excerpt: blogData.excerpt,
           excerpt_fr: blogData.excerpt_fr,
           content: blogData.content,

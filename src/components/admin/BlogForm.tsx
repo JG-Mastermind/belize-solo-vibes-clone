@@ -66,6 +66,7 @@ interface BlogFormData {
   content: string;
   content_fr: string;
   slug: string;
+  slug_fr: string;
   author: string;
   category_id: string;
   featured_image_url: string;
@@ -98,6 +99,7 @@ export const BlogForm: React.FC<BlogFormProps> = ({
     content: '',
     content_fr: '',
     slug: '',
+    slug_fr: '',
     author: '',
     category_id: '',
     featured_image_url: '',
@@ -131,6 +133,15 @@ export const BlogForm: React.FC<BlogFormProps> = ({
         .replace(/[^a-z0-9]+/g, '-')
         .replace(/(^-|-$)/g, '');
       setFormData(prev => ({ ...prev, slug }));
+    }
+    
+    // Auto-generate slug_fr from title_fr
+    if (field === 'title_fr' && !initialData?.slug_fr) {
+      const slugFr = value
+        .toLowerCase()
+        .replace(/[^a-z0-9]+/g, '-')
+        .replace(/(^-|-$)/g, '');
+      setFormData(prev => ({ ...prev, slug_fr: slugFr }));
     }
   };
 
@@ -232,6 +243,15 @@ export const BlogForm: React.FC<BlogFormProps> = ({
         .replace(/[^a-z0-9]+/g, '-')
         .replace(/(^-|-$)/g, '');
       setFormData(prev => ({ ...prev, slug }));
+    }
+    
+    // Auto-generate slug_fr if title_fr was updated
+    if (aiData.title_fr && !initialData?.slug_fr) {
+      const slugFr = aiData.title_fr
+        .toLowerCase()
+        .replace(/[^a-z0-9]+/g, '-')
+        .replace(/(^-|-$)/g, '');
+      setFormData(prev => ({ ...prev, slug_fr: slugFr }));
     }
   };
 
@@ -486,16 +506,29 @@ export const BlogForm: React.FC<BlogFormProps> = ({
         <CollapsibleContent>
           <Card className="dashboard-card mt-2">
             <CardContent className="space-y-4 pt-6">
-          <div>
-            <div className="mb-2">
-              <Label htmlFor="title_fr">Title (Titre)</Label>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+              <div className="mb-2">
+                <Label htmlFor="title_fr">Title (Titre)</Label>
+              </div>
+              <Input
+                id="title_fr"
+                value={formData.title_fr}
+                onChange={(e) => updateField('title_fr', e.target.value)}
+                placeholder="Titre du blog en français"
+              />
             </div>
-            <Input
-              id="title_fr"
-              value={formData.title_fr}
-              onChange={(e) => updateField('title_fr', e.target.value)}
-              placeholder="Titre du blog en français"
-            />
+            <div>
+              <div className="mb-2">
+                <Label htmlFor="slug_fr">URL Slug (French)</Label>
+              </div>
+              <Input
+                id="slug_fr"
+                value={formData.slug_fr}
+                onChange={(e) => updateField('slug_fr', e.target.value)}
+                placeholder="url-francais-compatible"
+              />
+            </div>
           </div>
 
           <div>

@@ -12,6 +12,8 @@ import { TableCell } from '@tiptap/extension-table-cell';
 import FloatingMenu from '@tiptap/extension-floating-menu';
 import { TextStyle } from '@tiptap/extension-text-style';
 import { Color } from '@tiptap/extension-color';
+import { Underline } from '@tiptap/extension-underline';
+import { TextAlign } from '@tiptap/extension-text-align';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -20,7 +22,9 @@ import { Progress } from '@/components/ui/progress';
 import { Separator } from '@/components/ui/separator';
 import { 
   Bold, 
-  Italic, 
+  Italic,
+  Underline as UnderlineIcon,
+  Strikethrough, 
   List, 
   ListOrdered, 
   Heading1, 
@@ -41,7 +45,11 @@ import {
   Type,
   FileText,
   Upload,
-  Palette
+  Palette,
+  AlignLeft,
+  AlignCenter,
+  AlignRight,
+  AlignJustify
 } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { analyzeBlogSEO, type SEOAnalysisResult } from '@/lib/ai/generateBlogSEO';
@@ -77,6 +85,11 @@ export const RichTextEditor: React.FC<RichTextEditorProps> = ({
       StarterKit,
       TextStyle,
       Color,
+      Underline,
+      TextAlign.configure({
+        types: ['heading', 'paragraph'],
+        alignments: ['left', 'center', 'right', 'justify'],
+      }),
       Image.configure({
         HTMLAttributes: {
           class: 'max-w-full h-auto rounded-lg',
@@ -370,6 +383,64 @@ export const RichTextEditor: React.FC<RichTextEditorProps> = ({
             title="Italic Text (Ctrl+I)"
           >
             <Italic className="h-4 w-4" />
+          </Button>
+          
+          <Button
+            type="button"
+            variant="ghost"
+            size="sm"
+            onClick={() => editor.chain().focus().toggleUnderline().run()}
+            className={editor.isActive('underline') ? 'bg-accent text-accent-foreground' : ''}
+            title="Underline Text (Ctrl+U)"
+          >
+            <UnderlineIcon className="h-4 w-4" />
+          </Button>
+          
+          <Button
+            type="button"
+            variant="ghost"
+            size="sm"
+            onClick={() => editor.chain().focus().toggleStrike().run()}
+            className={editor.isActive('strike') ? 'bg-accent text-accent-foreground' : ''}
+            title="Strikethrough Text"
+          >
+            <Strikethrough className="h-4 w-4" />
+          </Button>
+
+          <Separator orientation="vertical" className="mx-1 h-6" />
+
+          {/* Text Alignment */}
+          <Button
+            type="button"
+            variant="ghost"
+            size="sm"
+            onClick={() => editor.chain().focus().setTextAlign('left').run()}
+            className={editor.isActive({ textAlign: 'left' }) ? 'bg-accent text-accent-foreground' : ''}
+            title="Align Left"
+          >
+            <AlignLeft className="h-4 w-4" />
+          </Button>
+          
+          <Button
+            type="button"
+            variant="ghost"
+            size="sm"
+            onClick={() => editor.chain().focus().setTextAlign('center').run()}
+            className={editor.isActive({ textAlign: 'center' }) ? 'bg-accent text-accent-foreground' : ''}
+            title="Center Text"
+          >
+            <AlignCenter className="h-4 w-4" />
+          </Button>
+          
+          <Button
+            type="button"
+            variant="ghost"
+            size="sm"
+            onClick={() => editor.chain().focus().setTextAlign('right').run()}
+            className={editor.isActive({ textAlign: 'right' }) ? 'bg-accent text-accent-foreground' : ''}
+            title="Align Right"
+          >
+            <AlignRight className="h-4 w-4" />
           </Button>
           
           <Button

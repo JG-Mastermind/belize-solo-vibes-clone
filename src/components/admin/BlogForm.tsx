@@ -1,4 +1,4 @@
-import React, { useState, Suspense, lazy, ErrorBoundary } from 'react';
+import React, { useState, useEffect, Suspense, lazy, ErrorBoundary } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -9,6 +9,7 @@ import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/
 import { TranslationButton, TranslationStatus } from '@/components/ui/translation-button';
 import { useTranslation } from '@/hooks/useTranslation';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { supabase } from '@/integrations/supabase/client';
 
 // Lazy load heavy TipTap editor to reduce main bundle size
 const RichTextEditor = lazy(() => 
@@ -114,6 +115,7 @@ export const BlogForm: React.FC<BlogFormProps> = ({
   const [showFrenchContent, setShowFrenchContent] = useState(false);
   const [showAIAssistant, setShowAIAssistant] = useState(''); // Use string for accordion value
   const [showSEOMetadata, setShowSEOMetadata] = useState(false);
+  const [categories, setCategories] = useState<Array<{id: string, name: string}>>([]);
 
   const {
     translateText,
@@ -122,6 +124,25 @@ export const BlogForm: React.FC<BlogFormProps> = ({
     translationError,
     clearError
   } = useTranslation();
+
+  // Load categories on component mount
+  useEffect(() => {
+    const loadCategories = async () => {
+      try {
+        const { data, error } = await supabase
+          .from('categories')
+          .select('id, name')
+          .order('name');
+        
+        if (error) throw error;
+        setCategories(data || []);
+      } catch (error) {
+        console.error('Error loading categories:', error);
+      }
+    };
+    
+    loadCategories();
+  }, []);
 
   const updateField = (field: keyof BlogFormData, value: string) => {
     setFormData(prev => ({ ...prev, [field]: value }));
@@ -376,12 +397,11 @@ export const BlogForm: React.FC<BlogFormProps> = ({
                 <SelectValue placeholder="Select category" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="adventure">Adventure</SelectItem>
-                <SelectItem value="culture">Culture</SelectItem>
-                <SelectItem value="wildlife">Wildlife</SelectItem>
-                <SelectItem value="food">Food & Dining</SelectItem>
-                <SelectItem value="accommodation">Accommodation</SelectItem>
-                <SelectItem value="travel-tips">Travel Tips</SelectItem>
+                {categories.map((category) => (
+                  <SelectItem key={category.id} value={category.id}>
+                    {category.name}
+                  </SelectItem>
+                ))}
               </SelectContent>
             </Select>
           </div>

@@ -64,8 +64,22 @@ const CreatePost: React.FC = () => {
       navigate('/dashboard/blog-posts');
     } catch (error) {
       console.error('Error creating post:', error);
-      toast.error('Failed to create post. Please try again.');
-      throw error; // Re-throw so BlogForm can handle it
+      
+      // Show specific error message based on error type
+      if (error && typeof error === 'object' && 'message' in error) {
+        const message = (error as any).message;
+        if (message.includes('duplicate key value violates unique constraint')) {
+          toast.error('A post with this slug already exists. Please change the URL slug.');
+        } else if (message.includes('null value in column')) {
+          toast.error('Please fill in all required fields before saving.');
+        } else {
+          toast.error(`Save failed: ${message}`);
+        }
+      } else {
+        toast.error('Failed to create post. Please check all required fields and try again.');
+      }
+      
+      // Don't re-throw - let the finally block run to reset loading state
     } finally {
       setLoading(false);
     }

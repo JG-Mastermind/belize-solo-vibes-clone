@@ -84,6 +84,7 @@ export const RichTextEditor: React.FC<RichTextEditorProps> = ({
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [wordCount, setWordCount] = useState(0);
   const [readingTime, setReadingTime] = useState(0);
+  const [, forceUpdate] = useState({});
   const [showFloatingToolbar, setShowFloatingToolbar] = useState(false);
   const editor = useEditor({
     extensions: [
@@ -157,6 +158,10 @@ export const RichTextEditor: React.FC<RichTextEditorProps> = ({
       const html = editor.getHTML();
       onChange(html);
       updateContentStats(html);
+    },
+    onSelectionUpdate: ({ editor }) => {
+      // Force re-render to update button active states when cursor moves
+      forceUpdate({});
     },
   });
 
@@ -534,7 +539,7 @@ export const RichTextEditor: React.FC<RichTextEditorProps> = ({
             variant="ghost"
             size="sm"
             onClick={() => editor.chain().focus().toggleHeading({ level: 1 }).run()}
-            className={editor.isActive('heading', { level: 1 }) ? 'bg-accent text-accent-foreground' : ''}
+            className={editor.isActive('heading', { level: 1 }) ? 'bg-primary text-primary-foreground shadow-sm border-primary' : 'hover:bg-accent'}
             title="Large Heading (H1)"
           >
             <Heading1 className="h-4 w-4" />
@@ -545,7 +550,7 @@ export const RichTextEditor: React.FC<RichTextEditorProps> = ({
             variant="ghost"
             size="sm"
             onClick={() => editor.chain().focus().toggleHeading({ level: 2 }).run()}
-            className={editor.isActive('heading', { level: 2 }) ? 'bg-accent text-accent-foreground' : ''}
+            className={editor.isActive('heading', { level: 2 }) ? 'bg-primary text-primary-foreground shadow-sm border-primary' : 'hover:bg-accent'}
             title="Medium Heading (H2)"
           >
             <Heading2 className="h-4 w-4" />
@@ -556,7 +561,7 @@ export const RichTextEditor: React.FC<RichTextEditorProps> = ({
             variant="ghost"
             size="sm"
             onClick={() => editor.chain().focus().toggleHeading({ level: 3 }).run()}
-            className={editor.isActive('heading', { level: 3 }) ? 'bg-accent text-accent-foreground' : ''}
+            className={editor.isActive('heading', { level: 3 }) ? 'bg-primary text-primary-foreground shadow-sm border-primary' : 'hover:bg-accent'}
             title="Small Heading (H3)"
           >
             <Heading3 className="h-4 w-4" />
@@ -567,7 +572,7 @@ export const RichTextEditor: React.FC<RichTextEditorProps> = ({
             variant="ghost"
             size="sm"
             onClick={() => editor.chain().focus().toggleHeading({ level: 4 }).run()}
-            className={editor.isActive('heading', { level: 4 }) ? 'bg-accent text-accent-foreground' : ''}
+            className={editor.isActive('heading', { level: 4 }) ? 'bg-primary text-primary-foreground shadow-sm border-primary' : 'hover:bg-accent'}
             title="Subheading (H4) - Perfect for SEO structure"
           >
             <Heading4 className="h-4 w-4" />
@@ -578,7 +583,7 @@ export const RichTextEditor: React.FC<RichTextEditorProps> = ({
             variant="ghost"
             size="sm"
             onClick={() => editor.chain().focus().toggleHeading({ level: 5 }).run()}
-            className={editor.isActive('heading', { level: 5 }) ? 'bg-accent text-accent-foreground' : ''}
+            className={editor.isActive('heading', { level: 5 }) ? 'bg-primary text-primary-foreground shadow-sm border-primary' : 'hover:bg-accent'}
             title="Minor Heading (H5) - Great for detailed sections"
           >
             <Heading5 className="h-4 w-4" />
@@ -589,7 +594,7 @@ export const RichTextEditor: React.FC<RichTextEditorProps> = ({
             variant="ghost"
             size="sm"
             onClick={() => editor.chain().focus().toggleHeading({ level: 6 }).run()}
-            className={editor.isActive('heading', { level: 6 }) ? 'bg-accent text-accent-foreground' : ''}
+            className={editor.isActive('heading', { level: 6 }) ? 'bg-primary text-primary-foreground shadow-sm border-primary' : 'hover:bg-accent'}
             title="Smallest Heading (H6) - For fine details"
           >
             <Heading6 className="h-4 w-4" />

@@ -408,7 +408,7 @@ const BlogPost: React.FC = () => {
 
                     {/* Article Body */}
                     <div 
-                      className="prose prose-xl max-w-none leading-relaxed text-lg"
+                      className="prose prose-xl max-w-none leading-relaxed text-lg [&_h1]:text-3xl [&_h1]:font-bold [&_h1]:mb-6 [&_h1]:mt-8 [&_h2]:text-2xl [&_h2]:font-bold [&_h2]:mb-4 [&_h2]:mt-6 [&_h3]:text-xl [&_h3]:font-semibold [&_h3]:mb-3 [&_h3]:mt-5 [&_h4]:text-lg [&_h4]:font-semibold [&_h4]:mb-3 [&_h4]:mt-4 [&_h5]:text-base [&_h5]:font-semibold [&_h5]:mb-2 [&_h5]:mt-3 [&_h6]:text-sm [&_h6]:font-semibold [&_h6]:mb-2 [&_h6]:mt-2 [&_h1]:text-gray-900 [&_h2]:text-gray-800 [&_h3]:text-gray-700 [&_h4]:text-gray-700 [&_h5]:text-gray-600 [&_h6]:text-gray-600 dark:[&_h1]:text-white dark:[&_h2]:text-gray-100 dark:[&_h3]:text-gray-200 dark:[&_h4]:text-gray-200 dark:[&_h5]:text-gray-300 dark:[&_h6]:text-gray-300"
                       dangerouslySetInnerHTML={{ __html: translatedContent?.content || blogPost.content }}
                     />
 

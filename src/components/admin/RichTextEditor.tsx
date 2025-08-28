@@ -1,18 +1,13 @@
 import React, { useCallback, useState, useEffect } from 'react';
-import { useEditor, EditorContent } from '@tiptap/react';
+import { useEditor, EditorContent, BubbleMenu } from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
 import Image from '@tiptap/extension-image';
-import Link from '@tiptap/extension-link';
-import CodeBlock from '@tiptap/extension-code-block';
-import Blockquote from '@tiptap/extension-blockquote';
 import { Table } from '@tiptap/extension-table';
 import { TableRow } from '@tiptap/extension-table-row';
 import { TableHeader } from '@tiptap/extension-table-header';
 import { TableCell } from '@tiptap/extension-table-cell';
-import FloatingMenu from '@tiptap/extension-floating-menu';
 import { TextStyle } from '@tiptap/extension-text-style';
 import { Color } from '@tiptap/extension-color';
-import { Underline } from '@tiptap/extension-underline';
 import { TextAlign } from '@tiptap/extension-text-align';
 import { Highlight } from '@tiptap/extension-highlight';
 import { Button } from '@/components/ui/button';
@@ -88,10 +83,31 @@ export const RichTextEditor: React.FC<RichTextEditorProps> = ({
   const [showFloatingToolbar, setShowFloatingToolbar] = useState(false);
   const editor = useEditor({
     extensions: [
-      StarterKit,
+      // Configure StarterKit with custom HTMLAttributes for existing extensions
+      StarterKit.configure({
+        // Configure built-in extensions with custom styling
+        blockquote: {
+          HTMLAttributes: {
+            class: 'border-l-4 border-gray-300 dark:border-gray-600 pl-4 italic text-gray-700 dark:text-gray-300',
+          },
+        },
+        codeBlock: {
+          HTMLAttributes: {
+            class: 'bg-gray-100 dark:bg-gray-800 p-4 rounded-lg font-mono text-sm border',
+          },
+        },
+        // Link is included in StarterKit v3 by default
+        link: {
+          openOnClick: false,
+          HTMLAttributes: {
+            class: 'text-blue-600 dark:text-blue-400 hover:underline cursor-pointer',
+          },
+        },
+      }),
+      
+      // Additional extensions not included in StarterKit
       TextStyle,
       Color,
-      Underline,
       TextAlign.configure({
         types: ['heading', 'paragraph'],
         alignments: ['left', 'center', 'right', 'justify'],
@@ -105,22 +121,6 @@ export const RichTextEditor: React.FC<RichTextEditorProps> = ({
       Image.configure({
         HTMLAttributes: {
           class: 'max-w-full h-auto rounded-lg',
-        },
-      }),
-      Link.configure({
-        openOnClick: false,
-        HTMLAttributes: {
-          class: 'text-blue-600 dark:text-blue-400 hover:underline cursor-pointer',
-        },
-      }),
-      CodeBlock.configure({
-        HTMLAttributes: {
-          class: 'bg-gray-100 dark:bg-gray-800 p-4 rounded-lg font-mono text-sm border',
-        },
-      }),
-      Blockquote.configure({
-        HTMLAttributes: {
-          class: 'border-l-4 border-gray-300 dark:border-gray-600 pl-4 italic text-gray-700 dark:text-gray-300',
         },
       }),
       Table.configure({
@@ -143,9 +143,6 @@ export const RichTextEditor: React.FC<RichTextEditorProps> = ({
         HTMLAttributes: {
           class: 'border border-gray-300 dark:border-gray-600 p-2',
         },
-      }),
-      FloatingMenu.configure({
-        element: null, // Will be rendered inline, not as floating element
       }),
     ],
     content: value,
@@ -703,7 +700,7 @@ export const RichTextEditor: React.FC<RichTextEditorProps> = ({
             size="sm"
             onClick={() => setShowFloatingToolbar(!showFloatingToolbar)}
             className={showFloatingToolbar ? 'bg-accent text-accent-foreground' : ''}
-            title={showFloatingToolbar ? 'Hide Floating Toolbar' : 'Show Floating Toolbar - Pin toolbar for long content editing'}
+            title={showFloatingToolbar ? 'Hide Sticky Toolbar' : 'Pin Sticky Toolbar - Keep essential tools visible while scrolling through long content'}
           >
             <Pin className={`h-4 w-4 ${showFloatingToolbar ? 'rotate-45' : ''} transition-transform`} />
           </Button>
@@ -722,75 +719,154 @@ export const RichTextEditor: React.FC<RichTextEditorProps> = ({
           </div>
         </div>
 
-        {/* Floating Toolbar - Sticky during long content editing */}
+        {/* Fixed Floating Toolbar - Always visible while scrolling */}
         {showFloatingToolbar && editor && (
-          <div className="sticky top-0 z-10 bg-background border border-border rounded-lg shadow-lg mx-4 mb-4 p-2 flex flex-wrap items-center gap-1">
-            <Button
-              type="button"
-              variant="ghost"
-              size="sm"
-              onClick={() => editor.chain().focus().toggleBold().run()}
-              className={`h-8 w-8 p-0 ${editor.isActive('bold') ? 'bg-accent text-accent-foreground' : ''}`}
-              title="Bold"
-            >
-              <Bold className="h-4 w-4" />
-            </Button>
-            <Button
-              type="button"
-              variant="ghost"
-              size="sm"
-              onClick={() => editor.chain().focus().toggleItalic().run()}
-              className={`h-8 w-8 p-0 ${editor.isActive('italic') ? 'bg-accent text-accent-foreground' : ''}`}
-              title="Italic"
-            >
-              <Italic className="h-4 w-4" />
-            </Button>
-            <Button
-              type="button"
-              variant="ghost"
-              size="sm"
-              onClick={() => editor.chain().focus().toggleUnderline().run()}
-              className={`h-8 w-8 p-0 ${editor.isActive('underline') ? 'bg-accent text-accent-foreground' : ''}`}
-              title="Underline"
-            >
-              <UnderlineIcon className="h-4 w-4" />
-            </Button>
-            
-            <Separator orientation="vertical" className="h-6" />
-            
-            <Button
-              type="button"
-              variant="ghost"
-              size="sm"
-              onClick={() => editor.chain().focus().toggleBulletList().run()}
-              className={`h-8 w-8 p-0 ${editor.isActive('bulletList') ? 'bg-accent text-accent-foreground' : ''}`}
-              title="Bullet List"
-            >
-              <List className="h-4 w-4" />
-            </Button>
-            <Button
-              type="button"
-              variant="ghost"
-              size="sm"
-              onClick={() => editor.chain().focus().toggleHeading({ level: 2 }).run()}
-              className={`h-8 px-2 text-sm ${editor.isActive('heading', { level: 2 }) ? 'bg-accent text-accent-foreground' : ''}`}
-              title="Heading 2"
-            >
-              H2
-            </Button>
-            
-            <Separator orientation="vertical" className="h-6" />
-            
-            <Button
-              type="button"
-              variant="ghost"
-              size="sm"
-              onClick={() => setShowFloatingToolbar(false)}
-              className="h-8 w-8 p-0"
-              title="Hide Floating Toolbar"
-            >
-              <Pin className="h-4 w-4 rotate-45" />
-            </Button>
+          <div className="fixed top-4 left-1/2 transform -translate-x-1/2 z-50 animate-in slide-in-from-top-2 fade-in duration-300">
+            <div className="bg-card dark:bg-gray-800 border border-border rounded-xl shadow-xl backdrop-blur-sm bg-opacity-95 dark:bg-opacity-95">
+              <div className="flex flex-wrap items-center gap-1 p-3">
+                {/* Essential Formatting */}
+                <div className="flex items-center gap-1">
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => editor.chain().focus().toggleBold().run()}
+                    className={`h-9 w-9 p-0 rounded-lg ${editor.isActive('bold') ? 'bg-primary text-primary-foreground shadow-sm' : 'hover:bg-accent'}`}
+                    title="Bold (Ctrl+B)"
+                  >
+                    <Bold className="h-4 w-4" />
+                  </Button>
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => editor.chain().focus().toggleItalic().run()}
+                    className={`h-9 w-9 p-0 rounded-lg ${editor.isActive('italic') ? 'bg-primary text-primary-foreground shadow-sm' : 'hover:bg-accent'}`}
+                    title="Italic (Ctrl+I)"
+                  >
+                    <Italic className="h-4 w-4" />
+                  </Button>
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => editor.chain().focus().toggleUnderline().run()}
+                    className={`h-9 w-9 p-0 rounded-lg ${editor.isActive('underline') ? 'bg-primary text-primary-foreground shadow-sm' : 'hover:bg-accent'}`}
+                    title="Underline (Ctrl+U)"
+                  >
+                    <UnderlineIcon className="h-4 w-4" />
+                  </Button>
+                </div>
+
+                <Separator orientation="vertical" className="h-6 mx-1" />
+                
+                {/* Headings */}
+                <div className="flex items-center gap-1">
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => editor.chain().focus().toggleHeading({ level: 1 }).run()}
+                    className={`h-9 px-2 rounded-lg text-sm font-medium ${editor.isActive('heading', { level: 1 }) ? 'bg-primary text-primary-foreground shadow-sm' : 'hover:bg-accent'}`}
+                    title="Heading 1"
+                  >
+                    H1
+                  </Button>
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => editor.chain().focus().toggleHeading({ level: 2 }).run()}
+                    className={`h-9 px-2 rounded-lg text-sm font-medium ${editor.isActive('heading', { level: 2 }) ? 'bg-primary text-primary-foreground shadow-sm' : 'hover:bg-accent'}`}
+                    title="Heading 2"
+                  >
+                    H2
+                  </Button>
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => editor.chain().focus().toggleHeading({ level: 3 }).run()}
+                    className={`h-9 px-2 rounded-lg text-sm font-medium ${editor.isActive('heading', { level: 3 }) ? 'bg-primary text-primary-foreground shadow-sm' : 'hover:bg-accent'}`}
+                    title="Heading 3"
+                  >
+                    H3
+                  </Button>
+                </div>
+
+                <Separator orientation="vertical" className="h-6 mx-1" />
+                
+                {/* Lists */}
+                <div className="flex items-center gap-1">
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => editor.chain().focus().toggleBulletList().run()}
+                    className={`h-9 w-9 p-0 rounded-lg ${editor.isActive('bulletList') ? 'bg-primary text-primary-foreground shadow-sm' : 'hover:bg-accent'}`}
+                    title="Bullet List"
+                  >
+                    <List className="h-4 w-4" />
+                  </Button>
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => editor.chain().focus().toggleOrderedList().run()}
+                    className={`h-9 w-9 p-0 rounded-lg ${editor.isActive('orderedList') ? 'bg-primary text-primary-foreground shadow-sm' : 'hover:bg-accent'}`}
+                    title="Numbered List"
+                  >
+                    <ListOrdered className="h-4 w-4" />
+                  </Button>
+                </div>
+
+                <Separator orientation="vertical" className="h-6 mx-1" />
+                
+                {/* Additional Tools */}
+                <div className="flex items-center gap-1">
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => editor.chain().focus().toggleBlockquote().run()}
+                    className={`h-9 w-9 p-0 rounded-lg ${editor.isActive('blockquote') ? 'bg-primary text-primary-foreground shadow-sm' : 'hover:bg-accent'}`}
+                    title="Quote"
+                  >
+                    <Quote className="h-4 w-4" />
+                  </Button>
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    size="sm"
+                    onClick={addLink}
+                    className={`h-9 w-9 p-0 rounded-lg ${editor.isActive('link') ? 'bg-primary text-primary-foreground shadow-sm' : 'hover:bg-accent'}`}
+                    title="Add Link"
+                  >
+                    <LinkIcon className="h-4 w-4" />
+                  </Button>
+                </div>
+
+                <Separator orientation="vertical" className="h-6 mx-1" />
+                
+                {/* Content Stats - Mini */}
+                <div className="flex items-center gap-2 text-xs text-muted-foreground px-2">
+                  <span className="bg-muted/50 px-2 py-1 rounded-md">{wordCount}w</span>
+                  <span className="bg-muted/50 px-2 py-1 rounded-md">{readingTime}m</span>
+                </div>
+
+                {/* Close Button */}
+                <Button
+                  type="button"
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => setShowFloatingToolbar(false)}
+                  className="h-9 w-9 p-0 ml-auto rounded-lg hover:bg-red-100 dark:hover:bg-red-900/20"
+                  title="Hide Floating Toolbar"
+                >
+                  <Pin className="h-4 w-4 rotate-45 text-red-600 dark:text-red-400" />
+                </Button>
+              </div>
+            </div>
           </div>
         )}
         

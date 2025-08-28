@@ -647,7 +647,7 @@ export const RichTextEditor: React.FC<RichTextEditorProps> = ({
             variant="ghost"
             size="sm"
             onClick={() => editor.chain().focus().toggleBulletList().run()}
-            className={editor.isActive('bulletList') ? 'bg-accent text-accent-foreground' : ''}
+            className={editor.isActive('bulletList') ? 'bg-primary text-primary-foreground shadow-sm border-primary' : 'hover:bg-accent'}
             title="Bullet List - Create unordered list with bullet points"
           >
             <List className="h-4 w-4" />
@@ -658,7 +658,7 @@ export const RichTextEditor: React.FC<RichTextEditorProps> = ({
             variant="ghost" 
             size="sm"
             onClick={() => editor.chain().focus().toggleOrderedList().run()}
-            className={editor.isActive('orderedList') ? 'bg-accent text-accent-foreground' : ''}
+            className={editor.isActive('orderedList') ? 'bg-primary text-primary-foreground shadow-sm border-primary' : 'hover:bg-accent'}
             title="Numbered List - Create ordered list with numbers"
           >
             <ListOrdered className="h-4 w-4" />
@@ -946,7 +946,7 @@ export const RichTextEditor: React.FC<RichTextEditorProps> = ({
         <div className="p-4 min-h-[300px] bg-background dark:bg-gray-800 text-foreground">
           <EditorContent 
             editor={editor} 
-            className="prose prose-sm max-w-none focus:outline-none focus-within:ring-2 focus-within:ring-primary/20 dark:prose-invert [&_ul]:list-disc [&_ul]:list-inside [&_ul]:my-2 [&_ol]:list-decimal [&_ol]:list-inside [&_ol]:my-2 [&_li]:my-1 [&_.ProseMirror]:min-h-[250px] [&_.ProseMirror]:outline-none [&_.ProseMirror]:cursor-text [&_h1]:text-3xl [&_h1]:font-bold [&_h1]:mb-4 [&_h1]:mt-6 [&_h2]:text-2xl [&_h2]:font-bold [&_h2]:mb-3 [&_h2]:mt-5 [&_h3]:text-xl [&_h3]:font-semibold [&_h3]:mb-2 [&_h3]:mt-4 [&_h4]:text-lg [&_h4]:font-semibold [&_h4]:mb-2 [&_h4]:mt-3 [&_h5]:text-base [&_h5]:font-semibold [&_h5]:mb-1 [&_h5]:mt-2 [&_h6]:text-sm [&_h6]:font-semibold [&_h6]:mb-1 [&_h6]:mt-2"
+            className="prose prose-sm max-w-none focus:outline-none focus-within:ring-2 focus-within:ring-primary/20 dark:prose-invert [&_ul]:list-disc [&_ul]:list-outside [&_ul]:ml-6 [&_ul]:my-2 [&_ol]:list-decimal [&_ol]:list-outside [&_ol]:ml-6 [&_ol]:my-2 [&_li]:my-1 [&_li]:ml-0 [&_.ProseMirror]:min-h-[250px] [&_.ProseMirror]:outline-none [&_.ProseMirror]:cursor-text [&_h1]:text-3xl [&_h1]:font-bold [&_h1]:mb-4 [&_h1]:mt-6 [&_h2]:text-2xl [&_h2]:font-bold [&_h2]:mb-3 [&_h2]:mt-5 [&_h3]:text-xl [&_h3]:font-semibold [&_h3]:mb-2 [&_h3]:mt-4 [&_h4]:text-lg [&_h4]:font-semibold [&_h4]:mb-2 [&_h4]:mt-3 [&_h5]:text-base [&_h5]:font-semibold [&_h5]:mb-1 [&_h5]:mt-2 [&_h6]:text-sm [&_h6]:font-semibold [&_h6]:mb-1 [&_h6]:mt-2"
             placeholder={placeholder}
           />
         </div>

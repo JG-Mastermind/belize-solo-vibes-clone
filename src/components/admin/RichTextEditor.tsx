@@ -51,7 +51,9 @@ import {
   AlignCenter,
   AlignRight,
   AlignJustify,
-  Highlighter
+  Highlighter,
+  Indent,
+  Outdent
 } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { analyzeBlogSEO, type SEOAnalysisResult } from '@/lib/ai/generateBlogSEO';
@@ -492,6 +494,37 @@ export const RichTextEditor: React.FC<RichTextEditorProps> = ({
               </div>
             </div>
           </div>
+
+          <Separator orientation="vertical" className="mx-1 h-6" />
+
+          {/* Indent Controls - Simple and working */}
+          <Button
+            type="button"
+            variant="ghost"
+            size="sm"
+            onClick={() => {
+              if (editor) {
+                editor.chain().focus().sinkListItem('listItem').run();
+              }
+            }}
+            title="Indent List Item"
+          >
+            <Indent className="h-4 w-4" />
+          </Button>
+          
+          <Button
+            type="button"
+            variant="ghost"
+            size="sm"
+            onClick={() => {
+              if (editor) {
+                editor.chain().focus().liftListItem('listItem').run();
+              }
+            }}
+            title="Outdent List Item"
+          >
+            <Outdent className="h-4 w-4" />
+          </Button>
           
           <Button
             type="button"

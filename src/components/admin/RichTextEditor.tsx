@@ -27,6 +27,9 @@ import {
   Heading1, 
   Heading2, 
   Heading3,
+  Type as Heading4,
+  Type as Heading5,
+  Type as Heading6,
   Image as ImageIcon,
   Target,
   TrendingUp,
@@ -87,6 +90,9 @@ export const RichTextEditor: React.FC<RichTextEditorProps> = ({
       // Configure StarterKit with custom HTMLAttributes for existing extensions
       StarterKit.configure({
         // Configure built-in extensions with custom styling
+        heading: {
+          levels: [1, 2, 3, 4, 5, 6], // Explicit H1-H6 support for SEO headings
+        },
         blockquote: {
           HTMLAttributes: {
             class: 'border-l-4 border-gray-300 dark:border-gray-600 pl-4 italic text-gray-700 dark:text-gray-300',
@@ -266,25 +272,45 @@ export const RichTextEditor: React.FC<RichTextEditorProps> = ({
           const markdown = e.target?.result as string;
           if (markdown && editor) {
             try {
-              // Use marked to convert markdown to HTML
+              // Use marked to convert markdown to HTML with enhanced heading support
               const html = await marked.parse(markdown, {
                 async: true,
                 breaks: true,
-                gfm: true
+                gfm: true,
+                headerIds: true, // Enable heading IDs for SEO
+                headerPrefix: 'heading-' // Prefix for better SEO structure
               });
               
+              // Validate heading structure for SEO feedback
+              const validateMarkdownStructure = (htmlContent: string) => {
+                const headingMatches = htmlContent.match(/<h[1-6][^>]*>/g) || [];
+                const headingCount = headingMatches.length;
+                
+                if (headingCount === 0) {
+                  toast.warning('No headings detected. Consider adding headings for better SEO structure.');
+                } else if (headingCount > 0) {
+                  const levels = headingMatches.map(h => parseInt(h.match(/h([1-6])/)?.[1] || '1'));
+                  const uniqueLevels = [...new Set(levels)].sort();
+                  toast.success(`✅ Imported ${headingCount} headings (H${uniqueLevels.join(', H')}) - Great for SEO!`);
+                }
+                
+                return htmlContent;
+              };
+              
+              const validatedHtml = validateMarkdownStructure(html);
+              
               // Use TipTap's native setContent with the parsed HTML
-              editor.commands.setContent(html);
-              onChange(html);
+              editor.commands.setContent(validatedHtml);
+              onChange(validatedHtml);
               
               if (onMarkdownImport) {
-                onMarkdownImport(html);
+                onMarkdownImport(validatedHtml);
               }
               
-              toast.success('Markdown file imported successfully!');
+              toast.success('🌴 Markdown file imported successfully for BelizeVibes!');
             } catch (parseError) {
               console.error('Error parsing markdown:', parseError);
-              toast.error('Failed to parse markdown content');
+              toast.error('Failed to parse markdown content. Please check file format.');
             }
           }
         };
@@ -535,6 +561,39 @@ export const RichTextEditor: React.FC<RichTextEditorProps> = ({
           >
             <Heading3 className="h-4 w-4" />
           </Button>
+          
+          <Button
+            type="button"
+            variant="ghost"
+            size="sm"
+            onClick={() => editor.chain().focus().toggleHeading({ level: 4 }).run()}
+            className={editor.isActive('heading', { level: 4 }) ? 'bg-accent text-accent-foreground' : ''}
+            title="Subheading (H4) - Perfect for SEO structure"
+          >
+            <Heading4 className="h-4 w-4" />
+          </Button>
+          
+          <Button
+            type="button"
+            variant="ghost"
+            size="sm"
+            onClick={() => editor.chain().focus().toggleHeading({ level: 5 }).run()}
+            className={editor.isActive('heading', { level: 5 }) ? 'bg-accent text-accent-foreground' : ''}
+            title="Minor Heading (H5) - Great for detailed sections"
+          >
+            <Heading5 className="h-4 w-4" />
+          </Button>
+          
+          <Button
+            type="button"
+            variant="ghost"
+            size="sm"
+            onClick={() => editor.chain().focus().toggleHeading({ level: 6 }).run()}
+            className={editor.isActive('heading', { level: 6 }) ? 'bg-accent text-accent-foreground' : ''}
+            title="Smallest Heading (H6) - For fine details"
+          >
+            <Heading6 className="h-4 w-4" />
+          </Button>
 
           <div className="relative group">
             <Button
@@ -770,6 +829,36 @@ export const RichTextEditor: React.FC<RichTextEditorProps> = ({
                   >
                     H3
                   </Button>
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => editor.chain().focus().toggleHeading({ level: 4 }).run()}
+                    className={`h-9 px-2 rounded-lg text-sm font-medium ${editor.isActive('heading', { level: 4 }) ? 'bg-primary text-primary-foreground shadow-sm' : 'hover:bg-accent'}`}
+                    title="Heading 4 - SEO Subheading"
+                  >
+                    H4
+                  </Button>
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => editor.chain().focus().toggleHeading({ level: 5 }).run()}
+                    className={`h-9 px-2 rounded-lg text-sm font-medium ${editor.isActive('heading', { level: 5 }) ? 'bg-primary text-primary-foreground shadow-sm' : 'hover:bg-accent'}`}
+                    title="Heading 5 - Detail Section"
+                  >
+                    H5
+                  </Button>
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => editor.chain().focus().toggleHeading({ level: 6 }).run()}
+                    className={`h-9 px-2 rounded-lg text-sm font-medium ${editor.isActive('heading', { level: 6 }) ? 'bg-primary text-primary-foreground shadow-sm' : 'hover:bg-accent'}`}
+                    title="Heading 6 - Fine Details"
+                  >
+                    H6
+                  </Button>
                 </div>
 
                 <Separator orientation="vertical" className="h-6 mx-1" />
@@ -852,7 +941,7 @@ export const RichTextEditor: React.FC<RichTextEditorProps> = ({
         <div className="p-4 min-h-[300px] bg-background dark:bg-gray-800 text-foreground">
           <EditorContent 
             editor={editor} 
-            className="prose prose-sm max-w-none focus:outline-none focus-within:ring-2 focus-within:ring-primary/20 dark:prose-invert [&_ul]:list-disc [&_ul]:list-inside [&_ul]:my-2 [&_ol]:list-decimal [&_ol]:list-inside [&_ol]:my-2 [&_li]:my-1 [&_.ProseMirror]:min-h-[250px] [&_.ProseMirror]:outline-none [&_.ProseMirror]:cursor-text"
+            className="prose prose-sm max-w-none focus:outline-none focus-within:ring-2 focus-within:ring-primary/20 dark:prose-invert [&_ul]:list-disc [&_ul]:list-inside [&_ul]:my-2 [&_ol]:list-decimal [&_ol]:list-inside [&_ol]:my-2 [&_li]:my-1 [&_.ProseMirror]:min-h-[250px] [&_.ProseMirror]:outline-none [&_.ProseMirror]:cursor-text [&_h1]:text-3xl [&_h1]:font-bold [&_h1]:mb-4 [&_h1]:mt-6 [&_h2]:text-2xl [&_h2]:font-bold [&_h2]:mb-3 [&_h2]:mt-5 [&_h3]:text-xl [&_h3]:font-semibold [&_h3]:mb-2 [&_h3]:mt-4 [&_h4]:text-lg [&_h4]:font-semibold [&_h4]:mb-2 [&_h4]:mt-3 [&_h5]:text-base [&_h5]:font-semibold [&_h5]:mb-1 [&_h5]:mt-2 [&_h6]:text-sm [&_h6]:font-semibold [&_h6]:mb-1 [&_h6]:mt-2"
             placeholder={placeholder}
           />
         </div>

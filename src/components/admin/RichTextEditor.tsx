@@ -53,7 +53,8 @@ import {
   AlignJustify,
   Highlighter,
   Indent,
-  Outdent
+  Outdent,
+  Pin
 } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { analyzeBlogSEO, type SEOAnalysisResult } from '@/lib/ai/generateBlogSEO';
@@ -84,6 +85,7 @@ export const RichTextEditor: React.FC<RichTextEditorProps> = ({
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [wordCount, setWordCount] = useState(0);
   const [readingTime, setReadingTime] = useState(0);
+  const [showFloatingToolbar, setShowFloatingToolbar] = useState(false);
   const editor = useEditor({
     extensions: [
       StarterKit,
@@ -694,6 +696,20 @@ export const RichTextEditor: React.FC<RichTextEditorProps> = ({
 
           <Separator orientation="vertical" className="mx-2 h-6" />
 
+          {/* Floating Toolbar Toggle */}
+          <Button
+            type="button"
+            variant="ghost"
+            size="sm"
+            onClick={() => setShowFloatingToolbar(!showFloatingToolbar)}
+            className={showFloatingToolbar ? 'bg-accent text-accent-foreground' : ''}
+            title={showFloatingToolbar ? 'Hide Floating Toolbar' : 'Show Floating Toolbar - Pin toolbar for long content editing'}
+          >
+            <Pin className={`h-4 w-4 ${showFloatingToolbar ? 'rotate-45' : ''} transition-transform`} />
+          </Button>
+
+          <Separator orientation="vertical" className="mx-2 h-6" />
+
           {/* Content Stats */}
           <div className="flex items-center gap-4 text-sm text-muted-foreground ml-auto">
             <span>{wordCount} words</span>
@@ -705,6 +721,78 @@ export const RichTextEditor: React.FC<RichTextEditorProps> = ({
             )}
           </div>
         </div>
+
+        {/* Floating Toolbar - Sticky during long content editing */}
+        {showFloatingToolbar && editor && (
+          <div className="sticky top-0 z-10 bg-background border border-border rounded-lg shadow-lg mx-4 mb-4 p-2 flex flex-wrap items-center gap-1">
+            <Button
+              type="button"
+              variant="ghost"
+              size="sm"
+              onClick={() => editor.chain().focus().toggleBold().run()}
+              className={`h-8 w-8 p-0 ${editor.isActive('bold') ? 'bg-accent text-accent-foreground' : ''}`}
+              title="Bold"
+            >
+              <Bold className="h-4 w-4" />
+            </Button>
+            <Button
+              type="button"
+              variant="ghost"
+              size="sm"
+              onClick={() => editor.chain().focus().toggleItalic().run()}
+              className={`h-8 w-8 p-0 ${editor.isActive('italic') ? 'bg-accent text-accent-foreground' : ''}`}
+              title="Italic"
+            >
+              <Italic className="h-4 w-4" />
+            </Button>
+            <Button
+              type="button"
+              variant="ghost"
+              size="sm"
+              onClick={() => editor.chain().focus().toggleUnderline().run()}
+              className={`h-8 w-8 p-0 ${editor.isActive('underline') ? 'bg-accent text-accent-foreground' : ''}`}
+              title="Underline"
+            >
+              <UnderlineIcon className="h-4 w-4" />
+            </Button>
+            
+            <Separator orientation="vertical" className="h-6" />
+            
+            <Button
+              type="button"
+              variant="ghost"
+              size="sm"
+              onClick={() => editor.chain().focus().toggleBulletList().run()}
+              className={`h-8 w-8 p-0 ${editor.isActive('bulletList') ? 'bg-accent text-accent-foreground' : ''}`}
+              title="Bullet List"
+            >
+              <List className="h-4 w-4" />
+            </Button>
+            <Button
+              type="button"
+              variant="ghost"
+              size="sm"
+              onClick={() => editor.chain().focus().toggleHeading({ level: 2 }).run()}
+              className={`h-8 px-2 text-sm ${editor.isActive('heading', { level: 2 }) ? 'bg-accent text-accent-foreground' : ''}`}
+              title="Heading 2"
+            >
+              H2
+            </Button>
+            
+            <Separator orientation="vertical" className="h-6" />
+            
+            <Button
+              type="button"
+              variant="ghost"
+              size="sm"
+              onClick={() => setShowFloatingToolbar(false)}
+              className="h-8 w-8 p-0"
+              title="Hide Floating Toolbar"
+            >
+              <Pin className="h-4 w-4 rotate-45" />
+            </Button>
+          </div>
+        )}
         
         {/* Editor Content */}
         <div className="p-4 min-h-[300px] bg-background dark:bg-gray-800 text-foreground">

@@ -96,7 +96,8 @@ export const RichTextEditor: React.FC<RichTextEditorProps> = ({
         },
         blockquote: {
           HTMLAttributes: {
-            class: 'border-l-4 border-gray-300 dark:border-gray-600 pl-4 italic text-gray-700 dark:text-gray-300',
+            class: 'border-l-4 pl-6 py-0 my-2 italic text-gray-600 dark:text-gray-400 ml-12 relative',
+            style: 'border-left-color: #f97316;',
           },
         },
         codeBlock: {
@@ -669,7 +670,7 @@ export const RichTextEditor: React.FC<RichTextEditorProps> = ({
             variant="ghost"
             size="sm"
             onClick={() => editor.chain().focus().toggleBlockquote().run()}
-            className={editor.isActive('blockquote') ? 'bg-accent text-accent-foreground' : ''}
+            className={editor.isActive('blockquote') ? 'bg-primary text-primary-foreground shadow-sm border-primary' : 'hover:bg-accent'}
             title="Quote Block - Highlight important quotes or citations"
           >
             <Quote className="h-4 w-4" />
@@ -946,7 +947,7 @@ export const RichTextEditor: React.FC<RichTextEditorProps> = ({
         <div className="p-4 min-h-[300px] bg-background dark:bg-gray-800 text-foreground">
           <EditorContent 
             editor={editor} 
-            className="prose prose-sm max-w-none focus:outline-none focus-within:ring-2 focus-within:ring-primary/20 dark:prose-invert [&_ul]:list-disc [&_ul]:list-outside [&_ul]:ml-6 [&_ul]:my-2 [&_ol]:list-decimal [&_ol]:list-outside [&_ol]:ml-6 [&_ol]:my-2 [&_li]:my-1 [&_li]:ml-0 [&_.ProseMirror]:min-h-[250px] [&_.ProseMirror]:outline-none [&_.ProseMirror]:cursor-text [&_h1]:text-3xl [&_h1]:font-bold [&_h1]:mb-4 [&_h1]:mt-6 [&_h2]:text-2xl [&_h2]:font-bold [&_h2]:mb-3 [&_h2]:mt-5 [&_h3]:text-xl [&_h3]:font-semibold [&_h3]:mb-2 [&_h3]:mt-4 [&_h4]:text-lg [&_h4]:font-semibold [&_h4]:mb-2 [&_h4]:mt-3 [&_h5]:text-base [&_h5]:font-semibold [&_h5]:mb-1 [&_h5]:mt-2 [&_h6]:text-sm [&_h6]:font-semibold [&_h6]:mb-1 [&_h6]:mt-2"
+            className="prose prose-sm max-w-none focus:outline-none focus-within:ring-2 focus-within:ring-primary/20 dark:prose-invert [&_ul]:list-disc [&_ul]:list-outside [&_ul]:ml-6 [&_ul]:my-2 [&_ol]:list-decimal [&_ol]:list-outside [&_ol]:ml-6 [&_ol]:my-2 [&_li]:my-1 [&_li]:ml-0 [&_blockquote]:text-base [&_.ProseMirror]:min-h-[250px] [&_.ProseMirror]:outline-none [&_.ProseMirror]:cursor-text [&_h1]:text-3xl [&_h1]:font-bold [&_h1]:mb-4 [&_h1]:mt-6 [&_h2]:text-2xl [&_h2]:font-bold [&_h2]:mb-3 [&_h2]:mt-5 [&_h3]:text-xl [&_h3]:font-semibold [&_h3]:mb-2 [&_h3]:mt-4 [&_h4]:text-lg [&_h4]:font-semibold [&_h4]:mb-2 [&_h4]:mt-3 [&_h5]:text-base [&_h5]:font-semibold [&_h5]:mb-1 [&_h5]:mt-2 [&_h6]:text-sm [&_h6]:font-semibold [&_h6]:mb-1 [&_h6]:mt-2"
             placeholder={placeholder}
           />
         </div>

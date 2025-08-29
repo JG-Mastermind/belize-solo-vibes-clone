@@ -83,7 +83,7 @@ const MobileMenu = () => {
           ref={triggerRef}
           variant="ghost" 
           size="icon" 
-          className="md:hidden min-w-[44px] min-h-[44px] p-2"
+          className="min-w-[44px] min-h-[44px] p-2"
           aria-expanded={isOpen}
           aria-controls="mobile-menu"
         >

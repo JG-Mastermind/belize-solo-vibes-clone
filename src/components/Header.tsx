@@ -133,16 +133,7 @@ const Header = () => {
             <span className="font-playfair font-bold text-xl text-foreground">BelizeVibes</span>
           </Link>
           
-          <nav className="hidden md:flex items-center space-x-6">
-            <NavLink to="/" className={navLinkClass} end>{t('navigation:home')}</NavLink>
-            <NavLink to={getLocalizedPath('/adventures')} className={navLinkClass}>{t('navigation:adventures')}</NavLink>
-            <button onClick={handleReviewsClick} className="text-sm font-medium transition-all duration-200 rounded-md px-3 py-2 text-muted-foreground hover:text-foreground hover:bg-accent md:hover:bg-gray-100 dark:md:hover:bg-gray-800">{t('navigation:reviews')}</button>
-            <NavLink to={getLocalizedPath('/about')} className={navLinkClass}>{t('navigation:about')}</NavLink>
-            <NavLink to={getLocalizedPath('/blog')} className={navLinkClass}>{t('navigation:blog')}</NavLink>
-            <NavLink to={getLocalizedPath('/safety')} className={navLinkClass}>{t('navigation:safety')}</NavLink>
-            <NavLink to={getLocalizedPath('/contact')} className={navLinkClass}>{t('navigation:contact')}</NavLink>
-            <NavLink to="/admin/login" className={navLinkClass}>Admin</NavLink>
-          </nav>
+          {/* Desktop navigation removed - now using hamburger menu for all screen sizes */}
 
           <div className="flex items-center space-x-2 md:space-x-3">
             <DropdownMenu>
@@ -191,9 +182,8 @@ const Header = () => {
             
             <ModeToggle />
             
-            <div className="md:hidden">
-              <MobileMenu />
-            </div>
+            {/* Hamburger menu now available on all screen sizes */}
+            <MobileMenu />
           </div>
         </div>
       </div>

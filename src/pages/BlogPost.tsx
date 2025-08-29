@@ -33,6 +33,7 @@ import {
   type ImageLoadResult
 } from '@/utils/blogImageUtils';
 import { BlogVideoModal } from '@/components/blog/BlogVideoModal';
+import { useFAQStructuredData } from '@/components/blog/FAQStructuredData';
 
 interface BlogPostData {
   id: string;
@@ -93,6 +94,14 @@ const BlogPost: React.FC = () => {
   const [showVideoModal, setShowVideoModal] = useState(false);
   const [selectedVideoUrl, setSelectedVideoUrl] = useState<string>('');
   const [selectedVideoTitle, setSelectedVideoTitle] = useState<string>('');
+  
+  // FAQ Structured Data
+  const currentUrl = window.location.href;
+  const { FAQStructuredDataComponent } = useFAQStructuredData(
+    blogPost?.title || '',
+    currentUrl,
+    blogPost?.content || ''
+  );
 
   // Initialize analytics tracking when blog post loads
   useEffect(() => {
@@ -329,6 +338,9 @@ const BlogPost: React.FC = () => {
         <meta name="twitter:description" content={translatedContent?.excerpt || blogPost?.excerpt} />
         <meta name="twitter:image" content={getBlogPostImageUrl(blogPost)} />
       </Helmet>
+      
+      {/* FAQ Structured Data for SEO */}
+      <FAQStructuredDataComponent />
 
       <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-green-50 dark:bg-gradient-to-br dark:from-blue-950/20 dark:via-background dark:to-blue-950/10">
         {/* Reading Progress Bar */}
@@ -459,7 +471,33 @@ const BlogPost: React.FC = () => {
                     {/* Article Body */}
                     <div 
                       data-blog-content
-                      className="prose prose-xl max-w-none leading-relaxed text-lg [&_ul]:list-disc [&_ul]:list-outside [&_ul]:ml-6 [&_ul]:my-2 [&_ol]:list-decimal [&_ol]:list-outside [&_ol]:ml-6 [&_ol]:my-2 [&_li]:my-1 [&_li]:ml-0 [&_pre]:bg-gray-100 dark:[&_pre]:bg-gray-800 [&_pre]:p-4 [&_pre]:rounded-lg [&_pre]:font-mono [&_pre]:text-sm [&_pre]:border [&_code]:font-mono [&_h1]:text-3xl [&_h1]:font-bold [&_h1]:mb-6 [&_h1]:mt-8 [&_h2]:text-2xl [&_h2]:font-bold [&_h2]:mb-4 [&_h2]:mt-6 [&_h3]:text-xl [&_h3]:font-semibold [&_h3]:mb-3 [&_h3]:mt-5 [&_h4]:text-lg [&_h4]:font-semibold [&_h4]:mb-3 [&_h4]:mt-4 [&_h5]:text-base [&_h5]:font-semibold [&_h5]:mb-2 [&_h5]:mt-3 [&_h6]:text-sm [&_h6]:font-semibold [&_h6]:mb-2 [&_h6]:mt-2 [&_h1]:text-gray-900 [&_h2]:text-gray-800 [&_h3]:text-gray-700 [&_h4]:text-gray-700 [&_h5]:text-gray-600 [&_h6]:text-gray-600 dark:[&_h1]:text-white dark:[&_h2]:text-gray-100 dark:[&_h3]:text-gray-200 dark:[&_h4]:text-gray-200 dark:[&_h5]:text-gray-300 dark:[&_h6]:text-gray-300 [&_iframe[data-video-modal]]:cursor-pointer [&_iframe[data-video-modal]]:transition-all [&_iframe[data-video-modal]:hover]:opacity-90 [&_iframe[data-video-modal]:hover]:scale-[1.02] [&_.youtube-video-embed]:cursor-pointer [&_.youtube-video-embed]:transition-all [&_.youtube-video-embed:hover]:opacity-90 [&_.youtube-video-embed:hover]:scale-[1.02]"
+                      className={`
+                        prose prose-xl max-w-none leading-relaxed text-lg
+                        [&_ul]:list-disc [&_ul]:list-outside [&_ul]:ml-6 [&_ul]:my-2
+                        [&_ol]:list-decimal [&_ol]:list-outside [&_ol]:ml-6 [&_ol]:my-2
+                        [&_li]:my-1 [&_li]:ml-0
+                        [&_pre]:bg-gray-100 dark:[&_pre]:bg-gray-800 [&_pre]:p-4 [&_pre]:rounded-lg [&_pre]:font-mono [&_pre]:text-sm [&_pre]:border
+                        [&_code]:font-mono
+                        [&_h1]:text-3xl [&_h1]:font-bold [&_h1]:mb-6 [&_h1]:mt-8
+                        [&_h2]:text-2xl [&_h2]:font-bold [&_h2]:mb-4 [&_h2]:mt-6
+                        [&_h3]:text-xl [&_h3]:font-semibold [&_h3]:mb-3 [&_h3]:mt-5
+                        [&_h4]:text-lg [&_h4]:font-semibold [&_h4]:mb-3 [&_h4]:mt-4
+                        [&_h5]:text-base [&_h5]:font-semibold [&_h5]:mb-2 [&_h5]:mt-3
+                        [&_h6]:text-sm [&_h6]:font-semibold [&_h6]:mb-2 [&_h6]:mt-2
+                        [&_h1]:text-gray-900 [&_h2]:text-gray-800 [&_h3]:text-gray-700 [&_h4]:text-gray-700 [&_h5]:text-gray-600 [&_h6]:text-gray-600
+                        dark:[&_h1]:text-white dark:[&_h2]:text-gray-100 dark:[&_h3]:text-gray-200 dark:[&_h4]:text-gray-200 dark:[&_h5]:text-gray-300 dark:[&_h6]:text-gray-300
+                        [&_iframe[data-video-modal]]:cursor-pointer [&_iframe[data-video-modal]]:transition-all [&_iframe[data-video-modal]:hover]:opacity-90 [&_iframe[data-video-modal]:hover]:scale-[1.02]
+                        [&_.youtube-video-embed]:cursor-pointer [&_.youtube-video-embed]:transition-all [&_.youtube-video-embed:hover]:opacity-90 [&_.youtube-video-embed:hover]:scale-[1.02]
+                        [&_details]:bg-gradient-to-br [&_details]:from-belize-blue-50 [&_details]:to-belize-green-50 dark:[&_details]:from-gray-900 dark:[&_details]:to-gray-800
+                        [&_details]:rounded-2xl [&_details]:border [&_details]:border-belize-blue-100 dark:[&_details]:border-gray-700 [&_details]:shadow-lg [&_details]:my-6
+                        [&_details]:transition-all [&_details]:duration-300 hover:[&_details]:shadow-xl hover:[&_details]:transform hover:[&_details]:translate-y-[-2px] [&_details]:overflow-hidden
+                        [&_details_summary]:cursor-pointer [&_details_summary]:p-4 [&_details_summary]:font-semibold [&_details_summary]:text-belize-green-700 dark:[&_details_summary]:text-belize-green-400
+                        hover:[&_details_summary]:text-belize-orange-600 dark:hover:[&_details_summary]:text-belize-orange-400 [&_details_summary]:transition-colors
+                        [&_details_summary]:flex [&_details_summary]:items-center [&_details_summary]:gap-2 [&_details_summary]:select-none
+                        [&_details_summary]:bg-gradient-to-r [&_details_summary]:from-transparent [&_details_summary]:to-white/20 dark:[&_details_summary]:to-black/20
+                        [&_details_>div]:px-4 [&_details_>div]:pb-4 [&_details_>div]:pt-2 [&_details_>div]:text-gray-700 dark:[&_details_>div]:text-gray-300
+                        [&_details_>div]:bg-white/50 dark:[&_details_>div]:bg-black/20 [&_details_>div]:backdrop-blur-sm
+                      `.trim()}
                       dangerouslySetInnerHTML={{ __html: translatedContent?.content || blogPost.content }}
                     />
 

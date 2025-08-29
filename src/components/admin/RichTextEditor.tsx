@@ -12,6 +12,7 @@ import { TextStyle } from '@tiptap/extension-text-style';
 import { Color } from '@tiptap/extension-color';
 import { TextAlign } from '@tiptap/extension-text-align';
 import { Highlight } from '@tiptap/extension-highlight';
+import { Details, DetailsSummary, DetailsContent } from '@tiptap/extension-details';
 import Youtube from '@tiptap/extension-youtube';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -56,11 +57,13 @@ import {
   Indent,
   Outdent,
   Pin,
+  HelpCircle,
   Video
 } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { analyzeBlogSEO, type SEOAnalysisResult } from '@/lib/ai/generateBlogSEO';
 import { toast } from 'sonner';
+import { FAQTemplateModal } from '@/components/admin/FAQTemplateModal';
 import { YouTubeModal } from './YouTubeModal';
 
 interface RichTextEditorProps {
@@ -90,6 +93,7 @@ export const RichTextEditor: React.FC<RichTextEditorProps> = ({
   const [readingTime, setReadingTime] = useState(0);
   const [, forceUpdate] = useState({});
   const [showFloatingToolbar, setShowFloatingToolbar] = useState(false);
+  const [showFAQModal, setShowFAQModal] = useState(false);
   const [showYouTubeModal, setShowYouTubeModal] = useState(false);
   const editor = useEditor({
     extensions: [
@@ -174,6 +178,22 @@ export const RichTextEditor: React.FC<RichTextEditorProps> = ({
         HTMLAttributes: {
           class: 'youtube-video-embed rounded-lg shadow-lg cursor-pointer',
           'data-video-modal': 'true'
+        }
+      }),
+      Details.configure({
+        persist: true,
+        HTMLAttributes: {
+          class: 'belize-faq-section bg-gradient-to-br from-belize-blue-50 to-belize-green-50 dark:from-gray-900 dark:to-gray-800 rounded-2xl border border-belize-blue-100 dark:border-gray-700 shadow-lg my-6 transition-all duration-300 hover:shadow-xl hover:transform hover:translate-y-[-2px] overflow-hidden'
+        }
+      }),
+      DetailsSummary.configure({
+        HTMLAttributes: {
+          class: 'cursor-pointer p-4 font-semibold text-belize-green-700 dark:text-belize-green-400 hover:text-belize-orange-600 dark:hover:text-belize-orange-400 transition-colors flex items-center gap-2 select-none bg-gradient-to-r from-transparent to-white/20 dark:to-black/20'
+        }
+      }),
+      DetailsContent.configure({
+        HTMLAttributes: {
+          class: 'px-4 pb-4 pt-2 text-gray-700 dark:text-gray-300 bg-white/50 dark:bg-black/20 backdrop-blur-sm'
         }
       }),
     ],
@@ -397,6 +417,26 @@ export const RichTextEditor: React.FC<RichTextEditorProps> = ({
     if (editor && url) {
       editor.chain().focus().setYouTubeVideo({ src: url }).run();
       setShowYouTubeModal(false);
+    }
+  }, [editor]);
+
+  const handleAddFAQ = useCallback(() => {
+    setShowFAQModal(true);
+  }, []);
+
+  const handleFAQInsert = useCallback((question: string, answer: string) => {
+    if (editor && question && answer) {
+      const faqContent = `
+        <details>
+          <summary><span style="font-size: 1.1em;">❓</span> ${question}</summary>
+          <div style="display: flex; align-items: flex-start; gap: 8px; margin-top: 8px;">
+            <span style="color: #10b981; font-size: 1.1em; margin-top: 2px;">✅</span>
+            <p style="margin: 0; flex: 1;">${answer}</p>
+          </div>
+        </details>
+      `;
+      editor.chain().focus().insertContent(faqContent).run();
+      setShowFAQModal(false);
     }
   }, [editor]);
 
@@ -787,6 +827,17 @@ export const RichTextEditor: React.FC<RichTextEditorProps> = ({
             <Video className="h-4 w-4" />
           </Button>
 
+          <Button
+            type="button"
+            variant="ghost"
+            size="sm"
+            onClick={handleAddFAQ}
+            title="Add FAQ Section - Insert tourism Q&A with professional templates"
+            className="hover:bg-belize-orange-100 dark:hover:bg-belize-orange-900/20"
+          >
+            <HelpCircle className="h-4 w-4" />
+          </Button>
+
           <Separator orientation="vertical" className="mx-2 h-6" />
 
           {/* Import */}
@@ -983,6 +1034,16 @@ export const RichTextEditor: React.FC<RichTextEditorProps> = ({
                   >
                     <LinkIcon className="h-4 w-4" />
                   </Button>
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    size="sm"
+                    onClick={handleAddFAQ}
+                    className="h-9 w-9 p-0 rounded-lg hover:bg-belize-orange-100 dark:hover:bg-belize-orange-900/20"
+                    title="Add FAQ"
+                  >
+                    <HelpCircle className="h-4 w-4" />
+                  </Button>
                 </div>
 
                 <Separator orientation="vertical" className="h-6 mx-1" />
@@ -1159,6 +1220,13 @@ export const RichTextEditor: React.FC<RichTextEditorProps> = ({
         isOpen={showYouTubeModal}
         onClose={() => setShowYouTubeModal(false)}
         onInsert={handleYouTubeInsert}
+      />
+
+      {/* FAQ Template Modal */}
+      <FAQTemplateModal
+        isOpen={showFAQModal}
+        onClose={() => setShowFAQModal(false)}
+        onInsert={handleFAQInsert}
       />
     </div>
   );

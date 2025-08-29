@@ -7,6 +7,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed - TIPTAP CODE BLOCK EXTENSION & HEADLESS RENDERING 🔧 (August 29, 2025)
+- **CodeBlock Extension Fix**: Resolved non-functional code block feature in TipTap rich text editor
+  - **Root Cause**: CodeBlock extension not properly imported separately from StarterKit in TipTap v3
+  - **Solution**: Added `import CodeBlock from '@tiptap/extension-code-block'` and moved configuration outside StarterKit
+  - **Headless Rendering**: Added missing code block styling to BlogPost component for proper `<pre><code>` rendering
+  - **Result**: Code blocks now display with gray background, monospace font, and proper styling in both editor and blog posts
+  - **Styling**: `bg-gray-100 dark:bg-gray-800 p-4 rounded-lg font-mono text-sm border` applied consistently
+
 ### Fixed - RICH TEXT EDITOR IMAGE UPLOAD ISSUE 🖼️ (August 29, 2025)
 - **Image Upload Fix**: Resolved "image failed to load" issue in TipTap rich text editor
   - **Root Cause**: RichTextEditor was uploading to wrong Supabase bucket (`tours` instead of `blog_images`)

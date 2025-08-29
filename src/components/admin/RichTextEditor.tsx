@@ -3,6 +3,7 @@ import { useEditor, EditorContent, BubbleMenu } from '@tiptap/react';
 import { marked } from 'marked';
 import StarterKit from '@tiptap/starter-kit';
 import Image from '@tiptap/extension-image';
+import CodeBlock from '@tiptap/extension-code-block';
 import { Table } from '@tiptap/extension-table';
 import { TableRow } from '@tiptap/extension-table-row';
 import { TableHeader } from '@tiptap/extension-table-header';
@@ -100,11 +101,6 @@ export const RichTextEditor: React.FC<RichTextEditorProps> = ({
             style: 'border-left-color: #f97316;',
           },
         },
-        codeBlock: {
-          HTMLAttributes: {
-            class: 'bg-gray-100 dark:bg-gray-800 p-4 rounded-lg font-mono text-sm border',
-          },
-        },
         // Link is included in StarterKit v3 by default
         link: {
           openOnClick: false,
@@ -135,6 +131,11 @@ export const RichTextEditor: React.FC<RichTextEditorProps> = ({
           loading: 'lazy',
           referrerpolicy: 'no-referrer',
           crossorigin: 'anonymous',
+        },
+      }),
+      CodeBlock.configure({
+        HTMLAttributes: {
+          class: 'bg-gray-100 dark:bg-gray-800 p-4 rounded-lg font-mono text-sm border',
         },
       }),
       Table.configure({

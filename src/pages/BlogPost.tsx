@@ -32,6 +32,7 @@ import {
   getBlogPostImageUrlAsync,
   type ImageLoadResult
 } from '@/utils/blogImageUtils';
+import { BlogVideoModal } from '@/components/blog/BlogVideoModal';
 
 interface BlogPostData {
   id: string;
@@ -89,6 +90,9 @@ const BlogPost: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [readingProgress, setReadingProgress] = useState(0);
   const [isLiked, setIsLiked] = useState(false);
+  const [showVideoModal, setShowVideoModal] = useState(false);
+  const [selectedVideoUrl, setSelectedVideoUrl] = useState<string>('');
+  const [selectedVideoTitle, setSelectedVideoTitle] = useState<string>('');
 
   // Initialize analytics tracking when blog post loads
   useEffect(() => {
@@ -97,6 +101,52 @@ const BlogPost: React.FC = () => {
       return cleanup;
     }
   }, [blogPost?.slug]);
+
+  // Handle YouTube iframe clicks for modal
+  useEffect(() => {
+    const handleVideoClick = (event: Event) => {
+      const target = event.target as HTMLElement;
+      
+      // Check if clicked element is a YouTube iframe or has youtube-video-embed class
+      if (target.tagName === 'IFRAME' || target.classList.contains('youtube-video-embed')) {
+        const iframe = target.tagName === 'IFRAME' ? target as HTMLIFrameElement : target.querySelector('iframe') as HTMLIFrameElement;
+        
+        if (iframe && iframe.src) {
+          // Extract video URL from iframe src
+          const videoUrl = iframe.src;
+          const videoTitle = iframe.title || 'YouTube Video';
+          
+          // Prevent default iframe behavior
+          event.preventDefault();
+          event.stopPropagation();
+          
+          // Open video in modal
+          setSelectedVideoUrl(videoUrl);
+          setSelectedVideoTitle(videoTitle);
+          setShowVideoModal(true);
+        }
+      }
+    };
+
+    // Add click listeners to blog content
+    const blogContent = document.querySelector('[data-blog-content]');
+    if (blogContent) {
+      blogContent.addEventListener('click', handleVideoClick);
+      
+      // Also add listeners specifically to YouTube iframes
+      const youtubeIframes = blogContent.querySelectorAll('iframe[src*="youtube"], iframe[src*="youtu.be"], .youtube-video-embed iframe');
+      youtubeIframes.forEach(iframe => {
+        iframe.addEventListener('click', handleVideoClick);
+      });
+
+      return () => {
+        blogContent.removeEventListener('click', handleVideoClick);
+        youtubeIframes.forEach(iframe => {
+          iframe.removeEventListener('click', handleVideoClick);
+        });
+      };
+    }
+  }, [blogPost?.content]); // Re-run when content changes
 
 
   // Fetch blog post from Supabase
@@ -408,7 +458,8 @@ const BlogPost: React.FC = () => {
 
                     {/* Article Body */}
                     <div 
-                      className="prose prose-xl max-w-none leading-relaxed text-lg [&_ul]:list-disc [&_ul]:list-outside [&_ul]:ml-6 [&_ul]:my-2 [&_ol]:list-decimal [&_ol]:list-outside [&_ol]:ml-6 [&_ol]:my-2 [&_li]:my-1 [&_li]:ml-0 [&_pre]:bg-gray-100 dark:[&_pre]:bg-gray-800 [&_pre]:p-4 [&_pre]:rounded-lg [&_pre]:font-mono [&_pre]:text-sm [&_pre]:border [&_code]:font-mono [&_h1]:text-3xl [&_h1]:font-bold [&_h1]:mb-6 [&_h1]:mt-8 [&_h2]:text-2xl [&_h2]:font-bold [&_h2]:mb-4 [&_h2]:mt-6 [&_h3]:text-xl [&_h3]:font-semibold [&_h3]:mb-3 [&_h3]:mt-5 [&_h4]:text-lg [&_h4]:font-semibold [&_h4]:mb-3 [&_h4]:mt-4 [&_h5]:text-base [&_h5]:font-semibold [&_h5]:mb-2 [&_h5]:mt-3 [&_h6]:text-sm [&_h6]:font-semibold [&_h6]:mb-2 [&_h6]:mt-2 [&_h1]:text-gray-900 [&_h2]:text-gray-800 [&_h3]:text-gray-700 [&_h4]:text-gray-700 [&_h5]:text-gray-600 [&_h6]:text-gray-600 dark:[&_h1]:text-white dark:[&_h2]:text-gray-100 dark:[&_h3]:text-gray-200 dark:[&_h4]:text-gray-200 dark:[&_h5]:text-gray-300 dark:[&_h6]:text-gray-300"
+                      data-blog-content
+                      className="prose prose-xl max-w-none leading-relaxed text-lg [&_ul]:list-disc [&_ul]:list-outside [&_ul]:ml-6 [&_ul]:my-2 [&_ol]:list-decimal [&_ol]:list-outside [&_ol]:ml-6 [&_ol]:my-2 [&_li]:my-1 [&_li]:ml-0 [&_pre]:bg-gray-100 dark:[&_pre]:bg-gray-800 [&_pre]:p-4 [&_pre]:rounded-lg [&_pre]:font-mono [&_pre]:text-sm [&_pre]:border [&_code]:font-mono [&_h1]:text-3xl [&_h1]:font-bold [&_h1]:mb-6 [&_h1]:mt-8 [&_h2]:text-2xl [&_h2]:font-bold [&_h2]:mb-4 [&_h2]:mt-6 [&_h3]:text-xl [&_h3]:font-semibold [&_h3]:mb-3 [&_h3]:mt-5 [&_h4]:text-lg [&_h4]:font-semibold [&_h4]:mb-3 [&_h4]:mt-4 [&_h5]:text-base [&_h5]:font-semibold [&_h5]:mb-2 [&_h5]:mt-3 [&_h6]:text-sm [&_h6]:font-semibold [&_h6]:mb-2 [&_h6]:mt-2 [&_h1]:text-gray-900 [&_h2]:text-gray-800 [&_h3]:text-gray-700 [&_h4]:text-gray-700 [&_h5]:text-gray-600 [&_h6]:text-gray-600 dark:[&_h1]:text-white dark:[&_h2]:text-gray-100 dark:[&_h3]:text-gray-200 dark:[&_h4]:text-gray-200 dark:[&_h5]:text-gray-300 dark:[&_h6]:text-gray-300 [&_iframe[data-video-modal]]:cursor-pointer [&_iframe[data-video-modal]]:transition-all [&_iframe[data-video-modal]:hover]:opacity-90 [&_iframe[data-video-modal]:hover]:scale-[1.02] [&_.youtube-video-embed]:cursor-pointer [&_.youtube-video-embed]:transition-all [&_.youtube-video-embed:hover]:opacity-90 [&_.youtube-video-embed:hover]:scale-[1.02]"
                       dangerouslySetInnerHTML={{ __html: translatedContent?.content || blogPost.content }}
                     />
 
@@ -512,6 +563,14 @@ const BlogPost: React.FC = () => {
 
         {/* Scroll to Top Button */}
         <ScrollToTopButton />
+
+        {/* Video Modal */}
+        <BlogVideoModal
+          isOpen={showVideoModal}
+          onClose={() => setShowVideoModal(false)}
+          videoUrl={selectedVideoUrl}
+          videoTitle={selectedVideoTitle}
+        />
       </div>
     </>
   );

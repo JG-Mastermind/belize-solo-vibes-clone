@@ -12,6 +12,7 @@ import { TextStyle } from '@tiptap/extension-text-style';
 import { Color } from '@tiptap/extension-color';
 import { TextAlign } from '@tiptap/extension-text-align';
 import { Highlight } from '@tiptap/extension-highlight';
+import Youtube from '@tiptap/extension-youtube';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -54,11 +55,13 @@ import {
   Highlighter,
   Indent,
   Outdent,
-  Pin
+  Pin,
+  Video
 } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { analyzeBlogSEO, type SEOAnalysisResult } from '@/lib/ai/generateBlogSEO';
 import { toast } from 'sonner';
+import { YouTubeModal } from './YouTubeModal';
 
 interface RichTextEditorProps {
   value: string;
@@ -87,6 +90,7 @@ export const RichTextEditor: React.FC<RichTextEditorProps> = ({
   const [readingTime, setReadingTime] = useState(0);
   const [, forceUpdate] = useState({});
   const [showFloatingToolbar, setShowFloatingToolbar] = useState(false);
+  const [showYouTubeModal, setShowYouTubeModal] = useState(false);
   const editor = useEditor({
     extensions: [
       // Configure StarterKit with custom HTMLAttributes for existing extensions
@@ -158,6 +162,19 @@ export const RichTextEditor: React.FC<RichTextEditorProps> = ({
         HTMLAttributes: {
           class: 'border border-gray-300 dark:border-gray-600 p-2',
         },
+      }),
+      Youtube.configure({
+        inline: false,
+        width: 640,
+        height: 360,
+        controls: true,
+        nocookie: true,
+        allowFullscreen: true,
+        modestBranding: true,
+        HTMLAttributes: {
+          class: 'youtube-video-embed rounded-lg shadow-lg cursor-pointer',
+          'data-video-modal': 'true'
+        }
       }),
     ],
     content: value,
@@ -369,6 +386,17 @@ export const RichTextEditor: React.FC<RichTextEditorProps> = ({
   const addTable = useCallback(() => {
     if (editor) {
       editor.chain().focus().insertTable({ rows: 3, cols: 3, withHeaderRow: true }).run();
+    }
+  }, [editor]);
+
+  const handleAddYouTube = useCallback(() => {
+    setShowYouTubeModal(true);
+  }, []);
+
+  const handleYouTubeInsert = useCallback((url: string) => {
+    if (editor && url) {
+      editor.chain().focus().setYouTubeVideo({ src: url }).run();
+      setShowYouTubeModal(false);
     }
   }, [editor]);
 
@@ -749,6 +777,16 @@ export const RichTextEditor: React.FC<RichTextEditorProps> = ({
             <TableIcon className="h-4 w-4" />
           </Button>
 
+          <Button
+            type="button"
+            variant="ghost"
+            size="sm"
+            onClick={handleAddYouTube}
+            title="Embed YouTube Video - Add YouTube videos to your content"
+          >
+            <Video className="h-4 w-4" />
+          </Button>
+
           <Separator orientation="vertical" className="mx-2 h-6" />
 
           {/* Import */}
@@ -1115,6 +1153,13 @@ export const RichTextEditor: React.FC<RichTextEditorProps> = ({
           </CardContent>
         </Card>
       )}
+
+      {/* YouTube Modal */}
+      <YouTubeModal
+        isOpen={showYouTubeModal}
+        onClose={() => setShowYouTubeModal(false)}
+        onInsert={handleYouTubeInsert}
+      />
     </div>
   );
 };

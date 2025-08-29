@@ -171,9 +171,8 @@ const Header = () => {
               <UserProfile />
             ) : (
               <Button 
-                variant="ghost" 
+                variant="outline" 
                 size="icon" 
-                className={cn("text-foreground", scrolled ? "hover:bg-accent" : "hover:bg-foreground/10")}
                 onClick={() => setIsSignInModalOpen(true)}
               >
                 <User className="h-5 w-5" />

@@ -117,60 +117,213 @@ const App = () => {
             <Sonner />
             <BrowserRouter>
               <ScrollToTop />
-              <Suspense fallback={<PageLoader />}>
-                <Routes>
+              {/* Separate Suspense boundaries for static vs dynamic routes */}
+              <Routes>
               <Route path="/" element={<AppLayout />}>
-                <Route index element={<LandingPage />} />
-                <Route path="adventures" element={<AdventuresPage />} />
-                <Route path="contact" element={<Contact />} />
-                <Route path="blog" element={<Blog />} />
-                <Route path="blog/:slug" element={<BlogPost />} />
-                <Route path="fr-ca/blog" element={<Blog />} />
-                <Route path="fr-ca/blog/:frenchSlug" element={<BlogPost />} />
-                <Route path="about" element={<About />} />
-                <Route path="safety" element={<Safety />} />
-                <Route path="fr-ca/securite" element={<Safety />} />
-                <Route path="fr-ca/a-propos" element={<About />} />
-                <Route path="fr-ca/contact" element={<Contact />} />
-                <Route path="fr-ca/aventures" element={<AdventuresPage />} />
-                <Route path="fr-ca/tours/:frenchSlug" element={<AdventureDetail />} />
-                <Route path="tours/:slug" element={<AdventureDetail />} />
-                <Route path="tours/:id" element={<AdventureDetail />} />
-                <Route path="booking" element={<Booking />} />
-                <Route path="booking/:id" element={<BookingCheckout />} />
-                <Route path="booking/success" element={<SuccessPage />} />
-                <Route path="confirmation" element={<Confirmation />} />
-                <Route path="test-ai" element={<TestAI />} />
-                <Route path="auth/callback" element={<AuthCallback />} />
-                <Route path="auth/reset-password" element={<ResetPassword />} />
-                <Route path="*" element={<NotFound />} />
+                {/* Static routes - shared Suspense boundary (no data dependencies) */}
+                <Route index element={
+                  <Suspense fallback={<PageLoader />}>
+                    <LandingPage />
+                  </Suspense>
+                } />
+                <Route path="adventures" element={
+                  <Suspense fallback={<PageLoader />}>
+                    <AdventuresPage />
+                  </Suspense>
+                } />
+                <Route path="contact" element={
+                  <Suspense fallback={<PageLoader />}>
+                    <Contact />
+                  </Suspense>
+                } />
+                <Route path="about" element={
+                  <Suspense fallback={<PageLoader />}>
+                    <About />
+                  </Suspense>
+                } />
+                <Route path="safety" element={
+                  <Suspense fallback={<PageLoader />}>
+                    <Safety />
+                  </Suspense>
+                } />
+                <Route path="fr-ca/securite" element={
+                  <Suspense fallback={<PageLoader />}>
+                    <Safety />
+                  </Suspense>
+                } />
+                <Route path="fr-ca/a-propos" element={
+                  <Suspense fallback={<PageLoader />}>
+                    <About />
+                  </Suspense>
+                } />
+                <Route path="fr-ca/contact" element={
+                  <Suspense fallback={<PageLoader />}>
+                    <Contact />
+                  </Suspense>
+                } />
+                <Route path="fr-ca/aventures" element={
+                  <Suspense fallback={<PageLoader />}>
+                    <AdventuresPage />
+                  </Suspense>
+                } />
+                
+                {/* Dynamic routes with data dependencies - separate Suspense boundaries */}
+                <Route path="blog" element={
+                  <Suspense fallback={<PageLoader />}>
+                    <Blog />
+                  </Suspense>
+                } />
+                <Route path="blog/:slug" element={
+                  <Suspense fallback={<PageLoader />}>
+                    <BlogPost />
+                  </Suspense>
+                } />
+                <Route path="fr-ca/blog" element={
+                  <Suspense fallback={<PageLoader />}>
+                    <Blog />
+                  </Suspense>
+                } />
+                <Route path="fr-ca/blog/:frenchSlug" element={
+                  <Suspense fallback={<PageLoader />}>
+                    <BlogPost />
+                  </Suspense>
+                } />
+                <Route path="fr-ca/tours/:frenchSlug" element={
+                  <Suspense fallback={<PageLoader />}>
+                    <AdventureDetail />
+                  </Suspense>
+                } />
+                <Route path="tours/:slug" element={
+                  <Suspense fallback={<PageLoader />}>
+                    <AdventureDetail />
+                  </Suspense>
+                } />
+                <Route path="tours/:id" element={
+                  <Suspense fallback={<PageLoader />}>
+                    <AdventureDetail />
+                  </Suspense>
+                } />
+                
+                {/* Booking flow routes - separate boundary */}
+                <Route path="booking" element={
+                  <Suspense fallback={<PageLoader />}>
+                    <Booking />
+                  </Suspense>
+                } />
+                <Route path="booking/:id" element={
+                  <Suspense fallback={<PageLoader />}>
+                    <BookingCheckout />
+                  </Suspense>
+                } />
+                <Route path="booking/success" element={
+                  <Suspense fallback={<PageLoader />}>
+                    <SuccessPage />
+                  </Suspense>
+                } />
+                <Route path="confirmation" element={
+                  <Suspense fallback={<PageLoader />}>
+                    <Confirmation />
+                  </Suspense>
+                } />
+                <Route path="test-ai" element={
+                  <Suspense fallback={<PageLoader />}>
+                    <TestAI />
+                  </Suspense>
+                } />
+                <Route path="auth/callback" element={
+                  <Suspense fallback={<PageLoader />}>
+                    <AuthCallback />
+                  </Suspense>
+                } />
+                <Route path="auth/reset-password" element={
+                  <Suspense fallback={<PageLoader />}>
+                    <ResetPassword />
+                  </Suspense>
+                } />
+                <Route path="*" element={
+                  <Suspense fallback={<PageLoader />}>
+                    <NotFound />
+                  </Suspense>
+                } />
               </Route>
               
-              <Route path="/dashboard" element={<DashboardLayout />}>
-                <Route index element={<AdminDashboard />} />
-                <Route path="admin" element={<AdminDashboard />} />
-                <Route path="guide" element={<GuideDashboard />} />
-                <Route path="traveler" element={<TravelerDashboard />} />
-                <Route path="bookings" element={<Bookings />} />
-                <Route path="calendar" element={<Calendar />} />
-                <Route path="adventures" element={<AdminAdventures />} />
-                <Route path="messages" element={<Messages />} />
-                <Route path="payouts" element={<Payouts />} />
-                <Route path="create-adventure" element={<CreateAdventure />} />
+              {/* Dashboard routes with granular Suspense for dynamic pages */}
+              <Route path="/dashboard" element={
+                <Suspense fallback={<PageLoader />}>
+                  <DashboardLayout />
+                </Suspense>
+              }>
+                {/* Frequently used dashboard routes - separate boundaries to reduce cascade */}
+                <Route index element={
+                  <Suspense fallback={<PageLoader />}>
+                    <AdminDashboard />
+                  </Suspense>
+                } />
+                <Route path="admin" element={
+                  <Suspense fallback={<PageLoader />}>
+                    <AdminDashboard />
+                  </Suspense>
+                } />
+                <Route path="guide" element={
+                  <Suspense fallback={<PageLoader />}>
+                    <GuideDashboard />
+                  </Suspense>
+                } />
+                <Route path="traveler" element={
+                  <Suspense fallback={<PageLoader />}>
+                    <TravelerDashboard />
+                  </Suspense>
+                } />
+                <Route path="bookings" element={
+                  <Suspense fallback={<PageLoader />}>
+                    <Bookings />
+                  </Suspense>
+                } />
+                <Route path="calendar" element={
+                  <Suspense fallback={<PageLoader />}>
+                    <Calendar />
+                  </Suspense>
+                } />
+                <Route path="adventures" element={
+                  <Suspense fallback={<PageLoader />}>
+                    <AdminAdventures />
+                  </Suspense>
+                } />
+                <Route path="messages" element={
+                  <Suspense fallback={<PageLoader />}>
+                    <Messages />
+                  </Suspense>
+                } />
+                <Route path="payouts" element={
+                  <Suspense fallback={<PageLoader />}>
+                    <Payouts />
+                  </Suspense>
+                } />
+                <Route path="create-adventure" element={
+                  <Suspense fallback={<PageLoader />}>
+                    <CreateAdventure />
+                  </Suspense>
+                } />
                 <Route path="users" element={
-                  <RequireRole allowedRoles={['admin', 'super_admin']}>
-                    <UserManager />
-                  </RequireRole>
+                  <Suspense fallback={<PageLoader />}>
+                    <RequireRole allowedRoles={['admin', 'super_admin']}>
+                      <UserManager />
+                    </RequireRole>
+                  </Suspense>
                 } />
                 <Route path="alerts" element={
-                  <RequireRole allowedRoles={['admin', 'super_admin']}>
-                    <SafetyAlerts />
-                  </RequireRole>
+                  <Suspense fallback={<PageLoader />}>
+                    <RequireRole allowedRoles={['admin', 'super_admin']}>
+                      <SafetyAlerts />
+                    </RequireRole>
+                  </Suspense>
                 } />
                 <Route path="analytics" element={
-                  <RequireRole allowedRoles={['admin', 'super_admin']}>
-                    <AnalyticsDashboard />
-                  </RequireRole>
+                  <Suspense fallback={<PageLoader />}>
+                    <RequireRole allowedRoles={['admin', 'super_admin']}>
+                      <AnalyticsDashboard />
+                    </RequireRole>
+                  </Suspense>
                 } />
                 <Route path="api-management/metrics" element={
                   <RequireRole allowedRoles={['super_admin']}>
@@ -262,9 +415,23 @@ const App = () => {
                     <FinancialTransactionsDisputes />
                   </RequireRole>
                 } />
-                <Route path="create-post" element={<CreatePost />} />
-                <Route path="blog-posts" element={<BlogPosts />} />
-                <Route path="edit-post/:id" element={<EditPost />} />
+                {/* Blog management routes - separate boundaries for data fetching + component loading */}
+                <Route path="create-post" element={
+                  <Suspense fallback={<PageLoader />}>
+                    <CreatePost />
+                  </Suspense>
+                } />
+                <Route path="blog-posts" element={
+                  <Suspense fallback={<PageLoader />}>
+                    <BlogPosts />
+                  </Suspense>
+                } />
+                {/* EditPost - Critical fix for triple lazy loading cascade */}
+                <Route path="edit-post/:id" element={
+                  <Suspense fallback={<PageLoader />}>
+                    <EditPost />
+                  </Suspense>
+                } />
                 <Route path="settings" element={<UserSettings />} />
               </Route>
               
@@ -284,14 +451,30 @@ const App = () => {
                 } />
               </Route>
               
-              <Route path="/admin/posts/new" element={<CreatePost />} />
-              <Route path="/admin/posts/edit/:id" element={<EditPost />} />
-              <Route path="/admin/accept" element={<AcceptInvitation />} />
-              <Route path="/admin/login" element={<AdminLogin />} />
+              {/* Standalone admin routes with individual Suspense boundaries */}
+              <Route path="/admin/posts/new" element={
+                <Suspense fallback={<PageLoader />}>
+                  <CreatePost />
+                </Suspense>
+              } />
+              <Route path="/admin/posts/edit/:id" element={
+                <Suspense fallback={<PageLoader />}>
+                  <EditPost />
+                </Suspense>
+              } />
+              <Route path="/admin/accept" element={
+                <Suspense fallback={<PageLoader />}>
+                  <AcceptInvitation />
+                </Suspense>
+              } />
+              <Route path="/admin/login" element={
+                <Suspense fallback={<PageLoader />}>
+                  <AdminLogin />
+                </Suspense>
+              } />
               
               <Route path="*" element={<NotFound />} />
               </Routes>
-              </Suspense>
             </BrowserRouter>
             </AdventureCreationProvider>
           </AuthProvider>

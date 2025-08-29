@@ -10,13 +10,9 @@ import { TranslationButton, TranslationStatus } from '@/components/ui/translatio
 import { useTranslation } from '@/hooks/useTranslation';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { supabase } from '@/integrations/supabase/client';
+import { RichTextEditor } from '@/components/admin/RichTextEditor';
 
-// Lazy load heavy TipTap editor to reduce main bundle size
-const RichTextEditor = lazy(() => 
-  import('@/components/admin/RichTextEditor').then(module => ({ 
-    default: module.RichTextEditor 
-  }))
-);
+// Keep AI panel lazy loaded as it's optional and heavy
 const AIBlogAssistantPanel = lazy(() => 
   import('@/components/admin/AIBlogAssistantPanel').then(module => ({ 
     default: module.AIBlogAssistantPanel 
@@ -467,32 +463,16 @@ export const BlogForm: React.FC<BlogFormProps> = ({
             <div className="mb-2">
               <Label htmlFor="content">Content</Label>
             </div>
-            <ComponentErrorBoundary>
-              <Suspense fallback={
-                <div className="animate-pulse bg-gray-200 dark:bg-gray-800 rounded-lg h-48 w-full">
-                  <div className="p-4 space-y-3">
-                    <div className="flex gap-2">
-                      <div className="h-8 bg-gray-300 dark:bg-gray-700 rounded w-16"></div>
-                      <div className="h-8 bg-gray-300 dark:bg-gray-700 rounded w-16"></div>
-                      <div className="h-8 bg-gray-300 dark:bg-gray-700 rounded w-16"></div>
-                    </div>
-                    <div className="h-32 bg-gray-300 dark:bg-gray-700 rounded w-full"></div>
-                    <div className="text-sm text-gray-500 dark:text-gray-400">Loading rich text editor...</div>
-                  </div>
-                </div>
-              }>
-                <RichTextEditor
-                  value={formData.content}
-                  onChange={(value) => updateField('content', value)}
-                  placeholder="Write your blog post content here..."
-                  seoKeywords={seoKeywords.split(',').map(k => k.trim()).filter(k => k.length > 0)}
-                  title={formData.title}
-                  excerpt={formData.excerpt}
-                  showSEOPanel={true}
-                  onMarkdownImport={handleMarkdownImport}
-                />
-              </Suspense>
-            </ComponentErrorBoundary>
+            <RichTextEditor
+              value={formData.content}
+              onChange={(value) => updateField('content', value)}
+              placeholder="Write your blog post content here..."
+              seoKeywords={seoKeywords.split(',').map(k => k.trim()).filter(k => k.length > 0)}
+              title={formData.title}
+              excerpt={formData.excerpt}
+              showSEOPanel={true}
+              onMarkdownImport={handleMarkdownImport}
+            />
           </div>
         </CardContent>
       </Card>
@@ -568,32 +548,16 @@ export const BlogForm: React.FC<BlogFormProps> = ({
             <div className="mb-2">
               <Label htmlFor="content_fr">Content (Contenu)</Label>
             </div>
-            <ComponentErrorBoundary>
-              <Suspense fallback={
-                <div className="animate-pulse bg-gray-200 dark:bg-gray-800 rounded-lg h-48 w-full">
-                  <div className="p-4 space-y-3">
-                    <div className="flex gap-2">
-                      <div className="h-8 bg-gray-300 dark:bg-gray-700 rounded w-16"></div>
-                      <div className="h-8 bg-gray-300 dark:bg-gray-700 rounded w-16"></div>
-                      <div className="h-8 bg-gray-300 dark:bg-gray-700 rounded w-16"></div>
-                    </div>
-                    <div className="h-32 bg-gray-300 dark:bg-gray-700 rounded w-full"></div>
-                    <div className="text-sm text-gray-500 dark:text-gray-400">Chargement de l'éditeur de texte...</div>
-                  </div>
-                </div>
-              }>
-                <RichTextEditor
-                  value={formData.content_fr}
-                  onChange={(value) => updateField('content_fr', value)}
-                  placeholder="Écrivez le contenu de votre blog en français ici..."
-                  seoKeywords={seoKeywords.split(',').map(k => k.trim()).filter(k => k.length > 0)}
-                  title={formData.title_fr}
-                  excerpt={formData.excerpt_fr}
-                  showSEOPanel={false}
-                  onMarkdownImport={(content) => updateField('content_fr', content)}
-                />
-              </Suspense>
-            </ComponentErrorBoundary>
+            <RichTextEditor
+              value={formData.content_fr}
+              onChange={(value) => updateField('content_fr', value)}
+              placeholder="Écrivez le contenu de votre blog en français ici..."
+              seoKeywords={seoKeywords.split(',').map(k => k.trim()).filter(k => k.length > 0)}
+              title={formData.title_fr}
+              excerpt={formData.excerpt_fr}
+              showSEOPanel={false}
+              onMarkdownImport={(content) => updateField('content_fr', content)}
+            />
           </div>
             </CardContent>
           </Card>

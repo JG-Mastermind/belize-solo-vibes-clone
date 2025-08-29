@@ -128,8 +128,13 @@ export const RichTextEditor: React.FC<RichTextEditorProps> = ({
         },
       }),
       Image.configure({
+        inline: false,
+        allowBase64: true,
         HTMLAttributes: {
           class: 'max-w-full h-auto rounded-lg',
+          loading: 'lazy',
+          referrerpolicy: 'no-referrer',
+          crossorigin: 'anonymous',
         },
       }),
       Table.configure({
@@ -226,6 +231,28 @@ export const RichTextEditor: React.FC<RichTextEditorProps> = ({
     updateContentStats(value);
   }, [value, updateContentStats]);
 
+  const insertImageSafe = useCallback((editor: typeof editor, rawUrl: string, alt = 'Image', title = '') => {
+    if (!editor) return;
+
+    const url = rawUrl?.trim();
+    if (!url) return;
+
+    try {
+      const u = new URL(url);
+      if (!['http:', 'https:', 'data:', 'blob:'].includes(u.protocol)) return;
+
+      const encoded = encodeURI(url);
+
+      editor.chain().focus().setImage({
+        src: encoded,
+        alt,
+        title,
+      }).run();
+    } catch {
+      return;
+    }
+  }, []);
+
   const handleImageUpload = useCallback(async () => {
     const input = document.createElement('input');
     input.type = 'file';
@@ -240,17 +267,17 @@ export const RichTextEditor: React.FC<RichTextEditorProps> = ({
         const fileName = `blog-${Date.now()}.${fileExt}`;
         
         const { data, error } = await supabase.storage
-          .from('tours')
-          .upload(`blog-images/${fileName}`, file);
+          .from('blog_images')
+          .upload(`${fileName}`, file);
 
         if (error) throw error;
 
         const { data: { publicUrl } } = supabase.storage
-          .from('tours')
+          .from('blog_images')
           .getPublicUrl(data.path);
 
         if (editor) {
-          editor.chain().focus().setImage({ src: publicUrl }).run();
+          insertImageSafe(editor, publicUrl, 'Uploaded image', 'Blog post image');
         }
         
         toast.success('Image uploaded successfully');
@@ -261,7 +288,7 @@ export const RichTextEditor: React.FC<RichTextEditorProps> = ({
     };
 
     input.click();
-  }, [editor]);
+  }, [editor, insertImageSafe]);
 
   const handleMarkdownUpload = useCallback(async () => {
     const input = document.createElement('input');

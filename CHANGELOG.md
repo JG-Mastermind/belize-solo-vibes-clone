@@ -7,6 +7,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed - RICH TEXT EDITOR IMAGE UPLOAD ISSUE 🖼️ (August 29, 2025)
+- **Image Upload Fix**: Resolved "image failed to load" issue in TipTap rich text editor
+  - **Root Cause**: RichTextEditor was uploading to wrong Supabase bucket (`tours` instead of `blog_images`)
+  - **Solution**: Fixed bucket reference from `.from('tours')` to `.from('blog_images')` 
+  - **Path Cleanup**: Simplified upload path from `blog-images/${fileName}` to `${fileName}` for direct bucket storage
+  - **Result**: Image uploads now work correctly with proper URL generation and display in editor
+  - **Enhanced Configuration**: Added CORS-safe Image extension config with `allowBase64`, `referrerpolicy`, `crossorigin`
+  - **URL Validation**: Added `insertImageSafe()` helper with protocol whitelist and encoding for secure image insertion
+
 ### Fixed - TIPTAP MARKDOWN IMPORT & SEO HEADING SUPPORT 🔧 (August 28, 2025)
 - **Rich Text Editor Markdown Import**: Resolved critical H2/H5 SEO heading rendering issues in TipTap editor
   - **Complete H1-H6 Support**: Added explicit heading levels [1,2,3,4,5,6] in StarterKit configuration

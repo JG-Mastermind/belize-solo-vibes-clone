@@ -12,6 +12,7 @@ import { TextStyle } from '@tiptap/extension-text-style';
 import { Color } from '@tiptap/extension-color';
 import { TextAlign } from '@tiptap/extension-text-align';
 import { Highlight } from '@tiptap/extension-highlight';
+import { Underline } from '@tiptap/extension-underline';
 import { Details, DetailsSummary, DetailsContent } from '@tiptap/extension-details';
 import Youtube from '@tiptap/extension-youtube';
 import { Button } from '@/components/ui/button';
@@ -103,6 +104,8 @@ export const RichTextEditor: React.FC<RichTextEditorProps> = ({
         heading: {
           levels: [1, 2, 3, 4, 5, 6], // Explicit H1-H6 support for SEO headings
         },
+        // Disable underline in StarterKit since we're adding it separately
+        underline: false,
         blockquote: {
           HTMLAttributes: {
             class: 'border-l-4 pl-6 py-0 my-2 italic text-gray-600 dark:text-gray-400 ml-12 relative',
@@ -121,6 +124,11 @@ export const RichTextEditor: React.FC<RichTextEditorProps> = ({
       // Additional extensions not included in StarterKit
       TextStyle,
       Color,
+      Underline.configure({
+        HTMLAttributes: {
+          class: 'underline decoration-2 underline-offset-2',
+        },
+      }),
       TextAlign.configure({
         types: ['heading', 'paragraph'],
         alignments: ['left', 'center', 'right', 'justify'],
@@ -313,7 +321,7 @@ export const RichTextEditor: React.FC<RichTextEditorProps> = ({
         
         const { data, error } = await supabase.storage
           .from('blog_images')
-          .upload(`${fileName}`, file);
+          .upload(`blog-images/${fileName}`, file);
 
         if (error) throw error;
 
@@ -1019,6 +1027,52 @@ export const RichTextEditor: React.FC<RichTextEditorProps> = ({
 
                 <Separator orientation="vertical" className="h-6 mx-1" />
                 
+                {/* Text Alignment */}
+                <div className="flex items-center gap-1">
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => editor.chain().focus().setTextAlign('left').run()}
+                    className={`h-9 w-9 p-0 rounded-lg ${editor.isActive({ textAlign: 'left' }) ? 'bg-primary text-primary-foreground shadow-sm' : 'hover:bg-accent'}`}
+                    title="Align Left"
+                  >
+                    <AlignLeft className="h-4 w-4" />
+                  </Button>
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => editor.chain().focus().setTextAlign('center').run()}
+                    className={`h-9 w-9 p-0 rounded-lg ${editor.isActive({ textAlign: 'center' }) ? 'bg-primary text-primary-foreground shadow-sm' : 'hover:bg-accent'}`}
+                    title="Center Text"
+                  >
+                    <AlignCenter className="h-4 w-4" />
+                  </Button>
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => editor.chain().focus().setTextAlign('right').run()}
+                    className={`h-9 w-9 p-0 rounded-lg ${editor.isActive({ textAlign: 'right' }) ? 'bg-primary text-primary-foreground shadow-sm' : 'hover:bg-accent'}`}
+                    title="Align Right"
+                  >
+                    <AlignRight className="h-4 w-4" />
+                  </Button>
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => editor.chain().focus().setTextAlign('justify').run()}
+                    className={`h-9 w-9 p-0 rounded-lg ${editor.isActive({ textAlign: 'justify' }) ? 'bg-primary text-primary-foreground shadow-sm' : 'hover:bg-accent'}`}
+                    title="Justify Text"
+                  >
+                    <AlignJustify className="h-4 w-4" />
+                  </Button>
+                </div>
+
+                <Separator orientation="vertical" className="h-6 mx-1" />
+                
                 {/* Additional Tools */}
                 <div className="flex items-center gap-1">
                   <Button
@@ -1040,6 +1094,16 @@ export const RichTextEditor: React.FC<RichTextEditorProps> = ({
                     title="Add Link"
                   >
                     <LinkIcon className="h-4 w-4" />
+                  </Button>
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    size="sm"
+                    onClick={handleImageUpload}
+                    className="h-9 w-9 p-0 rounded-lg hover:bg-accent"
+                    title="Upload Image"
+                  >
+                    <ImageIcon className="h-4 w-4" />
                   </Button>
                   <Button
                     type="button"

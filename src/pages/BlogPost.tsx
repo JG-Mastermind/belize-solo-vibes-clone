@@ -477,7 +477,12 @@ const BlogPost: React.FC = () => {
                         [&_ol]:list-decimal [&_ol]:list-outside [&_ol]:ml-6 [&_ol]:my-2
                         [&_li]:my-1 [&_li]:ml-0
                         [&_pre]:bg-gray-100 dark:[&_pre]:bg-gray-800 [&_pre]:p-4 [&_pre]:rounded-lg [&_pre]:font-mono [&_pre]:text-sm [&_pre]:border
-                        [&_code]:font-mono
+                        [&_code]:font-mono [&_code]:bg-gray-100 dark:[&_code]:bg-gray-800 [&_code]:px-1 [&_code]:rounded [&_code]:text-sm
+                        [&_u]:underline [&_u]:decoration-2 [&_u]:underline-offset-2
+                        [&_mark]:bg-yellow-200 dark:[&_mark]:bg-yellow-800 [&_mark]:px-1 [&_mark]:rounded
+                        [&_table]:border-collapse [&_table]:border [&_table]:border-gray-300 dark:[&_table]:border-gray-600 [&_table]:w-full [&_table]:my-4
+                        [&_th]:border [&_th]:border-gray-300 dark:[&_th]:border-gray-600 [&_th]:bg-gray-100 dark:[&_th]:bg-gray-800 [&_th]:font-bold [&_th]:p-2
+                        [&_td]:border [&_td]:border-gray-300 dark:[&_td]:border-gray-600 [&_td]:p-2
                         [&_h1]:text-3xl [&_h1]:font-bold [&_h1]:mb-6 [&_h1]:mt-8
                         [&_h2]:text-2xl [&_h2]:font-bold [&_h2]:mb-4 [&_h2]:mt-6
                         [&_h3]:text-xl [&_h3]:font-semibold [&_h3]:mb-3 [&_h3]:mt-5
@@ -488,6 +493,7 @@ const BlogPost: React.FC = () => {
                         dark:[&_h1]:text-white dark:[&_h2]:text-gray-100 dark:[&_h3]:text-gray-200 dark:[&_h4]:text-gray-200 dark:[&_h5]:text-gray-300 dark:[&_h6]:text-gray-300
                         [&_iframe[data-video-modal]]:cursor-pointer [&_iframe[data-video-modal]]:transition-all [&_iframe[data-video-modal]:hover]:opacity-90 [&_iframe[data-video-modal]:hover]:scale-[1.02]
                         [&_.youtube-video-embed]:cursor-pointer [&_.youtube-video-embed]:transition-all [&_.youtube-video-embed:hover]:opacity-90 [&_.youtube-video-embed:hover]:scale-[1.02]
+                        [&_.youtube-video-embed]:rounded-lg [&_.youtube-video-embed]:shadow-lg [&_.youtube-video-embed]:my-4
                         [&_details]:bg-gradient-to-br [&_details]:from-belize-blue-50 [&_details]:to-belize-green-50 dark:[&_details]:from-gray-900 dark:[&_details]:to-gray-800
                         [&_details]:rounded-2xl [&_details]:border [&_details]:border-belize-blue-100 dark:[&_details]:border-gray-700 [&_details]:shadow-lg [&_details]:my-6
                         [&_details]:transition-all [&_details]:duration-300 hover:[&_details]:shadow-xl hover:[&_details]:transform hover:[&_details]:translate-y-[-2px] [&_details]:overflow-hidden

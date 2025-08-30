@@ -312,11 +312,11 @@ const App = () => {
                   </Suspense>
                 } />
                 <Route path="alerts" element={
-                  <Suspense fallback={<PageLoader />}>
-                    <RequireRole allowedRoles={['admin', 'super_admin']}>
+                  <RequireRole allowedRoles={['admin', 'super_admin']}>
+                    <Suspense fallback={<PageLoader />}>
                       <SafetyAlerts />
-                    </RequireRole>
-                  </Suspense>
+                    </Suspense>
+                  </RequireRole>
                 } />
                 <Route path="analytics" element={
                   <Suspense fallback={<PageLoader />}>
@@ -347,7 +347,9 @@ const App = () => {
                 } />
                 <Route path="api-management/alerts" element={
                   <RequireRole allowedRoles={['super_admin']}>
-                    <ApiAlertsManagement />
+                    <Suspense fallback={<PageLoader />}>
+                      <ApiAlertsManagement />
+                    </Suspense>
                   </RequireRole>
                 } />
                 <Route path="api-management/optimization" element={

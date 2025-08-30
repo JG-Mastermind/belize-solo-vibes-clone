@@ -30,6 +30,7 @@ interface CalendarBooking {
 const Calendar = () => {
   const [selectedDate, setSelectedDate] = useState<Date>(new Date());
   const [viewMode, setViewMode] = useState<'month' | 'week'>('month');
+  const [initialLoad, setInitialLoad] = useState(true);
 
   const { data: bookings, isLoading } = useQuery({
     queryKey: ['calendar-bookings', selectedDate],
@@ -61,6 +62,13 @@ const Calendar = () => {
       return data as CalendarBooking[];
     },
   });
+
+  // Handle initial calendar data loading
+  React.useEffect(() => {
+    if (bookings && initialLoad) {
+      setInitialLoad(false);
+    }
+  }, [bookings, initialLoad]);
 
   const getBookingsForDate = (date: Date) => {
     if (!bookings) return [];
@@ -95,7 +103,7 @@ const Calendar = () => {
 
   const selectedDateBookings = getBookingsForDate(selectedDate);
 
-  if (isLoading) {
+  if (isLoading || initialLoad) {
     return (
       <div className="flex items-center justify-center p-8">
         <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-orange-500"></div>

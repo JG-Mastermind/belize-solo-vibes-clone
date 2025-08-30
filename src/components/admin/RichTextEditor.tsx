@@ -259,8 +259,15 @@ export const RichTextEditor: React.FC<RichTextEditorProps> = ({
 
   // Sync editor content when value prop changes (only when not focused)
   useEffect(() => {
-    if (editor && value !== undefined && editor.getHTML() !== value && !editor.isFocused) {
-      editor.commands.setContent(value);
+    if (editor && value !== undefined && !editor.isFocused) {
+      // Force content update if editor is empty or content differs significantly
+      const currentContent = editor.getHTML();
+      const isEmpty = currentContent === '<p></p>' || currentContent === '';
+      const contentDiffers = currentContent !== value;
+      
+      if (isEmpty || (contentDiffers && value.length > 0)) {
+        editor.commands.setContent(value);
+      }
     }
   }, [editor, value]);
 
